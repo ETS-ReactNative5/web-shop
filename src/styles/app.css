@@ -1,0 +1,11 @@
+.header , .main , .footer{
+    display: flex;
+    padding:20px;
+    margin:20px;
+}
+.footer{
+    background:#eee;
+}
+.DatePicker__calendarContainer{
+    z-index:3000;
+}
