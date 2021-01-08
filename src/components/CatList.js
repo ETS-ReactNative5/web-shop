@@ -127,7 +127,7 @@ class CatList extends React.Component {
 			return <Redirect to={"/products?id=" + this.state.id} push={true} />;
 		}
 		return (
-			<div className="col-12" style={{ paddingLeft: 20, paddingRight: 20 }}>
+			<div className="col-12" style={{ paddingLeft: this.props.paddingLeft||20, paddingRight: this.props.paddingRight||20 }}>
 				<div className="row justify-content-center" style={{ marginRight: 15, marginLeft: 15 }} >
 					{this.state.CatData.data && this.state.CatData.data.length > 0 &&
 						<div className="col-lg-12 col-md-12 col-12" style={{ direction: 'rtl', backgroundColor: '#fff', borderRadius: 10 }}>

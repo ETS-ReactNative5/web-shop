@@ -56,9 +56,7 @@ import { Provider } from 'react-redux'
 import reducer from './reducer.js'
 
 import { createStore } from 'redux'
-import ReactGA from 'react-ga';
-ReactGA.initialize('G-C524RVK7ZJ');
-ReactGA.pageview(window.location.pathname + window.location.search);
+
 class App extends Component {
 
   store = createStore(reducer);
@@ -95,14 +93,7 @@ class App extends Component {
                     content="فروشگاه آنلاین ، خرید اینترنتی ، اصفهان ، خرید اقساطی"/>
                 <meta name="keywords"
                     content="کالای دیجیتال ، لپ تاپ ، موبایل ، خرید ، آنلاین"/>
-                  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C524RVK7ZJ"></script>
-                  <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-
-                    gtag('config', 'G-C524RVK7ZJ');
-                  </script>
+               
               </Helmet>
               <ScrollToTop>
                 <Switch>

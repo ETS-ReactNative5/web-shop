@@ -43,7 +43,7 @@
     padding: 0;
     font-family: 'irsans';
     direction: rtl;
-    background-color:#f5f5f5;
+    background-color:#f5f5f5 !important;
   
     /*direction: rtl;*/
   }
@@ -927,7 +927,7 @@
     bottom: -1.5px;
     height: 3px;
     width: 60px;
-    background-color: #f8694a;
+    background-color: #52e850;
 }
 .sss{
     padding-top:30px;
@@ -1081,9 +1081,7 @@ display: none;
 .p-tabview .p-tabview-nav li{
     float: right !important;
 }
-.p-tabview .p-tabview-nav{
-    margin-bottom: 5px !important;
-}
+
 div#multiselectContainerReact span {
     font-family: 'iranyekanweblight';
 }
@@ -1107,6 +1105,17 @@ div#multiselectContainerReact .searchBox {
     transform: translate(-50%, -50%) rotate(-7deg);
     transform-origin: center;
     width: 50%;
+    height: 1px;
+    background: #a4a4a4;
+}
+.oldPrice_product:before{
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-7deg);
+    transform-origin: center;
+    width: 75%;
     height: 1px;
     background: #a4a4a4;
 }

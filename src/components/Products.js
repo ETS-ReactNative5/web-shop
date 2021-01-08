@@ -1,55 +1,58 @@
 import React, { Component } from 'react';
-import Server  from './Server.js'
-import {Spinner} from 'primereact/spinner';
-import {withRouter , Route,Link,Redirect} from 'react-router-dom'
-import axios from 'axios'  
-import Header1  from './Header1.js'
-import {TabView,TabPanel} from 'primereact/tabview';
-import { Button,Alert } from 'reactstrap';
-import {Panel} from 'primereact/panel';
+import Server from './Server.js'
+import { Spinner } from 'primereact/spinner';
+import { withRouter, Route, Link, Redirect } from 'react-router-dom'
+import axios from 'axios'
+import Header1 from './Header1.js'
+import { TabView, TabPanel } from 'primereact/tabview';
+import { Button, Alert } from 'reactstrap';
+import { Panel } from 'primereact/panel';
 import moment from 'moment-jalaali';
 import { connect } from 'react-redux';
-import {Dialog} from 'primereact/dialog';
+import { Dialog } from 'primereact/dialog';
 import ReactImageMagnify from 'react-image-magnify';
-import MainBox3  from './MainBox3.js'
-import Footer  from './Footer.js' 
-import Header2  from './Header2.js'
+import MainBox3 from './MainBox3.js'
+import './Products.css'
+import CatList from './CatList.js'
+
+import Footer from './Footer.js'
+import Header2 from './Header2.js'
 import { Rating } from 'primereact/rating';
-import { ImageWithZoom, Slide, Slider,CarouselProvider  } from 'pure-react-carousel';
+import { ImageWithZoom, Slide, Slider, CarouselProvider } from 'pure-react-carousel';
 import Swiper from 'react-id-swiper';
 import { SelectButton } from 'primereact/selectbutton';
 
 const params = {
-	slidesPerView: 5,
-	spaceBetween: 5,
-	loop:1,
-	navigation: {
-	    nextEl: '.swiper-button-next',
-	    prevEl: '.swiper-button-prev'
-	  },
-	  breakpoints: {
-		1024: {
-		  slidesPerView: 5,
-		  spaceBetween: 5
-		},
-		768: {
-		  slidesPerView: 4,
-		  spaceBetween: 5
-		},
-		640: {
-		  slidesPerView: 2,
-		  spaceBetween: 5
-		},
-		320: {
-		  slidesPerView: 1,
-		  spaceBetween: 0
-		}
-	   }
+    slidesPerView: 5,
+    spaceBetween: 5,
+    loop: 1,
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+    },
+    breakpoints: {
+        1024: {
+            slidesPerView: 5,
+            spaceBetween: 5
+        },
+        768: {
+            slidesPerView: 4,
+            spaceBetween: 5
+        },
+        640: {
+            slidesPerView: 2,
+            spaceBetween: 5
+        },
+        320: {
+            slidesPerView: 1,
+            spaceBetween: 0
+        }
+    }
 }
 
 const params5 = {
-    
-    loop:1,
+
+    loop: 1,
     centeredSlides: true,
     slidesPerView: 'auto',
     pagination: {
@@ -58,805 +61,895 @@ const params5 = {
     }
 }
 class Products extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.Server = new Server();
         this.SendToCart = this.SendToCart.bind(this);
         this.SendComment = this.SendComment.bind(this);
         this.myRef = React.createRef()   // Create a ref object 
 
-        this.state={
-            id:this.props.location.search.split("id=")[1],
-            Haraj:this.props.location.search.split("Haraj=")[1],
-            UId:null,
-            title:'',
-            subtitle:'',
-            desc:'',
-            pic1:'',
-            pic2:'',
-            pic3:'',
-            pic4:'',
-            pic5:'',
-            price:0,
-            ShowPriceAftLogin:false,
-            off:0,
-            rating:0,
-            ratingText:"بدون امتیاز",
-            number:1,
-            reqNumber:1,
-            GoToCart:false,
-            GotoLogin:false,
-            SellerName:'',
-            SellerId:null,
-            Comments:[],
-            CommentText:null,
-            CommentLimit:5,
-            CommentSkip:0,
-            HasError:{},
-            CommentCount:0,
-            lastCommentCount:0,
-            AlertInShowComment:{},
-            GridData:[],
-            day:0,
-            hours:0,
-            minutes:0,
-            seconds:0,
-            visibleDialog:false,
-            DialogPic:null,
-            SameData:[],
-            absoluteUrl:this.Server.getAbsoluteUrl(),
-            url:this.Server.getUrl()
+        this.state = {
+            id: this.props.location.search.split("id=")[1],
+            Haraj: this.props.location.search.split("Haraj=")[1],
+            UId: null,
+            title: '',
+            subtitle: '',
+            desc: '',
+            pic1: '',
+            pic2: '',
+            pic3: '',
+            pic4: '',
+            pic5: '',
+            price: 0,
+            ShowPriceAftLogin: false,
+            off: 0,
+            rating: 0,
+            ratingText: "بدون امتیاز",
+            number: 1,
+            reqNumber: 1,
+            GoToCart: false,
+            GotoLogin: false,
+            SellerName: '',
+            SellerId: null,
+            Comments: [],
+            CommentText: null,
+            CommentLimit: 5,
+            CommentSkip: 0,
+            HasError: {},
+            CommentCount: 0,
+            lastCommentCount: 0,
+            AlertInShowComment: {},
+            GridData: [],
+            day: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            visibleDialog: false,
+            DialogPic: null,
+            SameData: [],
+            MainShopInfo:[],
+            absoluteUrl: this.Server.getAbsoluteUrl(),
+            url: this.Server.getUrl()
         }
         let that = this;
-        let param={
-            id : null,
+        let param = {
+            id: null,
             token: localStorage.getItem("api_token")
         };
-        if(this.state.Haraj)
-        {
+        if (this.state.Haraj) {
             let that = this;
-            
-            let SCallBack = function(response){
+
+            let SCallBack = function (response) {
                 var HarajDate = response.data.result[0].HarajDate,
                     ExpireDate = response.data.result[0].ExpireDate,
                     TodayDate = response.data.extra ? response.data.extra.TodayDate : null;
 
-    
-                if(ExpireDate >= TodayDate)    
-                {  
+
+                if (ExpireDate >= TodayDate) {
                     that.setState({
-                        GridData:response.data.result
+                        GridData: response.data.result
                     })
-                    var x = setInterval(function() {
-                        var distance = new Date(response.data.result[0].ExpireDate+" 23:59:59") - new Date(new moment().locale('fa').format("jYYYY/jMM/jDD HH:mm:ss"));
+                    var x = setInterval(function () {
+                        var distance = new Date(response.data.result[0].ExpireDate + " 23:59:59") - new Date(new moment().locale('fa').format("jYYYY/jMM/jDD HH:mm:ss"));
                         var day = Math.floor(distance / (1000 * 60 * 60 * 24));
                         var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                        var seconds = Math.floor((distance % (1000 * 60)) / 1000); 
-                      
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
                         // Display the result in the element with id="demo"
-                        if(hours == 0 && minutes == 0 && seconds <= 1)
+                        if (hours == 0 && minutes == 0 && seconds <= 1)
                             window.location.reload();
                         that.setState({
-                            hours:hours,
-                            minutes:minutes,
-                            seconds:seconds
+                            hours: hours,
+                            minutes: minutes,
+                            seconds: seconds
                         })
-                      
+
                         // If the count down is finished, write some text
                         if (distance < 0) {
-                          that.setState({
-                            GridData:[]
-                          })
-                          clearInterval(x);
-                          //document.getElementById("demo").innerHTML = "EXPIRED";
+                            that.setState({
+                                GridData: []
+                            })
+                            clearInterval(x);
+                            //document.getElementById("demo").innerHTML = "EXPIRED";
                         }
-                      }, 1000);
+                    }, 1000);
                 }
-                
+
             };
-            let ECallBack = function(error){
-               // alert(error)
+            let ECallBack = function (error) {
+                // alert(error)
             }
-            this.Server.send("MainApi/GetProductsPerCat",param,SCallBack,ECallBack)
+            this.Server.send("MainApi/GetProductsPerCat", param, SCallBack, ECallBack)
             return;
         }
-        
-        let SCallBack = function(response){
-            let res =response.data.result;
+
+        let SCallBack = function (response) {
+            let res = response.data.result;
             res.map((v, i) => {
+                debugger;
                 that.setState({
                     id: v._id,
-                    IsSeveralShop:response.data.extra.raiting[0] ? response.data.extra.raiting[0].IsSeveralShop : 0,
-                    title:v.title,
-                    subtitle:v.subTitle,
-                    Spec:v.Spec,
-                    desc:v.desc,
-                    rating:response.data.extra.raiting[0] ? response.data.extra.raiting[0].point : 0,
-                    pic1:v.fileUploaded  ? that.state.absoluteUrl + v.fileUploaded.split("public")[1] :  that.state.absoluteUrl+'nophoto.png',
-                    pic2:v.fileUploaded1 ? that.state.absoluteUrl + v.fileUploaded1.split("public")[1] : that.state.absoluteUrl+'nophoto.png',
-                    pic3:v.fileUploaded2 ? that.state.absoluteUrl + v.fileUploaded2.split("public")[1] : that.state.absoluteUrl+'nophoto.png',
-                    pic4:v.fileUploaded3 ? that.state.absoluteUrl + v.fileUploaded3.split("public")[1] : that.state.absoluteUrl+'nophoto.png',
-                    pic5:v.fileUploaded4 ? that.state.absoluteUrl + v.fileUploaded4.split("public")[1] : that.state.absoluteUrl+'nophoto.png',
-                    price:v.price,
-                    ShowPriceAftLogin:v.ShowPriceAftLogin,
-                    off:v.off,
-                    NoOff:v.NoOff,
-                    number:v.number,
-                    ProductId:v.product_id,
-                    SellerName:response.data.extra.Seller[0] ? response.data.extra.Seller[0].name : "",
-                    SellerId:response.data.extra.Seller[0] ? response.data.extra.Seller[0]._id : ""
+                    IsSeveralShop: response.data.extra.raiting[0] ? response.data.extra.raiting[0].IsSeveralShop : 0,
+                    title: v.title,
+                    subtitle: v.subTitle,
+                    Spec: v.Spec,
+                    desc: v.desc,
+                    rating: response.data.extra.raiting[0] ? response.data.extra.raiting[0].point : 0,
+                    pic1: v.fileUploaded ? that.state.absoluteUrl + v.fileUploaded.split("public")[1] : that.state.absoluteUrl + 'nophoto.png',
+                    pic2: v.fileUploaded1 ? that.state.absoluteUrl + v.fileUploaded1.split("public")[1] : that.state.absoluteUrl + 'nophoto.png',
+                    pic3: v.fileUploaded2 ? that.state.absoluteUrl + v.fileUploaded2.split("public")[1] : that.state.absoluteUrl + 'nophoto.png',
+                    pic4: v.fileUploaded3 ? that.state.absoluteUrl + v.fileUploaded3.split("public")[1] : that.state.absoluteUrl + 'nophoto.png',
+                    pic5: v.fileUploaded4 ? that.state.absoluteUrl + v.fileUploaded4.split("public")[1] : that.state.absoluteUrl + 'nophoto.png',
+                    price: v.price,
+                    ShowPriceAftLogin: v.ShowPriceAftLogin,
+                    off: v.off,
+                    NoOff: v.NoOff,
+                    number: v.number,
+                    ProductId: v.product_id,
+                    CatId:v.category_id,
+                    SellerName: response.data.extra.Seller[0] ? response.data.extra.Seller[0].name : "",
+                    SellerId: response.data.extra.Seller[0] ? response.data.extra.Seller[0]._id : "",
+                    PrepareTime:v.PrepareTime
                 })
-                if(v.SelectedColors && v.SelectedColors.length > 0 ){
+                if (v.SelectedColors && v.SelectedColors.length > 0) {
                     let Colors = [];
-                    for(let j=0;j<v.SelectedColors.length;j++)
-                    Colors.push({"label":v.SelectedColors[j].name,"value":v.SelectedColors[j].name})
+                    for (let j = 0; j < v.SelectedColors.length; j++)
+                        Colors.push({ "label": v.SelectedColors[j].name, "value": v.SelectedColors[j].name })
                     that.setState({
-                        Colors:Colors,
-                        Color:Colors[0].value
+                        Colors: Colors,
+                        Color: Colors[0].value
                     })
                 }
-                if(v.SelectedSize && v.SelectedSize.length > 0 ){
+                if (v.SelectedSize && v.SelectedSize.length > 0) {
                     let Sizes = [];
-                    for(let j=0;j<v.SelectedSize.length;j++)
-                    Sizes.push({"label":v.SelectedSize[j].name,"value":v.SelectedSize[j].name})
+                    for (let j = 0; j < v.SelectedSize.length; j++)
+                        Sizes.push({ "label": v.SelectedSize[j].name, "value": v.SelectedSize[j].name })
                     that.setState({
-                        Sizes:Sizes,
-                        Size:Sizes[0].value
+                        Sizes: Sizes,
+                        Size: Sizes[0].value
                     })
                 }
-                var point=0,
-                    count=0;
-                v.points &&v.points.map((o, j) => {
-                    point=point+o.point;
+                var point = 0,
+                    count = 0;
+                v.points && v.points.map((o, j) => {
+                    point = point + o.point;
                     count++;
                 })
                 that.setState({
                     /*rating:point/count,*/
-                    ratingText:point==0 ? "بدون امتیاز" : that.persianNumber((point/count).toFixed(2))  /*+ " از " + that.persianNumber(5)*/ + "    ("+that.persianNumber(count)+")" 
+                    ratingText: point == 0 ? "بدون امتیاز" : that.persianNumber((point / count).toFixed(2))  /*+ " از " + that.persianNumber(5)*/ + "    (" + that.persianNumber(count) + ")"
                 })
+            })
+            debugger;
+            that.getMainShopInfo();
+            //that.getComment()
+
+        };
+        let ECallBack = function (error) {
+            // alert(error)
+        }
+        axios.post(this.state.url + 'checktoken', {
+            token: localStorage.getItem("api_token")
+        })
+            .then(response => {
+                this.setState({
+                    UId: response.data.authData.userId
+                })
+                param = {
+                    id: that.state.id,
+                    UId: that.state.UId,
+                    token: localStorage.getItem("api_token"),
+                    levelOfUser: response.data.authData.levelOfUser
+                };
+                this.Server.send("MainApi/getProducts", param, SCallBack, ECallBack)
+            })
+            .catch(error => {
+                param = {
+                    id: that.state.id,
+                    UId: that.state.UId,
+                    token: localStorage.getItem("api_token")
+                };
+                this.Server.send("MainApi/getProducts", param, SCallBack, ECallBack)
+            })
+
+
+    }
+    getMainShopInfo(){
+        let that = this;
+        let param = {
+            main: true
+        };
+        
+        let SCallBack = function (response) {
+            that.setState({
+                MainShopInfo:response.data.result
             })
             that.getComment()
 
         };
-        let ECallBack = function(error){
-           // alert(error)
+
+        let ECallBack = function (error) {
+
         }
-        axios.post(this.state.url+'checktoken', {
-            token: localStorage.getItem("api_token")
-        })
-        .then(response => {
-                this.setState({
-                    UId : response.data.authData.userId
-                })
-                 param={
-                    id : that.state.id,
-                    UId:that.state.UId,
-                    token: localStorage.getItem("api_token"),
-                    levelOfUser:response.data.authData.levelOfUser
-                };
-                this.Server.send("MainApi/getProducts",param,SCallBack,ECallBack)
-          })
-          .catch(error => {
-            param={
-                id : that.state.id,
-                UId:that.state.UId,
-                token: localStorage.getItem("api_token")
-            };
-            this.Server.send("MainApi/getProducts",param,SCallBack,ECallBack)
-        })
-        
-       
+        that.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
     }
-    componentDidMount(){
-        document.getElementsByTagName("body")[0].scrollTo(0, 0); 
+    componentDidMount() {
+        document.getElementsByTagName("body")[0].scrollTo(0, 0);
         //this.myRef.current.scrollTo(0, 0);   
     }
-    roundPrice(price){
+    roundPrice(price) {
         return price.toString();;
-        if(price==0)
+        if (price == 0)
             return price;
-        price=parseInt(price).toString();
-        let C="500";
-        let S=3;
-        if(price.length <= 5){
-            C="100";
-            S=2;
+        price = parseInt(price).toString();
+        let C = "500";
+        let S = 3;
+        if (price.length <= 5) {
+            C = "100";
+            S = 2;
         }
-        if(price.length <= 4){
-            C="100";
-            S=2;
+        if (price.length <= 4) {
+            C = "100";
+            S = 2;
         }
-        let A = price.substr(price.length-S,S)
-        if(A==C || A=="000" || A=="00")
-          return price;
-        if(parseInt(A) > parseInt(C)){
-          let B=parseInt(A)-parseInt(C);
-          return (parseInt(price) - B + parseInt(C)).toString();
-        }else{
-          let B = parseInt(C) - parseInt(A);
-          return (parseInt(price) + B).toString();
-        }    
-    
-    
+        let A = price.substr(price.length - S, S)
+        if (A == C || A == "000" || A == "00")
+            return price;
+        if (parseInt(A) > parseInt(C)) {
+            let B = parseInt(A) - parseInt(C);
+            return (parseInt(price) - B + parseInt(C)).toString();
+        } else {
+            let B = parseInt(C) - parseInt(A);
+            return (parseInt(price) + B).toString();
+        }
+
+
     }
-    getComment(limit){
+    getComment(limit) {
         let that = this;
-        let param={
-            ProductId:this.state.id,
-            limit:limit||5,
-            All:0
-        }; 
-        if(limit)
+        let param = {
+            ProductId: this.state.id,
+            limit: limit || 5,
+            All: 0
+        };
+        if (limit)
             this.setState({
-                CommentCount:this.state.lastCommentCount
+                CommentCount: this.state.lastCommentCount
             })
-        let SCallBack = function(response){
+        let SCallBack = function (response) {
             that.GetSameProducts();
-            if(response.data.result.length == 0)
+            if (response.data.result.length == 0)
                 that.setState({
-                    AlertInShowComment:{
-                        text:"نظری برای این محصول ثبت نشده است",
-                        err:0,
+                    AlertInShowComment: {
+                        text: "نظری برای این محصول ثبت نشده است",
+                        err: 0,
                     },
 
                 })
             that.setState({
-                lastCommentCount:response.data.result.length,
-                Comments:response.data.result
+                lastCommentCount: response.data.result.length,
+                Comments: response.data.result
             })
-            that.myRef.current.scrollTo(0,0)
+            that.myRef.current.scrollTo(0, 0)
 
         };
-        
-        let ECallBack = function(error){
-            
+
+        let ECallBack = function (error) {
+
         }
-        that.Server.send("MainApi/getComment",param,SCallBack,ECallBack)
+        that.Server.send("MainApi/getComment", param, SCallBack, ECallBack)
     }
-    GetSameProducts(){
+    GetSameProducts() {
         let that = this;
-        let param={
-            ProductId:this.state.ProductId,
-            UId:this.state.UId,
+        let param = {
+            ProductId: this.state.ProductId,
+            UId: this.state.UId,
             token: this.state.token,
-            levelOfUser:this.state.levelOfUser,
-            SellerId:this.state.SellerId
-        }; 
-        let SCallBack = function(response){
+            levelOfUser: this.state.levelOfUser,
+            SellerId: this.state.SellerId
+        };
+        let SCallBack = function (response) {
+            debugger;
             that.setState({
-                SameData:response.data.result
+                SameData: response.data.result
             })
 
         };
-        
-        let ECallBack = function(error){
-            
+
+        let ECallBack = function (error) {
+
         }
-        that.Server.send("MainApi/getSimilarProducts",param,SCallBack,ECallBack)
+        that.Server.send("MainApi/getSimilarProducts", param, SCallBack, ECallBack)
     }
-    SendComment(){
+    SendComment() {
         let that = this;
-       
-        if(!this.state.CommentText){
+
+        if (!this.state.CommentText) {
             that.setState({
-                HasError:{
-                    text:"متن نظر خود را وارد کنید",
-                    err:1
+                HasError: {
+                    text: "متن نظر خود را وارد کنید",
+                    err: 1
                 }
             })
             return;
         }
-            
-        axios.post(that.state.url+'checktoken', {
+
+        axios.post(that.state.url + 'checktoken', {
             token: localStorage.getItem("api_token")
         })
-        .then(response => {
-            let param={
-                CommentText:that.state.CommentText,
-                SellerId:that.state.SellerId,
-                ProductId:that.state.id,
-                UserId:response.data.authData.userId,
-                set:1
-            };    
-            let SCallBack = function(response){
-                that.setState({
-                    HasError:{
-                        text:"نظر شما ثبت شد و پس از تایید نمایش می یابد",
-                        err:0
-                    }
-                })
-            };
-            
-            let ECallBack = function(error){
-                that.setState({
-                    HasError:{
-                        text:"نظر شما ثبت نشد لطفا مجددا تلاش کنید",
-                        err:1
-                    }
-                })
-            }
-            that.Server.send("MainApi/setOrUpdateComment",param,SCallBack,ECallBack)
-       }).catch(error => {
-        that.setState({
-            HasError:{
-                text:"برای ارسال نظر باید در سامانه وارد شوید",
-                err:1
-            }
-        })
-    })
-    }
-    SendToCart(PDId,PId,Number,UId,Price){
-        let that = this;
-        if(!this.state.IsSeveralShop)
-            PId=PDId;
-        axios.post(that.state.url+'checktoken', {
-            token: localStorage.getItem("api_token")
-        })
-        .then(response => {
-                let param={
-                    PDId : PDId,
-                    PId:PId,
-                    Number : Number,
-                    UId :  response.data.authData.userId,
-                    Price : Price,
-                    Status:"0",
-                    Type:"insert",
-                    token: localStorage.getItem("api_token"),
-                    SellerId:that.state.SellerId,
-                    Color:this.state.Color,
-                    Size:this.state.Size,
-                    IsSeveralShop:this.state.IsSeveralShop
+            .then(response => {
+                let param = {
+                    CommentText: that.state.CommentText,
+                    SellerId: that.state.SellerId,
+                    ProductId: that.state.id,
+                    UserId: response.data.authData.userId,
+                    set: 1
                 };
-                let SCallBack = function(response){
-                    let res =response.data.result;
+                let SCallBack = function (response) {
+                    that.setState({
+                        HasError: {
+                            text: "نظر شما ثبت شد و پس از تایید نمایش می یابد",
+                            err: 0
+                        }
+                    })
+                };
+
+                let ECallBack = function (error) {
+                    that.setState({
+                        HasError: {
+                            text: "نظر شما ثبت نشد لطفا مجددا تلاش کنید",
+                            err: 1
+                        }
+                    })
+                }
+                that.Server.send("MainApi/setOrUpdateComment", param, SCallBack, ECallBack)
+            }).catch(error => {
+                that.setState({
+                    HasError: {
+                        text: "برای ارسال نظر باید در سامانه وارد شوید",
+                        err: 1
+                    }
+                })
+            })
+    }
+    SendToCart(PDId, PId, Number, UId, Price) {
+        let that = this;
+        debugger;
+        if (!this.state.IsSeveralShop)
+            PId = PDId;
+        axios.post(that.state.url + 'checktoken', {
+            token: localStorage.getItem("api_token")
+        })
+            .then(response => {
+                let param = {
+                    PDId: PDId,
+                    PId: PId,
+                    Number: Number,
+                    UId: response.data.authData.userId,
+                    Price: Price,
+                    Status: "0",
+                    Type: "insert",
+                    token: localStorage.getItem("api_token"),
+                    SellerId: that.state.SellerId,
+                    Color: this.state.Color,
+                    Size: this.state.Size,
+                    IsSeveralShop: this.state.IsSeveralShop
+                };
+                let SCallBack = function (response) {
+                    let res = response.data.result;
                     let { history } = that.props;
-        
+
                     history.push({
                         pathname: '/cart'
                     })
-        
-                };
-                let ECallBack = function(error){
-                    
-                   // alert(error)
-                }
-                that.Server.send("MainApi/ManageCart",param,SCallBack,ECallBack)
 
-        }).catch(error => {
-            that.setState({
-                GotoLogin:true
+                };
+                let ECallBack = function (error) {
+
+                    // alert(error)
+                }
+                that.Server.send("MainApi/ManageCart", param, SCallBack, ECallBack)
+
+            }).catch(error => {
+                that.setState({
+                    GotoLogin: true
+                })
+                console.log(error)
             })
-            console.log(error)
-        })
-        
+
 
     }
-    changeRating(e){
-        this.setState({rating: e.value});
+    changeRating(e) {
+        this.setState({ rating: e.value });
         let that = this;
-        axios.post(that.state.url+'checktoken', {
+        axios.post(that.state.url + 'checktoken', {
             token: localStorage.getItem("api_token")
         })
-        .then(response => {
-                let param={
-                    userId : that.state.UId,
-                    productId : that.state.id,
-                    rating :  that.state.rating
+            .then(response => {
+                let param = {
+                    userId: that.state.UId,
+                    productId: that.state.id,
+                    rating: that.state.rating
                 };
-                let SCallBack = function(response){
-                    
-        
-                };
-                let ECallBack = function(error){
-                    
-                }
-                that.Server.send("MainApi/SetPoint",param,SCallBack,ECallBack)
+                let SCallBack = function (response) {
 
-        }).catch(error => {
-            that.setState({
-                GotoLogin:true
+
+                };
+                let ECallBack = function (error) {
+
+                }
+                that.Server.send("MainApi/SetPoint", param, SCallBack, ECallBack)
+
+            }).catch(error => {
+                that.setState({
+                    GotoLogin: true
+                })
+                console.log(error)
             })
-            console.log(error)
-        })
-        
+
     }
-    persianNumber(input){
-            var persian = {0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹'};
-            var string = (input + '').split('');
-            var count = string.length;
-            var num;
-            for (var i = 0; i <= count; i++) {
-                num = string[i];
-                if (persian[num]) {
-                    string[i] = persian[num];
-                }
+    persianNumber(input) {
+        var persian = { 0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹' };
+        var string = (input + '').split('');
+        var count = string.length;
+        var num;
+        for (var i = 0; i <= count; i++) {
+            num = string[i];
+            if (persian[num]) {
+                string[i] = persian[num];
             }
-            return string.join('');
+        }
+        return string.join('');
     }
-    render(){
-    if (this.state.GotoLogin) {
-        return <Redirect to={"/login"}/>;
-    }
-    return (
-      <div ref={this.myRef}>  
-        <Header1 /> 
-        <Header2 /> 
-        <Dialog header={this.state.title} visible={this.state.visibleDialog} style={{width: '700px'}} modal={true} onHide={() => this.setState({visibleDialog: false})}>
-            <div className="row" >
-                <div className="col-12" style={{textAlign:'center'}}>
-                       <img src={this.state.DialogPic} style={{width:430,height:380}} />
-                </div>
-                <div className="col-12" style={{borderColor:'#ccc',marginTop:10}}>
-                    <div className="row justify-content-center">
-                        <div className="col-4">
-                            <div style={{cursor:'pointer',textAlign:'center',padding:5}} onClick={()=>{this.setState({
-                                DialogPic:this.state.pic2
-                            })}} ><img  src={this.state.pic2} name="pic2" style={{height:100,borderRadius:12}}   alt="" />
-                            </div>
+    render() {
+        if (this.state.GotoLogin) {
+            return <Redirect to={"/login"} />;
+        }
+        return (
+            <div ref={this.myRef}>
+                <Header1 />
+                <Header2 />
+                <Dialog header={this.state.title} visible={this.state.visibleDialog} style={{ width: '700px' }} modal={true} onHide={() => this.setState({ visibleDialog: false })}>
+                    <div className="row" >
+                        <div className="col-12" style={{ textAlign: 'center' }}>
+                            <img src={this.state.DialogPic} style={{ width: 430, height: 380 }} />
                         </div>
-                        <div className="col-4">
-                            <div style={{cursor:'pointer',textAlign:'center',padding:5}} onClick={()=>{this.setState({
-                                DialogPic:this.state.pic3
-                            })}} ><img  src={this.state.pic3} name="pic3" style={{height:100,borderRadius:12}}   alt="" />
+                        <div className="col-12" style={{ borderColor: '#ccc', marginTop: 10 }}>
+                            <div className="row justify-content-center">
+                                <div className="col-4">
+                                    <div style={{ cursor: 'pointer', textAlign: 'center', padding: 5 }} onClick={() => {
+                                        this.setState({
+                                            DialogPic: this.state.pic2
+                                        })
+                                    }} ><img src={this.state.pic2} name="pic2" style={{ height: 100, borderRadius: 12 }} alt="" />
+                                    </div>
+                                </div>
+                                <div className="col-4">
+                                    <div style={{ cursor: 'pointer', textAlign: 'center', padding: 5 }} onClick={() => {
+                                        this.setState({
+                                            DialogPic: this.state.pic3
+                                        })
+                                    }} ><img src={this.state.pic3} name="pic3" style={{ height: 100, borderRadius: 12 }} alt="" />
+                                    </div>
+                                </div>
+
+                                <div className="col-4">
+                                    <div style={{ cursor: 'pointer', textAlign: 'center', padding: 5 }} onClick={() => {
+                                        this.setState({
+                                            DialogPic: this.state.pic4
+                                        })
+                                    }} ><img src={this.state.pic4} name="pic4" style={{ height: 100, borderRadius: 12 }} alt="" />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div className="col-4">
-                            <div style={{cursor:'pointer',textAlign:'center',padding:5}} onClick={()=>{this.setState({
-                                DialogPic:this.state.pic4
-                            })}} ><img  src={this.state.pic4} name="pic4" style={{height:100,borderRadius:12}}   alt="" />
-                            </div>
+
                         </div>
                     </div>
-                       
-                </div>
-            </div>
-        </Dialog>
-        <div className="single_product firstInPage" style={{direction:'rtl',marginTop:20}} >
-        
-		<div className="container">
-            {!this.state.Haraj ?
-            <div style={{backgroundColor:'#fff',padding:20,borderRadius:12}}>
-			<div className="row mt-md-5 mt-0" >
+                </Dialog>
+                <div className="single_product firstInPage" style={{ direction: 'rtl' }} >
 
-				
+                    <div >
+                        {!this.state.Haraj ?
+                            <div  style={{ padding: 20, borderRadius: 12 }}>
+                                <div className="row" style={{backgroundColor: '#fff',border:'1px solid #dededed4',borderRadius:7,padding:20}} >
 
-				<div className="col-md-5 col-12 order-1">
-					<div className="product_description">
-						<div className="product_category iranyekanwebmedium" style={{display:"none"}}>Laptops</div>
-						<div className="product_name iranyekanwebmedium" style={{textAlign:'center'}}>{this.state.title} <br/> <span style={{fontSize:15}}>{this.state.subtitle}</span></div>
-                        {this.state.SellerName &&
-                            <div className="product_text" ><p className="iranyekanwebmedium" style={{padding:"10px",textAlign:'right'}}> فروشنده : <span style={{color:'#333',fontSize:20}}>{this.state.SellerName} </span> </p></div>
-                        }
-                        
-                        
-                        
-                        <div className="product_text"><p className="iranyekanwebmedium" style={{padding:"10px",textAlign:'center'}}><span class="fa fa-star " style={{marginLeft:5,color:"#f18517"}}></span>{this.state.ratingText}</p></div>
 
-                        <div className="product_text" style={{marginTop:0}}><p className="iranyekanwebmedium" style={{padding:"10px",textAlign:'center'}}><Rating value={this.state.rating} readonly={this.state.UId ? false : true} cancel={false} onChange={(e) => this.changeRating(e)}></Rating></p></div>
 
-                        <div className="order_info d-flex flex-row">
-                        {
-                                            this.state.number > 0 
-                                            ?
-                            <form action="#">
-                            <label className="iranyekanwebmedium" style={{paddingLeft:"20px"}}>تعداد</label>
+                                    <div className="col-lg-4 col-12 order-1 order-lg-2" style={{ borderLeft: '1px solid #eee' }}>
+                                        <div className="product_description">
+                                            <div className="product_category YekanBakhFaBold" style={{ display: "none" }}>Laptops</div>
+                                            <div className="product_name YekanBakhFaBold" style={{ textAlign: 'right' }}>{this.state.title} <br /> <div style={{ fontSize: 14, marginTop: 15, color: '#b5b5b5' }}>{this.state.subtitle}</div></div>
 
-                                <Spinner value={this.state.reqNumber} onChange={(e) => this.setState({reqNumber: e.value})} min={1} max={this.state.number} />
-								{this.state.Colors && this.state.Colors.length >0 &&
-                                   <div style={{textAlign:'right'}} >
-                                        <SelectButton style={{textAlign:'right',marginTop:20}} value={this.state.Color} options={this.state.Colors} onChange={(e) => this.setState({Color: e.value})}></SelectButton>
-                                   </div>
-                                   }
-                                {this.state.Sizes && this.state.Sizes.length >0 &&
-                                <div style={{textAlign:'right',marginTop:20}} >
-                                    <SelectButton value={this.state.Size} options={this.state.Sizes} onChange={(e) => this.setState({Size: e.value})}></SelectButton>
 
-                                </div>
-                                }
-                                         {
-                                           (this.state.UId|| !this.state.ShowPriceAftLogin)  ?
-                                            <div>
-                                               {
-                                                ((!this.state.NoOff ? parseInt(this.props.off) : 0)+this.state.off) != "0" &&
+                                            {this.state.Colors && this.state.Colors.length > 0 &&
+                                                <div style={{ textAlign: 'right' }} >
+                                                    <SelectButton style={{ textAlign: 'right', marginTop: 20 }} value={this.state.Color} options={this.state.Colors} onChange={(e) => this.setState({ Color: e.value })}></SelectButton>
+                                                </div>
+                                            }
+                                            {this.state.Sizes && this.state.Sizes.length > 0 &&
+                                                <div style={{ textAlign: 'right', marginTop: 20 }} >
+                                                    <SelectButton value={this.state.Size} options={this.state.Sizes} onChange={(e) => this.setState({ Size: e.value })}></SelectButton>
+
+                                                </div>
+                                            }
+                                            <div className="product_text"><p className="iranyekanwebmedium" style={{ padding: "10px", textAlign: 'right', whiteSpace: 'pre-wrap',marginTop:30 }}>{this.state.desc}</p></div>
+
+
+
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-4 col-12 order-3 order-lg-3" >
+
+                                        <div className="order_info d-flex flex-row" >
+                                            {
+                                                this.state.number > 0
+                                                    ?
+                                                    <form action="#">
+
+                                                        {this.state.SellerName &&
+                                                            <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}> فروشنده : <span style={{ color: '#333', fontSize: 20 }}>{this.state.SellerName} </span> </p></div>
+                                                        }
+                                                        {this.state.MainShopInfo.length >0  &&
+                                                        <div>
+
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-shipping-fast" style={{fontSize:21,color:'green',paddingLeft:7}}></i>آماده ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span></p></div>
+
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-box-open" style={{fontSize:21,color:'green',paddingLeft:7}}></i>موجود در انبار فروشنده</p></div>
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-rocket" style={{fontSize:21,color:'green',paddingLeft:7}}></i>ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span>  تا <span style={{ color: '#333', fontSize: 20 }}>{this.state.PrepareTime||3} </span>روز کاری دیگر</p></div>
+
+                                                        </div>
+                                                     
+                                                        }
+
+                                                        <div className="product_text "><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><span class="fa fa-star " style={{ marginLeft: 5, color: "#f18517" }}></span>{this.state.ratingText}</p></div>
+
+                                                        <div className="product_text borderBottom" style={{ marginTop: 0 }}><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><Rating value={this.state.rating} readonly={this.state.UId ? false : true} cancel={false} onChange={(e) => this.changeRating(e)}></Rating></p></div>
+                                                        {
+                                                            (this.state.UId || !this.state.ShowPriceAftLogin) ?
+                                                                <div className=" row" style={{marginTop:95}}>
+                                                                    <div className="col-lg-4 col-12 ">
+                                                                        <Spinner value={this.state.reqNumber} style={{textAlign:'center',maxWidth:80,float:'right'}} onChange={(e) => this.setState({ reqNumber: e.value })} min={1} max={this.state.number} />
+
+                                                                        </div>
+                                                                    <div className="col-lg-8 col-12 ">
+                                                                    {
+                                                                        ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off) != "0" &&
+                                                                        <div className="mt-lg-0 mt-4"> 
+                                                                            {
+                                                                                ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off) > "0" &&
+                                                                                <div className="product_price YekanBakhFaBold oldPrice_product" style={{  textAlign: 'center' }}>{this.persianNumber(this.roundPrice(parseInt(this.state.price).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
+                                                                            }
+                                                                            {this.state.price > 0 &&
+                                                                                <div className="product_price YekanBakhFaBold" style={{ marginTop: 50, textAlign: 'right', fontSize: 25 }}>{this.persianNumber(this.roundPrice(parseInt(this.state.price - ((this.state.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
+
+                                                                            }
+                                                                        </div>
+                                                                    }
+                                                                    {
+                                                                        ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off) == "0" &&
+                                                                        <div className="product_price YekanBakhFaBold" style={{ textAlign: 'right', fontSize: 25 }}>{this.persianNumber(this.roundPrice(this.state.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
+
+                                                                    }
+                                                                    </div>
+                                                                    
+                                                                    <div className="button_container col-md-12 col-12 borderBottom ">
+                                                                        
+                                                                        <div >
+                                                                        <Button type="button" style={{ marginBottom: 10, paddingTop: 10, paddingBottom: 10, paddingRight: 10, paddingLeft: 10,width:'100%' }} color="success" className="iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, (this.roundPrice(this.state.price - ((this.state.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)))) }}><span style={{float:'right'}} ><i style={{fontSize:25}} className="fal fa-shopping-cart" /></span>  انتقال به سبد خرید</Button>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                :
+                                                                <div className="borderBottom">
+
+                                                                    <div className="button_container">
+                                                                        <Button color="success" style={{ marginBottom: 40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, null) }}>انتقال به سبد خرید</Button>
+                                                                        <div className="product_fav"><i className="fas fa-heart"></i></div>
+                                                                    </div>
+                                                                </div>
+                                                        }
+
+
+
+
+                                                    </form>
+                                                    :
+                                                    <div className="car-subtitle iranyekanwebmedium" style={{ textAlign: 'center', marginBottom: 15, width: '100%' }} ><span className="iranyekanwebmedium product_no" style={{ fontSize: 20, marginTop: 10 }}>ناموجود</span> </div>
+
+                                            }
+                                        </div>
+
+                                    </div>
+                                    <div className="col-12 d-md-none d-block" >
+                                        {this.state.pic1 != "" &&
+                                            <Swiper {...params5} style={{ position: 'absolute' }}>
                                                 <div>
-                                                    {
-                                                ((!this.state.NoOff ? parseInt(this.props.off) : 0)+this.state.off) > "0" &&
-                                                <div className="product_price iranyekanwebmedium" style={{textDecoration:'line-through',textAlign:'center'}}>{this.persianNumber(this.roundPrice(parseInt(this.state.price).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
-                                                    }
-                                               {this.state.price > 0 &&
-                                                      <div className="product_price iranyekanwebmedium" style={{marginTop:50,textAlign:'center',fontSize:25}}>{this.persianNumber(this.roundPrice(parseInt(this.state.price - ((this.state.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0)+this.state.off))/100)).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
-
-                                               }
-                                                    </div>
-                                                    }
-                                                    {
-                                                        ((!this.state.NoOff ? parseInt(this.props.off) : 0)+this.state.off) == "0" &&
-                                                        <div className="product_price iranyekanwebmedium" style={{textAlign:'center',fontSize:25}}>{this.persianNumber(this.roundPrice(this.state.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
-
-                                                    }
-
-                                                    <div className="button_container">
-                                                        
-                                                        <Button type="button" style={{marginBottom:40,paddingTop:15,paddingBottom:15,paddingRight:35,paddingLeft:35}} color="danger" className="iranyekanwebmedium" onClick={()=>{this.SendToCart(this.state.id,this.state.ProductId,this.state.reqNumber,null,(this.roundPrice(this.state.price - ((this.state.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0)+this.state.off))/100))))}}>انتقال به سبد خرید</Button>
-                                                        <div className="product_fav"><i className="fas fa-heart"></i></div>         
-                                                    </div>
-                                            </div>
-                                            :
-                                            <div>
-                                                 <div className="button_container">
-                                                        <Button color="danger" style={{marginBottom:40}}  className=" cart_button iranyekanwebmedium"  onClick={()=>{this.SendToCart(this.state.id,this.state.ProductId,this.state.reqNumber,null,null)}}>انتقال به سبد خرید</Button>
-                                                        <div className="product_fav"><i className="fas fa-heart"></i></div>
-                                                    </div>
-                                            </div>
-                                    }
-                                        
-                                
-                               
-								
-                            </form>
-                            : 
-                                            <div className="car-subtitle iranyekanwebmedium" style={{textAlign:'center',marginBottom:15,width:'100%'}} ><span className="iranyekanwebmedium" style={{fontSize:20,marginTop:10,color:'red'}}>ناموجود</span> </div>
-
+                                                    <img src={this.state.pic1} />
+                                                </div>
+                                                <div>
+                                                    <img src={this.state.pic2} />
+                                                </div>
+                                                <div>
+                                                    <img src={this.state.pic3} />
+                                                </div>
+                                                <div>
+                                                    <img src={this.state.pic4} />
+                                                </div>
+                                            </Swiper>
                                         }
-						</div>
-					</div>
-				</div>
-                <div className="col-12 d-md-none d-block">
-                 {this.state.pic1 != "" &&
-                <Swiper {...params5} style={{position:'absolute'}}>
-                    <div>
-                    <img src={this.state.pic1} /> 
-                    </div>
-                        <div>
-                        <img src={this.state.pic2} /> 
-                        </div>
-                        <div>
-                        <img src={this.state.pic3} /> 
-                        </div>
-                        <div>
-                        <img src={this.state.pic4} /> 
-                        </div>
-                    </Swiper>  
-    }
-				</div>
-				<div className="col-md-5 col-8 order-lg-1 order-2 d-md-block d-none">
-                    {this.state.InZoom ? 
-					<CarouselProvider
-                    visibleSlides={1}
-                    totalSlides={1}
-                    step={1}
-                    naturalSlideWidth={400}
-                    naturalSlideHeight={450}
-                    hasMasterSpinner
-                    lockOnWindowScroll
-                  >
-                    <Slide index={0}>
-                           <ImageWithZoom src={this.state.pic1} /> 
-                           </Slide>
-                    </CarouselProvider>
-                        :
-                        <div style={{cursor:'zoom-in',height:450,width:'100%',backgroundPosition:'top',backgroundSize:'contain',backgroundRepeat:'no-repeat',backgroundImage:`url(${this.state.pic1})`}} onClick={()=>this.setState({InZoom:true})}>
-                             </div>
-                        }
-				</div>
-                <div className="col-md-2 col-4 order-lg-2 order-3 d-md-block d-none">
-					<ul className="image_list">
-						<li onClick={()=>{this.setState({
-                            visibleDialog:true,
-                            DialogPic:this.state.pic2
-                        })}} ><img  src={this.state.pic2} name="pic1"   alt="" /> </li>
-						<li onClick={()=>{this.setState({
-                            visibleDialog:true,
-                            DialogPic:this.state.pic3
-                        })}} ><img  src={this.state.pic3} name="pic1"   alt="" /> </li>
-						<li onClick={()=>{this.setState({
-                            visibleDialog:true,
-                            DialogPic:this.state.pic4
-                        })}} ><img  src={this.state.pic4} name="pic1"   alt="" /> </li>
-					</ul>
-				</div>
+                                    </div>
+                                    <div className="col-lg-4 col-8 order-lg-1 order-2 d-md-block d-none" style={{ borderLeft: '1px solid #eee' }}>
+                                        <div className="row" >
+                                            <div className="col-12">
+                                                {this.state.InZoom ?
+                                                    <CarouselProvider
+                                                        visibleSlides={1}
+                                                        totalSlides={1}
+                                                        step={1}
+                                                        naturalSlideWidth={400}
+                                                        naturalSlideHeight={450}
+                                                        hasMasterSpinner
+                                                        lockOnWindowScroll
+                                                    >
+                                                        <Slide index={0}>
+                                                            <ImageWithZoom src={this.state.pic1} />
+                                                        </Slide>
+                                                    </CarouselProvider>
+                                                    :
+                                                    <div style={{ cursor: 'zoom-in', height: 450, width: '100%', backgroundPosition: 'top', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundImage: `url(${this.state.pic1})` }} onClick={() => this.setState({ InZoom: true })}>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div >
+                                                <ul className="image_list" style={{ display: 'flex', flexDirection: 'row' }}>
+                                                    <li onClick={() => {
+                                                        this.setState({
+                                                            visibleDialog: true,
+                                                            DialogPic: this.state.pic2
+                                                        })
+                                                    }} ><img src={this.state.pic2} name="pic1" alt="" /> </li>
+                                                    <li onClick={() => {
+                                                        this.setState({
+                                                            visibleDialog: true,
+                                                            DialogPic: this.state.pic3
+                                                        })
+                                                    }} ><img src={this.state.pic3} name="pic1" alt="" /> </li>
+                                                    <li onClick={() => {
+                                                        this.setState({
+                                                            visibleDialog: true,
+                                                            DialogPic: this.state.pic4
+                                                        })
+                                                    }} ><img src={this.state.pic4} name="pic1" alt="" /> </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
 
-			</div>
 
-            <div>
-            <div>    
-                {this.state.SameData.length > 0 &&
-                <div>
-            <div className="section-title " style={{marginLeft:10,marginRight:10,textAlign:'right'}}><span className="title iranyekanweblight" style={{fontSize:16,color:'gray'}} >‍‍‍‍‍‍‍ خرید این محصول از فروشندگان دیگر </span> </div>
-        
-             {this.state.SameData.map((item,index) => {
-                var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-                    return (
-                    <Link className="car-details " target="_blank" to={`${process.env.PUBLIC_URL}/Products?id=`+item._id} style={{display:'block',textDecorationStyle:'none',color:'#333',border:"1px solid rgb(239 239 239)",margin:5,padding:25,borderRadius:5}}>
-                       <div className="row">
-                        {(item.Seller && item.Seller[0] && item.Seller[0].name )&&
-                           <div className="col-lg-4 col-md-6 col-12">
-                                <div className="car-title yekan" style={{textAlign:'center',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',fontSize:14}}>
-                                <span>فروشنده : </span> <span style={{fontSize:20,fontWeight:'bold'}}>{item.Seller[0].name}</span> 
+
                                 </div>
-                           </div>
-                        }
-                           <div className="col-lg-4 col-md-6 col-12">
-                            {(this.state.UId || !item.ShowPriceAftLogin)&&
-                                <div className="car-title yekan" style={{textAlign:'center',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',fontSize:14}}>
-                                <span style={{fontSize:20,fontWeight:'bold'}} >{this.persianNumber(this.roundPrice((item.price - (item.price * ((!item.NoOff ? parseInt(this.props.off) : 0)+item.off))/100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان </span>
-                                </div>
-                            }
-                           </div>
-                           
-                       
-                       </div>
-                       
+                                {this.state.SameData.length > 0 &&
+                                <div style={{backgroundColor: '#fff',padding:20,borderRadius:7,marginTop:50,border:'1px solid #dededed4'}}>
+                                    <div>
+                                        
+                                            <div>
+                                                <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title YekanBakhFaBold" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ خرید این محصول از فروشندگان دیگر </span> </div>
+
+                                                {this.state.SameData.map((item, index) => {
+                                                    var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
+                                                    debugger;
+                                                    return (
+                                                            <div className="row">
+                                                                {(item.Seller && item.Seller[0] && item.Seller[0].name) &&
+                                                                    <div className="col-lg-2 col-md-6 col-12">
+                                                                        <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                           <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-id-card-alt" style={{fontSize:20,color:'#000',paddingLeft:10}} />{item.Seller[0].name}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <div className="col-lg-3 col-md-6 col-12">
+                                                                <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                           <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-truck" style={{fontSize:20,color:'#000'}} /> ارسال توسط {this.state.MainShopInfo[0].name} تا {this.persianNumber(item.PrepareTime||"3")} کاری دیگر</span>
+                                                                        </div>
+                                                                </div>
+                                                                <div className="col-lg-3 col-md-6 col-12">
+                                                                        <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                           <span style={{ fontSize: 13, fontWeight: 'bold',color:'#989898' }}><i className="fal fa-umbrella" style={{fontSize:20,color:'#000'}} /> گارانتی اصالت و سلامت فیزیکی کالا</span>
+                                                                        </div>
+                                                                </div>
+                                                                <div className="col-lg-2 col-md-6 col-12">
+                                                                    {(this.state.UId || !item.ShowPriceAftLogin) &&
+                                                                        <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                            <span style={{ fontSize: 13, fontWeight: 'bold' }} >{this.persianNumber(this.roundPrice((item.price - (item.price * ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off)) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان </span>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                                <div className="col-lg-2 col-md-6 col-12" style={{textAlign:'center'}}>
+                                                                    <button className="btn btn-outline-success iranyekanwebmedium" onClick={() => { this.SendToCart(item._id, item.product_id, 1, null, (this.roundPrice(item.price - ((item.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)))); return false; } }><span style={{float:'right'}} ></span>افزودن به سبد</button>
+
+                                                                </div>
 
 
-                </Link>
-        
-                    )
-                    })
-                }
-                </div>
-            }
-                </div>
-            </div>
-            <div  >
-                    <TabView renderActiveOnly={false} style={{textAlign:'right',direction:'rtl'}} activeIndex={0}  >
-                    <TabPanel header="مشخصات" headerClassName="iranyekanwebmedium" rightIcon="pi pi-calendar">
-                            <div className="product_text"><p className="iranyekanwebmedium" style={{padding:"10px",textAlign:'right',whiteSpace:'pre-wrap'}}>{this.state.desc}</p></div>
-                            {this.state.Spec &&
-                                <div className="iranyekanwebmedium" style={{padding:"10px",textAlign:'right',marginTop:20}}>
-                                    <hr/>
-                                <div style={{color:'#333',fontSize:20,marginBottom:30}}>مشخصات فنی</div> 
-                                {this.state.Spec.map((v,i) => {
-                                    if(v.value != "-")
-                                        return (   <p className="iranyekanwebmedium" style={{display:'flex',flexDirection:'row'}}><div style={{width:"40%",background:"#f9f9f9",padding:5}}>{v.title}</div><div style={{width:"5%"}}></div><div style={{width:"40%",background:"#f9f9f9",padding:5}}>{v.value}</div></p> )
-                                    })
-                                }
-                                </div>
-                            }
-                        </TabPanel>
-                       
-                        <TabPanel header="نظرات کاربران    " headerClassName="iranyekanwebmedium" rightIcon="pi pi-calendar">
-                        {this.state.Comments.map((v, i) => {
 
-                            return ( 
 
-                                <Panel header={ v.user[0].name + "   .....   " + this.persianNumber(v.date)} className="iranyekanwebmedium"  headerClassName="iranyekanwebmedium" style={{textAlign:'right',fontFamily:'IRANiranyekanwebmedium'}}>
-                                <p className="iranyekanwebmedium" >{v.CommentText}</p>
-                                </Panel>
-                            )
+                                                            </div>
 
-                        })
 
-                        }
-                        {this.state.lastCommentCount != this.state.CommentCount &&
-                            <span style={{cursor:'pointer',fontSize:13,color:'#2557b3',marginRight:3}} className="iranyekanwebmedium" onClick={()=>this.getComment(this.state.CommentLimit+5)} >بیشتر</span>
-                        }    
-                        {this.state.AlertInShowComment.text ?
-                        <Alert color={this.state.AlertInShowComment.err ? "danger" : "success"} style={{textAlign:"center"}} className="iranyekanwebmedium">
-                            {this.state.AlertInShowComment.text}
-                        </Alert>
-                        :<p></p>
-                        }
-                        </TabPanel>
-                        <TabPanel header="ثبت نظر" rightIcon="pi pi-user" headerClassName="iranyekanwebmedium" >
-                        <form className="form-signin">
-                            <div >
-                            <label className="iranyekanwebmedium" style={{float:'right'}}>نظر خود را درباره این محصول ثبت کنید</label>
 
-                                <textarea className="form-control iranyekanwebmedium" type="textarea" id="CommentText"  value={this.state.CommentText} name="CommentText" onChange={(e)=>this.setState({CommentText:e.currentTarget.value})}   required  />
-                            </div>
-                            
-                            <Button style={{marginLeft:5,marginTop:10}} color="primary" className="iranyekanwebmedium"  onClick={this.SendComment}>ثبت نظر</Button>
-                        </form>
-                        <div>
-                        {this.state.HasError.text ?
-                        <Alert color={this.state.HasError.err ? "danger" : "success"} style={{textAlign:"center"}} className="iranyekanwebmedium">
-                            {this.state.HasError.text}
-                        </Alert>
-                        :<p></p>
-                        }
-                        </div>
-                        </TabPanel>
-                        
-                    </TabView>
-                    
-                </div>
-                </div>
-                 :
-                 <div className="row">
-                     {
-                         this.state.GridData.map((data) => {
-                            let pic = data.fileUploaded.split("public")[1] ? this.state.absoluteUrl+data.fileUploaded.split("public")[1] : this.state.absoluteUrl+'nophoto.png';
-                            var distance = new Date(data.ExpireDate+" 23:59:59") - new Date(new moment().locale('fa').format("jYYYY/jMM/jDD HH:mm:ss"));
-                            var day = Math.floor(distance / (1000 * 60 * 60 * 24));
-                         return(
 
-                             <div className="col-lg-3 col-12" >
-                                 <div  style={{border:1,borderRadius:5,borderColor:'#ccc',borderStyle:'solid',borderRadius:5,padding:20,marginBottom:5}}>
-                               <Link target="_blank"  to={`${process.env.PUBLIC_URL}/Products?id=`+data._id} style={{textDecoration:'none',color:'#333'}}>
-
-                                <div className="row">   
-                                <div className="col-12 iranyekanwebmedium" style={{textAlign:'center'}}>
-                                    <img  src={pic} style={{width : 150,height:120}} name="pic3"  alt="" /> 
-                                    </div>
-                                    <div className="col-12 iranyekanwebmedium"  style={{textAlign:'center',marginTop:10}}>
-                                    <span>    
-                                        <div style={{whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{data.title}</div>
-                                        <br/>
-                                        <div style={{whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',fontSize:12}}>{data.subTitle}</div>
-                                    </span><br/>    
-                                    </div>
-                                    <div className="col-12 " style={{textAlign:'center',display:'none'}} >
-                                         <p className="iranyekanwebmedium" style={{textAlign:"center",whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{data.desc}</p>
-                                    </div>
-                                    <div className="col-12 iranyekanwebmedium" style={{textAlign:'center'}} >
-                                    <span style={{fontSize:20}}>
-                                        {this.persianNumber((data.price - (data.price * ((!data.NoOff ? parseInt(this.props.off) : 0)+data.off))/100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان
-                                    </span>
-                                    </div>
-                                    {
-                                        ((!data.NoOff ? parseInt(this.props.off) : 0)+data.off) != "0" &&
-                                        <div className="car-title iranyekanwebmedium off" style={{position:'absolute',top:0,left:0}} >{this.persianNumber(((!data.NoOff ? parseInt(this.props.off) : 0)+data.off))} %</div>
-
-                                    }
-                                    <div className="col-12" style={{textAlign:'center',marginTop:10}} >
-                                    <div className="deals_timer d-flex flex-row align-items-center justify-content-center" style={{marginTop:0}}>
-                                           
-                                           <div >
-                                               <div className="deals_timer_box clearfix" data-target-time="">
-                                               <div className="deals_timer_unit">
-                                                       <div id="deals_timer1_day" className="deals_timer_day iranyekanwebmedium" style={{fontSize:12}}>{day != "0" ? this.persianNumber(day) : ""}</div>
-                                                       <span className="iranyekanwebmedium" style={{fontSize:"11px"}}>{day != "0" ? "روز" : "" }</span>
-                                                   </div>
-                                                   <div className="deals_timer_unit">
-                                                       <div id="deals_timer1_hr" className="deals_timer_hr iranyekanwebmedium" style={{fontSize:12}}>{this.state.hours != "0" ? this.persianNumber(this.state.hours) : ""}</div>
-                                                       <span className="iranyekanwebmedium" style={{fontSize:"11px"}}>{this.state.hours != "0" ? "ساعت" : "" }</span>
-                                                   </div>
-                                                   <div className="deals_timer_unit">
-                                                       <div id="deals_timer1_min" className="deals_timer_min iranyekanwebmedium" style={{fontSize:12}}>{this.persianNumber(this.state.minutes)}</div>
-                                                       <span className="iranyekanwebmedium" style={{fontSize:"11px"}}>دقیقه</span>
-                                                   </div>
-                                                   <div className="deals_timer_unit">
-                                                       <div id="deals_timer1_sec" className="deals_timer_sec iranyekanwebmedium" style={{fontSize:12}}>{this.persianNumber(this.state.seconds)}</div>
-                                                       <span className="iranyekanwebmedium" style={{fontSize:"11px"}}>ثانیه</span>
-                                                   </div>
-                                                   
-                                               </div>
-                                           </div>
-                                       </div>
+                                                    )
+                                                })
+                                                }
+                                            </div>
                                        
-                                       </div>
-                                   
-                                    
-                                    
-                                    
+                                    </div>
                                 </div>
-                                </Link>
-                             </div>
-                             </div>
-                         )
-                    })}
+                                 }
+                                {this.state.CatId &&
+                                    <div style={{marginTop:20}}>
+                                        <CatList _id={this.state.CatId} name="محصولات مرتبط"  paddingLeft="0" paddingRight="0" />
+
+                                    </div>    
+                                }
+                                <div style={{marginTop:30}} >
+                                    <TabView renderActiveOnly={false} style={{ textAlign: 'right', direction: 'rtl' }} activeIndex={0}  >
+                                        <TabPanel header="مشخصات" headerClassName="iranyekanwebmedium" rightIcon="fal fa-list">
+                                            {this.state.Spec &&
+                                                <div className="iranyekanwebmedium" style={{ padding: "10px", textAlign: 'right', marginTop: 20 }}>
+                                                    <hr />
+                                                    <div style={{ color: '#333', fontSize: 20 }}>مشخصات فنی</div>
+                                                    <div style={{ color: '#333', fontSize: 14, marginBottom: 30 }} className="YekanBakhFaLight">{this.state.title}</div>
+                                                    {this.state.Spec.map((v, i) => {
+                                                        if (v.value != "-")
+                                                            return (<p className="iranyekanwebmedium" style={{ display: 'flex', flexDirection: 'row' }}><div className="YekanBakhFaBold" style={{ width: "30%", background: "#f2f2f2", padding: 10 }}>{v.title}</div><div style={{ width: "5%" }}></div><div className="YekanBakhFaMedium" style={{ width: "65%", background: "#f2f2f2", padding: 10 }}>{v.value}</div></p>)
+                                                    })
+                                                    }
+                                                </div>
+                                            }
+                                        </TabPanel>
+
+                                        <TabPanel header="نظرات کاربران    " headerClassName="iranyekanwebmedium" rightIcon="fal fa-comments">
+                                            {this.state.Comments.map((v, i) => {
+
+                                                return (
+
+                                                    <Panel header={v.user[0].name + "   .....   " + this.persianNumber(v.date)} className="iranyekanwebmedium" headerClassName="iranyekanwebmedium" style={{ textAlign: 'right', fontFamily: 'IRANiranyekanwebmedium' }}>
+                                                        <p className="iranyekanwebmedium" >{v.CommentText}</p>
+                                                    </Panel>
+                                                )
+
+                                            })
+
+                                            }
+                                            {this.state.lastCommentCount != this.state.CommentCount &&
+                                                <span style={{ cursor: 'pointer', fontSize: 13, color: '#2557b3', marginRight: 3 }} className="iranyekanwebmedium" onClick={() => this.getComment(this.state.CommentLimit + 5)} >بیشتر</span>
+                                            }
+                                            {this.state.AlertInShowComment.text ?
+                                                <Alert color={this.state.AlertInShowComment.err ? "danger" : "success"} style={{ textAlign: "center" }} className="iranyekanwebmedium">
+                                                    {this.state.AlertInShowComment.text}
+                                                </Alert>
+                                                : <p></p>
+                                            }
+                                        </TabPanel>
+                                        <TabPanel header="ثبت نظر" rightIcon="fal fa-comment-plus" headerClassName="iranyekanwebmedium" >
+                                            <form className="form-signin">
+                                                <div >
+                                                    <label className="iranyekanwebmedium" style={{ float: 'right' }}>نظر خود را درباره این محصول ثبت کنید</label>
+
+                                                    <textarea className="form-control iranyekanwebmedium" type="textarea" id="CommentText" value={this.state.CommentText} name="CommentText" onChange={(e) => this.setState({ CommentText: e.currentTarget.value })} required />
+                                                </div>
+
+                                                <Button style={{ marginLeft: 5, marginTop: 10,background:'#00bfd6',padding:'5px 30px 5px 30px' }} className="iranyekanwebmedium" onClick={this.SendComment}>ثبت نظر</Button>
+                                            </form>
+                                            <div>
+                                                {this.state.HasError.text ?
+                                                    <Alert color={this.state.HasError.err ? "danger" : "success"} style={{ textAlign: "center" }} className="iranyekanwebmedium">
+                                                        {this.state.HasError.text}
+                                                    </Alert>
+                                                    : <p></p>
+                                                }
+                                            </div>
+                                        </TabPanel>
+
+                                    </TabView>
+
+                                </div>
+                            </div>
+                            :
+                            <div className="row">
+                                {
+                                    this.state.GridData.map((data) => {
+                                        let pic = data.fileUploaded.split("public")[1] ? this.state.absoluteUrl + data.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
+                                        var distance = new Date(data.ExpireDate + " 23:59:59") - new Date(new moment().locale('fa').format("jYYYY/jMM/jDD HH:mm:ss"));
+                                        var day = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                        return (
+
+                                            <div className="col-lg-3 col-12" >
+                                                <div style={{ border: 1, borderRadius: 5, borderColor: '#ccc', borderStyle: 'solid', borderRadius: 5, padding: 20, marginBottom: 5 }}>
+                                                    <Link target="_blank" to={`${process.env.PUBLIC_URL}/Products?id=` + data._id} style={{ textDecoration: 'none', color: '#333' }}>
+
+                                                        <div className="row">
+                                                            <div className="col-12 iranyekanwebmedium" style={{ textAlign: 'center' }}>
+                                                                <img src={pic} style={{ width: 150, height: 120 }} name="pic3" alt="" />
+                                                            </div>
+                                                            <div className="col-12 iranyekanwebmedium" style={{ textAlign: 'center', marginTop: 10 }}>
+                                                                <span>
+                                                                    <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{data.title}</div>
+                                                                    <br />
+                                                                    <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12 }}>{data.subTitle}</div>
+                                                                </span><br />
+                                                            </div>
+                                                            <div className="col-12 " style={{ textAlign: 'center', display: 'none' }} >
+                                                                <p className="YekanBakhFaLight" style={{ textAlign: "center", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{data.desc}</p>
+                                                            </div>
+                                                            <div className="col-12 YekanBakhFaBold" style={{ textAlign: 'center' }} >
+                                                                <span style={{ fontSize: 20 }}>
+                                                                    {this.persianNumber((data.price - (data.price * ((!data.NoOff ? parseInt(this.props.off) : 0) + data.off)) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان
+                                    </span>
+                                                            </div>
+                                                            {
+                                                                ((!data.NoOff ? parseInt(this.props.off) : 0) + data.off) != "0" &&
+                                                                <div className="car-title iranyekanwebmedium off" style={{ position: 'absolute', top: 0, left: 0 }} >{this.persianNumber(((!data.NoOff ? parseInt(this.props.off) : 0) + data.off))} %</div>
+
+                                                            }
+                                                            <div className="col-12" style={{ textAlign: 'center', marginTop: 10 }} >
+                                                                <div className="deals_timer d-flex flex-row align-items-center justify-content-center" style={{ marginTop: 0 }}>
+
+                                                                    <div >
+                                                                        <div className="deals_timer_box clearfix" data-target-time="">
+                                                                            <div className="deals_timer_unit">
+                                                                                <div id="deals_timer1_day" className="deals_timer_day iranyekanwebmedium" style={{ fontSize: 12 }}>{day != "0" ? this.persianNumber(day) : ""}</div>
+                                                                                <span className="iranyekanwebmedium" style={{ fontSize: "11px" }}>{day != "0" ? "روز" : ""}</span>
+                                                                            </div>
+                                                                            <div className="deals_timer_unit">
+                                                                                <div id="deals_timer1_hr" className="deals_timer_hr iranyekanwebmedium" style={{ fontSize: 12 }}>{this.state.hours != "0" ? this.persianNumber(this.state.hours) : ""}</div>
+                                                                                <span className="iranyekanwebmedium" style={{ fontSize: "11px" }}>{this.state.hours != "0" ? "ساعت" : ""}</span>
+                                                                            </div>
+                                                                            <div className="deals_timer_unit">
+                                                                                <div id="deals_timer1_min" className="deals_timer_min iranyekanwebmedium" style={{ fontSize: 12 }}>{this.persianNumber(this.state.minutes)}</div>
+                                                                                <span className="iranyekanwebmedium" style={{ fontSize: "11px" }}>دقیقه</span>
+                                                                            </div>
+                                                                            <div className="deals_timer_unit">
+                                                                                <div id="deals_timer1_sec" className="deals_timer_sec iranyekanwebmedium" style={{ fontSize: 12 }}>{this.persianNumber(this.state.seconds)}</div>
+                                                                                <span className="iranyekanwebmedium" style={{ fontSize: "11px" }}>ثانیه</span>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+
+
+
+                                                        </div>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+
+                            </div>
+                        }
+
+                    </div>
 
                 </div>
-                }
-                 
-        </div>
-                   
-	</div>
-    <Footer />
-   </div>
-    )
+                <Footer />
+            </div>
+        )
     }
 }
 const mapStateToProps = (state) => {
-	return{
-		CartNumber : state.CartNumber,
-		off : state.off,
-		credit:state.credit
-	}
-   }
-   export default withRouter(
-	connect(mapStateToProps)(Products)
-   );
+    return {
+        CartNumber: state.CartNumber,
+        off: state.off,
+        credit: state.credit
+    }
+}
+export default withRouter(
+    connect(mapStateToProps)(Products)
+);
