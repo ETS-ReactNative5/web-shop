@@ -95,7 +95,14 @@ class App extends Component {
                     content="فروشگاه آنلاین ، خرید اینترنتی ، اصفهان ، خرید اقساطی"/>
                 <meta name="keywords"
                     content="کالای دیجیتال ، لپ تاپ ، موبایل ، خرید ، آنلاین"/>
+                  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C524RVK7ZJ"></script>
+                  <script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
 
+                    gtag('config', 'G-C524RVK7ZJ');
+                  </script>
               </Helmet>
               <ScrollToTop>
                 <Switch>
