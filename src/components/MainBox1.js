@@ -46,8 +46,11 @@ class MainBox1 extends React.Component {
             <div style={{backgroundColor:'#eee'}}>
                 <Header1 /> 
                 <Header2 /> 
-                <MainBox2 /> 
-                <MainBox4 /> 
+                <div className="A-container" >
+                    <MainBox2 /> 
+                    <MainBox4 /> 
+                </div>
+                
                 <Footer />
            </div>
             
