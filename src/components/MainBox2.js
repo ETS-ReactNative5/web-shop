@@ -1163,7 +1163,7 @@ class MainBox2 extends React.Component {
         :
         <div style={{ zIndex: 10000 }} >
           <p style={{ textAlign: 'center' }}>
-            <img src={require('../public/loading.gif')} style={{ width: 100 }} />
+            <img src={require('../public/loading.gif')} style={{ width: 320 }} />
           </p>
 
         </div>

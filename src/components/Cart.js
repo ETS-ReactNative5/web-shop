@@ -16,6 +16,8 @@ import Header2  from './Header2.js'
 import { Alert,Message } from 'rsuite';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import './Cart.css'
+import CatList from './CatList.js'
 
 
 class Cart extends React.Component {
@@ -150,7 +152,7 @@ class Cart extends React.Component {
                         that.setState({
                             GridData:[],
                             refId:response.data.refId,
-                            EndMessage:<div className="yekan"> کد رهگیری سفارش : {that.persianNumber(response.data.refId) } <br/><br/><p className="yekan" style={{fontSize:25}}>سفارش شما ثبت شد . جهت ادامه ی عملیات خرید با شما تماس گرفته خواهد شد</p> </div> 
+                            EndMessage:<div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId) } <br/><br/><p className="YekanBakhFaMedium" style={{fontSize:25}}>سفارش شما ثبت شد . جهت ادامه ی عملیات خرید با شما تماس گرفته خواهد شد</p> </div> 
     
                         })
                         if(this.state.ActiveSms != "none"){
@@ -218,7 +220,6 @@ class Cart extends React.Component {
             lastPrice : 0,
             orgLastPrice:0
         })
-
         let param={
             UId : this.state.userId,
             levelOfUser:this.state.levelOfUser/*,
@@ -240,7 +241,8 @@ class Cart extends React.Component {
                     orgLastPrice:lastPrice,
                     GridData:response.data.result,
                     CartNumber:CartNumber,
-                    CartItemsGet:1
+                    CartItemsGet:1,
+                    CatId:(response.data.result[0] && response.data.result[0].products && response.data.result[0].products.length>0) ? response.data.result[0].products[0].category_id : null
                 })
                 that.props.dispatch({
                     type: 'LoginTrueUser',    
@@ -254,7 +256,7 @@ class Cart extends React.Component {
                 duration: 3500,
                 description: (
                   <div>
-                    <p className="yekan">تعداد کالا ی موجود در سبد خرید <span style={{"color":"green"}}> {that.persianNumber(that.state.CartNumber)} </span> محصول</p>
+                    <p className="YekanBakhFaMedium">تعداد کالا ی موجود در سبد خرید <span style={{"color":"green"}}> {that.persianNumber(that.state.CartNumber)} </span> محصول</p>
                   </div>
                 )
               });
@@ -327,23 +329,70 @@ class Cart extends React.Component {
         if (layout === 'list' && car && car.products[0]) {
             let pic = car.products[0].fileUploaded.split("public")[1] ? this.state.absoluteUrl+car.products[0].fileUploaded.split("public")[1] : 'https://api.emdcctv.com/'+'nophoto.png';
             let rowPrice = car.price//car.products[0].getFromCredit ? car.products[0].price : (car.products[0].price - (car.products[0].price * ((!car.products[0].NoOff ? parseInt(this.props.off) : 0)+car.products[0].off))/100);
-            
+                
             //let pic = car.products[0].fileUploaded.split("public")[1] ? 'http://localhost:3000/'+car.products[0].fileUploaded.split("public")[1] : 'http://localhost:3000/'+'nophoto.png';
              return (
                  <div>    
-                 <div className="row" style={{alignItems:'baseline'}}>
-                 <div className="col-lg-2 col-12 yekan" style={{textAlign:'center'}}>
+                 <div className="row" style={{alignItems:'center'}}>
+                 <div className="col-lg-3 col-md-3  col-12 YekanBakhFaMedium" style={{textAlign:'center'}}>
                  <Link target="_blank" to={`${process.env.PUBLIC_URL}/Products?id=`+car.product_detail_id||car.products[0]._id} >
-                      <img  src={pic} style={{width : "150px" , height:"100px"}} name="pic3" onClick={this.Changepic}  alt="" /> 
+                      <img  src={pic} style={{height:"140px"}} name="pic3" onClick={this.Changepic}  alt="" /> 
                  </Link>
                   </div>
-                     <div className="col-lg-2 col-12 yekan" style={{textAlign:'center'}} >
-                     {car.products[0].title}
+                     <div className="col-lg-4 col-md-6 col-12 YekanBakhFaLight" style={{textAlign:'right'}} >
+                      <div style={{paddingBottom:5}} className="YekanBakhFaBold">
+                         {car.products[0].title}
+
+                     </div> 
+                     {car.product_detail && car.product_detail.length > 0 && 
+                        <div>
+                            <div style={{paddingBottom:5,fontSize:13}}>
+                            <i className="fal fa-umbrella" style={{paddingLeft:5}}></i><span>گارانتی اصالت و سلامت فیزیکی کالا</span>
+                            </div> 
+                            <div style={{paddingBottom:5,fontSize:13}}>
+                            <i className="fal fa-id-card-alt" style={{paddingLeft:5}}></i><span>{car.Seller[0].name} </span>
+                            </div> 
+                            <div style={{paddingBottom:5,fontSize:13}}>
+                            <i className="fal fa-rocket" style={{paddingLeft:5}}></i><span>ارسال تا {this.persianNumber(car.product_detail[0].PrepareTime||"3")} روز کاری دیگر</span>
+                            </div> 
+                        </div>
+                     }
                      <br/>
-                     {car.products[0].subTitle}
+                     </div>
+                     <div className="col-12">
+                         <div class="row" style={{alignItems:'center'}} >
+                         
+                         <div className="col-lg-3 col-12 YekanBakhFaMedium" style={{textAlign:'center'}}>
+                 
+                        </div>
+                     <div className="col-lg-2 col-4 YekanBakhFaMedium" style={{textAlign:'center'}}>
+                     
+                     <Spinner value={car.number} style={{textAlign:'center',maxWidth:65,float:'right'}}  onChange={(e) => {if(car.number == e.value) return; this.changeCart(e.value,car.product_detail_id||car.product_id,car.user_id,car.number)}} min={0} max={car.products[0].number} />
+                     </div>
+                     <div className="col-lg-2 col-4 YekanBakhFaMedium" style={{textAlign:'center'}}>
+                         <span style={{cursor:'pointer'}} onClick={(e) =>this.changeCart("0",car.product_detail_id||car.product_id,car.user_id,car)}>
+                         <i className="fal fa-trash-alt" style={{paddingLeft:5}}></i><span>حذف</span>
+                         </span>                    
+
+
+                     </div>
+                     <div className="col-lg-2 col-4 YekanBakhFaMedium" style={{textAlign:'center'}}>
+                     {car.Seller[0] && car.Seller[0].AllowCredit ? 
+
+                     <div>
+                       
+                        <a className="YekanBakhFaMedium" style={{color:'green'}} href="javascript:void(0)" onClick={()=>{this.setState({displayReduse:car,ReducePrice:car.getFromCredit ? car.getFromCredit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0 ,PriceAfterCompute:(car.number*parseInt(rowPrice))});return false;}}>کسر از اعتبار</a>
+
+                     </div>
+                     :
+                     <div>
+                        <label className="YekanBakhFaMedium">خرید نقدی</label>
+
+                     </div>
+                    }
                      </div>
                      
-                     <div className="col-lg-2 col-4 yekan" style={{textAlign:'center'}}>
+                     <div className="col-lg-3 col-12 YekanBakhFaMedium" style={{textAlign:'left'}}>
                      {car.products[0].price != '-' && 
                         <div>   
                             <div style={{fontSize:14}}>
@@ -357,31 +406,10 @@ class Cart extends React.Component {
                         </div>
                      }
                      </div>
-                     <div className="col-lg-2 col-4 yekan" style={{textAlign:'center'}}>
-                     
-                     <Spinner value={car.number} onChange={(e) => {if(car.number == e.value) return; this.changeCart(e.value,car.product_detail_id||car.product_id,car.user_id,car.number)}} min={0} max={car.products[0].number} />
+                        
                      </div>
-                     <div className="col-lg-3 col-4 yekan" style={{textAlign:'center'}}>
-                     {car.Seller[0] && car.Seller[0].AllowCredit ? 
-
-                     <div>
-                       
-                        <a className="yekan" href="javascript:void(0)" onClick={()=>{this.setState({displayReduse:car,ReducePrice:car.getFromCredit ? car.getFromCredit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0 ,PriceAfterCompute:(car.number*parseInt(rowPrice))});return false;}}>کسر از اعتبار</a>
-
-                     </div>
-                     :
-                     <div>
-                        <label className="yekan">خرید نقدی</label>
-
-                     </div>
-                    }
-                     </div>
-                     <div className="col-lg-1 col-4 yekan" style={{textAlign:'center'}}>
-                        <img src={process.env.PUBLIC_URL + '/close.png'} alt="حذف" style={{cursor:'pointer',width:15,height:15,marginTop:8}} onClick={(e) =>this.changeCart("0",car.product_detail_id||car.product_id,car.user_id,car)} />
-
                      </div>
                      
-                    
                  </div> <hr />
                  
                     
@@ -490,7 +518,7 @@ class Cart extends React.Component {
         <Header1 /> 
         <Header2 /> 
         <div className="row justify-content-center d-lg-flex d-md-flex d-none" style={{direction:'ltr',marginBottom:50,marginTop:30}}  >
-        <div className="col-9  yekan alert-light" style={{padding:20}} >
+        <div className="col-9  yekan alert-light" style={{padding:20,display:'none'}} >
         {this.state.GridData.length > 0 && 
             <Steps current={this.state.StepNumber}  vertical={this.state.StepVertical} >
                 <Steps.Item  title="سبد خرید" />
@@ -502,44 +530,11 @@ class Cart extends React.Component {
         </div>
         </div>
         
-        <div className="row justify-content-center firstInPage" style={{direction:'rtl',minHeight:600}}   >
-        {this.state.GridData.length > 0 &&
-        <div className="col-lg-3">
+        <div className="row justify-content-center firstInPage" style={{direction:'rtl'}}   >
         
-        <div className="card" style={{paddingBottom:15,paddingRight:5,paddingLeft:5}}>
-            <p className="yekan" style={{textAlign:"center",marginTop:40}}>مبلغ قابل پرداخت  <div style={{color: '#a01212',fontSize:25,marginTop:50}}> {this.state.lastPrice != "0" ? this.persianNumber(this.state.lastPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" : "        "} 
-                {
-                    this.state.finalCreditReducer > 0 &&
-                    <p className="yekan" style={{fontSize:10}}>{this.persianNumber(this.state.finalCreditReducer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" } از اعتبار شما کسر خواهد شد</p>
-
-                }
-            </div>  </p>
-            {this.state.AcceptAddress ?
-            <p className="yekan" style={{textAlign:'center'}} >
-                
-                   <span style={{fontSize:13}}>سفارش شما به آدرس زیر ارسال می شود : </span> <br /><br />
-                   <span style={{fontSize:15,color:'#000'}}>  {this.state.Address} </span>  <br /><br />
-                    <Link to={`${process.env.PUBLIC_URL}/user?fromCart=1&id=`+this.state.userId}  style={{textDecoration:'none',fontSize:13}} className="yekan">برای ویرایش آدرس اینجا کلیک کنید</Link>
-            </p>
-            :
-             <p>
-
-             </p>
-            }   
-            {this.state.ActiveBank !="none" ?
-                <button className="btn btn-info yekan" style={{marginTop:40}} disabled={(this.state.AcceptAddress && this.state.Address=="")} onClick={this.Payment}>{this.state.AcceptAddress ? <span>پرداخت</span> : <span>ادامه فرایند خرید</span>}  </button>
-
-            :
-                <button className="btn btn-info yekan" style={{marginTop:40}}   onClick={this.Payment}>{this.state.AcceptAddress ? <span>ثبت نهایی</span> : <span>ادامه فرایند خرید</span>}  </button>
-
-            }
-        </div>
-       
-        </div>
-         }
         <div className="col-lg-8">
             {this.state.GridData.length > 0 ? 
-            <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} rows={10} itemTemplate={this.itemTemplate}></DataView>
+            <DataView value={this.state.GridData} layout={this.state.layout}  rows={100} itemTemplate={this.itemTemplate}></DataView>
             :
                 (
                     this.state.refId ?
@@ -547,16 +542,59 @@ class Cart extends React.Component {
                     :
                     (this.state.CartItemsGet
                         ?
-                    <p style={{textAlign:'center',paddingTop:50,fontSize:25}} className="iranyekanweblight">سبد خرید شما خالی است</p>
+                    <p style={{textAlign:'center',paddingTop:50,marginBottom:250,fontSize:25}} className="iranyekanweblight">سبد خرید شما خالی است</p>
                         :
-                    <p style={{textAlign:'center',paddingTop:50,fontSize:25}} className="iranyekanweblight">در حال بررسی سبد خرید ... منتظر باشید</p>
+                        <div style={{ zIndex: 10000 }} >
+                        <p style={{ textAlign: 'center' }}>
+                          <img src={require('../public/loading.gif')} style={{ width: 320 }} />
+                        </p>
+              
+                         </div>
     
                     )
                 )
             }
         </div>
+        {this.state.GridData.length > 0 &&
+        <div className="col-lg-3">
         
+        <div className="card mt-md-0 mt-5" style={{padding:10,borderRadius:20}}>
+            <p className="YekanBakhFaMedium" style={{textAlign:"center",marginTop:40,borderBottom:"1px solid #eee"}}><span style={{paddingLeft:25}}>مبلغ قابل پرداخت </span> <span style={{color: '#a01212',fontSize:25,marginTop:50}}> {this.state.lastPrice != "0" ? this.persianNumber(this.state.lastPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" : "        "} 
+                {
+                    this.state.finalCreditReducer > 0 &&
+                    <p className="YekanBakhFaMedium" style={{fontSize:10}}>{this.persianNumber(this.state.finalCreditReducer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" } از اعتبار شما کسر خواهد شد</p>
+
+                }
+            </span>  </p>
+            {this.state.AcceptAddress ?
+            <p className="YekanBakhFaMedium" style={{textAlign:'center'}} >
+                
+                   <span style={{fontSize:13}}>سفارش شما به آدرس زیر ارسال می شود : </span> <br /><br />
+                   <span style={{fontSize:15,color:'#000'}}>  {this.state.Address} </span>  <br /><br />
+                    <Link to={`${process.env.PUBLIC_URL}/user?fromCart=1&id=`+this.state.userId}  style={{textDecoration:'none',fontSize:13}} className="YekanBakhFaMedium">برای ویرایش آدرس اینجا کلیک کنید</Link>
+            </p>
+            :
+             <p>
+
+             </p>
+            }   
+            {this.state.ActiveBank !="none" ?
+                <button className="btn btn-success YekanBakhFaMedium" style={{marginTop:40,marginBottom:10}} disabled={(this.state.AcceptAddress && this.state.Address=="")} onClick={this.Payment}>{this.state.AcceptAddress ? <span>پرداخت</span> : <span>ادامه فرایند خرید</span>}  </button>
+
+            :
+                <button className="btn btn-success YekanBakhFaMedium" style={{marginTop:40,marginBottom:10}}   onClick={this.Payment}>{this.state.AcceptAddress ? <span>ثبت نهایی</span> : <span>ادامه فرایند خرید</span>}  </button>
+
+            }
         </div>
+       
+        </div>
+         }
+        </div>
+        {this.state.CatId &&
+        <div style={{marginTop:90}}>
+                <CatList _id={this.state.CatId} name="پیشنهاد برای شما"  paddingLeft="70" paddingRight="70"  />
+        </div>
+        }
         <Footer />
         <Dialog header="Header" visible={this.state.displayReduse} style={{ width: '50vw' }} footer={renderDialogFooter()} onHide={() => onHide()}>
             <p className="iranyekanweblight" style={{textAlign:'center'}}>موجودی اعتبار کل : {(parseInt(this.props.credit)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>

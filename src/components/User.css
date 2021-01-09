@@ -2,3 +2,44 @@
 	float:right;
 	margin:0;
 }
+/*
+.p-tabmenu-nav a{
+	padding: 14px 20px !important;
+    position: relative !important;
+    color: #6f6f6f !important;
+    display: block !important;
+	line-height: 27px !important;
+	border-bottom: 0px !important;
+	margin-right:0px !important;
+}
+
+.p-tabmenu-nav li{
+	margin:0px !important;
+	margin-right:0px !important;
+}
+.p-tabmenu-nav .p-tabmenu-selected a{
+	padding-bottom: 14px !important;
+    color: #6f6f6f !important;
+    background: #fff !important;
+    margin-bottom: -1px !important;
+	padding-top: 15px !important;
+	border-top: 5px solid #19d849 !important;
+	border-right-width: 0px !important;
+}
+.p-tabmenu-nav{
+	margin-bottom: 0px !important;
+	display: flex !important;
+
+}
+.p-tabmenu-right-icon{
+	float:right !important;
+	font-size: 30px !important;
+}
+.p-tabmenu-nav .p-tabmenu-selected a:hover .p-tabmenu-right-icon{
+	color: #000 !important;
+}
+.p-tabmenu-panels{
+	border-left-width: 0px !important;
+    border-right-width: 0px !important;
+    border-bottom-width: 0px !important;
+}*/

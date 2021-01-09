@@ -167,10 +167,9 @@ class Products extends React.Component {
         let SCallBack = function (response) {
             let res = response.data.result;
             res.map((v, i) => {
-                debugger;
                 that.setState({
                     id: v._id,
-                    IsSeveralShop: response.data.extra.raiting[0] ? response.data.extra.raiting[0].IsSeveralShop : 0,
+                    IsSeveralShop: response.data.extra ? response.data.extra.IsSeveralShop : 0,
                     title: v.title,
                     subtitle: v.subTitle,
                     Spec: v.Spec,
@@ -221,7 +220,6 @@ class Products extends React.Component {
                     ratingText: point == 0 ? "بدون امتیاز" : that.persianNumber((point / count).toFixed(2))  /*+ " از " + that.persianNumber(5)*/ + "    (" + that.persianNumber(count) + ")"
                 })
             })
-            debugger;
             that.getMainShopInfo();
             //that.getComment()
 
@@ -350,7 +348,6 @@ class Products extends React.Component {
             SellerId: this.state.SellerId
         };
         let SCallBack = function (response) {
-            debugger;
             that.setState({
                 SameData: response.data.result
             })
@@ -415,7 +412,6 @@ class Products extends React.Component {
     }
     SendToCart(PDId, PId, Number, UId, Price) {
         let that = this;
-        debugger;
         if (!this.state.IsSeveralShop)
             PId = PDId;
         axios.post(that.state.url + 'checktoken', {
@@ -816,7 +812,7 @@ class Products extends React.Component {
                                                 return (
 
                                                     <Panel header={v.user[0].name + "   .....   " + this.persianNumber(v.date)} className="iranyekanwebmedium" headerClassName="iranyekanwebmedium" style={{ textAlign: 'right', fontFamily: 'IRANiranyekanwebmedium' }}>
-                                                        <p className="iranyekanwebmedium" >{v.CommentText}</p>
+                                                        <p className="iranyekanwebmedium" style={{whiteSpace:'pre-line'}} >{v.CommentText}</p>
                                                     </Panel>
                                                 )
 
@@ -887,7 +883,7 @@ class Products extends React.Component {
                                                             <div className="col-12 YekanBakhFaBold" style={{ textAlign: 'center' }} >
                                                                 <span style={{ fontSize: 20 }}>
                                                                     {this.persianNumber((data.price - (data.price * ((!data.NoOff ? parseInt(this.props.off) : 0) + data.off)) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان
-                                    </span>
+                                                                </span>
                                                             </div>
                                                             {
                                                                 ((!data.NoOff ? parseInt(this.props.off) : 0) + data.off) != "0" &&
