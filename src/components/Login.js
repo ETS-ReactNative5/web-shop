@@ -4,6 +4,7 @@ import {BrowserRouter , Route,withRouter,Redirect} from 'react-router-dom'
 import { Button,Alert } from 'reactstrap';
 import { connect } from 'react-redux';
 import Server  from './Server.js'
+import './Login.css';
 
 import Header1  from './Header1.js'
 import Footer  from './Footer.js' 
@@ -23,20 +24,22 @@ class Login extends React.Component {
       HasError:false,
       loginState:true,
       ActiveSms:"none",
+      AccessAfterReg:0,
       STitle:'',
       registerState:false,
       changePassState:false,  
       SmsToken:null,
+      Step:0,
       url:this.Server.getUrl()
     }
     this.handleChangeinputEmail = this.handleChangeinputEmail.bind(this);
     this.get = this.get.bind(this);
-    this.register = this.register.bind(this);
     this.getPassword = this.getPassword.bind(this);
     this.getNewPass = this.getNewPass.bind(this);
     this.goToLogin = this.goToLogin.bind(this);    
     this.handleChangeinputPassword = this.handleChangeinputPassword.bind(this);
-    
+    this.handleChangeSecurityCode = this.handleChangeSecurityCode.bind(this);
+
   }
   componentDidMount(){
     let that = this;
@@ -60,34 +63,29 @@ class Login extends React.Component {
     .then(response => {
       that.setState({
         ActiveSms:response.data.result ? response.data.result.ActiveSms : "none",
-        STitle:response.data.result ? response.data.result.STitle : ""
+        STitle:response.data.result ? response.data.result.STitle : "",
+        AccessAfterReg:response.data.result ? response.data.result.AccessAfterReg : 0
+
       })
     })
     .catch(error => {
       console.log(error)
     })
   }
-  register(){
-    this.setState({
-        registerState:true,
-        loginState:false,
-        changePassState:false
-    })
-  }
+  
   goToLogin(){
     this.setState({
-      registerState:false,
       loginState:true,
       changePassState:false
   })
   }
   getPassword(){
     this.setState({
-      registerState:false,
       loginState:false,
       changePassState:true
   })
   }
+
   getNewPass(){
     axios.post(this.state.url+'GetNewPass' , {
       username: this.state.inputEmail
@@ -175,16 +173,182 @@ class Login extends React.Component {
         console.log(error)
       })
   }
+  Register(final){
+    
+    if(this.state.Step==2){
+
+  
+      axios.post(this.state.url+'Register' , {
+        username: this.state.inputEmail.trim(),
+        Step: "1",
+        AccessAfterReg:this.state.AccessAfterReg
+      }) 
+      .then(response => {
+        
+             
+
+            
+              var SecCode = response.data.SecurityCode;
+            
+              if(this.state.ActiveSms=="smart"){
+                axios.post(this.state.url+'sendsms_smartSms', {
+                  token: response.data.result.TokenKey,
+                  text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                  mobileNo : this.state.Mobile
+                })
+                .then(response => {
+                    console.log(response);
+                
+                })
+                .catch(error => {
+                })
+              }else if(this.state.ActiveSms=="smsir"){
+                axios.post(this.state.url+'GetSmsToken', {
+                })
+                .then(response => {
+                      
+                      this.setState({
+                        SmsToken:response.data.result.TokenKey
+                      })
+                      axios.post(this.state.url+'sendsms_SmsIr', {
+                        token: response.data.result.TokenKey,
+                        text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                        mobileNo : this.state.Mobile
+                      })
+                      .then(response => {
+                          console.log(response);
+                      
+                      })
+                      .catch(error => {
+                       // alert(error);
+                       alert(error)
+                      })
+                  
+                  
+                })
+                .catch(error => {
+                  alert(error);
+                  console.log(error)
+                })
+              }
+              
+            
+            
+
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error)
+      })
+
+    }
+    if(this.state.Step == 3){
+      
+      
+      axios.post(this.state.url+'Register',{
+        username: this.state.inputEmail,
+        password: this.state.SecurityCode,
+        SecurityCode: this.state.SecurityCode,
+        Step: "2"
+      })
+      .then(response => {
+            if(response.data.msg){
+              this.setState({
+                Step:2,
+                HasError:response.data.msg
+              })
+              return;
+            }
+            axios.post(this.state.url+'Register', {
+            username: this.state.inputEmail,
+            password: this.state.SecurityCode,
+            Step: "3"
+          })
+          .then(response => {
+            localStorage.setItem("api_token",response.data.token);
+            this.props.dispatch({
+              type: 'LoginTrueUser',    
+              CartNumber:0,
+              off:0,
+              credit:0
+      
+            })
+            if(response.data.result[0].level=="0")
+              this.setState({
+                AutenticatedUser : true
+              })
+            else
+              this.setState({
+                AutenticatedAdmin : true
+              })
+
+           
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error)
+      })
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error)
+      })
+
+    }
+    
+  }
   get(){
     this.setState({
       HasError:false
     })
+    if(!this.state.inputPassword && this.state.Step !=2){
+      axios.post(this.state.url+'getuser', {
+        username: this.state.inputEmail
+      })
+      .then(response => {
+        debugger;
+        
+        this.setState({
+          Step:response.data.result=="yes" ? 1 : 2
+        })
+        if(response.data.result=="no" ){
+          this.Register();
+        }
+      })
+      .catch(error => {
+        this.setState({
+          Step:2
+        })
+        this.Register();
+        console.log(error)
+      })
+      
+      return;
+
+    }else if(this.state.Step ==2){
+      if(this.state.SecurityCode == "" ){
+
+        this.setState({
+          HasError:"کد امنیتی پیامک شده را وارد کنید"
+        })
+        return;
+
+      }
+      this.setState({
+        Step:3
+      })  
+      let that=this;
+      setTimeout(function(){
+        that.Register();
+
+      },0)
+      return;
+    }
     axios.post(this.state.url+'getuser', {
       username: this.state.inputEmail,
       password: this.state.inputPassword
     })
     .then(response => {
-      debugger;
       if(!response.data.token){
         this.setState({
           HasError:response.data.result[0]
@@ -222,10 +386,13 @@ class Login extends React.Component {
     })
   }
   handleChangeinputEmail(event){
-this.setState({inputEmail: event.target.value});
+    this.setState({inputEmail: event.target.value});
   }
   handleChangeinputPassword(event){
-this.setState({inputPassword: event.target.value});
+    this.setState({inputPassword: event.target.value});
+  }
+  handleChangeSecurityCode(event){
+    this.setState({SecurityCode: event.target.value});
   }
     render(){
       if(this.state.registerState){
@@ -247,24 +414,46 @@ this.setState({inputPassword: event.target.value});
               <Header2 /> 
           <div className="container p-md-5 p-3" style={{direction:'rtl',minHeight:600}}>
             <div className="row">
-              <div className="col-sm-10 col-12 col-md-9 col-lg-7 mx-auto">
+              <div className="col-sm-10 col-12 col-md-9 col-lg-7 mx-auto" style={{position:'relative'}}>
                 <div className="card card-signin" style={{paddingTop:20,paddingBottom:40}} >
                   <div className="card-body">
-                    <h5 className="card-title text-center iranyekanwebmedium">کاربران | ورود به محیط کاربری</h5>
-                    <form className="form-signin">
-                    <div className="group">
-                          <input className="form-control iranyekanwebmedium" style={{textAlign:'center'}} type="text" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
-                          <label className="iranyekanwebmedium">نام کاربری</label>
+                    <div style={{display:'flex',justifyContent:'spaceBetween'}}>
+                      <div>
+                        {this.state.Step > 0 &&
+                          <i class="fal fa-arrow-circle-right" style={{cursor:'pointer',fontSize:28}} onClick={()=>{this.setState({Step:0,inputPassword:""})}} />
+                        }
+                      </div>
+                      <div>
+
+                      </div>
                     </div>
+                    <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>ورود / ثبت نام</h5>
+                    {this.state.Step == "0" &&
                     <div className="group">
-                          <input type="password" className="form-control iranyekanwebmedium" style={{textAlign:'center'}} id="inputPassword" name="inputPassword" value={this.state.inputPassword} onChange={this.handleChangeinputPassword} required />
-                          <label className="iranyekanwebmedium">رمز عبور</label>
+                          <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
+                          <label className="YekanBakhFaBold">شماره موبایل</label>
                     </div>
-                    <Button style={{marginLeft:5,marginTop:10}} color="warning" className="iranyekanwebmedium"  onClick={this.get}>ورود</Button>
-                  </form>
+                    }
+                    {this.state.Step == "1" &&
+                    <div className="group">
+                          <input type="password" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="inputPassword" name="inputPassword" value={this.state.inputPassword} onChange={this.handleChangeinputPassword} required />
+                          <label className="YekanBakhFaBold">رمز عبور</label>
+                    </div>
+                   }
+                   {this.state.Step == "2" &&
+                    <div className="group">
+                          <input className="form-control yekan" type="text" id="SecurityCode"  value={this.state.SecurityCode} name="SecurityCode" onChange={this.handleChangeSecurityCode}   required  />
+                          <label className="YekanBakhFaBold">کد تایید </label>
+                    </div>
+                    }
+                    <div style={{width:'100%'}}>
+                    <button className="btn btn-success YekanBakhFaMedium" style={{marginTop:40,marginBottom:10,width:'100%'}} onClick={this.get}>ورود</button>
+
+                    </div>
+
                   </div>  
                   {this.state.HasError ?
-                  <Alert color="danger" style={{textAlign:"center"}} className="iranyekanwebmedium">
+                  <Alert color="danger" style={{textAlign:"center"}} className="YekanBakhFaBold">
                     {this.state.HasError}
                   </Alert>
                   :<p></p>
@@ -272,10 +461,10 @@ this.setState({inputPassword: event.target.value});
                   <hr/>
                   <div className="row" style={{textAlign:'center'}}>
                       <div className="col-12 col-lg-6 col-md-6">
-                        <Button style={{marginLeft:5,marginTop:10}} color="info" className="iranyekanwebmedium"  onClick={this.register}>ثبت نام</Button>
+                        <Button style={{marginLeft:5,marginTop:10}} color="info" className="YekanBakhFaBold"  onClick={this.register}>ثبت نام</Button>
                       </div>
                       <div className="col-12 col-lg-6 col-md-6">
-                        <Button style={{marginLeft:5,marginTop:10}} color="info" className="iranyekanwebmedium"  onClick={this.getPassword}>بازیابی رمز عبور</Button>
+                        <Button style={{marginLeft:5,marginTop:10}} color="info" className="YekanBakhFaBold"  onClick={this.getPassword}>بازیابی رمز عبور</Button>
                       </div>
                     </div>
                 </div>
@@ -299,17 +488,17 @@ this.setState({inputPassword: event.target.value});
             <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
               <div className="card card-signin" style={{padding:40}}>
                 <div className="card-body">
-                  <h5 className="card-title text-center iranyekanwebmedium">بازیابی رمز عبور</h5>
+                  <h5 className="card-title text-center YekanBakhFaBold">بازیابی رمز عبور</h5>
                   <form className="form-signin">
                   <div className="group">
-                        <input className="form-control iranyekanwebmedium" type="text" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
-                        <label className="iranyekanwebmedium">شماره موبایل</label>
+                        <input className="form-control YekanBakhFaBold" type="text" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
+                        <label className="YekanBakhFaBold">شماره موبایل</label>
                   </div>
-                <Button style={{marginLeft:5,marginTop:10}} color="primary" className="iranyekanwebmedium"  onClick={this.getNewPass}>دریافت رمز عبور</Button>
+                <Button style={{marginLeft:5,marginTop:10}} color="primary" className="YekanBakhFaBold"  onClick={this.getNewPass}>دریافت رمز عبور</Button>
                 </form>
                 </div>  
                 {this.state.HasError ?
-                <Alert color="danger" style={{textAlign:"center"}} className="iranyekanwebmedium">
+                <Alert color="danger" style={{textAlign:"center"}} className="YekanBakhFaBold">
                   {this.state.HasError}
                 </Alert>
                 :<p></p>
@@ -317,7 +506,7 @@ this.setState({inputPassword: event.target.value});
                 <hr/>
                 <div className="row">
                     <div className="col-8">
-                      <Button style={{marginLeft:5,marginTop:10}} color="info" className="iranyekanwebmedium"  onClick={this.goToLogin}>ورود به محیط کاربری</Button>
+                      <Button style={{marginLeft:5,marginTop:10}} color="info" className="YekanBakhFaBold"  onClick={this.goToLogin}>ورود به محیط کاربری</Button>
                     </div>
                     
                   </div>

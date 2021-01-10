@@ -130,7 +130,7 @@ class Category extends React.Component {
                                  {
                                     car.number > 0 && (parseInt(this.props.off) + car.off) > "0" ?
                                     <div>
-                                        <div className="car-subtitle oldPrice  iranyekanwebmedium" style={{paddingTop:5,marginTop:25, marginLeft:45,fontSize: 11, color: '#a09696' }} >{this.persianNumber(this.roundPrice(car.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div><br/>
+                                        <div className="car-subtitle oldPrice_cat  iranyekanwebmedium" style={{paddingTop:5,marginTop:25, marginLeft:45,fontSize: 11, color: '#a09696' }} >{this.persianNumber(this.roundPrice(car.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div><br/>
                                         <div className="car-title iranyekanwebmedium off" style={{ position: 'absolute', top: 0, right: 'auto',left:0 }} >{this.persianNumber(((!car.NoOff ? parseInt(this.props.off) : 0) + car.off))} %</div>
                                     </div>
                                     :

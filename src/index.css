@@ -38,6 +38,9 @@
         font-family: 'YekanBakhFaMedium';
         src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');
       }
+      * {
+        outline: none!important;
+    }
   body {
     margin: 0;
     padding: 0;
@@ -846,7 +849,17 @@
       font-family: 'yekan';
   }
   
-
+  input[type=text], input[type=password] {
+    padding: 9px 12px;
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #e0e0e2;
+    font-size: 14px;
+    font-size: 1rem;
+    line-height: 24px;
+    width: 100%;
+    color: #030a16;
+  }
   .form-control:focus ~ label, .form-control:valid ~ label {
     top: -20px;
     font-size: 14px;
@@ -1119,6 +1132,17 @@ div#multiselectContainerReact .searchBox {
     height: 1px;
     background: #a4a4a4;
 }
+.oldPrice_cat:before{
+    content: '';
+    position: absolute;
+    left: 15%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-7deg);
+    transform-origin: center;
+    width: 30%;
+    height: 1px;
+    background: #a4a4a4;
+}
 div.InlineImages img{
     border-radius: 15px;
     width:100%;/*
@@ -1176,4 +1200,9 @@ div.InlineImagesHalf{
     margin-right:auto;
     margin-left:auto;
     width:100%;
+}
+
+.form-control:focus {
+    border-color:inherit !important;
+    outline: none!important;
 }
