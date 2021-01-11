@@ -117,7 +117,7 @@ class Cart extends React.Component {
                 let products_id=[];
                 for(let i=0;i<this.state.GridData.length;i++){
                     if(this.state.GridData[i].products[0])
-                        products_id.push({_id:this.state.GridData[i].product_id,SellerId:((this.state.GridData[i].product_detail&&this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId),SellerName:((this.state.GridData[i].Seller&&this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : ""),number:this.state.GridData[i].number,title:this.state.GridData[i].products[0].title,subTitle:this.state.GridData[i].products[0].subTitle,desc:this.state.GridData[i].products[0].desc,price:(this.roundPrice(this.state.GridData[i].number*this.state.GridData[i].price)),UnitPrice:this.state.GridData[i].price,credit:this.state.GridData[i].getFromCredit,SellerId:this.state.GridData[i].products[0].SellerId,status:"0",color:this.state.GridData[i].Color,size:this.state.GridData[i].Size});
+                        products_id.push({_id:this.state.GridData[i].product_id,SellerId:((this.state.GridData[i].product_detail&&this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId),SellerName:((this.state.GridData[i].Seller&&this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : ""),number:this.state.GridData[i].number,title:this.state.GridData[i].products[0].title,subTitle:this.state.GridData[i].products[0].subTitle,desc:this.state.GridData[i].products[0].desc,price:(this.roundPrice(this.state.GridData[i].number*this.state.GridData[i].price)),UnitPrice:this.state.GridData[i].price,credit:this.state.GridData[i].getFromCredit,SellerId:this.state.GridData[i].products[0].SellerId,fileUploaded:this.state.GridData[i].products[0].fileUploaded,status:"0",color:this.state.GridData[i].Color,size:this.state.GridData[i].Size});
                 }
                 that.setState({
                     StepNumber:3
@@ -327,7 +327,7 @@ class Cart extends React.Component {
     }
     itemTemplate(car, layout) {
         if (layout === 'list' && car && car.products[0]) {
-            let pic = car.products[0].fileUploaded.split("public")[1] ? this.state.absoluteUrl+car.products[0].fileUploaded.split("public")[1] : 'https://api.emdcctv.com/'+'nophoto.png';
+            let pic = car.products[0].fileUploaded.split("public")[1] ? this.state.absoluteUrl+car.products[0].fileUploaded.split("public")[1] : this.state.absoluteUrl+'nophoto.png';
             let rowPrice = car.price//car.products[0].getFromCredit ? car.products[0].price : (car.products[0].price - (car.products[0].price * ((!car.products[0].NoOff ? parseInt(this.props.off) : 0)+car.products[0].off))/100);
                 
             //let pic = car.products[0].fileUploaded.split("public")[1] ? 'http://localhost:3000/'+car.products[0].fileUploaded.split("public")[1] : 'http://localhost:3000/'+'nophoto.png';
