@@ -12,7 +12,7 @@ class Server extends React.Component {
         serverUrl: 'https://marketapi.sarvapps.ir/'
 
      }
-
+   
    }
    getUrl(admin){
       return admin ? this.state.serverUrl+"AdminApi/" : this.state.serverUrl+"MainApi/" 

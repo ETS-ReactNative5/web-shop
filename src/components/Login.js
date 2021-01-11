@@ -81,8 +81,7 @@ class Login extends React.Component {
   }
   getPassword(){
     this.setState({
-      loginState:false,
-      changePassState:true
+      Step:-1
   })
   }
 
@@ -107,7 +106,9 @@ class Login extends React.Component {
         mobileNo : this.state.inputEmail
       })
       .then(response => {
-          console.log(response);
+        this.setState({
+          Step:0
+        })
       
       })
       .catch(error => {
@@ -126,6 +127,9 @@ class Login extends React.Component {
               mobileNo : this.state.inputEmail
             })
             .then(response => {
+                this.setState({
+                  Step:0
+                })
                 console.log(response);
             
             })
@@ -194,7 +198,7 @@ class Login extends React.Component {
                 axios.post(this.state.url+'sendsms_smartSms', {
                   token: response.data.result.TokenKey,
                   text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
-                  mobileNo : this.state.Mobile
+                  mobileNo : this.state.inputEmail.trim()
                 })
                 .then(response => {
                     console.log(response);
@@ -213,7 +217,7 @@ class Login extends React.Component {
                       axios.post(this.state.url+'sendsms_SmsIr', {
                         token: response.data.result.TokenKey,
                         text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
-                        mobileNo : this.state.Mobile
+                        mobileNo : this.state.inputEmail.trim()  
                       })
                       .then(response => {
                           console.log(response);
@@ -298,6 +302,10 @@ class Login extends React.Component {
     
   }
   get(){
+    if(this.state.Step=="-1"){
+      this.getNewPass();
+      return;
+    }
     this.setState({
       HasError:false
     })
@@ -419,54 +427,59 @@ class Login extends React.Component {
                   <div className="card-body">
                     <div style={{display:'flex',justifyContent:'spaceBetween'}}>
                       <div>
-                        {this.state.Step > 0 &&
-                          <i class="fal fa-arrow-circle-right" style={{cursor:'pointer',fontSize:28}} onClick={()=>{this.setState({Step:0,inputPassword:""})}} />
+                        {this.state.Step != 0 &&
+                          <i class="fal fa-arrow-circle-right" style={{cursor:'pointer',fontSize:28}} onClick={()=>{this.setState({Step:0,inputPassword:"",HasError:0})}} />
                         }
                       </div>
                       <div>
 
                       </div>
                     </div>
-                    <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>ورود / ثبت نام</h5>
-                    {this.state.Step == "0" &&
-                    <div className="group">
+                    <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>{this.state.Step =="-1" ? 'درخواست بازیابی رمز عبور' : 'ورود / ثبت نام'}</h5>
+                    {(this.state.Step == "0" || this.state.Step=="-1") &&
+                    <div >
+                    {this.state.Step=="-1" &&
+                    <div className="YekanBakhFaBold group" style={{textAlign:'right',color:'blueviolet'}} >
+                      رمز عبور جدید به شماره تلفن همراه شما پیامک خواهد شد
+                    </div>
+                    }
+                    <div className="group" style={{marginTop:45}}>
                           <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
                           <label className="YekanBakhFaBold">شماره موبایل</label>
                     </div>
+                    </div>
                     }
                     {this.state.Step == "1" &&
-                    <div className="group">
+                    <div><div className="group">
                           <input type="password" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="inputPassword" name="inputPassword" value={this.state.inputPassword} onChange={this.handleChangeinputPassword} required />
                           <label className="YekanBakhFaBold">رمز عبور</label>
+                    </div>
+
+
+                    <div>
+                      <div onClick={this.getPassword} className="YekanBakhFaBold" style={{cursor:'pointer',textAlign:'right',marginTop:30,display:'flex',alignItems:'center',color:'blue'}}><span>بازیابی رمز عبور</span><i class="fal fa-arrow-left" style={{marginRight:7}}></i></div>
+                    </div>
                     </div>
                    }
                    {this.state.Step == "2" &&
                     <div className="group">
-                          <input className="form-control yekan" type="text" id="SecurityCode"  value={this.state.SecurityCode} name="SecurityCode" onChange={this.handleChangeSecurityCode}   required  />
+                          <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id="SecurityCode"  value={this.state.SecurityCode} name="SecurityCode" onChange={this.handleChangeSecurityCode}   required  />
                           <label className="YekanBakhFaBold">کد تایید </label>
                     </div>
                     }
                     <div style={{width:'100%'}}>
-                    <button className="btn btn-success YekanBakhFaMedium" style={{marginTop:40,marginBottom:10,width:'100%'}} onClick={this.get}>ورود</button>
+                    <button className="btn btn-success YekanBakhFaMedium" style={{marginTop:40,marginBottom:10,width:'100%'}} onClick={this.get}>{this.state.Step=="-1" ? 'بازیابی رمز عبور' : 'ورود'}</button>
 
                     </div>
 
                   </div>  
                   {this.state.HasError ?
-                  <Alert color="danger" style={{textAlign:"center"}} className="YekanBakhFaBold">
+                  <Alert color="danger" fade={false} isOpen={this.state.HasError} toggle={()=>{this.setState({HasError:0})}}   style={{textAlign:"center"}} className="YekanBakhFaBold">
                     {this.state.HasError}
                   </Alert>
                   :<p></p>
                   }
-                  <hr/>
-                  <div className="row" style={{textAlign:'center'}}>
-                      <div className="col-12 col-lg-6 col-md-6">
-                        <Button style={{marginLeft:5,marginTop:10}} color="info" className="YekanBakhFaBold"  onClick={this.register}>ثبت نام</Button>
-                      </div>
-                      <div className="col-12 col-lg-6 col-md-6">
-                        <Button style={{marginLeft:5,marginTop:10}} color="info" className="YekanBakhFaBold"  onClick={this.getPassword}>بازیابی رمز عبور</Button>
-                      </div>
-                    </div>
+                  
                 </div>
                 
               </div>
@@ -478,49 +491,7 @@ class Login extends React.Component {
 
         )
     }
-    if(this.state.changePassState && !this.state.loginState){ //بازیابی رمز عبور
-      return (
-        <div>
-              <Header1 /> 
-              <Header2 /> 
-        <div className="container p-md-5 p-3" style={{direction:'rtl',minHeight:600}}>
-          <div className="row">
-            <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-              <div className="card card-signin" style={{padding:40}}>
-                <div className="card-body">
-                  <h5 className="card-title text-center YekanBakhFaBold">بازیابی رمز عبور</h5>
-                  <form className="form-signin">
-                  <div className="group">
-                        <input className="form-control YekanBakhFaBold" type="text" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
-                        <label className="YekanBakhFaBold">شماره موبایل</label>
-                  </div>
-                <Button style={{marginLeft:5,marginTop:10}} color="primary" className="YekanBakhFaBold"  onClick={this.getNewPass}>دریافت رمز عبور</Button>
-                </form>
-                </div>  
-                {this.state.HasError ?
-                <Alert color="danger" style={{textAlign:"center"}} className="YekanBakhFaBold">
-                  {this.state.HasError}
-                </Alert>
-                :<p></p>
-                }
-                <hr/>
-                <div className="row">
-                    <div className="col-8">
-                      <Button style={{marginLeft:5,marginTop:10}} color="info" className="YekanBakhFaBold"  onClick={this.goToLogin}>ورود به محیط کاربری</Button>
-                    </div>
-                    
-                  </div>
-              </div>
-              
-            </div>
-            
-          </div>
-        </div>
-        <Footer /> 
-        </div>
-
-      )
-  }
+    
     }
 }
 const mapStateToProps = (state) => {
