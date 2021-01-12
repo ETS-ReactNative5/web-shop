@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Server  from './Server.js'
-import {Spinner} from 'primereact/spinner';
 import {DataView, DataViewLayoutOptions} from 'primereact/dataview';
 import axios from 'axios'  
 import { connect } from 'react-redux';
@@ -18,6 +17,7 @@ import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import './Cart.css'
 import CatList from './CatList.js'
+import { InputNumber } from 'primereact/inputnumber';
 
 
 class Cart extends React.Component {
@@ -359,24 +359,24 @@ class Cart extends React.Component {
                      }
                      <br/>
                      </div>
-                     <div className="col-12">
+                     <div className="col-12 mb-3">
                          <div class="row" style={{alignItems:'center'}} >
                          
-                         <div className="col-lg-3 col-12 YekanBakhFaMedium" style={{textAlign:'center'}}>
+                         <div className="col-lg-3 col-12 YekanBakhFaMedium mt-lg-0 mt-4" style={{textAlign:'center'}}>
                  
                         </div>
                      <div className="col-lg-2 col-4 YekanBakhFaMedium" style={{textAlign:'center'}}>
-                     
-                     <Spinner value={car.number} style={{textAlign:'center',maxWidth:65,float:'right'}}  onChange={(e) => {if(car.number == e.value) return; this.changeCart(e.value,car.product_detail_id||car.product_id,car.user_id,car.number)}} min={0} max={car.products[0].number} />
+                     <InputNumber value={car.number} inputStyle={{borderRadius:0,padding:0}} mode="decimal" showButtons  onValueChange={(e) => {if(car.number == e.value) return; this.changeCart(e.value,car.product_detail_id||car.product_id,car.user_id,car.number)}} min={1} max={car.products[0].number} />
+
                      </div>
-                     <div className="col-lg-2 col-4 YekanBakhFaMedium" style={{textAlign:'center'}}>
+                     <div className="col-lg-2 col-12 YekanBakhFaMedium mt-lg-0 mt-4" style={{textAlign:'center'}}>
                          <span style={{cursor:'pointer'}} onClick={(e) =>this.changeCart("0",car.product_detail_id||car.product_id,car.user_id,car)}>
                          <i className="fal fa-trash-alt" style={{paddingLeft:5}}></i><span>حذف</span>
                          </span>                    
 
 
                      </div>
-                     <div className="col-lg-2 col-4 YekanBakhFaMedium" style={{textAlign:'center'}}>
+                     <div className="col-lg-2 col-12 YekanBakhFaMedium mt-lg-0 mt-4" style={{textAlign:'center'}}>
                      {car.Seller[0] && car.Seller[0].AllowCredit ? 
 
                      <div>
@@ -392,7 +392,7 @@ class Cart extends React.Component {
                     }
                      </div>
                      
-                     <div className="col-lg-3 col-12 YekanBakhFaMedium" style={{textAlign:'left'}}>
+                     <div className="col-lg-3 col-12 YekanBakhFaMedium mt-lg-0 mt-4" style={{textAlign:'left'}}>
                      {car.products[0].price != '-' && 
                         <div>   
                             <div style={{fontSize:14}}>
@@ -410,7 +410,7 @@ class Cart extends React.Component {
                      </div>
                      </div>
                      
-                 </div> <hr />
+                 </div> 
                  
                     
                  </div>
@@ -466,8 +466,8 @@ class Cart extends React.Component {
     const renderDialogFooter = (name) => {
             return (
                 <div>
-                    <Button label="انصراف" icon="pi pi-times" onClick={() => onHide()} className="p-button-text" />
-                    <Button label="تایید" disabled={!this.state.ShowAlarm} icon="pi pi-check" onClick={() => onHide(1)} autoFocus />
+                    <Button style={{fontFamily:'YekanBakhFaBold'}} label="انصراف" icon="pi pi-times" onClick={() => onHide()} className="p-button-text" />
+                    <Button style={{fontFamily:'YekanBakhFaBold'}} label="تایید" disabled={!this.state.ShowAlarm} icon="pi pi-check" onClick={() => onHide(1)} autoFocus />
                 </div>
             );
     }
@@ -538,11 +538,11 @@ class Cart extends React.Component {
             :
                 (
                     this.state.refId ?
-                    <p style={{textAlign:'center',paddingTop:50,fontSize:25}} className="iranyekanweblight">{this.state.EndMessage}</p>
+                    <p style={{textAlign:'center',paddingTop:50,fontSize:25}} className="YekanBakhFaBold">{this.state.EndMessage}</p>
                     :
                     (this.state.CartItemsGet
                         ?
-                    <p style={{textAlign:'center',paddingTop:50,marginBottom:250,fontSize:25}} className="iranyekanweblight">سبد خرید شما خالی است</p>
+                    <p style={{textAlign:'center',paddingTop:50,marginBottom:250,fontSize:25}} className="YekanBakhFaBold">سبد خرید شما خالی است</p>
                         :
                         <div style={{ zIndex: 10000 }} >
                         <p style={{ textAlign: 'center' }}>
@@ -596,22 +596,22 @@ class Cart extends React.Component {
         </div>
         }
         <Footer />
-        <Dialog header="Header" visible={this.state.displayReduse} style={{ width: '50vw' }} footer={renderDialogFooter()} onHide={() => onHide()}>
-            <p className="iranyekanweblight" style={{textAlign:'center'}}>موجودی اعتبار کل : {(parseInt(this.props.credit)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
-            <p className="iranyekanweblight" style={{textAlign:'center'}}>موجودی قابل برداشت : {(parseInt(this.props.credit)-parseInt(this.state.finalCreditReducer)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
+        <Dialog header="کسر از اعتبار " visible={this.state.displayReduse} style={{ width: '50vw',fontFamily:'YekanBakhFaBold' }} footer={renderDialogFooter()} onHide={() => onHide()}>
+            <p className="YekanBakhFaBold" style={{textAlign:'center'}}>موجودی اعتبار کل : {(parseInt(this.props.credit)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
+            <p className="YekanBakhFaBold" style={{textAlign:'center'}}>موجودی قابل برداشت : {(parseInt(this.props.credit)-parseInt(this.state.finalCreditReducer)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
 
             <div className="row">
                 <div className="col-md-6 col-12" >
-                    <input className="form-control iranyekanweblight" placeholder="مبلغ را وارد کنید" autoComplete="off"  type="text" value={this.state.ReducePrice} name="ReducePrice" onChange={(event)=>{this.setState({ReducePrice: event.target.value.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ","),ShowAlarm:false})}}  required="true" />
+                    <input className="form-control YekanBakhFaBold" placeholder="مبلغ را وارد کنید" autoComplete="off"  type="text" value={this.state.ReducePrice} name="ReducePrice" onChange={(event)=>{this.setState({ReducePrice: event.target.value.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ","),ShowAlarm:false})}}  required="true" />
 
                 </div>
                 <div className="col-md-6 col-12" style={{textAlign:'center'}} >
-                    <Button label="محاسبه مبلغ"  onClick={this.computeReduce} className="p-button-text" />
+                    <Button label="محاسبه مبلغ"  onClick={this.computeReduce} style={{fontFamily:'YekanBakhFaBold'}} className="p-button-text" />
 
                 </div>
                 <div className="col-12" >
                     {this.state.ShowAlarm &&
-                    <p className="iranyekanweblight" style={{textAlign:'center',color:'red',padding:20,textAlign:'right'}}>
+                    <p className="YekanBakhFaBold" style={{textAlign:'center',color:'red',padding:20,textAlign:'right'}}>
                     <span>
                      برای خرید این محصول مبلغ 
                         &nbsp;

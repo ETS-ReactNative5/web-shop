@@ -5,7 +5,7 @@ import Dashboard  from './Dashboard.js'
 import  './Dashboard.css'
 import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Server  from './../Server.js'
@@ -186,7 +186,7 @@ class ShopsList extends React.Component {
 
     <Dashboard list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
      </div>
-      <div className="col-lg-9 col-md-8 col-12" style={{marginTop:50}}>
+      <div className="col-lg-9 col-md-8 col-12" style={{marginTop:20,background:'#fff'}}>
       <div className="section-title " style={{textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >‍‍‍‍‍‍‍لیست فروشگاهها</span></div>
 
               <DataTable responsive resizableColumns={true} paginator={true} rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedId} onSelectionChange={e => this.selectedListChange(e.value)} >

@@ -5,7 +5,7 @@ import Dashboard  from './Dashboard.js'
 import  './Dashboard.css'
 import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Server  from './../Server.js'
@@ -392,7 +392,7 @@ class Sales extends React.Component {
 
     <Dashboard list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
      </div>
-      <div className="col-lg-9 col-md-8 col-12"  style={{marginTop:50}}>
+      <div className="col-lg-9 col-md-8 col-12"  style={{marginTop:20,backgroundColor:'#fff'}}>
      <div className="section-title " style={{textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >موجودی نقدی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
      {this.state.CreditSupport && 
         <div className="section-title " style={{textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >موجودی اعتباری : {this.persianNumber(parseInt(this.state.LastCredit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>

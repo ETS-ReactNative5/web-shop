@@ -187,7 +187,7 @@ class Header2 extends React.Component {
         return (
 		<div className="firstInPage" style={{position:"relative"}} >
 			 {(this.props.credit !="undefined" && this.props.credit !=0 && this.props.credit !=undefined) &&
-					<p  className="iranyekanweblight" style={{position: 'absolute',left: '30px',zIndex: '2', background: '#fff',top: '13px',borderRadius: '15px',padding: '5px'}}><span>موجودی اعتباری : </span><span>{this.props.credit ? this.persianNumber(this.props.credit.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : 0} تومان</span></p>
+					<p  className="iranyekanweblight" style={{display:'none',position: 'absolute',left: '30px',zIndex: '2', background: '#fff',top: '13px',borderRadius: '15px',padding: '5px'}}><span>موجودی اعتباری : </span><span>{this.props.credit ? this.persianNumber(this.props.credit.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : 0} تومان</span></p>
 			 }
 			{this.state.loading == 1 &&
               <div style={{position:'fixed',zIndex:2000,top:10,left:15,backgroundColor:'#e89f31',padding:'2px 20px'}}>

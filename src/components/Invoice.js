@@ -149,15 +149,15 @@ class Invoice extends React.Component {
         <Header2 /> 
       <div className="container" style={{marginTop:15,minHeight:600}}>
       <div className="row">
-        <div className="col-sm-9 col-md-7 col-lg-7 mx-auto">
-          <div className="card card-signin" style={{padding: 40}}>
+        <div className="col-lg-7 col-md-9 col-12 mx-auto">
+          <div className="card" style={{padding: 40}}>
             <div className="card-body" style={{paddingTop:0,paddingBottom:0,textAlign:'center'}}>
               <img src={require('../public/Ania.png')}  style={{width:115,marginBottom:20}}/>
-              <h5 className="card-title text-center yekan"> فاکتور خرید</h5>
+              <h5 className="card-title text-center YekanBakhFaBold"> فاکتور خرید</h5>
 
             </div>  
             {this.state.refId && this.state.refId != -1 &&
-            <div  style={{textAlign:"center",opacity:1}} className="yekan alert alert-success ">
+            <div  style={{textAlign:"center",opacity:1}} className="YekanBakhFaBold alert alert-success ">
             پرداخت با موفقیت انجام شد  <br/>
             </div>
            
@@ -165,7 +165,7 @@ class Invoice extends React.Component {
             
 
             {this.state.refId && this.state.refId != -1 ? 
-            <div  style={{textAlign:"center",opacity:1}} className="alert alert-primary yekan">
+            <div  style={{textAlign:"center",opacity:1}} className="alert alert-primary YekanBakhFaBold">
               <div>از خرید شما سپاسگزاریم</div><br/>
               رسید تراکنش <br /> <br /> <div style={{fontSize:21,color:'green'}}>  {this.persianNumber(this.state.refId)} </div><br/>
               <div>محصولات خریداری شده به زودی آماده و به آدرس شما ارسال می شود</div>
@@ -173,17 +173,17 @@ class Invoice extends React.Component {
             
             :
             this.state.refId != -1 ? 
-            <div style={{textAlign:"center",opacity:1}} className="yekan alert alert-danger ">
+            <div style={{textAlign:"center",opacity:1}} className="YekanBakhFaBold alert alert-danger ">
             در حال دریافت اطلاعات ....  
             </div>
 
-            : <div  style={{textAlign:"center",opacity:1}} className="yekan alert alert-danger ">
+            : <div  style={{textAlign:"center",opacity:1}} className="YekanBakhFaBold alert alert-danger ">
             پرداخت انجام نشد 
             </div>
 
             }
             {this.state.InMobileApp=="0" &&
-           <div  style={{textAlign:"center",opacity:1}} className="yekan alert alert-success ">
+           <div  style={{textAlign:"center",opacity:1}} className="YekanBakhFaBold alert alert-success ">
               <a href="http://aniashop.ir">بازگشت به صفحه اصلی سایت</a>
             </div>
             }

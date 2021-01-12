@@ -5,7 +5,7 @@ import Dashboard  from './Dashboard.js'
 import  './Dashboard.css'
 import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Server  from './../Server.js'

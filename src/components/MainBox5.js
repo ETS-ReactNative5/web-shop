@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import {Dialog} from 'primereact/dialog';
 import {Button} from 'primereact/button';
-import 'primereact/resources/themes/nova-light/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';  
 class MainBox5 extends React.Component {
     constructor(){
         super(); 

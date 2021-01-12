@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Category.css';
 import Server  from './Server.js'
-import {Spinner} from 'primereact/spinner';
 import axios from 'axios'  
 import {DataView, DataViewLayoutOptions} from 'primereact/dataview';
 import {BrowserRouter , Route,withRouter,Redirect} from 'react-router-dom'

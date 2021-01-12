@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Server from './Server.js'
-import { Spinner } from 'primereact/spinner';
 import { withRouter, Route, Link, Redirect } from 'react-router-dom'
 import axios from 'axios'
 import Header1 from './Header1.js'
@@ -21,6 +20,7 @@ import { Rating } from 'primereact/rating';
 import { ImageWithZoom, Slide, Slider, CarouselProvider } from 'pure-react-carousel';
 import Swiper from 'react-id-swiper';
 import { SelectButton } from 'primereact/selectbutton';
+import { InputNumber } from 'primereact/inputnumber';
 
 const params = {
     slidesPerView: 5,
@@ -605,7 +605,7 @@ class Products extends React.Component {
                                                             (this.state.UId || !this.state.ShowPriceAftLogin) ?
                                                                 <div className=" row" style={{marginTop:95}}>
                                                                     <div className="col-lg-4 col-12 ">
-                                                                        <Spinner value={this.state.reqNumber} style={{textAlign:'center',maxWidth:80,float:'right'}} onChange={(e) => this.setState({ reqNumber: e.value })} min={1} max={this.state.number} />
+                                                                        <InputNumber value={this.state.reqNumber} inputStyle={{borderRadius:0,padding:0}} mode="decimal" showButtons onValueChange={(e) => this.setState({ reqNumber: e.value })} min={1} max={this.state.number} />
 
                                                                         </div>
                                                                     <div className="col-lg-8 col-12 ">
@@ -823,7 +823,7 @@ class Products extends React.Component {
                                                 <span style={{ cursor: 'pointer', fontSize: 13, color: '#2557b3', marginRight: 3 }} className="iranyekanwebmedium" onClick={() => this.getComment(this.state.CommentLimit + 5)} >بیشتر</span>
                                             }
                                             {this.state.AlertInShowComment.text ?
-                                                <Alert color={this.state.AlertInShowComment.err ? "danger" : "success"} style={{ textAlign: "center" }} className="iranyekanwebmedium">
+                                                <Alert fade={false} color={this.state.AlertInShowComment.err ? "danger" : "success"} style={{ textAlign: "center" }} className="iranyekanwebmedium">
                                                     {this.state.AlertInShowComment.text}
                                                 </Alert>
                                                 : <p></p>

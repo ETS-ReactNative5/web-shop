@@ -7,7 +7,7 @@ import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
 import {Dialog} from 'primereact/dialog';
 import {Button} from 'primereact/button';
-import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Server  from './../Server.js'
