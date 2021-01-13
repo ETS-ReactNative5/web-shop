@@ -20,6 +20,8 @@ import { DataTable } from 'primereact/datatable';
 import './User.css'
 import { Alert } from 'rsuite';
 import { Link } from 'react-router-dom'
+import Cities from './Cities.js'
+
 
 import Mapir from "mapir-react-component";
 let markerArray=new Array(),lat,lon;
@@ -56,6 +58,8 @@ class User extends React.Component {
       GridDataFactors: [],
       layout: 'list',
       newStatus: null,
+      SelectedCity:"-1",
+			SelectedSubCity:"-1",
       ActiveLi: 3,
       PayActiveLi:1,
       selectedFactor: null,
@@ -175,6 +179,12 @@ class User extends React.Component {
       lat= e.lngLat.lat;
       lon= e.lngLat.lng ;
 
+  }
+  getResponse(value){
+    this.setState({
+      SelectedCity:value.SelectedCity,
+      SelectedSubCity:value.SelectedSubCity
+    })
   }
   itemTemplate(car, layout) {
     if (layout === 'list' && car && car.products[0]) {
@@ -474,6 +484,8 @@ class User extends React.Component {
         username: response.data.result[0].username,
         name: response.data.result[0].name,
         address: response.data.result[0].address,
+        SelectedCity:response.data.result[0].city,
+        SelectedSubCity:response.data.result[0].subCity,
         mail: response.data.result[0].mail,
         company: response.data.result[0].company,
         loading: 0,
@@ -511,12 +523,21 @@ class User extends React.Component {
     that.setState({
       loading: 1
     })
+    
+    if(this.state.ActiveLi !=3){
+      if(!this.state.SelectedCity || this.state.SelectedCity == "-1" || !this.state.SelectedSubCity || this.state.SelectedSubCity == "-1"){
+        Alert.warning('استان و شهر  را انتخاب کنید',2500);
+        return;
+      }
+    }
     let param = {
       token: localStorage.getItem("api_token"),
       username: this.state.username,
       nopass: 1,
       name: this.state.name,
       address: this.state.address,
+      city:this.state.SelectedCity,
+      subCity:this.state.SelectedSubCity,
       company: this.state.company,
       mail: this.state.mail,
       MyAccount: "1",
@@ -734,10 +755,16 @@ class User extends React.Component {
             }
             {this.state.ActiveLi == 5 &&
               <div style={{ minHeight: 500, background: '#fff', borderRadius: 10, padding: 20, textAlign: 'right' }}>
+                
+
+                
                 <div className="col-lg-12">
-                <div className="group">
+                <Cities  callback={this.getResponse.bind(this)} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity}/>
+
+                <div className="group" style={{marginTop:50}}>
                   <textarea className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.address} name="address" onChange={this.handleChangeAddress} style={{ textAlign: 'right' }} required="true" />
-                  <label>آدرس کامل پستی</label>
+                  <label>آدرس  پستی</label>
+
                 </div>
                 </div>
                 <div className="col-lg-12" style={{textAlign:'right',display:'none'}}>

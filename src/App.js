@@ -49,6 +49,7 @@ import ShopInformation from './components/admin/ShopInformation.js'
 import ShopsList from './components/admin/ShopsList.js'
 import Set from './components/admin/Set.js'
 import CatList from './components/CatList.js'
+import Cities from './components/Cities.js'
 
 import { BrowserRouter, Switch, Route, HashRouter } from 'react-router-dom'
 
@@ -106,6 +107,8 @@ class App extends Component {
                   <Route path="/admin/Maps" component={Maps} />
                   <Route path="/admin/Blog" component={Blog} />
                   <Route path="/Blogs" component={Blogs} />
+                  <Route path="/Cities" component={Cities} />
+
                   <Route path="/admin/Management" component={Management} />
                   <Route path="/admin/Comments" component={Comments} />
                   <Route path="/admin/Guarantee" component={Guarantee} />
