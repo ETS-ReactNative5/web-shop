@@ -422,7 +422,7 @@ class Login extends React.Component {
               <Header2 /> 
           <div className="container p-md-5 p-3" style={{direction:'rtl',minHeight:600}}>
             <div className="row">
-              <div className="col-sm-10 col-12 col-md-9 col-lg-7 mt-md-0 mt-5 mx-auto" style={{position:'relative'}}>
+              <div className="col-sm-10 col-12 col-md-9 col-lg-7 mx-auto" style={{position:'relative'}}>
                 <div className="card card-signin" style={{paddingTop:20,paddingBottom:40}} >
                   <div className="card-body">
                     <div style={{display:'flex',justifyContent:'spaceBetween'}}>

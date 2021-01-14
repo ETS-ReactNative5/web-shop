@@ -19,9 +19,6 @@ import { connect } from 'react-redux';
 import {Checkbox} from 'primereact/checkbox';
 import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
-import Cities from './../Cities.js'
-import { Fieldset } from 'primereact/fieldset';
-import { MultiSelect } from 'primereact/multiselect';
 
 class ShopInformation extends React.Component {
   constructor(props){
@@ -45,8 +42,6 @@ class ShopInformation extends React.Component {
       Message:null,
       pic1:'',
       currentImage:'',
-      SubCities:[],
-      SelectedSubCities:[],
       loading:0,
       absoluteUrl:this.Server.getAbsoluteUrl(),
       url:this.Server.getUrl(1)
@@ -118,14 +113,6 @@ class ShopInformation extends React.Component {
         that.setState({
           ShopId : that.state.ShopId,
           address:response.data.result[0].address,
-          SelectedCity:response.data.result[0].city,
-          SelectedSubCity:response.data.result[0].subCity,
-          SendToCity:response.data.result[0].SendToCity,
-          SendToNearCity:response.data.result[0].SendToNearCity,
-          SendToState:response.data.result[0].SendToState,
-          SendToCountry:response.data.result[0].SendToCountry,
-          FreeInExpensive:response.data.result[0].FreeInExpensive,
-          SelectedSubCities:response.data.result[0].SelectedSubCities,
           call:response.data.result[0].call,
           about:response.data.result[0].about,
           user_id:response.data.result[0].UserId,
@@ -156,41 +143,11 @@ class ShopInformation extends React.Component {
     }
     this.Server.send("MainApi/checktoken",param,SCallBack,ECallBack)
   }
-  getResponse(value){
-    if(this.state.SelectedCity != value.SelectedCity){
-      this.setState({
-        SelectedSubCities:[]
-      })
-    }
-    this.setState({
-      SelectedCity:value.SelectedCity,
-      SelectedSubCity:value.SelectedSubCity
-    })
-    if(value.SubCities && value.SubCities.length > 0){
-      let SubCities = [];
-      for(let item of value.SubCities){
-        SubCities.push({label: item, value: item})
-      }
-      SubCities.shift();
-      this.setState({
-        SubCities:SubCities
-      })
-
-    }
-  }
   EditShopInformation(){
     let that = this;
     let param={
       token: localStorage.getItem("api_token"),
       address:this.state.address,
-      city:this.state.SelectedCity,
-      subCity:this.state.SelectedSubCity,
-      SendToCity:this.state.SendToCity,
-      SendToNearCity:this.state.SendToNearCity,
-      SendToState:this.state.SendToState,
-      SendToCountry:this.state.SendToCountry,
-      FreeInExpensive:this.state.FreeInExpensive,
-      SelectedSubCities:this.state.SelectedSubCities,
       call:this.state.call,
       about:this.state.about,
       ShopId:this.state.ShopId,
@@ -247,15 +204,6 @@ class ShopInformation extends React.Component {
         <label className="yekan">نام فروشگاه</label>
       </div>
       </div>
-      <div className="col-lg-7">
-      <div className="group">
-
-      <Cities  callback={this.getResponse.bind(this)} callback={this.getResponse.bind(this)} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity}/>
-
-
-      </div>
-      </div>
-
       <div className="col-lg-7">
       <div className="group">
 
@@ -353,44 +301,7 @@ class ShopInformation extends React.Component {
       <img src={this.state.logoCopyRight}  style={{width:150,height:150}}/>
       </div>
       
-      <div className="col-12" style={{marginTop:20}}>
-
-      <Fieldset legend="تنظیمات ارسال کالا" style={{marginTop:20,textAlign:'right',marginBottom:50,fontFamily: 'yekan'}}>
-      <div className="row">
-            <div className="col-lg-3 col-12" style={{display:'flex',alignItems:'center'}}>
-            <Checkbox onChange={e => this.setState({SendToCity: e.checked})} checked={this.state.SendToCity}></Checkbox>
-            <label style={{paddingRight:5,marginTop:5}}>ارسال درون شهری</label>  
-            </div>
-            <div className="col-lg-3 col-12" style={{display:'flex',alignItems:'center'}}>
-            <Checkbox onChange={e => this.setState({SendToNearCity: e.checked})} checked={this.state.SendToNearCity}></Checkbox>
-            <label style={{paddingRight:5,marginTop:5}}>ارسال به شهرهای مجاور</label>  
-            </div>
-            <div className="col-lg-3 col-12" style={{display:'flex',alignItems:'center'}}>
-            <Checkbox onChange={e => this.setState({SendToState: e.checked})} checked={this.state.SendToState}></Checkbox>
-            <label style={{paddingRight:5,marginTop:5}}>ارسال درون استانی</label>  
-            </div>
-            <div className="col-lg-3 col-12" style={{display:'flex',alignItems:'center'}}>
-            <Checkbox onChange={e => this.setState({SendToCountry: e.checked})} checked={this.state.SendToCountry}></Checkbox>
-            <label style={{paddingRight:5,marginTop:5}}>ارسال سزاسری</label>  
-            </div>
-            {this.state.SendToNearCity &&
-              <div class="col-12" style={{marginTop:20,marginBottom:20}}>
-                <p className="yekan">
-                  شهرهای مجاور شهر خود را انتخاب کنید
-                </p>
-              <MultiSelect optionLabel="label" style={{width:'100%'}} value={this.state.SelectedSubCities} options={this.state.SubCities} onChange={(e) => this.setState({SelectedSubCities:e.value})} />
-
-              </div>
-            }
-            
-            <div className="col-lg-12 col-12" style={{display:'flex',alignItems:'center'}}>
-            <Checkbox onChange={e => this.setState({FreeInExpensive: e.checked})} checked={this.state.FreeInExpensive}></Checkbox>
-            <label style={{paddingRight:5,marginTop:5}}>برای خریدهای با مبلغ زیاد هزینه پیک رایگان شود</label>  
-            </div>
-            
-        </div>
-      </Fieldset>
-      </div>
+      
       
       <div className="col-lg-12">
       <Button style={{marginLeft:5,marginTop:10}} color="primary"  onClick={this.EditShopInformation}>ویرایش اطلاعات</Button>

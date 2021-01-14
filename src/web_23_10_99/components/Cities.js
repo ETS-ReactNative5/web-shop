@@ -63,27 +63,12 @@ class Cities extends React.Component {
 			SubCities : SubCities
 		})
 		setTimeout(function(){
-			that.props.callback({SelectedCity:that.state.SelectedCity,SelectedSubCity:that.state.SelectedSubCity,SubCities:that.state.SubCities});
+			that.props.callback({SelectedCity:that.state.SelectedCity,SelectedSubCity:that.state.SelectedSubCity});
 
 		},0)
 		
 
 	}
-	componentWillReceiveProps(param) {
-        if(param.SelectedCity || param.SelectedSubCity){
-			let lastCity = this.state.SelectedCity;
-			this.setState({
-				SelectedCity:param.SelectedCity,
-				SelectedSubCity:param.SelectedSubCity
-			});
-			if(param.SelectedCity != lastCity){
-				let that=this;
-				setTimeout(function(){
-					that.ChangeCity(param.SelectedCity)
-				},0)
-			}
-		}
-    }
 	render() {
 		
 		return (
@@ -111,7 +96,7 @@ class Cities extends React.Component {
 						this.setState({
 							SelectedSubCity:event.target.value
 							});
-							this.props.callback({SelectedCity:this.state.SelectedCity,SelectedSubCity:event.target.value,SubCities:this.state.SubCities});
+							this.props.callback({SelectedCity:this.state.SelectedCity,SelectedSubCity:event.target.value});
 
 						}} value={this.state.SelectedSubCity}>
 						{this.state.SubCities.map(function(item,index){

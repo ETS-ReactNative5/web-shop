@@ -1,0 +1,13 @@
+.card-signin{
+	padding-top: 20px;
+    padding-bottom: 40px;
+    border-radius: 8px;
+    border: 1px solid #ededed;
+    padding: 30px;
+    width: 380px;
+    /*position: absolute;*/
+    top: 50%;
+    right: 50%;
+    -webkit-transform: translate(50%,-55%);
+    transform: translate(50%,-55%);
+}
