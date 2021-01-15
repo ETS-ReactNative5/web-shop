@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useRef  } from 'react';
 import Server from './Server.js'
 import { withRouter, Route, Link, Redirect } from 'react-router-dom'
 import axios from 'axios'
@@ -21,6 +21,7 @@ import { ImageWithZoom, Slide, Slider, CarouselProvider } from 'pure-react-carou
 import Swiper from 'react-id-swiper';
 import { SelectButton } from 'primereact/selectbutton';
 import { InputNumber } from 'primereact/inputnumber';
+import { Toast } from 'primereact/toast';
 
 const params = {
     slidesPerView: 5,
@@ -67,6 +68,7 @@ class Products extends React.Component {
         this.SendToCart = this.SendToCart.bind(this);
         this.SendComment = this.SendComment.bind(this);
         this.myRef = React.createRef()   // Create a ref object 
+        this.toast =  React.createRef();
 
         this.state = {
             id: this.props.location.search.split("id=")[1],
@@ -108,9 +110,11 @@ class Products extends React.Component {
             DialogPic: null,
             SameData: [],
             MainShopInfo:[],
+            PeykInfo:[],
             absoluteUrl: this.Server.getAbsoluteUrl(),
             url: this.Server.getUrl()
         }
+
         let that = this;
         let param = {
             id: null,
@@ -166,6 +170,19 @@ class Products extends React.Component {
 
         let SCallBack = function (response) {
             let res = response.data.result;
+            let extra = response.data.extra;
+            if(extra){
+                const SellerInfo = extra.Seller;
+                const UserInfo = [extra.user];
+                const CatInfo = extra.category;
+                let PeykInfo = [{city:SellerInfo[0].city,subCity:SellerInfo[0].subCity,SelectedSubCities:SellerInfo[0].SelectedSubCities,SendToCity:SellerInfo[0].SendToCity,SendToState:SellerInfo[0].SendToState,SendToCountry:SellerInfo[0].SendToCountry,SendToNearCity:SellerInfo[0].SendToNearCity,FreeInExpensive:SellerInfo[0].FreeInExpensive},
+                {CumputeByNumberInPeyk:CatInfo[0].CumputeByNumberInPeyk,MergeableInPeyk:CatInfo[0].MergeableInPeyk,SendToCity:CatInfo[0].SendToCity,SendToCountry:CatInfo[0].SendToCountry,SendToNearCity:CatInfo[0].SendToNearCity,SendToState:CatInfo[0].SendToState  },
+                {city:UserInfo[0].city,subCity:UserInfo[0].subCity }];
+                that.setState({
+                    PeykInfo:PeykInfo
+                })
+                
+            }
             res.map((v, i) => {
                 that.setState({
                     id: v._id,
@@ -418,7 +435,31 @@ class Products extends React.Component {
             token: localStorage.getItem("api_token")
         })
             .then(response => {
+                let userLocation=0;
+                let PeykInfo = that.state.PeykInfo;
+                if(!PeykInfo[2].city || !PeykInfo[2].subCity)
+                {
+                    that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: 'آدرس خود را ثبت کنید', life: 3000});
+
+                    return;
+                }
+                if(PeykInfo[2].subCity == PeykInfo[0].subCity)
+                    userLocation=1;
+                else if(PeykInfo[0].SelectedSubCities && PeykInfo[0].SelectedSubCities.indexOf(PeykInfo[2].subCity) > -1)
+                    userLocation=2;
+                else if(PeykInfo[2].city == PeykInfo[0].city)
+                    userLocation=3;
+                else
+                    userLocation=4;
+                if((userLocation==4 && !PeykInfo[0].SendToCountry) || (userLocation==3 && !PeykInfo[0].SendToState) || (userLocation==2 && !PeykInfo[0].SendToNearCity)|| (userLocation==1 && !PeykInfo[0].SendToCity)){
+                    //alert("امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد");
+                    that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: 'امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد', life: 3000});
+
+                    return;
+                }    
+                PeykInfo[2].userLocation=userLocation;
                 let param = {
+                    PeykInfo:PeykInfo,
                     PDId: PDId,
                     PId: PId,
                     Number: Number,
@@ -504,6 +545,8 @@ class Products extends React.Component {
         }
         return (
             <div ref={this.myRef}>
+             <Toast ref={this.toast} position="top-right" style={{fontFamily:'YekanBakhFaBold',textAlign:'right'}} />
+
                 <Header1 />
                 <Header2 />
                 <Dialog header={this.state.title} visible={this.state.visibleDialog} style={{ width: '700px' }} modal={true} onHide={() => this.setState({ visibleDialog: false })}>

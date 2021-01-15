@@ -125,6 +125,7 @@ class Cart extends React.Component {
                 
                 let url = that.state.ActiveBank=="z" ? this.state.url+'payment' : this.state.url+'payment2';
                 axios.post(url , {
+                    paykAmount: this.state.paykAmount,
                     Amount: this.state.lastPrice,
                     Credit:this.state.finalCreditReducer,
                     userId:this.state.userId,
@@ -218,7 +219,8 @@ class Cart extends React.Component {
         let that=this;
         this.setState({
             lastPrice : 0,
-            orgLastPrice:0
+            orgLastPrice:0,
+            paykAmount:0
         })
         let param={
             UId : this.state.userId,
@@ -229,14 +231,46 @@ class Cart extends React.Component {
             let SCallBack = function(response){
                 let lastPrice=0,
                     CartNumber=0;
+                let paykAmount = [],
+                    LastPaykAmount=0;
                 response.data.result.map((res) =>{
                     if(res.price)
                         lastPrice+=res.number*parseInt(that.roundPrice(res.price));
                     CartNumber+=parseInt(res.number);
-                    
+                    switch(res.PeykInfo[2].userLocation){
+                        case 1 :{
+                            paykAmount.push({Amount:parseInt(res.PeykInfo[1].SendToCity||"0")*(res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1),Marge:res.PeykInfo[1].MergeableInPeyk?1:0})
+                            break;
+                        }
+                        case 2 :{
+                            paykAmount.push({Amount:parseInt(res.PeykInfo[1].SendToNearCity||"0")*(res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1),Marge:res.PeykInfo[1].MergeableInPeyk?1:0})
+                            break;
+                        }
+                        case 3 :{
+                            paykAmount.push({Amount:parseInt(res.PeykInfo[1].SendToState||"0")*(res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1),Marge:res.PeykInfo[1].MergeableInPeyk?1:0})
+                            break;
+                        }
+                        case 4 :{
+                            paykAmount.push({Amount:parseInt(res.PeykInfo[1].SendToCountry||"0")*(res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1),Marge:res.PeykInfo[1].MergeableInPeyk?1:0})
+                            break;
+                        }
+                    }
+
                     
                 })
+                let MargablePaykAmount=[],
+                    NotMargablePaykAmount=[];
+                for(let i=0;i<paykAmount.length;i++){
+                    if(paykAmount[i].Marge)
+                        MargablePaykAmount.push(paykAmount[i].Amount)
+                    else
+                        NotMargablePaykAmount.push(paykAmount[i].Amount)
+                }
+                LastPaykAmount+=NotMargablePaykAmount.reduce((a, b) => a + b, 0);
+                LastPaykAmount+=MargablePaykAmount.length > 0 ? Math.max(...MargablePaykAmount) : 0;
+                debugger;
                 that.setState({
+                    paykAmount:LastPaykAmount,
                     lastPrice:lastPrice,
                     orgLastPrice:lastPrice,
                     GridData:response.data.result,
@@ -332,7 +366,7 @@ class Cart extends React.Component {
                 
             //let pic = car.products[0].fileUploaded.split("public")[1] ? 'http://localhost:3000/'+car.products[0].fileUploaded.split("public")[1] : 'http://localhost:3000/'+'nophoto.png';
              return (
-                 <div>    
+                 <div style={{marginTop:15}}>    
                  <div className="row" style={{alignItems:'center'}}>
                  <div className="col-lg-3 col-md-3  col-12 YekanBakhFaMedium" style={{textAlign:'center'}}>
                  <Link target="_blank" to={`${process.env.PUBLIC_URL}/Products?id=`+car.product_detail_id||car.products[0]._id} >
@@ -559,7 +593,15 @@ class Cart extends React.Component {
         <div className="col-lg-3">
         
         <div className="card mt-md-0 mt-5" style={{padding:10,borderRadius:20}}>
-            <p className="YekanBakhFaMedium" style={{textAlign:"center",marginTop:40,borderBottom:"1px solid #eee"}}><span style={{paddingLeft:25}}>مبلغ قابل پرداخت </span> <span style={{color: '#a01212',fontSize:25,marginTop:50}}> {this.state.lastPrice != "0" ? this.persianNumber(this.state.lastPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" : "        "} 
+                {
+                    this.state.paykAmount > 0 &&
+                    <p className="YekanBakhFaMedium" style={{fontSize:14,textAlign:'center',marginTop:10,color:'slategrey'}}>{this.persianNumber(this.state.paykAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" } به عنوان هزینه ارسال به مبلغ سفارش اضافه شد</p>
+
+                }
+            <p className="YekanBakhFaMedium" style={{textAlign:"center",marginTop:40,borderBottom:"1px solid #eee"}}><span style={{paddingLeft:25}}>مبلغ قابل پرداخت </span> <span style={{color: '#a01212',fontSize:25,marginTop:50}}> {this.state.lastPrice != "0" ? this.persianNumber((parseInt(this.state.paykAmount) + parseInt(this.state.lastPrice)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" : "        "} 
+                
+               
+                
                 {
                     this.state.finalCreditReducer > 0 &&
                     <p className="YekanBakhFaMedium" style={{fontSize:10}}>{this.persianNumber(this.state.finalCreditReducer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" } از اعتبار شما کسر خواهد شد</p>
