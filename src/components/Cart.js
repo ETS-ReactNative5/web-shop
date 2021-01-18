@@ -126,7 +126,7 @@ class Cart extends React.Component {
                 let url = that.state.ActiveBank=="z" ? this.state.url+'payment' : this.state.url+'payment2';
                 axios.post(url , {
                     paykAmount: this.state.paykAmount,
-                    Amount: this.state.lastPrice,
+                    Amount: parseInt(this.state.lastPrice)+parseInt(this.state.paykAmount),
                     Credit:this.state.finalCreditReducer,
                     userId:this.state.userId,
                     products_id:products_id,
@@ -232,10 +232,12 @@ class Cart extends React.Component {
                 let lastPrice=0,
                     CartNumber=0;
                 let paykAmount = [],
-                    LastPaykAmount=0;
+                    LastPaykAmount=0,
+                    PrepareTime=[];
                 response.data.result.map((res) =>{
                     if(res.price)
                         lastPrice+=res.number*parseInt(that.roundPrice(res.price));
+                    PrepareTime.push(res.products[0].PrepareTime);
                     CartNumber+=parseInt(res.number);
                     switch(res.PeykInfo[2].userLocation){
                         case 1 :{
@@ -270,6 +272,7 @@ class Cart extends React.Component {
                 LastPaykAmount+=MargablePaykAmount.length > 0 ? Math.max(...MargablePaykAmount) : 0;
                 debugger;
                 that.setState({
+                    PrepareTime:Math.max(...PrepareTime),
                     paykAmount:LastPaykAmount,
                     lastPrice:lastPrice,
                     orgLastPrice:lastPrice,
@@ -567,8 +570,15 @@ class Cart extends React.Component {
         <div className="row justify-content-center firstInPage" style={{direction:'rtl'}}   >
         
         <div className="col-lg-8">
+            
             {this.state.GridData.length > 0 ? 
+            <div>
+                <div style={{textAlign:'right',marginRight:10}} >
+                <p className="YekanBakhFaBold">موجودی اعتباری : {this.props.credit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
+
+                </div>
             <DataView value={this.state.GridData} layout={this.state.layout}  rows={100} itemTemplate={this.itemTemplate}></DataView>
+            </div>
             :
                 (
                     this.state.refId ?
@@ -587,6 +597,8 @@ class Cart extends React.Component {
     
                     )
                 )
+
+            
             }
         </div>
         {this.state.GridData.length > 0 &&
@@ -604,7 +616,7 @@ class Cart extends React.Component {
                 
                 {
                     this.state.finalCreditReducer > 0 &&
-                    <p className="YekanBakhFaMedium" style={{fontSize:10}}>{this.persianNumber(this.state.finalCreditReducer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" } از اعتبار شما کسر خواهد شد</p>
+                    <p className="YekanBakhFaMedium" style={{fontSize:12,marginTop:10}}>{this.persianNumber(this.state.finalCreditReducer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" } از اعتبار شما کسر خواهد شد</p>
 
                 }
             </span>  </p>
@@ -613,7 +625,7 @@ class Cart extends React.Component {
                 
                    <span style={{fontSize:13}}>سفارش شما به آدرس زیر ارسال می شود : </span> <br /><br />
                    <span style={{fontSize:15,color:'#000'}}>  {this.state.Address} </span>  <br /><br />
-                    <Link to={`${process.env.PUBLIC_URL}/user?fromCart=1&id=`+this.state.userId}  style={{textDecoration:'none',fontSize:13}} className="YekanBakhFaMedium">برای ویرایش آدرس اینجا کلیک کنید</Link>
+                    <Link to={`${process.env.PUBLIC_URL}/user?Active=5`}  style={{textDecoration:'none',fontSize:13}} className="YekanBakhFaMedium">برای ویرایش آدرس اینجا کلیک کنید</Link>
             </p>
             :
              <p>

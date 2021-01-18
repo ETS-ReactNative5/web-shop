@@ -20,7 +20,7 @@ import {Checkbox} from 'primereact/checkbox';
 import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 
-class ShopInformation extends React.Component {
+class Brands extends React.Component {
   constructor(props){
     super(props);
     this.Server = new Server();
@@ -273,5 +273,5 @@ const mapStateToProps = (state) => {
   }
 }
 export default withRouter(
-  connect(mapStateToProps)(ShopInformation)
+  connect(mapStateToProps)(Brands)
 );

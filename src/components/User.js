@@ -54,13 +54,13 @@ class User extends React.Component {
 
     this.onHide = this.onHide.bind(this);
     this.state = {
-      id: this.props.location.search.split("id=")[1],
+      id: null,
       GridDataFactors: [],
       layout: 'list',
       newStatus: null,
       SelectedCity:"-1",
 			SelectedSubCity:"-1",
-      ActiveLi: 3,
+      ActiveLi: this.props.location.search.split("Active=")[1]||3,
       PayActiveLi:1,
       selectedFactor: null,
       GridDataPayment: [],

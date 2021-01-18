@@ -15,6 +15,7 @@ import {Column} from 'primereact/column';
 import {Dialog} from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { SelectButton } from 'primereact/selectbutton';
+import { ComponentToPrint } from './../ComponentToPrint.js';
 
 import { connect } from 'react-redux';
 import {Dropdown} from 'primereact/dropdown';   
@@ -22,9 +23,9 @@ import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import GoogleMapReact from 'google-map-react';
+import ReactToPrint from 'react-to-print';
 
 const FilterItems = [
-  {label: 'همه', value: 'All'},
   {label: 'تسویه شده', value: '5'},
   {label: 'پایان', value: '4'},
   {label: 'ارسال شده', value: '3'},
@@ -32,7 +33,9 @@ const FilterItems = [
   {label: 'ثبت شده', value: '1'},
   {label: 'ناموفق', value: '0'},
   {label: 'لغو شده', value: '-1'},
-  {label: 'درخواست لغو توسط کاربر', value: '-2'}
+  {label: 'درخواست لغو توسط کاربر', value: '-2'},
+  {label: 'همه', value: 'All'}
+
 
 ];
 class Sales extends React.Component {
@@ -67,7 +70,7 @@ class Sales extends React.Component {
     this.onStatusChange = this.onStatusChange.bind(this);
     this.onRowSelect = this.onRowSelect.bind(this);
 
-    
+
 
   }
   componentDidMount(){
@@ -134,7 +137,10 @@ class Sales extends React.Component {
     this.setState({statusDesc: event.value});
   }
   handleChangeStatus(event){
-    debugger;
+    let that = this;
+    that.setState({
+      newStatus:event.target.value
+    })
     let param={
       token: localStorage.getItem("api_token"),
       newStatus:event.target.value,
@@ -149,7 +155,7 @@ class Sales extends React.Component {
       console.log(error)
     }
     this.Server.send("AdminApi/changeFactorStatus",param,SCallBack,ECallBack)
-
+    return false;
   }
   handleProductStatusChange(event){
     let that=this;
@@ -253,6 +259,7 @@ class Sales extends React.Component {
     
       
   }
+  
   GetFactors(Filter){
     let that = this;
     let param={
@@ -295,7 +302,13 @@ class Sales extends React.Component {
           v.company = v.userData[0].company;
         }
         v.delete = <i class="fa fa-times" style={{cursor:'pointer'}} aria-hidden="true" onClick={()=>that.EditFactor(v._id,null,null,"del")}></i>  
-        
+        v.print = <ReactToPrint
+        trigger={() => {
+          return <i class="far fa-print" style={{cursor:'pointer'}} aria-hidden="true" onClick={()=>that.state.printParam=v}></i> ;
+        }}
+        content={() => that.componentRef}
+      /> 
+
       })
       that.setState({
         GridDataFactors : response.data.result.result,
@@ -366,7 +379,6 @@ class Sales extends React.Component {
   }
     render(){
       let statusDesc = [
-        {label: "همه", value: null},
         {label: "لغو شده", value: "لغو شده"},
         {label: "درخواست لغو توسط خریدار", value: "درخواست لغو توسط خریدار"},
         {label: "درخواست لغو توسط خریدار", value: "درخواست لغو توسط خریدار"},
@@ -375,13 +387,19 @@ class Sales extends React.Component {
         {label: "آماده ارسال" , value: "آماده ارسال"},
         {label: "ارسال شده", value: "ارسال شده"},
         {label: "پایان", value: "پایان"},
-        {label: "تسویه شده", value: "تسویه شده"}
+        {label: "تسویه شده", value: "تسویه شده"},
+        {label: "همه", value: null}
+
 
      ];
        let StatusFilter = <Dropdown style={{width: '100%'}}
        value={this.state.statusDesc} options={statusDesc} onChange={this.onStatusChange}/>
      return (
       <div style={{direction:'rtl'}}>
+                <div style={{ display: "none" }}>
+                  <ComponentToPrint param={this.state.printParam} ref={el => (this.componentRef = el)} />
+                </div>
+
         {this.state.loading == 1 &&
               <div style={{position:'fixed',zIndex:2000,top:10,left:15,backgroundColor:'#e89f31',padding:'2px 20px'}}>
                 <Loader content="لطفا صبر کنید ..." className="yekan"  />
@@ -393,13 +411,13 @@ class Sales extends React.Component {
     <Dashboard list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
      </div>
       <div className="col-lg-9 col-md-8 col-12"  style={{marginTop:20,backgroundColor:'#fff'}}>
-     <div className="section-title " style={{textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >موجودی نقدی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
+     <div className="section-title " style={{display:'none',textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >موجودی نقدی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
      {this.state.CreditSupport && 
-        <div className="section-title " style={{textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >موجودی اعتباری : {this.persianNumber(parseInt(this.state.LastCredit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
+        <div className="section-title " style={{display:'none',textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >موجودی اعتباری : {this.persianNumber(parseInt(this.state.LastCredit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
      }
      <div className="section-title " style={{textAlign:'right'}}><span className="title IRANYekan" style={{fontSize:17,color:'gray'}} >لیست فاکتورها</span></div>
      <div style={{textAlign:'right',marginBottom:10}}>
-     <SelectButton value={this.state.Filter} options={FilterItems} onChange={(e) => {this.setState({Filter: e.value});this.GetFactors(e.value)}}></SelectButton>
+     <SelectButton value={this.state.Filter} options={FilterItems} style={{fontFamily:'Yekan'}} className="yekan" onChange={(e) => {this.setState({Filter: e.value});this.GetFactors(e.value)}}></SelectButton>
 
        </div>
               <DataTable responsive resizableColumns={true} paginator={true} rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedFactor} onSelectionChange={e => {if(e.originalEvent.target.tagName !="I")this.selectedFactorChange(e.value)}} >
@@ -418,6 +436,9 @@ class Sales extends React.Component {
                         <Column field="statusDesc" filter={false} header="وضعیت" filterElement={StatusFilter}  className="yekan" style={{textAlign:"center"}}/>
                         {this.state.isMainShop==1 &&
                           <Column field="delete" filter={false} header="حذف" className="yekan" style={{textAlign:"center"}}/>
+                        }
+                        {this.state.isMainShop==1 &&
+                          <Column field="print" filter={false} header="چاپ" className="yekan" style={{textAlign:"center"}}/>
                         }
               </DataTable>
       </div>
@@ -465,7 +486,6 @@ class Sales extends React.Component {
       }
 
       <DataTable onRowSelect={this.onRowSelect} responsive selection={this.state.selectedProduct1} onSelectionChange={e =>{
-        debugger;
         for(let i=0;i<this.state.selectedFactor.length;i++){
           if(this.state.selectedFactor[i]._id==e.value._id){
              this.setState({

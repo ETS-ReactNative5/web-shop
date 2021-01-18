@@ -439,7 +439,7 @@ class Products extends React.Component {
                 let PeykInfo = that.state.PeykInfo;
                 if(!PeykInfo[2].city || !PeykInfo[2].subCity)
                 {
-                    that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: 'آدرس خود را ثبت کنید', life: 3000});
+                    that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: <div><span>آدرس خود را ثبت کنید</span><br/><br/><Link to={`${process.env.PUBLIC_URL}/User?Active=5`} style={{ textDecoration: 'none', color: '#333' }}>ویرایش آدرس</Link></div>, life: 8000});
 
                     return;
                 }
@@ -453,7 +453,7 @@ class Products extends React.Component {
                     userLocation=4;
                 if((userLocation==4 && !PeykInfo[0].SendToCountry) || (userLocation==3 && !PeykInfo[0].SendToState) || (userLocation==2 && !PeykInfo[0].SendToNearCity)|| (userLocation==1 && !PeykInfo[0].SendToCity)){
                     //alert("امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد");
-                    that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: 'امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد', life: 3000});
+                    that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: <div><span>امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد</span><br/><br/><Link to={`${process.env.PUBLIC_URL}/User?Active=5`} style={{ textDecoration: 'none', color: '#333' }}>ویرایش آدرس</Link></div>, life: 8000});
 
                     return;
                 }    
@@ -672,7 +672,7 @@ class Products extends React.Component {
                                                                     }
                                                                     </div>
                                                                     
-                                                                    <div className="button_container col-md-12 col-12 borderBottom ">
+                                                                    <div className="button_container col-md-12 col-12 borderBottom " style={{marginTop:15}}>
                                                                         
                                                                         <div >
                                                                         <Button type="button" style={{ marginBottom: 10, paddingTop: 10, paddingBottom: 10, paddingRight: 10, paddingLeft: 10,width:'100%' }} color="success" className="iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, (this.roundPrice(this.state.price - ((this.state.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)))) }}><span style={{float:'right'}} ><i style={{fontSize:25}} className="fal fa-shopping-cart" /></span>  انتقال به سبد خرید</Button>

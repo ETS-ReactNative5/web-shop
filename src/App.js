@@ -2,29 +2,20 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import './styles/app.css'
-
 import { Helmet } from "react-helmet";
 import MainBox1 from './components/MainBox1.js'
-
 import Map from './components/Map.js'
 import Photos from './components/Photos.js'
-
-
-
-
+import Charts from './components/Charts.js'
 import Blogs from './components/Blogs.js'
-
 import Blog from './components/admin/Blog.js'
 import Cats from './components/admin/Cats.js'
-
+import Billing from './components/admin/Billing.js'
 import AdminLogin from './components/admin/Login.js'
 import Login from './components/Login.js'
 import Shop from './components/Shop.js'
 import Comments from './components/admin/Comments.js'
-
 import ScrollToTop from './components/ScrollToTop.js'
-
-
 import Admin from './components/admin/Admin.js'
 import Sales from './components/admin/Sales.js'
 import Users from './components/admin/Users.js'
@@ -33,9 +24,7 @@ import Forms from './components/admin/Forms.js'
 import Management from './components/admin/Management.js'
 import Guarantee from './components/admin/Guarantee.js'
 import Brands from './components/admin/Brands.js'
-
 import Pics from './components/admin/Pics.js'
-
 import Products from './components/Products.js'
 import Cart from './components/Cart.js'
 import Category from './components/Category.js'
@@ -50,12 +39,9 @@ import ShopsList from './components/admin/ShopsList.js'
 import Set from './components/admin/Set.js'
 import CatList from './components/CatList.js'
 import Cities from './components/Cities.js'
-
 import { BrowserRouter, Switch, Route, HashRouter } from 'react-router-dom'
-
 import { Provider } from 'react-redux'
 import reducer from './reducer.js'
-
 import { createStore } from 'redux'
 
 class App extends Component {
@@ -80,7 +66,6 @@ class App extends Component {
    };
   render() {
     return (
-
       <div >
         <Provider store={this.store}>
           <HashRouter >
@@ -94,12 +79,13 @@ class App extends Component {
                     content="فروشگاه آنلاین ، خرید اینترنتی ، اصفهان ، خرید اقساطی"/>
                 <meta name="keywords"
                     content="کالای دیجیتال ، لپ تاپ ، موبایل ، خرید ، آنلاین"/>
-               
-              </Helmet>
+                </Helmet>
               <ScrollToTop>
                 <Switch>
                   <Route path="/" component={MainBox1} exact />
                   <Route path="/admin/Cats" component={Cats} />
+                  <Route path="/Charts" component={Charts} />
+                  <Route path="/admin/Billing" component={Billing} />
                   <Route path="/admin/Admin" component={Admin} />
                   <Route path="/admin/Sales" component={Sales} />
                   <Route path="/admin/Users" component={Users} />
@@ -108,7 +94,6 @@ class App extends Component {
                   <Route path="/admin/Blog" component={Blog} />
                   <Route path="/Blogs" component={Blogs} />
                   <Route path="/Cities" component={Cities} />
-
                   <Route path="/admin/Management" component={Management} />
                   <Route path="/admin/Comments" component={Comments} />
                   <Route path="/admin/Guarantee" component={Guarantee} />
@@ -134,14 +119,10 @@ class App extends Component {
                   <Route path="/admin/ShopInformation" component={ShopInformation} />
                   <Route path="/admin/ShopsList" component={ShopsList} />
                 </Switch>
-
               </ScrollToTop>
-
-
             </div>
           </HashRouter>
         </Provider>
-
       </div>
     );
   }
