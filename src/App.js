@@ -11,6 +11,9 @@ import Blogs from './components/Blogs.js'
 import Blog from './components/admin/Blog.js'
 import Cats from './components/admin/Cats.js'
 import Billing from './components/admin/Billing.js'
+import Accounts from './components/admin/Accounts.js'
+
+
 import AdminLogin from './components/admin/Login.js'
 import Login from './components/Login.js'
 import Shop from './components/Shop.js'
@@ -86,6 +89,7 @@ class App extends Component {
                   <Route path="/admin/Cats" component={Cats} />
                   <Route path="/Charts" component={Charts} />
                   <Route path="/admin/Billing" component={Billing} />
+                  <Route path="/admin/Accounts" component={Accounts} />                  
                   <Route path="/admin/Admin" component={Admin} />
                   <Route path="/admin/Sales" component={Sales} />
                   <Route path="/admin/Users" component={Users} />

@@ -5,7 +5,7 @@ import Server  from '.././Server.js'
 import { Sidenav,Nav,Dropdown,Icon} from 'rsuite';
 import { Alert } from 'rsuite';
 import { Badge,Button } from 'rsuite';
-
+import  './Dashboard.css'
 const styles = {
    width: '100%',
    display: 'inline-table',
@@ -31,7 +31,7 @@ class Dashboard extends React.Component {
       ShopId : (this.props.data && this.props.data.length >0) ? this.props.data[0]._id : null,
       user_id: (this.props.data && this.props.data.length >0) ? this.props.data[0].UserId : null,
       name: (this.props.data && this.props.data.length >0) ? this.props.data[0].name : null,
-      logo : (this.props.data && this.props.data.length >0 && this.props.data[0].logo ) ? 'https://api.emdcctv.com/' + this.props.data[0].logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
+      logo : (this.props.data && this.props.data.length >0 && this.props.data[0].logo ) ? this.Server.getAbsoluteUrl() + this.props.data[0].logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
      }
     this.logout = this.logout.bind(this);
     if(this.props.list && this.props.list.length>0)
@@ -244,11 +244,12 @@ class Dashboard extends React.Component {
                    
                    {this.state.list.map((v, i) => {
                          const icon = "fa " + v.icon;  
-                         var LiClass=""; 
-                         if(v.LName.indexOf("Products_List")/*i==0*/)
-                           LiClass = "active";
-                         return (     
-                           <Link to={{ pathname: v.Url , state: { data:this.state.data,list: this.state.list,NewUsers:this.state.NewUsers,NewFactors:this.state.NewFactors} }} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}><Nav.Item eventKey="1"   className="yekan" style={{textDecoration:'none',padding:5,textAlign:'right'}}>{((v.FName=="لیست کاربران" && this.state.NewUsers) || (v.FName=="سفارشات" && this.state.NewFactors)) ?  
+                         var LiClass="Dassbord-Items yekan"; 
+                         //if(v.LName.indexOf("Products_List")/*i==0*/)
+                         //  LiClass = "active";
+                         return (    
+                           
+                           <Nav.Item eventKey="1"   className={LiClass} style={{textDecoration:'none',padding:5,textAlign:'right'}}><Link to={{ pathname: v.Url , state: { data:this.state.data,list: this.state.list,NewUsers:this.state.NewUsers,NewFactors:this.state.NewFactors} }} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((v.FName=="لیست کاربران" && this.state.NewUsers) || (v.FName=="سفارشات" && this.state.NewFactors)) ?  
                             ( 
                               v.FName=="لیست کاربران" ?
                             <Badge content={this.state.NewUsers}>
@@ -260,11 +261,11 @@ class Dashboard extends React.Component {
                             </Badge>
                             )
                             : 
-                           v.FName}</Nav.Item></Link>
+                           v.FName}</Link></Nav.Item>
                          )
                       })
                      }
-                      <Nav.Item style={{padding:5,textAlign:'right'}}><p onClick={this.logout} className="yekan"><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
+                      <Nav.Item style={{padding:5,textAlign:'right',backgroundColor:'#ff7070'}}><p onClick={this.logout} className="yekan" style={{color:'#fff'}}><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
    
                  </Nav>
                </Sidenav.Body>

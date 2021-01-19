@@ -13,7 +13,8 @@ import { Loader } from 'rsuite';
 import Charts from '.././Charts.js'
 import { Chip } from 'primereact/chip';
 import { Alert } from 'rsuite';
-
+import {DataTable} from 'primereact/datatable';
+import {Column} from 'primereact/column';
 import { OrganizationChart } from 'primereact/organizationchart';
 const data = [{
   label: 'مراحل تسویه حساب',
@@ -169,13 +170,37 @@ class Billing extends React.Component {
       UserId : this.state.UserId,
       price : this.state.price,
       sheba : this.state.sheba,
-      SellerId:this.state.SellerId
+      SellerId:this.state.SellerId,
+      status:0,
+      statusDesc:'درخواست شده'
     };
     let SCallBack = function(response){
       that.setState({
         loading:0
       })
-      
+      that.GetTransfer();
+
+      Alert.success('عملیات با موفقیت انجام شد', 5000);
+    };
+    let ECallBack = function(error){
+      that.setState({
+        loading:0
+      })
+      Alert.error('عملیات انجام نشد', 5000);
+    }
+    this.Server.send("AdminApi/SetTransfer",param,SCallBack,ECallBack)
+   }
+   delTransfer(rowData){
+     let that = this;
+    let param={
+      token: localStorage.getItem("api_token"),
+      _id : rowData._id
+    };
+    let SCallBack = function(response){
+      that.setState({
+        loading:0
+      })
+      that.GetTransfer();
       Alert.success('عملیات با موفقیت انجام شد', 5000);
     };
     let ECallBack = function(error){
@@ -191,15 +216,15 @@ class Billing extends React.Component {
     let param={
       token: localStorage.getItem("api_token"),
       SellerId:this.state.SellerId,
-      isMainShop:this.state.isMainShop
+      isMainShop:this.state.isMainShop,
     };
     this.setState({
       loading:1
     })
     let SCallBack = function(response){
-      debugger;
       that.setState({
-        loading:0
+        loading:0,
+        GridDataTransferReq:response.data.result
       })
       
     };
@@ -213,7 +238,17 @@ class Billing extends React.Component {
   }
    
   render() {
-
+    const userTemplate = (rowData) => {
+      return `${rowData.user[0].name}`;
+    }
+    const shopTemplate = (rowData) => {
+      return `${rowData.shop[0].name}`;
+    }
+    const delTemplate = (rowData) => {
+      if(rowData.status==0)
+      return   <i class="fa fa-times" style={{cursor:'pointer'}} aria-hidden="true" onClick={()=>this.delTransfer(rowData)}></i>;
+    }
+    
     return (
       <div style={{ direction: 'rtl' }}>
         {this.state.loading == 1 &&
@@ -227,15 +262,19 @@ class Billing extends React.Component {
           </div>
           <div className="col-lg-9 col-md-8 col-12" style={{ marginTop: 20, background: '#fff' }}>
           <div className="row">
-              <div className="col-6">
+              <div className="col-md-6 col-12">
                 {(this.state.LastCredit != 0 || this.state.LastAmount != 0) ?
                   <div>
-                    <div style={{display:'flex',flexDirection:'row',justifyContent:'space-between',marginTop:100}}>
-                    <Chip style={{fontFamily:'Yekan'}} label={'موجودی نقدی : ' +this.persianNumber(this.state.LastAmount.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' تومان'}  />
-                    <Chip style={{fontFamily:'Yekan'}} label={'موجودی اعتباری : ' +this.persianNumber(this.state.LastCredit.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' تومان'}  />
+                    <div style={{marginTop:100}} className="row">
+                    <Chip className="col-md-5 col-12 mt-0" style={{fontFamily:'Yekan'}} label={'موجودی نقدی : ' +this.persianNumber(this.state.LastAmount.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' تومان'}  />
+                    <div className="col-md-2 col-0" ></div>
+                    <Chip className="col-md-5 col-12 mt-md-0 mt-4" style={{fontFamily:'Yekan'}} label={'موجودی اعتباری : ' +this.persianNumber(this.state.LastCredit.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' تومان'}  />
 
-                      </div>
-                    <Charts data = {[this.state.LastAmount,this.state.LastCredit]}  />
+                    </div>
+                    <div className="mt-4">
+
+                      <Charts data = {[this.state.LastAmount,this.state.LastCredit]}  />
+                    </div>
                   </div>
                     :
                 <div style={{textAlign:'center',marginTop:125}}>
@@ -244,14 +283,14 @@ class Billing extends React.Component {
                   }
 
               </div>
-              <div className="col-6">
+              <div className="col-md-6 col-12">
                 <div>
 
                 </div>
               </div>
             </div>
             <div className="row" style={{marginTop:50,borderTop:'2px solid #eee'}}>
-              <div className="col-6" >
+              <div className="col-md-7 col-12 orede-md-2 order-1" >
               <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ درخواست واریز وجه </span> </div>
 
                 <div className="row">
@@ -272,9 +311,24 @@ class Billing extends React.Component {
 
                   </div>
                 </div>
+                <div class="row">
+                  <div class="col-12">
+                  <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ لیست ده درخواست آخر </span> </div>
+
+                  <DataTable responsive value={this.state.GridDataTransferReq} selectionMode="single"   >
+                        <Column field="price"  header="مبلغ" className="yekan" style={{textAlign:"center",fontSize:13}} />
+                        <Column field="user" body={userTemplate}  header="نام فروشنده"  className="yekan" style={{textAlign:"center",fontSize:13}}/>
+                        <Column field="shop" body={shopTemplate} header="نام فروشگاه" className="yekan" style={{textAlign:"center",fontSize:13}}  />
+                        <Column field="date" header="تاریخ" className="yekan" style={{textAlign:"center",fontSize:13}} />
+                        <Column field="statusDesc" header="وضعیت" className="yekan" style={{textAlign:"center",fontSize:13}} />
+                        <Column field="del" body={delTemplate} header="حذف درخواست" className="yekan" style={{textAlign:"center",fontSize:13}}  />
+
+                    </DataTable>
+                  </div>
+                </div>
 
               </div>
-              <div className="col-6">
+              <div className="col-md-5 col-12 orede-md-1 order-2">
                 <div style={{marginTop:20}}>
                 <OrganizationChart value={data}></OrganizationChart>
 
