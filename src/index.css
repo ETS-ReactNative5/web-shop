@@ -1,30 +1,30 @@
 @font-face {
     font-family: 'irsans';
-    src: local('irsans'), url(./NewFont/irsans.ttf) format('truetype');
+    src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');
   }
   @font-face {
       font-family: 'Yekan';
-      src: local('Yekan'), url(./NewFont/iranyekanweblight.ttf) format('truetype');
+      src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');
     }
     @font-face {
       font-family: 'IRANYekan';
-      src: local('IRANYekan'), url(./NewFont/IRANYekan.ttf) format('truetype');             
+      src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');             
     } 
     @font-face {
       font-family: 'iranyekanwebblack';
-      src: local('iranyekanwebblack'), url(./NewFont/iranyekanwebblack.ttf) format('truetype');
+      src: local('YekanBakhFaBold'), url(./NewFont/YekanBakhFaBold.woff) format('truetype');
     }
     @font-face {
       font-family: 'iranyekanweblight';
-      src: local('iranyekanweblight'), url(./NewFont/iranyekanweblight.ttf) format('truetype');
+      src: local('YekanBakhFaLight'), url(./NewFont/YekanBakhFaLight.woff) format('truetype');
     } 
     @font-face {
         font-family: 'iranyekanwebmedium';
-        src: local('iranyekanwebmedium'), url(./NewFont/iranyekanwebmedium.ttf) format('truetype');
+        src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');
       } 
       @font-face {
         font-family: 'iranyekanwebregular';
-        src: local('iranyekanwebregular'), url(./NewFont/iranyekanwebregular.ttf) format('truetype');
+        src: local('YekanBakhFaLight'), url(./NewFont/YekanBakhFaLight.woff) format('truetype');
       }
       @font-face {
         font-family: 'YekanBakhFaBold';
@@ -1073,8 +1073,7 @@ display: none;
     font-family: 'iranyekanwebregular' !important;
 }
 .row-highlight1{
-    background-color: #d08528 !important;
-    color:#fff !important;
+    color:#c5c3c3 !important;
 }
 .blogs p{
     font-family: 'iranyekanweblight' !important;

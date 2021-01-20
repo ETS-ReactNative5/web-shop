@@ -667,19 +667,19 @@ class MainBox2 extends React.Component {
             </div>
             {this.state.products.length > 0 &&
               <div className="col-lg-12 col-12"  >
-                <div style={{ background: '#f08304', marginTop: 20, borderTopRightRadius: 50, borderBottomRightRadius: 100, marginRight: 20, marginBottom: 20 }} >
-                  <div className=" backgroundsvg" style={{ direction: 'rtl', paddingRight: 0 }}>
+                <div style={{ background: 'rgb(102 90 210)', marginTop: 20, borderTopRightRadius: 50, borderBottomRightRadius: 100, borderTopLeftRadius: 50, borderBottomLeftRadius: 100, marginRight: 20, marginBottom: 20 }} >
+                  <div className=" backgroundsvg" style={{ direction: 'rtl', padding:40 }}>
 
                     <Swiper {...params2}>
-                      <div style={{ maxWidth: 170 }}>
-                        <p class="iranyekanweblight" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 22 }}>محصولات شگفت انگیز</p>
-                        <img src={require('../public/pngfuel.png')} style={{ width: 170, marginTop: 20, marginRight: 20, opacity: 0.5, transform: 'rotate(20deg)' }} />
+                      <div style={{ maxWidth: 230}}>
+                        <p class="YekanBakhFaBold" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center' }}>محصولات شگفت انگیز</p>
+                        <img src={require('../public/Ania_Off.png')} style={{height:250}}  />
                       </div>
                       {this.state.products.map((item, index) => {
                         var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
                         return (
 
-                          <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 5, background: '#fff', color: '#333', maxWidth: 250 }}>
+                          <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250 }}>
                             <div className="p-grid p-nogutter" >
                               <div className="p-col-12 c-product-box__img" align="center" >
                                 <img src={img} alt="" />

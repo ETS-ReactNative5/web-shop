@@ -262,10 +262,10 @@ class Header1 extends React.Component {
 						<div className="col-lg-2 col-12 order-lg-3 order-1">
 							<div className="text-lg-right text-center mr-lg-4 mr-0 ">
 								{this.state.logo &&
-									<div style={{ textAlign: 'center',display:'none' }}>
+									<div style={{ textAlign: 'center' }}>
 
 										<Link to={`${process.env.PUBLIC_URL}`}>
-											<img src={this.state.absoluteUrl + this.state.logo.split("public")[1]} className="hvr-pulse-shrink" style={{ width: 80 }} />
+											<img src={this.state.absoluteUrl + this.state.logo.split("public")[1]} className="hvr-pulse-shrink" />
 										</Link>
 									</div>
 								}

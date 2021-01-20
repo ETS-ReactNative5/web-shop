@@ -1720,19 +1720,19 @@ PreparEditProduct(row){
                 
 
                 <div className="row" style={{marginTop:20,paddingRight:10}}>
-                  <div className="col-12" style={{textAlign:'right'}}>
+                  <div className="col-12" style={{textAlign:'right',display:'flex',alignItems:'baseline'}}>
                     <Checkbox inputId="ShowPriceAftLogin" value={this.state.ShowPriceAftLogin} checked={this.state.ShowPriceAftLogin} onChange={e => this.setState({ShowPriceAftLogin: e.checked})}></Checkbox>
                     <label htmlFor="ShowPriceAftLogin" className="p-checkbox-label yekan" style={{paddingRight:5}}> نمایش قیمت بعد از هویت سنجی</label>
                   </div>
-                  <div className="col-12" style={{textAlign:'right'}}>
+                  <div className="col-12" style={{textAlign:'right',display:'flex',alignItems:'baseline'}}>
                     <Checkbox inputId="ShowPriceAftLogin" value={this.state.NoOff} checked={this.state.NoOff} onChange={e => this.setState({NoOff: e.checked})}></Checkbox>
                     <label htmlFor="ShowPriceAftLogin" className="p-checkbox-label yekan" style={{paddingRight:5}}> در تخفیف های کلی لحاظ نشود</label>
                   </div>
-                  <div className="col-12" style={{textAlign:'right'}} >
+                  <div className="col-12" style={{textAlign:'right',display:'flex',alignItems:'baseline'}} >
                     <Checkbox inputId="Immediate" value={this.state.Immediate} checked={this.state.Immediate} onChange={e => this.setState({Immediate: e.checked})}></Checkbox>
                     <label htmlFor="Immediate" className="p-checkbox-label yekan" style={{paddingRight:5}}>ارسال فوری</label>
                   </div>
-                  <div className="col-12" style={{textAlign:'right'}}>
+                  <div className="col-12"  style={{textAlign:'right',display:'flex',alignItems:'baseline'}}>
                         <RadioButton inputId="TypeOfSend1" name="TypeOfSend" value="1" onChange={(e) => this.setState({TypeOfSend: e.value})} checked={this.state.TypeOfSend === '1'} />
                         <label htmlFor="TypeOfSend1" className="p-checkbox-label yekan">ارسال منطقه ای</label>
                         <RadioButton inputId="TypeOfSend2" name="TypeOfSend" value="2" onChange={(e) => this.setState({TypeOfSend: e.value})} checked={this.state.TypeOfSend === '2'} />
@@ -1740,11 +1740,11 @@ PreparEditProduct(row){
                   </div>
                   </div>
                 <div className="row" style={{height:40,marginTop:20,paddingRight:10}}>
-                  <div className="col-3" style={{textAlign:'right'}}>
+                  <div className="col-3"  style={{textAlign:'right',display:'flex',alignItems:'baseline'}}>
                     <Checkbox inputId="harajCheckBox" value={this.state.harajCheckBox} checked={this.state.harajCheckBox} onChange={(e)=>{this.setState({SetHaraj:!this.state.SetHaraj,harajCheckBox: e.checked})}}></Checkbox>
                     <label htmlFor="harajCheckBox" className="p-checkbox-label yekan" style={{paddingRight:10}}>حراج</label>
                   </div>
-                  <div className="col-3" style={{textAlign:'right',display:(this.state.SetHaraj ? "flex" : "none" )}} >
+                  <div className="col-3" style={{alignItems:'baseline',textAlign:'right',display:(this.state.SetHaraj ? "flex" : "none" )}} >
                         <RadioButton inputId="HarajType1" name="HarajType" value="1" onChange={(e) => this.setState({HarajType: e.value})} checked={this.state.HarajType === '1'} />
                         <label htmlFor="HarajType1" className="p-checkbox-label yekan"  style={{paddingRight:5}}>روز</label>
                         <RadioButton inputId="HarajType2" name="HarajType" value="2" onChange={(e) => this.setState({HarajType: e.value})} checked={this.state.HarajType === '2'} />
@@ -1951,7 +1951,7 @@ PreparEditProduct(row){
        <label>تعداد</label>
       </div>
       </div>
-      <div className="col-md-12 col-12" style={{textAlign:'right',marginTop:5,height:45}}>
+      <div className="col-md-12 col-12" style={{textAlign:'right',marginTop:5,height:45,display:'flex',alignItems:'baseline'}} >
                     <Checkbox inputId="harajCheckBox" value={this.state.harajCheckBoxEdit} disabled={this.state.SellerId !=this.state.MainShopId} checked={this.state.harajCheckBoxEdit} onChange={(e)=>{this.setState({SetHaraj_edit:!this.state.SetHaraj_edit,harajCheckBoxEdit: e.checked})}} name="harajCheckBoxEdit" ></Checkbox>
                     <label htmlFor="harajCheckBox" className="p-checkbox-label yekan" style={{paddingRight:10}}>حراج روز</label>
                  
@@ -1973,20 +1973,20 @@ PreparEditProduct(row){
 
                 
              </div>
-                  <div className="col-12" style={{textAlign:'right'}}>
+                  <div className="col-12" style={{textAlign:'right',display:'flex',alignItems:'baseline'}}>
                     <Checkbox inputId="ShowPriceAftLogin_edit" value={this.state.ShowPriceAftLogin_edit} checked={this.state.ShowPriceAftLogin_edit} disabled={this.state.SellerId !=this.state.MainShopId} onChange={e => this.setState({ShowPriceAftLogin_edit: e.checked})}></Checkbox>
                     <label htmlFor="ShowPriceAftLogin_edit" className="p-checkbox-label yekan" style={{paddingRight:5}}> نمایش قیمت بعد از هویت سنجی</label>
                   </div>
-                  <div className="col-12" style={{textAlign:'right'}}>
+                  <div className="col-12" style={{textAlign:'right',display:'flex',alignItems:'baseline'}}>
                     <Checkbox inputId="NoOff_edit" value={this.state.NoOff_edit} checked={this.state.NoOff_edit} onChange={e => this.setState({NoOff_edit: e.checked})}></Checkbox>
                     <label htmlFor="NoOff_edit" className="p-checkbox-label yekan" style={{paddingRight:5}}> در تخفیف های کلی لحاظ نشود</label>
                   </div>
                   
-                  <div className="col-12" style={{textAlign:'right'}} >
+                  <div className="col-12" style={{textAlign:'right',display:'flex',alignItems:'baseline'}} >
                     <Checkbox inputId="Immediate" value={this.state.Immediate_edit} checked={this.state.Immediate_edit} onChange={e => this.setState({Immediate_edit: e.checked})}></Checkbox>
                     <label htmlFor="Immediate_edit" className="p-checkbox-label yekan" style={{paddingRight:5}}>ارسال فوری</label>
                   </div>
-                  <div className="col-12" style={{textAlign:'right'}}>
+                  <div className="col-12" style={{textAlign:'right',display:'flex',alignItems:'baseline'}}>
                         <RadioButton inputId="TypeOfSend1_edit" name="TypeOfSend_edit" value="1" onChange={(e) => this.setState({TypeOfSend_edit: e.value})} checked={this.state.TypeOfSend_edit === '1'} />
                         <label htmlFor="TypeOfSend1" className="p-checkbox-label yekan">ارسال منطقه ای</label>
                         <RadioButton inputId="TypeOfSend2_edit" name="TypeOfSend_edit" value="2" onChange={(e) => this.setState({TypeOfSend_edit: e.value})} checked={this.state.TypeOfSend_edit === '2'} />

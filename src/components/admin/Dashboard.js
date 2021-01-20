@@ -265,7 +265,7 @@ class Dashboard extends React.Component {
                          )
                       })
                      }
-                      <Nav.Item style={{padding:5,textAlign:'right',backgroundColor:'#ff7070'}}><p onClick={this.logout} className="yekan" style={{color:'#fff'}}><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
+                      <Nav.Item style={{padding:5,textAlign:'right'}}><p onClick={this.logout} className="yekan"><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
    
                  </Nav>
                </Sidenav.Body>

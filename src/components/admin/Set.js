@@ -14,7 +14,7 @@ import {Panel} from 'primereact/panel';import {DataTable} from 'primereact/datat
 import {Column} from 'primereact/column';
 import {Dialog} from 'primereact/dialog';
 import {Checkbox} from 'primereact/checkbox';
-import { Loader } from 'rsuite';
+import { FlexboxGrid, Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { connect } from 'react-redux';
 import {Dropdown} from 'primereact/dropdown';
@@ -286,35 +286,35 @@ class Set extends React.Component {
       <div className="col-lg-9 col-md-8 col-12" style={{marginTop:20,background:'#fff'}}>
       <Panel header="تنظیمات سیستم" style={{marginTop:20,textAlign:'right',marginBottom:50,fontFamily: 'yekan'}}>
             <div className="row" >
-              <div className="col-12">
+              <div className="col-12" style={{display:'flex',alignItems:'baseline'}}>
               <Checkbox onChange={e => this.setState({SeveralShop: e.checked})} checked={this.state.SeveralShop}></Checkbox>
               <label style={{paddingRight:5,marginTop:5}}>استفاده از امکانات چند فروشگاهی - برای تغییر این فیلد لازم است با طراحان سیستم هماهنگی شود</label>  
 
               </div>
-              <div className="col-12">
+              <div className="col-12" style={{display:'flex',alignItems:'baseline'}}>
               <Checkbox onChange={e => this.setState({CreditSupport: e.checked})} checked={this.state.CreditSupport}></Checkbox>
               <label style={{paddingRight:5,marginTop:5}}>ویژگی های مربوط به خرید اقساطی و اعتباری فعال باشد</label>  
 
               </div>
               
-              <div className="col-12">
+              <div className="col-12" style={{display:'flex',alignItems:'baseline'}}>
               <Checkbox onChange={e => this.setState({AccessAfterReg: e.checked})} checked={this.state.AccessAfterReg}></Checkbox>
               <label style={{paddingRight:5,marginTop:5}}>پس از ثبت نام امکان دسترسی بلافاصله به سیستم وجود داشته باشد</label>  
 
               </div>
-              <div className="col-12">
+              <div className="col-12" >
               <div className="group">
                 <input className="form-control yekan"  autoComplete="off"  type="text" value={this.state.STitle} name="STitle" onChange={(event)=> this.setState({STitle: event.target.value})} required="true" />
                 <label className="yekan">عنوان فروشگاه (در پیامک ها و آلارم ها استفاده می شود)</label>
               </div>
               </div>
-              <div className="col-12">
+              <div className="col-12" >
               <div className="group">
                 <input className="form-control yekan"  autoComplete="off"  type="text" value={this.state.RegSmsText} name="RegSmsText" onChange={(event)=> this.setState({RegSmsText: event.target.value})} required="true" />
                 <label className="yekan">متن پیامک پس از اتمام ثبت نام</label>
               </div>
               </div>
-              <div className="col-12">
+              <div className="col-12" >
               <div className="group">
                 <input className="form-control yekan"  autoComplete="off"  type="text" value={this.state.UserChangeSmsText} name="UserChangeSmsText" onChange={(event)=> this.setState({UserChangeSmsText: event.target.value})} required="true" />
                 <label className="yekan">متن پیامک پس از تغییر وضعیت حساب کاربر</label>
@@ -339,15 +339,15 @@ class Set extends React.Component {
     <TabPanel header="تنظیمات کلی" headerStyle={{fontFamily:'yekan'}}>
     <Fieldset legend="درگاه فعال" className="yekan" style={{fontFamily:'yekan'}}>
     <div className="row">
-          <div className="col-lg-4 col-12" >
+          <div className="col-lg-4 col-12" style={{display:'flex',alignItems:'baseline'}}>
           <RadioButton value="none" style={{textAlign:"center",fontSize:18}} className="yekan" name="ActiveBank" onChange={(e) => this.setState({ActiveBank: e.value})} checked={this.state.ActiveBank === 'none'} />
           <label style={{textAlign:"center",fontSize:18}} className="yekan">امکان خرید آنلاین ندارد</label>
           </div>
-          <div className="col-lg-4 col-12" >
+          <div className="col-lg-4 col-12" style={{display:'flex',alignItems:'baseline'}}>
           <RadioButton value="p" style={{textAlign:"center",fontSize:18}} className="yekan" name="ActiveBank" onChange={(e) => this.setState({ActiveBank: e.value})} checked={this.state.ActiveBank === 'p'} />
           <label style={{textAlign:"center",fontSize:18}} className="yekan">پارسیان</label>
           </div>
-          <div className="col-lg-4 col-12" >
+          <div className="col-lg-4 col-12" style={{display:'flex',alignItems:'baseline'}}>
           <RadioButton value="z" style={{textAlign:"center",fontSize:18}} className="yekan" name="ActiveBank" onChange={(e) => this.setState({ActiveBank: e.value})} checked={this.state.ActiveBank === 'z'} />
           <label style={{textAlign:"center",fontSize:18}} className="yekan">زرین پال</label>
           </div>
@@ -398,15 +398,15 @@ class Set extends React.Component {
     <TabPanel header="تنظیمات کلی" headerStyle={{fontFamily:'yekan'}}>
     <Fieldset legend="پنل فعال" className="yekan" style={{fontFamily:'yekan'}}>
     <div className="row">
-          <div className="col-lg-4 col-12" >
+          <div className="col-lg-4 col-12" style={{display:'flex',alignItems:'baseline'}}>
           <RadioButton value="none" style={{textAlign:"center",fontSize:18}} className="yekan" name="ActiveSms" onChange={(e) => this.setState({ActiveSms: e.value})} checked={this.state.ActiveSms === 'none'} />
           <label style={{textAlign:"center",fontSize:18}} className="yekan">غیر فعال</label>
           </div>
-          <div className="col-lg-4 col-12" >
+          <div className="col-lg-4 col-12" style={{display:'flex',alignItems:'baseline'}}>
           <RadioButton value="smsir" style={{textAlign:"center",fontSize:18}} className="yekan" name="ActiveSms" onChange={(e) => this.setState({ActiveSms: e.value})} checked={this.state.ActiveSms === 'smsir'} />
           <label style={{textAlign:"center",fontSize:18}} className="yekan">Sms.ir</label>
           </div>
-          <div className="col-lg-4 col-12" >
+          <div className="col-lg-4 col-12" style={{display:'flex',alignItems:'baseline'}}>
           <RadioButton value="smart" style={{textAlign:"center",fontSize:18}} className="yekan" name="ActiveSms" onChange={(e) => this.setState({ActiveSms: e.value})} checked={this.state.ActiveSms === 'smart'} />
           <label style={{textAlign:"center",fontSize:18}} className="yekan">smartsms.ir</label>
           </div>
