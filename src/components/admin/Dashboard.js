@@ -234,7 +234,7 @@ class Dashboard extends React.Component {
              <Sidenav  defaultOpenKeys={['3', '4']} appearance="subtle" >
              <Sidenav.Header>
                <a href="/" style={{textDecoration:'none'}}>
-                  <img src={this.state.logo}  style={{width:105,height:105,marginTop:20}} className="d-none d-sm-inline-block" />
+                  <img src={this.state.logo}  style={{marginTop:20}} className="d-none d-sm-inline-block" />
                   <p className="iranyekanweblight" style={{marginTop:20,background:'#3ee6a8',color:'#fff',padding:4}}>{this.state.name}</p>
                </a>
               

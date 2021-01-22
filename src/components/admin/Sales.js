@@ -189,8 +189,12 @@ class Sales extends React.Component {
 
     let that = this;
     var p=[];
-    
+    debugger;
     for(let i=0;i<value.products.length;i++){
+      value.products[i].credit = value.products[i].credit ? value.products[i].credit.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
+      value.products[i].price = value.products[i].price ? value.products[i].price.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
+      value.products[i].UnitPrice = value.products[i].UnitPrice ? value.products[i].UnitPrice.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
+
       value.products[i].detail="";
       value.products[i].edit=<i class="fa fa-times" style={{cursor:'pointer'}} aria-hidden="true" onClick={()=>that.EditFactor(value._id,value.products[i]._id,value.products[i].title,"del")}></i>
       if(value.products[i].color)
@@ -277,6 +281,8 @@ class Sales extends React.Component {
       })
       let NewFactors = 0;
       response.data.result.result.map(function(v,i){
+        v.Amount = !v.Amount ? "0" : v.Amount.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        v.Credit = !v.Credit ? "0" : v.Credit.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         if(v.status=="1")
           NewFactors++;
         if(v.status=="-2")

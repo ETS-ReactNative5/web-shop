@@ -1,4 +1,4 @@
-@font-face {
+    @font-face {
     font-family: 'irsans';
     src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');
   }
@@ -37,6 +37,10 @@
       @font-face {
         font-family: 'YekanBakhFaMedium';
         src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');
+      }
+      @font-face {
+        font-family: 'irsans';
+        src: local('irsans'), url(./NewFont/irsans.ttf) format('truetype');
       }
       * {
         outline: none!important;

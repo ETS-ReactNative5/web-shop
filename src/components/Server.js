@@ -9,7 +9,8 @@ class Server extends React.Component {
         isLoading:false,/*
         serverUrl: 'https://api.emdcctv.com/'
         serverUrl: 'http://localhost:3000/'*/
-        serverUrl: 'https://marketapi.sarvapps.ir/'
+        serverUrl: 'https://marketapi.sarvapps.ir/'/*
+        serverUrl: 'https://api.aniabook.ir/'*/
 
      }
    

@@ -7,7 +7,7 @@ import Server  from './../Server.js'
 import Header1  from './../Header1.js'
 import { Button } from 'reactstrap';
 import LoadingOverlay from 'react-loading-overlay';
-import { Alert } from 'rsuite';
+import { Toast } from 'primereact/toast';
 
 class Seller extends React.Component {
     constructor(props){
@@ -24,16 +24,19 @@ class Seller extends React.Component {
         pleaseWait:true
       }
       this.Server = new Server();
+      this.toast =  React.createRef();
+
       this.CreateShop = this.CreateShop.bind(this)
       
 		
     }
     componentDidMount(){
-      let param={
+      let param={ //9132248532
         token: localStorage.getItem("api_token"),
       };
       let that = this;
       let SCallBack = function(response){
+        debugger;
         that.setState({
           userId : response.data.authData.userId
         })
@@ -48,14 +51,7 @@ class Seller extends React.Component {
             GoToManagement : true,
             DisplayPage:true
           }) 
-          /*that.Server.send("AdminApi/GetShopInformation",{UserId:response.data.authData.userId},function(response){
-            that.setState({
-              name:response.data.result[0].name,
-              ShopId : response.data.result[0]._id
-            })
-          },function(error){
-            console.log(error)
-          })*/
+          
         }
            
         that.props.dispatch({
@@ -80,6 +76,7 @@ class Seller extends React.Component {
         UserId : this.state.userId,
         name : this.state.name,
         address : this.state.address,
+        type:this.state.type,
         edit:"0"
       };
       let that = this;
@@ -88,20 +85,17 @@ class Seller extends React.Component {
         localStorage.setItem("CartNumber",0)
         that.props.dispatch({
           type: 'LoginTrueUser',    
-          userId:null,
-          CartNumber:0
+              CartNumber:0,
+              off:0,
+              credit:0
         })
-        that.setState({
-          HasError : "فروشگاه  "+that.state.name+" ایجاد شد برای استفاده از تمام امکانات سیستم لازم است مجددا وارد سیستم شوید"
-        })
-        Alert.success('عملیات با موفقیت انجام شد', 5000);
-        /*that.setState({
-            GoToLogin:true
-        })*/
+        
+        that.toast.current.show({severity: 'success', summary: 'ایجاد فروشگاه', detail: <div><span>فروشگاه <span>{that.state.name}</span> با موفقیت ایجاد شد </span><br/><Link to={`${process.env.PUBLIC_URL}/Login`} style={{ textDecoration: 'none', color: '#333' }}>ورود به سیستم</Link></div>, life: 8000});
+        
 
       };
       let ECallBack = function(error){
-        Alert.danger('عملیات انجام نشد', 5000);
+        that.toast.current.show({severity: 'error', summary: 'ایجاد فروشگاه', detail: <div><span> اشکال در ثبت فروشگاه</span></div>, life: 8000});
         console.log(error)
       }
       this.Server.send("AdminApi/CreateShop",param,SCallBack,ECallBack)
@@ -114,9 +108,12 @@ class Seller extends React.Component {
       } 
         return (
      <div dir="rtl" style={{display:this.state.DisplayPage ? "block" : "none"}}>
+       <Toast ref={this.toast} position="top-right" style={{fontFamily:'YekanBakhFaBold',textAlign:'right'}} />
+
        <Header1 /> 
        
 			<div className="container firstInPage" >
+        <div style={{backgroundColor:'#fff',marginTop:50,padding:40,borderRadius:25}}>
 				<div className="row justify-content-center">
 
 					<div className="col-lg-12 col-12 order-1">
@@ -141,6 +138,7 @@ class Seller extends React.Component {
                   <div className="row justify-content-center">
                   <div className="col-lg-6"> 
                   <div className="row" >
+                  
                     <div className="col-lg-12">
 
                     <div className="group">
@@ -155,6 +153,24 @@ class Seller extends React.Component {
                         <label>آدرس فروشگاه</label>
                       </div>
                       </div>
+                      <div className="col-lg-12">
+                      <div className="group">
+                      <select className="custom-select YekanBakhFaBold" value={this.state.type} name="type" onChange={(event) => this.setState({ type: event.target.value })} >
+                        <option value="">زمینه فعالیت فروشگا را وارد کنید</option>
+                        <option value="کالای دیجیتال">کالای دیجیتال</option>
+                        <option value="محصولات فرهنگی">محصولات فرهنگی</option>
+                        <option value="لوازم التحریر">لوازم التحریر</option>
+                        <option value="کتاب">کتاب</option>
+                        <option value="محصولات خوراکی">محصولات خوراکی</option>
+                        <option value="پوشاک">پوشاک</option>
+                        <option value="لوازم منزل">لوازم منزل</option>
+                        <option value="سایر">سایر</option>
+
+
+                      </select>
+                      </div>
+                      </div>
+                      
                       </div>
                     </div>
                     <div className="col-12" style={{textAlign:'center'}}>
@@ -169,20 +185,14 @@ class Seller extends React.Component {
               :
               <div>
                 <div style={{textAlign:'center',marginTop:50,fontSize:20}} className="yekan">
-                ایتدا در سیستم  <a href="/#/Register" >ثبت نام</a> کنید و یا <a href="/#/Login" >وارد شوید</a>
+                ایتدا در سیستم  <a href="/#/Login" >ثبت نام</a> کنید و یا <a href="/#/Login" >وارد شوید</a>
                   </div>
               </div>
             }
 
 				</div>
-      {this.state.HasError ?
-                  <Alert color="danger" style={{textAlign:"center"}} className="yekan">
-                    {this.state.HasError}
-                    <a href = "/#/Login" style={{paddingRight:5}}  >ورود به سیستم</a>
-                  </Alert>
-                  :<p></p>
-                  }
-	
+      
+	</div>
 			</div>
         )
     }

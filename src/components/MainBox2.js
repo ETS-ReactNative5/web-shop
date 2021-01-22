@@ -133,6 +133,7 @@ const params2 = {
   }
 
 }
+
 const responsive = {
   superLargeDesktop: {
     // the naming can be any, depends on you.
@@ -568,14 +569,14 @@ class MainBox2 extends React.Component {
                           {this.state.text1 &&
                             <p className="iranyekanweblight  p-md-3 d-md-block d-none animate__animated animate__fadeInLeftBig " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text1}</p>
                           }
-                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap' }} title={this.state.text1} />
+                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text1} />
                         </Link>
                         :
                         <Link to={`${process.env.PUBLIC_URL}/` + this.state.link1} className="" target="_blank" href="#" style={{ textDecoration: 'none' }}>
                           {this.state.text1 &&
                             <p className="iranyekanweblight  p-md-3 d-md-block d-none animate__animated animate__fadeInLeftBig " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text1}</p>
                           }
-                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap' }} title={this.state.text1} />
+                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text1} />
                         </Link>
                       }
                     </div>
@@ -586,7 +587,7 @@ class MainBox2 extends React.Component {
                           {this.state.text2 &&
                             <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text2}</p>
                           }
-                          <img src={this.state.logo2} style={{borderRadius: 12, whiteSpace: 'pre-wrap' }} title={this.state.text2} />
+                          <img src={this.state.logo2} style={{borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text2} />
 
                         </Link>
                         :
@@ -594,7 +595,7 @@ class MainBox2 extends React.Component {
                           {this.state.text2 &&
                             <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text2}</p>
                           }
-                          <img src={this.state.logo2} style={{ borderRadius: 12, whiteSpace: 'pre-wrap' }} title={this.state.text2} />
+                          <img src={this.state.logo2} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text2} />
 
                         </Link>
                       }
@@ -606,14 +607,14 @@ class MainBox2 extends React.Component {
                           {this.state.text3 &&
                             <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text3}</p>
                           }
-                          <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap' }} title={this.state.text3} />
+                          <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text3} />
                         </Link>
                         :
                         <Link to={`${process.env.PUBLIC_URL}/` + this.state.link3} className="" target="_blank" href="#" style={{ textDecoration: 'none' }}>
                           {this.state.text3 &&
                             <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text3}</p>
                           }
-                          <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap' }} title={this.state.text3} />
+                          <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text3} />
                         </Link>
                       }
                     </div>
@@ -755,6 +756,145 @@ class MainBox2 extends React.Component {
 
             </div>
             </div>
+
+            {this.state.MaxObj.length > 0 &&
+              <div className="col-lg-12 col-12"  >
+                <div style={{ background: '#fce82e',border:'5px solid #fce82e', marginTop: 20, borderTopRightRadius: 50, borderBottomRightRadius: 100, borderTopLeftRadius: 50, borderBottomLeftRadius: 100, marginRight: 20, marginBottom: 20 }} >
+                  <div className=" backgroundsvg2" style={{ direction: 'rtl', padding:20 }}>
+
+                    <Swiper {...params3}>
+                      
+                      {this.state.MaxObj.map((item, index) => {
+                        var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
+                        var img1 = this.state.absoluteUrl + item.fileUploaded1.split("public")[1];
+                        var img2 = this.state.absoluteUrl + item.fileUploaded2.split("public")[1];
+                        return (
+                          <div expiredate={item.ExpireDate} className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', margin: 5, padding: 5, borderRadius: 5, marginLeft: 0 }}>
+                            <div className="row justify-content-center">
+                            <div className="col-lg-6 col-12">
+                                <div className="d-md-none d-block" style={{textAlign:'center'}}>
+                                <img src={img} alt="" style={{ borderRadius: 36, height: '100%', maxHeight: 200 }} />
+
+                                </div>
+                                <div   className=" row d-md-flex d-none" style={{ height: '100%',backgroundColor:'#fff',boxShadow:'5px 5px 5px 5px #8888883d',borderRadius:50 }} >
+                                {item.fileUploaded1 &&
+                                    <div className="col-md-3 d-md-block d-none">
+                                      <div style={{  borderRadius: 25 }}>
+                                        <img src={img1} alt="" style={{ padding: 10, height: 150,borderRadius: 25 }} />
+                                      </div>
+                                      <div style={{  borderRadius: 25, marginTop: 15 }}>
+                                        <img src={img2} alt="" style={{ padding: 10, height: 150,borderRadius: 25 }} />
+                                      </div>
+  
+  
+                                    </div>
+                                  }
+                                  <div className="col-md-8 col-12 d-md-block d-none">
+                                    <img src={img} alt="" style={{ borderRadius: 5, height: '100%', maxHeight: 350 }} />
+  
+                                  </div>
+                                  
+  
+                                </div>
+  
+                              </div>
+                              <div className="col-lg-6  col-12" align="center" >
+  
+                                <div className="car-title yekan  mt-md-5" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 22 }}>{item.title}</div>
+                                {item.subTitle != "-" &&
+                                    <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 15, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
+
+                                }  
+                                {
+                                  item.number > 0
+                                    ?
+                                    <div>
+                                      {(this.state.UId || !item.ShowPriceAftLogin) &&
+                                        <div>
+                                          {
+                                            ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" ?
+                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#8e7b7b' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
+                                              :
+                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#8e7b7b', height: 16 }} ></div>
+  
+                                          }
+                                          <div className="car-subtitle yekan" style={{ maxWidth:260,display:'flex',justifyContent:'space-evenly',textAlign: 'center', marginBottom: 15 }} > <span className="iranyekanwebblack" style={{ fontSize: 40 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> <span className="yekan" style={{ float: 'left', fontSize: 22, marginTop: 10 }}>تومان</span> </div>
+                                        </div>
+                                      }
+                                    </div>
+                                    : (this.state.UId || !item.ShowPriceAftLogin) &&
+                                    <div>
+                                      <div className="car-subtitle yekan" style={{ height: 22 }} ></div>
+  
+                                      <div className="car-subtitle yekan" style={{ textAlign: 'center', marginBottom: 15 }} ><span className="yekan" style={{ fontSize: 22, marginTop: 10, color: 'red' }}>ناموجود</span> </div>
+                                    </div>
+                                }
+                                  <div  style={{ marginBottom: 30 }}>
+  
+                                    {
+                                      (item.off + (!item.NoOff ? parseInt(this.props.off) : 0)) > "0" &&
+                                      <div style={{ position: 'relative' }}>
+                                        <div className="car-title yekan off" style={{ position: 'absolute', top: -30, left: 3 }} > <span>  {this.persianNumber((item.off + (!item.NoOff ? parseInt(this.props.off) : 0)))} %</span> </div>
+                                      </div>
+                                    }
+  
+                                    <div className="deals_timer d-flex flex-row align-items-center justify-content-center" style={{ marginTop: 0 }}>
+  
+                                      <div >
+                                        <span className="yekan" style={{fontSize:30}}>فرصت باقیمانده</span>
+                                        <div className="deals_timer_box clearfix" data-target-time="" >
+                                        {this.state.days != "0" &&
+                                          <div id="deals_timer1_day" className="deals_timer_day yekan" style={{ marginLeft:10,fontSize: 25 }}>{this.state.days != "0" ? this.persianNumber(this.state.days) : ""}</div>
+                                        }
+                                        {this.state.hours != "0" &&
+                                            <div>:</div>
+                                        }
+                                          <div className="deals_timer_unit">
+                                            <div id="deals_timer1_hr" className="deals_timer_hr yekan" style={{ fontSize: 25 }}>{this.state.hours != "0" ?  this.persianNumber(this.state.hours) : ""}</div>
+                                            
+                                          </div>
+                                          {this.state.hours != "0" &&
+                                            <div>:</div>
+                                          }
+                                          <div className="deals_timer_unit">
+                                            <div id="deals_timer1_min" className="deals_timer_min yekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.minutes)}  </div>
+                                          </div>
+                                          <div>:</div>
+                                          <div className="deals_timer_unit">
+                                            <div id="deals_timer1_sec" className="deals_timer_sec yekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.seconds)}</div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div >
+                                    <Link to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ display: "inline-block", textDecoration: 'none',fontSize:22 }}><span className="icon fa fa-arrow-left"></span>خرید محصول</Link>
+  
+                                  </div>
+  
+  
+  
+                              </div>
+                              
+                            </div>
+  
+                          </div>
+  
+                        )
+                      })
+                      }
+
+                    </Swiper>
+                  </div>
+
+                </div>
+
+
+
+
+              </div>
+            }
+            
             {
               this.state.catsList[0] &&
               <CatList _id={this.state.catsList[0]._id} title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
@@ -900,134 +1040,7 @@ class MainBox2 extends React.Component {
               </Swiper>
 
             </div>
-            {
-
-            this.state.MaxObj.length != "0" &&
-            <div className="col-lg-12  col-12 Haraj pb-3" style={{ background: '#fff', marginTop: 0 }}>
-
-              
-                <div ref={this.myRef}>
-                  <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ آفر هفته </span><Link to={`${process.env.PUBLIC_URL}/Products?Haraj=1`}  ><span className="yekan" style={{ fontSize: 12, outline: 0, float: 'left' }}> همه پیشنهادها</span></Link></div>
-
-
-                  <Swiper {...params3} >
-                    {this.state.MaxObj.map((item, index) => {
-                      var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-                      var img1 = this.state.absoluteUrl + item.fileUploaded1.split("public")[1];
-                      var img2 = this.state.absoluteUrl + item.fileUploaded2.split("public")[1];
-                      return (
-                        <div expiredate={item.ExpireDate} className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', margin: 5, padding: 5, borderRadius: 5, marginLeft: 0 }}>
-                          <div className="row justify-content-center">
-
-                            <div className="col-lg-6  col-12" align="center" >
-
-                              <div className="car-title yekan  mt-md-5" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 22 }}>{item.title}</div>
-
-                              <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 15, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
-                              {
-                                item.number > 0
-                                  ?
-                                  <div>
-                                    {(this.state.UId || !item.ShowPriceAftLogin) &&
-                                      <div>
-                                        {
-                                          ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" ?
-                                            <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#8e7b7b' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
-                                            :
-                                            <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#8e7b7b', height: 16 }} ></div>
-
-                                        }
-                                        <div className="car-subtitle yekan" style={{ textAlign: 'center', marginBottom: 15 }} ><span className="yekan" style={{ float: 'left', fontSize: 22, marginTop: 10 }}>تومان</span> <span className="iranyekanwebblack" style={{ fontSize: 40 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> </div>
-                                      </div>
-                                    }
-                                  </div>
-                                  : (this.state.UId || !item.ShowPriceAftLogin) &&
-                                  <div>
-                                    <div className="car-subtitle yekan" style={{ height: 22 }} ></div>
-
-                                    <div className="car-subtitle yekan" style={{ textAlign: 'center', marginBottom: 15 }} ><span className="yekan" style={{ fontSize: 22, marginTop: 10, color: 'red' }}>ناموجود</span> </div>
-                                  </div>
-                              }
-                              <div className="ellipsis yekan" style={{ display: 'none', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12, marginTop: 5, marginBottom: 5, maxWidth: 300, lineHeight: 3, textDecoration: 'none', height: 143 }} >{item.desc}</div>
-                              <div className="row" style={{ marginTop: 50 }}>
-                                <div className="col-md-5 col-12" style={{ marginBottom: 30 }}>
-
-                                  {
-                                    (item.off + (!item.NoOff ? parseInt(this.props.off) : 0)) > "0" &&
-                                    <div style={{ position: 'relative' }}>
-                                      <div className="car-title yekan off" style={{ position: 'absolute', top: -30, left: 3 }} > <span>  {this.persianNumber((item.off + (!item.NoOff ? parseInt(this.props.off) : 0)))} %</span> </div>
-                                    </div>
-                                  }
-
-                                  <div className="deals_timer d-flex flex-row align-items-center justify-content-center" style={{ marginTop: 0 }}>
-
-                                    <div >
-                                      <div className="deals_timer_box clearfix" data-target-time="" style={{ marginTop: 10 }}>
-
-                                        <div className="deals_timer_unit">
-                                          <div id="deals_timer1_day" className="deals_timer_day yekan" style={{ fontSize: 25 }}>{this.state.days != "0" ? this.persianNumber(this.state.days) : ""}</div>
-                                          <span className="yekan" style={{ fontSize: 14 }}>{this.state.days != "0" ? "روز" : ""}</span>
-                                        </div>
-                                        <div className="deals_timer_unit">
-                                          <div id="deals_timer1_hr" className="deals_timer_hr yekan" style={{ fontSize: 25 }}>{this.state.hours != "0" ? this.persianNumber(this.state.hours) : ""}</div>
-                                          <span className="yekan" style={{ fontSize: 14 }}>{this.state.hours != "0" ? "ساعت" : ""}</span>
-                                        </div>
-                                        <div className="deals_timer_unit">
-                                          <div id="deals_timer1_min" className="deals_timer_min yekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.minutes)}</div>
-                                          <span className="yekan" style={{ fontSize: 14 }}>دقیقه</span>
-                                        </div>
-                                        <div className="deals_timer_unit">
-                                          <div id="deals_timer1_sec" className="deals_timer_sec yekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.seconds)}</div>
-                                          <span className="yekan" style={{ fontSize: 14 }}>ثانیه</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-md-7 col-12">
-                                  <Link to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ display: "inline-block", textDecoration: 'none' }}><span className="icon fa fa-arrow-left"></span>مشاهده جزئیات</Link>
-
-                                </div>
-                              </div>
-
-
-
-                            </div>
-                            <div className="col-lg-6 col-12">
-                              <div className="row" style={{ height: '100%' }} >
-
-                                <div className="col-md-8 col-12">
-                                  <img src={img} alt="" style={{ borderRadius: 5, height: '100%', maxHeight: 350 }} />
-
-                                </div>
-                                {item.fileUploaded1 &&
-                                  <div className="col-md-3 d-md-block d-none">
-                                    <div style={{ border: '1px solid #ccc', borderRadius: 5 }}>
-                                      <img src={img1} alt="" style={{ padding: 10, height: 150 }} />
-                                    </div>
-                                    <div style={{ border: '1px solid #ccc', borderRadius: 5, marginTop: 15 }}>
-                                      <img src={img2} alt="" style={{ padding: 10, height: 150 }} />
-                                    </div>
-
-
-                                  </div>
-                                }
-
-                              </div>
-
-                            </div>
-                          </div>
-
-                        </div>
-
-                      )
-                    })
-                    }
-                  </Swiper>
-                </div>
-             
-            </div>
-            }
+            
             <div className="col-lg-12 col-12" style={{ backgroundColor: '#fff', marginTop: 20, display: 'none' }}   >
               {this.state.productsBestOff.length > 0 &&
                 <div><div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ محصولات پر تخفیف</span></div>

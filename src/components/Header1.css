@@ -1440,26 +1440,36 @@ select option
 }
 .deals_timer_box
 {
-	width: 173px;
-	padding-left: 3px;
-	padding-right: 3px;
-	border: solid 1px #cccccc;
-	border-radius: 5px;
-	margin-right: 1px;
+	width: 250px;
+    padding-left: 3px;
+    padding-right: 3px;
+    border: solid 1px #cccccc;
+    border-radius: 5px;
+    margin-right: 1px;
+    background: #fb3449;
+    display: flex;
+    flex-flow: row-reverse;
+    align-items: center;
+    justify-content: space-around;
+    min-height: 35px;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 10px;
+	height: auto;
+	color: #fff;
 }
 .deals_timer_unit
 {
 	width: 25%;
 	font-size: 24px;
 	font-weight: 500;
-	color: #000000;
+	color: #fff;
 	padding-left: 12px;
 	padding-right: 12px;
 	padding-top: 3px;
 	padding-bottom: 2px;
 	float: left;
 }
-.deals_timer_unit:first-child::after,
+/*.deals_timer_unit:first-child::after,
 .deals_timer_unit:nth-child(2)::after
 {
 	display: block;
@@ -1475,7 +1485,7 @@ select option
 	height: 25px;
 	background: #e5e5e5;
 	content: '';
-}
+}*/
 .deals_timer_unit span
 {
 	position: absolute;

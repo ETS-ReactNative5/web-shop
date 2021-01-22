@@ -256,6 +256,7 @@ class Users extends React.Component {
     this.setState({
       HasError: null
     })
+    debugger;
     let param={
       token: localStorage.getItem("api_token"),
       name:this.state.name,

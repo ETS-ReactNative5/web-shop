@@ -16,6 +16,8 @@ import { Alert } from 'rsuite';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import { OrganizationChart } from 'primereact/organizationchart';
+import { InputNumber } from 'primereact/inputnumber';
+
 const data = [{
   label: 'مراحل تسویه حساب',
   expanded: true,
@@ -150,12 +152,18 @@ class Billing extends React.Component {
 
    TransferReq(){
     let that = this;
-    if(this.state.price == 0 || this.state.price > this.state.LastAmount  || this.state.price == '' || isNaN(this.state.price) || this.state.sheba == '')
+    let price = this.state.price.toString().replace(/,/g,"");
+    if(price == 0 || price > this.state.LastAmount  || price == '' || isNaN(price) || this.state.sheba == '')
     {
       Alert.warning('مبلغ و کد شبا را به درستی وارد کنید',5000);
       return;
     }
-    if( this.state.sheba == '' || this.state.sheba.indexOf("IR") == -1 )
+    if( this.state.sheba.toString().indexOf("IR") > -1 )
+    {
+      Alert.warning("کد شبا باید فقط شامل اعداد باشد",5000);
+      return;
+    }
+    if( this.state.sheba == '' || this.state.sheba.toString().length  != 24 )
     {
       Alert.warning('کد شبا نادرست است',5000);
       return;
@@ -168,8 +176,8 @@ class Billing extends React.Component {
     let param={
       token: localStorage.getItem("api_token"),
       UserId : this.state.UserId,
-      price : this.state.price,
-      sheba : this.state.sheba,
+      price : price,
+      sheba : "IR"+this.state.sheba,
       SellerId:this.state.SellerId,
       status:0,
       statusDesc:'درخواست شده'
@@ -222,6 +230,9 @@ class Billing extends React.Component {
       loading:1
     })
     let SCallBack = function(response){
+      for(let value of response.data.result ){
+        value.price = value.price.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      }
       that.setState({
         loading:0,
         GridDataTransferReq:response.data.result
@@ -266,9 +277,9 @@ class Billing extends React.Component {
                 {(this.state.LastCredit != 0 || this.state.LastAmount != 0) ?
                   <div>
                     <div style={{marginTop:100}} className="row">
-                    <Chip className="col-md-5 col-12 mt-0" style={{fontFamily:'Yekan'}} label={'موجودی نقدی : ' +this.persianNumber(this.state.LastAmount.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' تومان'}  />
+                    <Chip className="col-md-5 col-12 mt-0" style={{fontFamily:'Yekan'}} label={'موجودی نقدی : ' +this.persianNumber(this.state.LastAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + ' تومان'}  />
                     <div className="col-md-2 col-0" ></div>
-                    <Chip className="col-md-5 col-12 mt-md-0 mt-4" style={{fontFamily:'Yekan'}} label={'موجودی اعتباری : ' +this.persianNumber(this.state.LastCredit.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' تومان'}  />
+                    <Chip className="col-md-5 col-12 mt-md-0 mt-4" style={{fontFamily:'Yekan'}} label={'موجودی اعتباری : ' +this.persianNumber(this.state.LastCredit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + ' تومان'}  />
 
                     </div>
                     <div className="mt-4">
@@ -296,13 +307,13 @@ class Billing extends React.Component {
                 <div className="row">
                   <div className="col-12">
                   <div className="group">
-                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.price} name="price" onChange={(event)=>this.setState({price:event.target.value})}  required="true" />
+                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.price} name="price" onChange={(event)=>this.setState({price:event.target.value.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",")})}  required="true" />
                   <label>مبلغ </label>
 					        </div>
                   </div>
                   <div className="col-12">
                   <div className="group">
-                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.sheba} name="sheba" onChange={(event)=>this.setState({sheba:event.target.value})}  required="true" />
+                  <input className="form-control yekan" style={{textAlign:'left'}} autoComplete="off" placeholder="نمونه : 062960000000100324200001 " type="text" value={this.state.sheba} name="sheba" onChange={(event)=>this.setState({sheba:event.target.value})}  required="true" />
                   <label>کد شبا </label>
 					      </div>
                   </div>

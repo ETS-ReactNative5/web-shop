@@ -12,8 +12,7 @@ import Blog from './components/admin/Blog.js'
 import Cats from './components/admin/Cats.js'
 import Billing from './components/admin/Billing.js'
 import Accounts from './components/admin/Accounts.js'
-
-
+import SiteSettings from './components/admin/SiteSettings.js'
 import AdminLogin from './components/admin/Login.js'
 import Login from './components/Login.js'
 import Shop from './components/Shop.js'
@@ -122,6 +121,9 @@ class App extends Component {
                   <Route path="/admin/Seller" component={Seller} />
                   <Route path="/admin/ShopInformation" component={ShopInformation} />
                   <Route path="/admin/ShopsList" component={ShopsList} />
+                  <Route path="/admin/SiteSettings" component={SiteSettings} />
+
+                  
                 </Switch>
               </ScrollToTop>
             </div>
