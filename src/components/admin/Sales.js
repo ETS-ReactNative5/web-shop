@@ -26,15 +26,18 @@ import GoogleMapReact from 'google-map-react';
 import ReactToPrint from 'react-to-print';
 
 const FilterItems = [
-  {label: 'تسویه شده', value: '5'},
-  {label: 'پایان', value: '4'},
-  {label: 'ارسال شده', value: '3'},
-  {label: 'آماده ارسال', value: '2'},
+  {label: 'همه', value: 'All'},
   {label: 'ثبت شده', value: '1'},
+
+  {label: 'آماده ارسال', value: '2'},
+  {label: 'ارسال شده', value: '3'},
+  {label: 'پایان', value: '4'},
+
+  {label: 'تسویه شده', value: '5'},
   {label: 'ناموفق', value: '0'},
   {label: 'لغو شده', value: '-1'},
   {label: 'درخواست لغو توسط کاربر', value: '-2'},
-  {label: 'همه', value: 'All'}
+  
 
 
 ];
@@ -115,6 +118,7 @@ class Sales extends React.Component {
   }
   onRowSelect(event) {
     this.setState({
+      ProductSelectedTitle:event.data.title,
       ProductStatus:event.data.status,
       showProductStatus:true
     })
@@ -189,7 +193,6 @@ class Sales extends React.Component {
 
     let that = this;
     var p=[];
-    debugger;
     for(let i=0;i<value.products.length;i++){
       value.products[i].credit = value.products[i].credit ? value.products[i].credit.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].price = value.products[i].price ? value.products[i].price.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
@@ -203,6 +206,7 @@ class Sales extends React.Component {
         value.products[i].detail +="اندازه : " + value.products[i].size;  
 
     }
+    debugger;
     this.setState({
       selectedUsername:value.username,
       selectedId:value._id,
@@ -452,7 +456,7 @@ class Sales extends React.Component {
     </div>
  
     <Dialog header="جزئیات فاکتور"  visible={this.state.selectedFactor} style={{width: '80vw'}}  minY={70} onHide={this.onHide} maximizable={true}>
-      <div style={{overflowY:'auto',overflowX:'hidden',height:400}}>
+      <div style={{overflowY:'auto',overflowX:'hidden',minHeight:400}}>
       {this.state.isMainShop==1 &&
       <div>
       <p className="yekan" style={{float:"right"}}>تغییر وضعیت سفارش</p>
@@ -473,10 +477,9 @@ class Sales extends React.Component {
       </div>
       
       }
-      <p className="yekan" style={{float:"right"}}>برای تغییر وضعیت هر محصول روی سطر آن کلیک کنید</p><br/><br/>
-      {this.state.showProductStatus==1 &&
+      {this.state.showProductStatus==1 ?
       <div>
-      <p className="yekan" style={{float:"right"}}>تغییر وضعیت محصول</p>
+      <p className="yekan" style={{float:"right",color:'red'}}>تغییر وضعیت {this.state.ProductSelectedTitle||"محصول"}</p>
       <select className="custom-select yekan"  value={this.state.ProductStatus} name="status" onChange={this.handleProductStatusChange} >
       
         <option value="0">منتظر تایید</option>
@@ -488,6 +491,10 @@ class Sales extends React.Component {
        
       </select>
       <br/><br/>
+      </div>
+      :
+      <div>
+        <p className="yekan" style={{float:"right"}}>برای تغییر وضعیت هر محصول روی سطر آن کلیک کنید</p><br/><br/>
       </div>
       }
 

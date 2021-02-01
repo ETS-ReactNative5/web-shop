@@ -11,9 +11,7 @@ class Server extends React.Component {
         serverUrl: 'http://localhost:3000/'*/
         serverUrl: 'https://marketapi.sarvapps.ir/'/*
         serverUrl: 'https://api.aniabook.ir/'*/
-
      }
-   
    }
    getUrl(admin){
       return admin ? this.state.serverUrl+"AdminApi/" : this.state.serverUrl+"MainApi/" 

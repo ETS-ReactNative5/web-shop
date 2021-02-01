@@ -69,10 +69,10 @@ const params3 = {
     delay: 5000,
     disableOnInteraction: false
   },
-
-  pagination: {
-    el: '.swiper-pagination'
-  }
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
 }
 const params1 = {
   autoplay: {
@@ -227,6 +227,7 @@ class MainBox2 extends React.Component {
       text3: null,
       text4: null,
       text5: null,
+      SpecialImage:null,
       loading: true,
       cats: [],
       absoluteUrl: this.Server.getAbsoluteUrl(),
@@ -334,6 +335,13 @@ class MainBox2 extends React.Component {
               link5: item.link,
               text5: item.text
             })
+          if (item.name == "file11"){
+            debugger;
+            that.setState({
+              SpecialImage: that.state.absoluteUrl + item.fileUploaded.split("public")[1]
+            })
+          }
+              
         })
         that.getCategory(1);
       })
@@ -674,7 +682,9 @@ class MainBox2 extends React.Component {
                     <Swiper {...params2}>
                       <div style={{ maxWidth: 230}}>
                         <p class="YekanBakhFaBold" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center' }}>محصولات شگفت انگیز</p>
-                        <img src={require('../public/Ania_Off.png')} style={{height:250}}  />
+                        {this.state.SpecialImage &&
+                        <img src={this.state.SpecialImage} style={{height:250}}  />
+                        }
                       </div>
                       {this.state.products.map((item, index) => {
                         var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];

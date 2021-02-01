@@ -1668,7 +1668,7 @@ PreparEditProduct(row){
                   <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.off} name="off" onChange={this.handleChangeOff}  required="true"  />
                  <label>تخفیف</label>
 					      </div>
-                <div className="group" style={{background:'#eee'}}>
+                <div className="group" >
 
                  <Multiselect
                   placeholder="رنگ"
@@ -1678,7 +1678,7 @@ PreparEditProduct(row){
                   displayValue="name" // Property name to display in the dropdown options
                   />
 					      </div>
-                <div className="group" style={{background:'#eee'}}>
+                <div className="group">
 
                 <Multiselect
                   placeholder="اندازه"
@@ -1913,7 +1913,7 @@ PreparEditProduct(row){
       </div>
       </div>
       <div className="col-lg-6">
-      <div className="group" style={{background:'#eee'}}>
+      <div className="group" >
             <Multiselect
                   placeholder="رنگ"
                   ref={this.ColorsRef_edit}
@@ -1925,7 +1925,7 @@ PreparEditProduct(row){
 					      </div>
       </div>
       <div className="col-lg-6">
-          <div className="group" style={{background:'#eee'}}>
+          <div className="group" >
           <Multiselect
                   placeholder="اندازه"
                   ref={this.SizeRef_edit}

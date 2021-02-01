@@ -285,7 +285,7 @@ class Cart extends React.Component {
                     type: 'LoginTrueUser',    
                     CartNumber:that.state.CartNumber,
                     off:that.props.off,
-                    credit:that.props.credit
+                    credit:that.props.credit != "undefined" ? that.props.credit : 0
                })
                Notification.open({
                 title: '',
@@ -403,7 +403,7 @@ class Cart extends React.Component {
                  
                         </div>
                      <div className="col-lg-2 col-4 YekanBakhFaMedium" style={{textAlign:'center'}}>
-                     <InputNumber value={car.number} inputStyle={{borderRadius:0,padding:0}} mode="decimal" showButtons  onValueChange={(e) => {if(car.number == e.value) return; this.changeCart(e.value,car.product_detail_id||car.product_id,car.user_id,car.number)}} min={1} max={car.products[0].number} />
+                     <InputNumber value={car.number} inputStyle={{borderRadius:0,padding:0,textAlign:'center',fontSize:20}} mode="decimal" showButtons  onValueChange={(e) => {if(car.number == e.value) return; this.changeCart(e.value,car.product_detail_id||car.product_id,car.user_id,car.number)}} min={1} max={car.products[0].number} />
 
                      </div>
                      <div className="col-lg-2 col-12 YekanBakhFaMedium mt-lg-0 mt-4" style={{textAlign:'center'}}>
@@ -573,10 +573,7 @@ class Cart extends React.Component {
             
             {this.state.GridData.length > 0 ? 
             <div>
-                <div style={{textAlign:'right',marginRight:10}} >
-                <p className="YekanBakhFaBold">موجودی اعتباری : {this.props.credit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
-
-                </div>
+                
             <DataView value={this.state.GridData} layout={this.state.layout}  rows={100} itemTemplate={this.itemTemplate}></DataView>
             </div>
             :
@@ -605,6 +602,10 @@ class Cart extends React.Component {
         <div className="col-lg-3">
         
         <div className="card mt-md-0 mt-5" style={{padding:10,borderRadius:20}}>
+        <div style={{textAlign:'left',marginRight:10,borderBottom:'1px solid #eee'}} >
+                <p className="YekanBakhFaBold">موجودی اعتباری : {this.props.credit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
+
+                </div>
                 {
                     this.state.paykAmount > 0 &&
                     <p className="YekanBakhFaMedium" style={{fontSize:14,textAlign:'center',marginTop:10,color:'slategrey'}}>{this.persianNumber(this.state.paykAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + "  تومان" } به عنوان هزینه ارسال به مبلغ سفارش اضافه شد</p>

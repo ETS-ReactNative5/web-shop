@@ -86,8 +86,8 @@
         font-family: 'iranyekanwebmedium';
     
         }
-        .iranyekanweblight{
-            font-family: 'iranyekanweblight';
+        .yekan{
+            font-family: 'yekan';
         
             }
             .iranyekanwebblack{
@@ -864,7 +864,7 @@
     width: 100%;
     color: #030a16;
   }
-  .form-control:focus ~ label, .form-control:valid ~ label {
+  .form-control:focus ~ label, .form-control:valid ~ label, .form-control:disabled ~ label {
     top: -20px;
     font-size: 14px;
     color: #5264AE;
@@ -977,6 +977,7 @@
 .rs-alert-item-content{
     font-size: 14px;
     font-family: 'iranyekanwebmedium' ;
+    max-width:'auto'
 }
 .rs-alert-item-content .rs-icon{
 display: none;
@@ -1080,18 +1081,18 @@ display: none;
     color:#c5c3c3 !important;
 }
 .blogs p{
-    font-family: 'iranyekanweblight' !important;
+    font-family: 'yekan' !important;
 }
 .p-dropdown-item{
     text-align: right;
-    font-family: iranyekanweblight;
+    font-family: yekan;
 }
 .react-confirm-alert-overlay{
     z-index:10003 !important;
 }
 
 .p-panel-title{
-    font-family: iranyekanweblight;
+    font-family: yekan;
 
 }
 .p-tabview .p-tabview-nav li{
@@ -1099,10 +1100,14 @@ display: none;
 }
 
 div#multiselectContainerReact span {
-    font-family: 'iranyekanweblight';
+    font-family: 'yekan';
 }
 div#multiselectContainerReact .searchBox {
-    font-family: 'iranyekanweblight';}
+    font-family: 'yekan';
+}
+div#multiselectContainerReact .searchBox::placeholder {
+    font-family: 'yekan';
+}
 .p-dropdown-filter-container{
     width:100%;
 }    
@@ -1199,7 +1204,7 @@ div.InlineImagesHalf{
     margin-left: 0px !important;
 }
 .A-container{
-    max-width:1366px;
+    max-width:1676px;
     margin-right:auto;
     margin-left:auto;
     width:100%;
@@ -1208,4 +1213,15 @@ div.InlineImagesHalf{
 .form-control:focus {
     border-color:inherit !important;
     outline: none!important;
+}
+.optionContainer li{
+    font-family:'yekan';
+    text-align: right;
+}
+.p-button-label {
+    font-family: yekan !important;
+}
+.p-autocomplete-loader{
+    right: auto !important;
+    left: 3.5rem;
 }

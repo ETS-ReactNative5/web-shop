@@ -293,6 +293,11 @@ class Products extends React.Component {
         document.getElementsByTagName("body")[0].scrollTo(0, 0);
         //this.myRef.current.scrollTo(0, 0);   
     }
+    componentWillReceiveProps(nextProps) {
+        if((nextProps.location.search && nextProps.location.search.split("id=")[1] != this.state.id) || (!nextProps.location.search && this.state.id) ){
+            window.location.reload();
+        }
+    }
     roundPrice(price) {
         return price.toString();;
         if (price == 0)
@@ -648,7 +653,7 @@ class Products extends React.Component {
                                                             (this.state.UId || !this.state.ShowPriceAftLogin) ?
                                                                 <div className=" row" style={{marginTop:95}}>
                                                                     <div className="col-lg-4 col-12 ">
-                                                                        <InputNumber value={this.state.reqNumber} inputStyle={{borderRadius:0,padding:0}} mode="decimal" showButtons onValueChange={(e) => this.setState({ reqNumber: e.value })} min={1} max={this.state.number} />
+                                                                        <InputNumber value={this.state.reqNumber} inputStyle={{borderRadius:0,padding:0,textAlign:'center',fontSize:20}} mode="decimal" showButtons onValueChange={(e) => this.setState({ reqNumber: e.value })} min={1} max={this.state.number} />
 
                                                                         </div>
                                                                     <div className="col-lg-8 col-12 ">
@@ -795,7 +800,7 @@ class Products extends React.Component {
                                                                 </div>
                                                                 <div className="col-lg-3 col-md-6 col-12">
                                                                         <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
-                                                                           <span style={{ fontSize: 13, fontWeight: 'bold',color:'#989898' }}><i className="fal fa-umbrella" style={{fontSize:20,color:'#000'}} /> گارانتی اصالت و سلامت فیزیکی کالا</span>
+                                                                           <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-umbrella" style={{fontSize:20,color:'#000'}} /> گارانتی اصالت و سلامت فیزیکی کالا</span>
                                                                         </div>
                                                                 </div>
                                                                 <div className="col-lg-2 col-md-6 col-12">

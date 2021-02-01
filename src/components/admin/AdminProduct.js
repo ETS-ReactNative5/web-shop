@@ -30,7 +30,7 @@ import { Dropdown } from 'primereact/dropdown';
 import {AutoComplete} from 'primereact/autocomplete';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import { Multiselect } from 'multiselect-react-dropdown';
-
+let Count=0;
 class AdminProduct extends React.Component {
   constructor(props){
     super(props);
@@ -644,7 +644,7 @@ PreparEditProduct(row){
       CatSelectedName=property["name"]
   }  
   this.setState({
-    id_edit:(this.state.SellerId !=this.state.MainShopId) ? row.product_id : row._id,
+    id_edit:(this.state.SellerId !=this.state.MainShopId) ? row.product_id||row.product_detail[0].product_id : row._id,
     title_edit: row.title,
     title2_edit: row.subTitle,
     desc_edit: row.desc,
@@ -674,7 +674,7 @@ PreparEditProduct(row){
   }
   
   if(this.state.SellerId !=this.state.MainShopId ){
-    this.GetProductPerShop(this.state.SellerId,row.product_id)
+    this.GetProductPerShop(this.state.SellerId,row.product_id||row.product_detail[0].product_id)
   }
   
 }
@@ -993,6 +993,10 @@ PreparEditProduct(row){
   }
   
   setProduct(event){
+    if(parseInt(this.state.price_edit.replace(/,/g,"")) > 100000000){
+      Alert.success("قیمت نمی تواند بیش از 100,000,000 تومان و کمتر از 100 تومان باشد",2500);
+      return;
+    }
     if(this.state.title == "" || this.state.title2 == "" || this.state.desc == "" || this.state.price == "" || this.state.off == ""  )
       Alert.info('فیلدهای اجباری را پر کنید', 5000);
     let that=this;
@@ -1037,7 +1041,6 @@ PreparEditProduct(row){
       Size:this.SizeRef.current.getSelectedItems()
     };
     
-    debugger;
 
     let SCallBack = function(response){
       if(response.data.result.insertedCount)
@@ -1079,6 +1082,10 @@ PreparEditProduct(row){
     event.preventDefault();
   }
   editProduct(event){
+      if(parseInt(this.state.price_edit.replace(/,/g,"")) > 100000000){
+        Alert.success("قیمت نمی تواند بیش از 100,000,000 تومان و کمتر از 100 تومان باشد",200000);
+        return;
+      }
       if(this.state.title_edit == "" || this.state.title2_edit == "" || this.state.desc_edit == "" || this.state.price_edit == ""  )
         {
           Alert.success("فیلدهای اجباری را پر کنید",2500);
@@ -1236,6 +1243,7 @@ PreparEditProduct(row){
     this.Server.send("AdminApi/getProducts",param,SCallBack,ECallBack)
   }
   GetProductPerShop(shopId,id){
+    debugger;
     let that = this;
     that.setState({
       price_edit: "",
@@ -1271,6 +1279,7 @@ PreparEditProduct(row){
       })
       if(res.length==0)
         return;
+
       that.setState({
         price_edit: res[0].price.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         off_edit: res[0].off,
@@ -1285,7 +1294,8 @@ PreparEditProduct(row){
         SetHaraj_edit:res[0].HarajDate ? 1 : 0,
         PrepareTime_edit:res[0].PrepareTime ? res[0].PrepareTime : "",
         SelectedSize_edit:res[0].SelectedSize ? res[0].SelectedSize : "",
-        SelectedColors_edit:res[0].SelectedColors ? res[0].SelectedColors : ""
+        SelectedColors_edit:res[0].SelectedColors ? res[0].SelectedColors : "",
+        harajCheckBoxEdit:res[0].HarajDate ? true : false
       })
       
      
@@ -1301,7 +1311,7 @@ PreparEditProduct(row){
     this.Server.send("AdminApi/getProducts",param,SCallBack,ECallBack)
   }
   onSortChange(event) {
-    const value = event.value.value;
+    const value = event.value;
     if (value.indexOf('!') === 0) {
         this.setState({
             sortOrder: -1,
@@ -1419,7 +1429,11 @@ PreparEditProduct(row){
     return this.inputTextEditor(field,props);
   }
   onSelect(event){
+    debugger;
     var _id = event.originalEvent.target.getAttribute("_id");
+    this.setState({
+      brand:event.value.title
+    })
     if(!_id){
       try{
         _id = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_id");
@@ -1441,20 +1455,14 @@ PreparEditProduct(row){
     
     let SCallBack = function(response){
 
-      let title = [];
-      let _id =[],
-        img=[],
-        desc=[],
-        subTitle=[];
+      
+        let brandSuggestions = []
       response.data.result.map(function(v,i){
-        title.push(v.title);
-        subTitle.push(v.subTitle);
-        _id.push(v._id);
-        img.push(v.fileUploaded);
-        desc.push(v.desc);
+        
+        brandSuggestions.push({_id:v._id,title:v.title,subTitle:v.subTitle,desc:v.desc,img:v.fileUploaded})
       })
       
-      that.setState({_id:_id,img:img ,desc:desc, Count:-1 , brandSuggestions: title,subTitle:subTitle });
+      that.setState({brandSuggestions:brandSuggestions});
   
       
 
@@ -1470,20 +1478,20 @@ PreparEditProduct(row){
     
      }
   itemTemplateSearch(brand) {
-		this.state.Count++;
+    
 		return (
 		    <div className="p-clearfix" style={{direction:'rtl'}} >
-			   <div style={{ margin: '10px 10px 0 0' }} className="row" _id={this.state._id[this.state.Count]} >
+			   <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
 			   
-			   <div className="col-lg-6" _id={this.state._id[this.state.Count]} style={{textAlign:'right'}}>{this.state.desc[this.state.Count] && 
-			   <span className="iranyekanwebregular" style={{textAlign:'right'}}  _id={this.state._id[this.state.Count]} >
-			   <span _id={this.state._id[this.state.Count]}>{brand}</span><br />
-			   <span _id={this.state._id[this.state.Count]}>{this.state.subTitle[this.state.Count]}</span> 
+			   <div className="col-lg-6" _id={brand._id} style={{textAlign:'right'}}>{brand.desc && 
+			   <span className="iranyekanwebregular" style={{textAlign:'right'}}  _id={brand._id} >
+			   <span _id={brand._id}>{brand.title}</span><br />
+			   <span _id={brand._id}>{brand.subTitle}</span> 
 			   </span>
 			   }
 			   </div>
-			   <div _id={this.state._id[this.state.Count]} className="col-lg-6">{this.state.img[this.state.Count] && 
-			   <img src={this.state.absoluteUrl + this.state.img[this.state.Count].split("public")[1]} style={{width:100,height:100,minWidth:100}}  _id={this.state._id[this.state.Count]}  />
+			   <div _id={brand._id} className="col-lg-6" style={{textAlign:'center'}}>{brand.img && 
+			   <img src={this.state.absoluteUrl + brand.img.split("public")[1]} style={{width:100,height:100,minWidth:100}}  _id={brand._id}  />
 			   } </div>
 			   </div>
 		    </div>
@@ -1613,7 +1621,7 @@ PreparEditProduct(row){
  
     render(){
       const footer = (
-        <div>
+        <div style={{textAlign:'center'}}>
                 <button  className="btn btn-primary yekan" onClick={this.editProduct}  style={{marginTop : "20px" , marginBottom : "20px"}}> اصلاح محصول </button>
 
         </div>
@@ -1658,17 +1666,17 @@ PreparEditProduct(row){
 
                 <div className="group">
                   <input className="form-control yekan" autoComplete="off" type="text" value={this.state.price} name="price" onChange={this.handleChangePrice}  required="true" />
-                  <label>قیمت</label>
+                  <label>قیمت (تومان)</label>
 					      </div>
                 <div className="group">
                   <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.number} name="number" onChange={this.handleChangeNumber}  required="true"  />
                  <label>تعداد</label>
 					      </div>
                 <div className="group">
-                  <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.off} name="off" onChange={this.handleChangeOff}  required="true"  />
+                  <input className="form-control yekan" autoComplete="off"  type="number" min="0" max="100" value={this.state.off} name="off" onChange={this.handleChangeOff}  required="true"  />
                  <label>تخفیف</label>
 					      </div>
-                <div className="group" style={{background:'#eee'}}>
+                <div className="group">
 
                  <Multiselect
                   placeholder="رنگ"
@@ -1676,9 +1684,10 @@ PreparEditProduct(row){
                   options={this.Colors} // Options to display in the dropdown
                   selectedValues={this.state.selectedColors} // Preselected value to persist in dropdown
                   displayValue="name" // Property name to display in the dropdown options
+                  
                   />
 					      </div>
-                <div className="group" style={{background:'#eee'}}>
+                <div className="group">
 
                 <Multiselect
                   placeholder="اندازه"
@@ -1689,7 +1698,7 @@ PreparEditProduct(row){
                   />
 					      </div>
                 <div className="group">
-                  <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.PrepareTime} name="PrepareTime" onChange={this.handleChangePrepareTime}  required="true"  />
+                  <input className="form-control yekan" autoComplete="off"  type="number" min="0" max="7" value={this.state.PrepareTime} name="PrepareTime" onChange={this.handleChangePrepareTime}  required="true"  />
                  <label>زمان آماده سازی محصول برای تحویل به مشتری</label>
 					      </div>
                 {this.state.SeveralShop && 
@@ -1827,7 +1836,7 @@ PreparEditProduct(row){
                        )
                   
                     })
-                  }
+                  }   
                   </div>
                 
                 
@@ -1840,10 +1849,10 @@ PreparEditProduct(row){
                 <div className="col-6" style={{textAlign: 'right'}}>
                 <AutoComplete placeholder="نام کالای مورد نظر را جستجو کنید" inputStyle={{fontFamily:'iranyekanwebregular',textAlign:'right',fontSize:12,borderColor:'#dedddd',fontSize:15}} style={{width:'100%'}} onChange={(e) => this.setState({ brand: e.value })}  itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)}  suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
                 </div>
-                <div className="col-3" style={{textAlign: 'left'}}>
+                <div className="col-3 mt-0 mt-md-2" style={{textAlign: 'right'}}>
                 <i class="fas fa-sync" style={{cursor:'pointer'}} aria-hidden="true" onClick={()=>this.GetProduct()} ></i>
                 </div>
-                <div className="col-3" style={{textAlign: 'left'}}>
+                <div className="col-3" style={{textAlign: 'left',display:'none'}}>
                     <Dropdown options={this.sortOptions} value={this.state.sortKey} optionLabel="label" placeholder="مرتب سازی" onChange={this.onSortChange}/>
                 </div>
                 </div>
@@ -1853,7 +1862,7 @@ PreparEditProduct(row){
             </div>
     <Dialog header="اصلاح محصول"  visible={this.state.visibleModalEditProduct} style={{width: '60vw'}} footer={footer} minY={70} onHide={this.onHide} maximizable={true}>
 
-    <form   style={{overflowY:'auto',overflowX:'hidden',height:400}}  >
+    <form   style={{overflowY:'auto',overflowX:'hidden'}}  >
       <div className="row">
       {this.state.SeveralShop && (this.state.SellerId ==this.state.MainShopId ) &&
       
@@ -1903,29 +1912,31 @@ PreparEditProduct(row){
       <div className="col-lg-6">
       <div className="group">
         <input className="form-control yekan" autoComplete="off" type="text" value={this.state.price_edit} name="price_edit" onChange={this.handleChangePrice_edit}  required="true" />
-        <label>قیمت</label>
+        <label>قیمت(تومان)</label>
       </div>
       </div>
       <div className="col-lg-6">
       <div className="group">
-        <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.off_edit} name="off_edit" onChange={this.handleChangeOff_edit}  required="true"  />
+        <input className="form-control yekan" autoComplete="off"  type="number" min="0" max="100" value={this.state.off_edit} name="off_edit" onChange={this.handleChangeOff_edit}  required="true"  />
        <label>تخفیف</label>
       </div>
       </div>
       <div className="col-lg-6">
-      <div className="group" style={{background:'#eee'}}>
+      <div className="group" >
             <Multiselect
                   placeholder="رنگ"
                   ref={this.ColorsRef_edit}
                   options={this.Colors} // Options to display in the dropdown
                   selectedValues={this.state.SelectedColors_edit} // Preselected value to persist in dropdown
                   displayValue="name" // Property name to display in the dropdown options
+                  disable={this.state.SellerId !=this.state.MainShopId}
+
                   />
 
 					      </div>
       </div>
       <div className="col-lg-6">
-          <div className="group" style={{background:'#eee'}}>
+          <div className="group">
           <Multiselect
                   placeholder="اندازه"
                   ref={this.SizeRef_edit}
@@ -1933,6 +1944,8 @@ PreparEditProduct(row){
                   selectedValues={this.state.SelectedSize_edit} // Preselected value to persist in dropdown
                   displayValue="name" // Property name to display in the dropdown options
                   style={{ fontFamily: 'iranyekanweblight' }}
+                  disable={this.state.SellerId !=this.state.MainShopId}
+
                   />
 
 					      </div>
@@ -1940,7 +1953,7 @@ PreparEditProduct(row){
                 
       <div className="col-lg-6">
       <div className="group">
-        <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.PrepareTime_edit} name="PrepareTime_edit" onChange={this.handleChangePrepareTime_edit}  required="true"  />
+        <input className="form-control yekan" autoComplete="off"  type="number" min="0" max="7"  value={this.state.PrepareTime_edit} name="PrepareTime_edit" onChange={this.handleChangePrepareTime_edit}  required="true"  />
        <label>زمان آماده سازی محصول برای تحویل به مشتری</label>
       </div>
       </div>
@@ -2156,7 +2169,7 @@ PreparEditProduct(row){
      </div>
    <div className="datatable-editing-demo">
   
-                <div className="card" style={{maxHeight: '400px'}} >
+   <div className="card" style={{maxHeight: '400px'}} >
    <DataTable value={this.state.grid} editMode="cell"   className="editable-cells-table" paginator={true} rows={14}  >
                         <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight',textAlign:'right',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }} filter={true} field="title" header="عنوان" ></Column>
                         <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight',textAlign:'right',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }} filter={true} field="subTitle" header="عنوان دوم"  ></Column>

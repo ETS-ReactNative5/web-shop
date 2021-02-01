@@ -45,6 +45,7 @@ class Pics extends React.Component {
       logo7:null,
       logo8:null,
       logo9:null,
+      logo11:null,
       link1:null,
       link2:null,
       link3:null,
@@ -304,7 +305,11 @@ class Pics extends React.Component {
           this.setState({
             logo9 : this.state.absoluteUrl + response.data.split("public")[1]
           })
-
+          if(name=="file11")
+            this.setState({
+              logo11 : this.state.absoluteUrl + response.data.split("public")[1]
+            })
+          
           this.getPics();
        
       })
@@ -388,6 +393,10 @@ class Pics extends React.Component {
               logo9 : that.state.absoluteUrl + item.fileUploaded.split("public")[1],
               link9: item.link,
               text9: item.text
+            })
+          if(item.name=="file11")
+            that.setState({
+              logo11 : that.state.absoluteUrl + item.fileUploaded.split("public")[1]
             })
         })
         that.setState({
@@ -631,7 +640,7 @@ class Pics extends React.Component {
       </div>
       </div>
       <div className="col-6" style={{textAlign:'center',marginTop:10}} >
-      <img src={this.state.logo9} style={{width:200}}  />
+        <img src={this.state.logo9} style={{width:200}}  />
       </div>
 
 
@@ -642,6 +651,29 @@ class Pics extends React.Component {
       
     </form>
     </Panel> 
+
+    <Panel header="تصویر شگفت انگیز" style={{marginTop:50,textAlign:'right',marginBottom:50,fontFamily: 'yekan'}}>
+         <form  >
+      <div className="row">
+      <div className="col-6" >
+      <div className="group">
+            <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload}  type="file"  name="file11"    />
+                 <label>تصویر  </label>
+			</div>
+      </div>
+      <div className="col-6" style={{textAlign:'center',marginTop:10}} >
+      <img src={this.state.logo11} style={{width:200}}  />
+      </div>
+
+     
+
+     
+      </div>
+      
+    </form>
+    </Panel> 
+
+
     </div>  
     :
     <div>
