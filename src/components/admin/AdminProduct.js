@@ -894,7 +894,6 @@ PreparEditProduct(row){
             loadedCount : `${loaded} byte of ${total}byte | ${percent}%`
           })
           if(percent == "100"){
-            debugger;
             this.setState({
               showLoadedCount:0
             })
@@ -1162,7 +1161,6 @@ PreparEditProduct(row){
   productTableAction(act,id){
     let that = this;
 
-    debugger;
     if(act=="delete"){
       confirmAlert({
         title: <span className="yekan">حذف محصول</span>,
@@ -1243,7 +1241,6 @@ PreparEditProduct(row){
     this.Server.send("AdminApi/getProducts",param,SCallBack,ECallBack)
   }
   GetProductPerShop(shopId,id){
-    debugger;
     let that = this;
     that.setState({
       price_edit: "",
@@ -1429,7 +1426,6 @@ PreparEditProduct(row){
     return this.inputTextEditor(field,props);
   }
   onSelect(event){
-    debugger;
     var _id = event.originalEvent.target.getAttribute("_id");
     this.setState({
       brand:event.value.title

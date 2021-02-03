@@ -256,7 +256,10 @@ class Users extends React.Component {
     this.setState({
       HasError: null
     })
-    debugger;
+    if(this.state.level=="1" && !this.state.ShopId){
+      Alert.warning('فروشگاه مربوط به مدیر را انتخاب کنید',5000);
+      return;
+    }
     let param={
       token: localStorage.getItem("api_token"),
       name:this.state.name,
@@ -342,7 +345,8 @@ class Users extends React.Component {
       pass2:"",
       address:"",
       credit:0,
-      HasError:null
+      HasError:null,
+      ShopId:null
     });
 
   }
@@ -646,6 +650,7 @@ class Users extends React.Component {
     <select className="custom-select irsans"  value={this.state.ShopId} name="ShopId" onChange={(event)=>this.setState({
       ShopId: event.target.value
       })} >
+        <option value="null" >فروشگاه مربوط به مدیر را انتخاب کنید</option>
       {
         this.state.ShopArray && this.state.ShopArray.map((v,i) => {
           return (   <option value={v} >{this.state.ShopArrayName[i]}</option> )

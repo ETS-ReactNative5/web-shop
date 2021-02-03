@@ -756,7 +756,7 @@ class MainBox2 extends React.Component {
                 if (item.pic && index < 4) {
                   return (
                     <div className="col-md-3 col-12 mb-md-0 mb-3">
-                      <Link to={`${process.env.PUBLIC_URL}/products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} href="#" target="_blank" style={{ textDecoration: 'none', height: 120 }}>
+                      <Link to={`${process.env.PUBLIC_URL}/category?id=` + item._id} href="#" target="_blank" style={{ textDecoration: 'none', height: 120 }}>
                         <img style={{ height: 150, width: '100%' }} src={this.state.absoluteUrl + item.pic.split("public")[1]}></img>
                       </Link></div>
                   )

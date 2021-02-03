@@ -64,7 +64,8 @@ class Login extends React.Component {
       that.setState({
         ActiveSms:response.data.result ? response.data.result.ActiveSms : "none",
         STitle:response.data.result ? response.data.result.STitle : "",
-        AccessAfterReg:response.data.result ? response.data.result.AccessAfterReg : 0
+        AccessAfterReg:response.data.result ? response.data.result.AccessAfterReg : 0,
+        RegSmsText:response.data.result ? response.data.result.RegSmsText : ''
 
       })
     })
@@ -197,7 +198,7 @@ class Login extends React.Component {
               if(this.state.ActiveSms=="smart"){
                 axios.post(this.state.url+'sendsms_smartSms', {
                   token: response.data.result.TokenKey,
-                  text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                  text: this.state.AccessAfterReg ? "کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
                   mobileNo : this.state.inputEmail.trim()
                 })
                 .then(response => {
@@ -216,7 +217,7 @@ class Login extends React.Component {
                       })
                       axios.post(this.state.url+'sendsms_SmsIr', {
                         token: response.data.result.TokenKey,
-                        text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                        text: this.state.AccessAfterReg ? "کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
                         mobileNo : this.state.inputEmail.trim()  
                       })
                       .then(response => {
@@ -269,6 +270,52 @@ class Login extends React.Component {
             Step: "3"
           })
           .then(response => {
+            
+            if(this.state.ActiveSms=="smart"){
+              axios.post(this.state.url+'sendsms_smartSms', {
+                token: response.data.result.TokenKey,
+                text: this.state.RegSmsText+"\n"+this.state.STitle,
+                mobileNo : this.state.inputEmail.trim()
+              })
+              .then(response => {
+                  console.log(response);
+              
+              })
+              .catch(error => {
+              })
+            }else if(this.state.ActiveSms=="smsir"){
+              axios.post(this.state.url+'GetSmsToken', {
+              })
+              .then(response => {
+                    
+                    this.setState({
+                      SmsToken:response.data.result.TokenKey
+                    })
+                    axios.post(this.state.url+'sendsms_SmsIr', {
+                      token: response.data.result.TokenKey,
+                      text: this.state.RegSmsText+"\n"+this.state.STitle,
+                      mobileNo : this.state.inputEmail.trim()  
+                    })
+                    .then(response => {
+                        console.log(response);
+                    
+                    })
+                    .catch(error => {
+                     // alert(error);
+                     alert(error)
+                    })
+                
+                
+              })
+              .catch(error => {
+                alert(error);
+                console.log(error)
+              })
+            }
+
+
+
+
             localStorage.setItem("api_token",response.data.token);
             this.props.dispatch({
               type: 'LoginTrueUser',    

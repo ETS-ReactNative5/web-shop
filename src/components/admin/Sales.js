@@ -63,7 +63,8 @@ class Sales extends React.Component {
       LastCredit:0,
       loading:0,
       isMainShop:0,
-      showProductStatus:0
+      showProductStatus:0,
+      url: this.Server.getUrl()
       
     }
     this.selectedFactorChange = this.selectedFactorChange.bind(this);
@@ -145,12 +146,19 @@ class Sales extends React.Component {
     that.setState({
       newStatus:event.target.value
     })
+    let msg="";
+    if(event.target.value=="2" || event.target.value=="3" || event.target.value=="4"){
+          msg = event.target.value=="2" ? "سفارش شما توسط فروشنده تامین و آماده ارسال گردید" + "\n" + that.state.STitle : 
+                (event.target.value=="3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش تا ساعتی دیگر به دستتان خواهد رسید"+"\n"+that.state.STitle :
+                 "سفارش شما تحویل شد ." + "\n" + "از خریدتان ممنونیم" + "\n" + that.state.STitle)
+    }
     let param={
       token: localStorage.getItem("api_token"),
       newStatus:event.target.value,
       selectedId:this.state.selectedId,
       statusDesc:event.target.options[event.target.selectedIndex].innerText,
-      selectedUsername:this.state.selectedUsername
+      selectedUsername:this.state.selectedUsername,
+      msg:msg
     };
     let SCallBack = function(response){
       
@@ -225,7 +233,9 @@ class Sales extends React.Component {
         type:type,
         product:product
       };
+
       let SCallBack = function(response){
+          
         
       };
       let ECallBack = function(error){
@@ -353,8 +363,13 @@ class Sales extends React.Component {
         loading:0
       })
       if(response.data.result){
+        let resp = response.data.result[0];
         that.setState({
-          CreditSupport : response.data.result[0].CreditSupport
+          CreditSupport : resp.CreditSupport,
+          ActiveSms:response.data.result ? resp.ActiveSms : "none",
+          STitle:response.data.result ? resp.STitle : "",
+          AccessAfterReg:response.data.result ? resp.AccessAfterReg : 0,
+          RegSmsText:response.data.result ? resp.RegSmsText : ''
         })
       }
 
@@ -371,6 +386,7 @@ class Sales extends React.Component {
 
   
 }
+
   onEditorValueChange(props, value,field) {
     let updatedProducts = [...props.value];
     updatedProducts[props.rowIndex][props.field] = value;

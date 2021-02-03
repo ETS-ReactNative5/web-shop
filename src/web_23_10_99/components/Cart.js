@@ -386,7 +386,7 @@ class Cart extends React.Component {
                      </div>
                      :
                      <div>
-                        <label className="YekanBakhFaMedium">خرید نقدی</label>
+                        <label className="YekanBakhFaMedium">خرید آنلاین</label>
 
                      </div>
                     }

@@ -30,18 +30,25 @@ class Invoice extends React.Component {
         InMobileApp:value.InMobileApp=="1" ? "1" : "0"
       })
       if(refId && refId !=-1){
+        
         axios.post(this.state.url+'getuserInformation', {
           token: localStorage.getItem("api_token"),
           user_id:value.userId
 
         })
         .then(response => {
+          debugger
                 let credit = response.data.result[0].credit;
+                this.setState({
+                  username:response.data.result[0].username
+                })
                 this.props.dispatch({
                   type: 'LoginTrueUser',    
                   CartNumber:0,
                   credit:credit
                 })
+                this.getSetting();
+                
                 
             })
           .catch(error => {
@@ -97,6 +104,51 @@ class Invoice extends React.Component {
                 refId : response.data.result,
                 userId : userId
               })
+              if(that.state.ActiveSms=="smart"){
+                axios.post(that.state.url+'sendsms_smartSms', {
+                  token: response.data.result.TokenKey,
+                  text: "ثبت سفارش با موفقیت انجام شد " +
+                  "شماره پیگیری سفارش : "+ refId + "\n"
+                  +""+"\n"+"سفارش شما در سریع ترین زمان پردازش و ارسال خواهد شد"+"\n"+"از خرید شما سپاسگزاریم"+"\n"+that.state.STitle,
+                  mobileNo : that.state.username.trim()
+                })
+                .then(response => {
+                    console.log(response);
+                
+                })
+                .catch(error => {
+                })
+              }else if(that.state.ActiveSms=="smsir"){
+                axios.post(that.state.url+'GetSmsToken', {
+                })
+                .then(response => {
+                      
+                    that.setState({
+                        SmsToken:response.data.result.TokenKey
+                      })
+                      axios.post(that.state.url+'sendsms_SmsIr', {
+                        token: response.data.result.TokenKey,
+                        text: "ثبت سفارش با موفقیت انجام شد "+
+                        "شماره پیگیری سفارش : "+ refId + "\n"
+                        +"\n"+"سفارش شما در سریع ترین زمان پردازش و ارسال خواهد شد"+"\n"+"از خرید شما سپاسگزاریم"+"\n"+that.state.STitle,
+                        mobileNo : that.state.username.trim()  
+                      })
+                      .then(response => {
+                          console.log(response);
+                      
+                      })
+                      .catch(error => {
+                       // alert(error);
+                       alert(error)
+                      })
+                  
+                  
+                })
+                .catch(error => {
+                  alert(error);
+                  console.log(error)
+                })
+              }
           })
         .catch(error => {
   
@@ -125,6 +177,68 @@ class Invoice extends React.Component {
      })
 
 
+  }
+  getSetting(){
+    debugger;
+    let that = this;
+    axios.post(this.state.url+'getSettings', {
+      token: localStorage.getItem("api_token")
+    })
+    .then(response => {
+      that.setState({
+        ActiveSms:response.data.result ? response.data.result.ActiveSms : "none",
+        STitle:response.data.result ? response.data.result.STitle : "",
+        AccessAfterReg:response.data.result ? response.data.result.AccessAfterReg : 0,
+        RegSmsText:response.data.result ? response.data.result.RegSmsText : ''
+
+      })
+      setTimeout(function(){
+        if(that.state.ActiveSms=="smart"){
+          axios.post(that.state.url+'sendsms_smartSms', {
+            token: response.data.result.TokenKey,
+            text: "سفارش شما با موفقیت ثبت شد "+"\n"+"سفارش شما در سریع ترین زمان پردازش و ارسال خواهد شد"+"\n"+"از خرید شما سپاسگزاریم",
+            mobileNo : that.state.username.trim()
+          })
+          .then(response => {
+              console.log(response);
+          
+          })
+          .catch(error => {
+          })
+        }else if(that.state.ActiveSms=="smsir"){
+          axios.post(that.state.url+'GetSmsToken', {
+          })
+          .then(response => {
+                
+              that.setState({
+                  SmsToken:response.data.result.TokenKey
+                })
+                axios.post(that.state.url+'sendsms_SmsIr', {
+                  token: response.data.result.TokenKey,
+                  text: "سفارش شما با موفقیت ثبت شد "+"\n"+"سفارش شما در سریع ترین زمان پردازش و ارسال خواهد شد"+"\n"+"از خرید شما سپاسگزاریم",
+                  mobileNo : that.state.username.trim()  
+                })
+                .then(response => {
+                    console.log(response);
+                
+                })
+                .catch(error => {
+                 // alert(error);
+                 alert(error)
+                })
+            
+          })
+          .catch(error => {
+            alert(error);
+            console.log(error)
+          })
+        }
+      },0)
+      
+    })
+    .catch(error => {
+      console.log(error)
+    })
   }
   persianNumber(input){
 		var persian = {0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹'};
