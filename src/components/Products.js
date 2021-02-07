@@ -782,48 +782,50 @@ class Products extends React.Component {
                                                 <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title YekanBakhFaBold" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ خرید این محصول از فروشندگان دیگر </span> </div>
 
                                                 {this.state.SameData.map((item, index) => {
-                                                    var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-                                                    debugger;
-                                                    return (
-                                                            <div className="row">
-                                                                {(item.Seller && item.Seller[0] && item.Seller[0].name) &&
-                                                                    <div className="col-lg-2 col-md-6 col-12">
-                                                                        <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
-                                                                           <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-id-card-alt" style={{fontSize:20,color:'#000',paddingLeft:10}} />{item.Seller[0].name}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                }
-                                                                <div className="col-lg-3 col-md-6 col-12">
-                                                                <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
-                                                                           <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-truck" style={{fontSize:20,color:'#000'}} /> ارسال توسط {this.state.MainShopInfo[0].name} تا {this.persianNumber(item.PrepareTime||"3")} کاری دیگر</span>
-                                                                        </div>
-                                                                </div>
-                                                                <div className="col-lg-3 col-md-6 col-12">
-                                                                        <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
-                                                                           <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-umbrella" style={{fontSize:20,color:'#000'}} /> گارانتی اصالت و سلامت فیزیکی کالا</span>
-                                                                        </div>
-                                                                </div>
-                                                                <div className="col-lg-2 col-md-6 col-12">
-                                                                    {(this.state.UId || !item.ShowPriceAftLogin) &&
-                                                                        <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
-                                                                            <span style={{ fontSize: 13, fontWeight: 'bold' }} >{this.persianNumber(this.roundPrice((item.price - (item.price * ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off)) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان </span>
+                                                    if(item.number > 0 ){
+                                                        var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
+                                                        return (
+                                                                <div className="row" style={{marginBottom:10}}>
+                                                                    {(item.Seller && item.Seller[0] && item.Seller[0].name) &&
+                                                                        <div className="col-lg-2 col-md-6 col-12">
+                                                                            <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                               <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-id-card-alt" style={{fontSize:20,color:'#000',paddingLeft:10}} />{item.Seller[0].name}</span>
+                                                                            </div>
                                                                         </div>
                                                                     }
+                                                                    <div className="col-lg-3 col-md-6 col-12">
+                                                                    <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                               <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-truck" style={{fontSize:20,color:'#000'}} /> ارسال توسط {this.state.MainShopInfo[0].name} تا {this.persianNumber(item.PrepareTime||"3")} کاری دیگر</span>
+                                                                            </div>
+                                                                    </div>
+                                                                    <div className="col-lg-3 col-md-6 col-12">
+                                                                            <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                               <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-umbrella" style={{fontSize:20,color:'#000'}} /> گارانتی اصالت و سلامت فیزیکی کالا</span>
+                                                                            </div>
+                                                                    </div>
+                                                                    <div className="col-lg-2 col-md-6 col-12">
+                                                                        {(this.state.UId || !item.ShowPriceAftLogin) &&
+                                                                            <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                                <span style={{ fontSize: 13, fontWeight: 'bold' }} >{this.persianNumber(this.roundPrice((item.price - (item.price * ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off)) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان </span>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                    <div className="col-lg-2 col-md-6 col-12" style={{textAlign:'center'}}>
+                                                                        <button className="btn btn-outline-success iranyekanwebmedium" onClick={() => { this.SendToCart(item._id, item.product_id, 1, null, (this.roundPrice(item.price - ((item.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)))); return false; } }><span style={{float:'right'}} ></span>افزودن به سبد</button>
+    
+                                                                    </div>
+    
+    
+    
+    
                                                                 </div>
-                                                                <div className="col-lg-2 col-md-6 col-12" style={{textAlign:'center'}}>
-                                                                    <button className="btn btn-outline-success iranyekanwebmedium" onClick={() => { this.SendToCart(item._id, item.product_id, 1, null, (this.roundPrice(item.price - ((item.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)))); return false; } }><span style={{float:'right'}} ></span>افزودن به سبد</button>
-
-                                                                </div>
-
-
-
-
-                                                            </div>
-
-
-
-
-                                                    )
+    
+    
+    
+    
+                                                        )
+                                                    }
+                                                   
                                                 })
                                                 }
                                             </div>

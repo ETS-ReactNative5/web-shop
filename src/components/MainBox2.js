@@ -687,7 +687,7 @@ class MainBox2 extends React.Component {
                         }
                       </div>
                       {this.state.products.map((item, index) => {
-                        var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
+                        var img = this.state.absoluteUrl + (item.fileUploaded ? item.fileUploaded.split("public")[1] : "/nophoto.png");
                         return (
 
                           <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250 }}>

@@ -140,6 +140,14 @@ class Dashboard extends React.Component {
     };
     let SCallBack = function(response){
       let result = response.data.result;
+      for(let i=0;i<result.length;i++){
+        result[i].children=[];
+        for(let j=0;j<result.length;j++){
+          if(result[i].CId==result[j].Parent && result[i].IsTitle){
+            result[i].children.push(result[j])
+          }
+        }
+      }
       that.setState({
          list:result,
          username : response.data.user
@@ -231,11 +239,11 @@ class Dashboard extends React.Component {
        <div  style={{textAlign:'center',margin:5}}>
        
        <div style={styles}>
-             <Sidenav  defaultOpenKeys={['3', '4']} appearance="subtle" >
+             <Sidenav  defaultOpenKeys={['0', '2']} appearance="default" expanded={true}  >
              <Sidenav.Header>
                <a href="/" style={{textDecoration:'none'}}>
                   <img src={this.state.logo}  style={{marginTop:20}} className="d-none d-sm-inline-block" />
-                  <p className="iranyekanweblight" style={{marginTop:20,background:'#3ee6a8',color:'#fff',padding:4}}>{this.state.name}</p>
+                  <p className="yekan" style={{marginTop:20,background:'#3ee6a8',color:'#fff',padding:4}}>{this.state.name}</p>
                </a>
               
       	    </Sidenav.Header> 
@@ -245,27 +253,61 @@ class Dashboard extends React.Component {
                    {this.state.list.map((v, i) => {
                          const icon = "fa " + v.icon;  
                          var LiClass="Dassbord-Items yekan"; 
-                         //if(v.LName.indexOf("Products_List")/*i==0*/)
-                         //  LiClass = "active";
-                         return (    
-                           
-                           <Nav.Item eventKey="1"   className={LiClass} style={{textDecoration:'none',padding:5,textAlign:'right'}}><Link to={{ pathname: v.Url , state: { data:this.state.data,list: this.state.list,NewUsers:this.state.NewUsers,NewFactors:this.state.NewFactors} }} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((v.FName=="لیست کاربران" && this.state.NewUsers) || (v.FName=="سفارشات" && this.state.NewFactors)) ?  
-                            ( 
-                              v.FName=="لیست کاربران" ?
-                            <Badge content={this.state.NewUsers}>
-                              <div>{v.FName}</div>
-                            </Badge>
-                            :
-                            <Badge content={this.state.NewFactors}>
-                              <div>{v.FName}</div>
-                            </Badge>
+                         if(!v.Parent){
+                           if(v.children.length > 0){
+                            return ( <Dropdown
+                                      placement="rightStart"
+                                      eventKey={i}
+                                      title={v.FName}
+                                      icon={v.icon ? <Icon icon="magic" /> : ""}
+                                      className={LiClass}
+                                    >
+                                      {v.children.map((u,j) =>{
+                                        return (
+                                          <Dropdown.Item eventKey={i + "_" + j} href={"/#"+u.Url} className={LiClass}  className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((u.FName=="لیست کاربران" && this.state.NewUsers) || (u.FName=="سفارشات" && this.state.NewFactors)) ?
+                                                    ( 
+                                                      v.FName=="لیست کاربران" ?
+                                                     <Badge content={this.state.NewUsers}>
+                                                       <div>{u.FName}</div>
+                                                     </Badge>
+                                                     :
+                                                     <Badge content={this.state.NewFactors}>
+                                                       <div>{u.FName}</div>
+                                                     </Badge>
+                                                    )
+                                                    : 
+                                                   u.FName}
+                                           </Dropdown.Item>
+                                        )
+                                      })
+                                      }
+                                      
+                                    </Dropdown>
                             )
-                            : 
-                           v.FName}</Link></Nav.Item>
-                         )
+                           }else{
+                            return (    
+                           
+                              <Nav.Item eventKey="1" href={"/#"+v.Url}   className={LiClass} style={{textDecoration:'none',padding:5,textAlign:'right'}}  params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((v.FName=="لیست کاربران" && this.state.NewUsers) || (v.FName=="سفارشات" && this.state.NewFactors)) ?  
+                               ( 
+                                 v.FName=="لیست کاربران" ?
+                                <Badge content={this.state.NewUsers}>
+                                  <div>{v.FName}</div>
+                                </Badge>
+                                :
+                                <Badge content={this.state.NewFactors}>
+                                  <div>{v.FName}</div>
+                                </Badge>
+                               )
+                               : 
+                              v.FName}</Nav.Item>
+                            )
+                           }                         
+                         
+                         }
+                         
                       })
                      }
-                      <Nav.Item style={{padding:5,textAlign:'right'}}><p onClick={this.logout} className="yekan"><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
+                      <Nav.Item style={{padding:5,textAlign:'right'}}><p onClick={this.logout} className="yekan" style={{color:'red'}}><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
    
                  </Nav>
                </Sidenav.Body>
