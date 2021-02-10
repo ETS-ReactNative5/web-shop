@@ -26,23 +26,8 @@ import GoogleMapReact from 'google-map-react';
 import ReactToPrint from 'react-to-print';
 import './DataTableDemo.css';
 
-const FilterItems = [
-  { label: 'همه', value: 'All' },
-  { label: 'ثبت شده', value: '1' },
 
-  { label: 'آماده ارسال', value: '2' },
-  { label: 'ارسال شده', value: '3' },
-  { label: 'پایان', value: '4' },
-
-  { label: 'تسویه شده', value: '5' },
-  { label: 'ناموفق', value: '0' },
-  { label: 'لغو شده', value: '-1' },
-  { label: 'درخواست لغو توسط کاربر', value: '-2' },
-
-
-
-];
-class Sales extends React.Component {
+class Sales_Registered extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
@@ -52,7 +37,7 @@ class Sales extends React.Component {
       dashData: (this.props && this.props.location && this.props.location.state && this.props.location.state.data) ? this.props.location.state.data : [],
       NewFactors: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewFactors) ? this.props.location.state.NewFactors : null,
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
-      Filter: 'All',
+      Filter: '5',
       GridDataUsers: [],
       GridDataFactors: [],
       selectedFactor: null,
@@ -358,7 +343,7 @@ class Sales extends React.Component {
       loading: 1
     })
     that.Server.send("AdminApi/getSettings", {}, function (response) {
-      that.GetFactors("All");
+      that.GetFactors(that.state.Filter);
       that.setState({
         loading: 0
       })
@@ -377,7 +362,7 @@ class Sales extends React.Component {
 
 
     }, function (error) {
-      that.GetFactors("All");
+      that.GetFactors(that.state.Filter);
       that.setState({
         loading: 0
       })
@@ -406,11 +391,19 @@ class Sales extends React.Component {
   
   render() {
     const BodyTemplate = (rowData,props) => {
-      debugger;
       return (
           <React.Fragment>
               <span className="p-column-title">{props.header}</span>
               {rowData[props.field]}
+          </React.Fragment>
+      );
+    }
+    const ProductBodyTemplate = (rowData,props) => {
+      return (
+          <React.Fragment>
+              <span className="p-column-title">{props.header}</span>
+              <span style={{paddingRight:20}}>{rowData[props.field]}</span>
+              
           </React.Fragment>
       );
     }
@@ -448,11 +441,8 @@ class Sales extends React.Component {
             {this.state.CreditSupport &&
               <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی اعتباری : {this.persianNumber(parseInt(this.state.LastCredit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
             }
-            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها</span></div>
-            <div style={{ textAlign: 'right', marginBottom: 10 }}>
-              <SelectButton value={this.state.Filter} options={FilterItems} style={{ fontFamily: 'Yekan' }} className="yekan" onChange={(e) => { this.setState({ Filter: e.value }); this.GetFactors(e.value) }}></SelectButton>
-
-            </div>
+            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها (تسویه شده)</span></div>
+            
             <div className="datatable-responsive-demo">
               <DataTable  resizableColumns={true} paginator={true} className="p-datatable-responsive-demo" rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedFactor} onSelectionChange={e => { if (e.originalEvent.target.tagName != "I") this.selectedFactorChange(e.value) }} >
                 <Column field="name" header="نام خریدار"  body={BodyTemplate}   className="yekan" style={{ textAlign: "right" }} />
@@ -484,8 +474,9 @@ class Sales extends React.Component {
 
         </div>
 
-        <Dialog header="جزئیات فاکتور" visible={this.state.selectedFactor} style={{ width: '80vw' }} minY={70} onHide={this.onHide} maximizable={true}>
+        <Dialog header="جزئیات فاکتور" visible={this.state.selectedFactor} style={{ width: '80vw' }} minY={70} onHide={this.onHide} maximizable={false} maximized={true}>
           <div style={{ overflowY: 'auto', overflowX: 'hidden', minHeight: 400 }}>
+            <div style={{position:'fixed',backgroundColor:'#fff',zIndex:2,width:'100%'}} >
             {this.state.isMainShop == 1 &&
               <div>
                 <p className="yekan" style={{ float: "right" }}>تغییر وضعیت سفارش</p>
@@ -526,8 +517,10 @@ class Sales extends React.Component {
                 <p className="yekan" style={{ float: "right" }}>برای تغییر وضعیت هر محصول روی سطر آن کلیک کنید</p><br /><br />
               </div>
             }
+            </div>
+            <div className="datatable-responsive-demo" style={{marginTop:this.state.isMainShop == 1 ? 180 : 100}}>
 
-            <DataTable onRowSelect={this.onRowSelect} responsive selection={this.state.selectedProduct1} onSelectionChange={e => {
+            <DataTable onRowSelect={this.onRowSelect} className="p-datatable-responsive-demo" responsive selection={this.state.selectedProduct1} onSelectionChange={e => {
               for (let i = 0; i < this.state.selectedFactor.length; i++) {
                 if (this.state.selectedFactor[i]._id == e.value._id) {
                   this.setState({
@@ -536,25 +529,33 @@ class Sales extends React.Component {
                   })
                 }
               }
-            }} selectionMode="single" dataKey="id" resizableColumns={true} paginator={true} rows={10} value={this.state.selectedFactor}  >
-              <Column field="title" header="عنوان" className="yekan" style={{ textAlign: "center" }} />
-              <Column field="subTitle" header="عنوان دوم" className="yekan" style={{ textAlign: "center" }} />
-              <Column field="SellerName" header="فروشنده" className="yekan" style={{ textAlign: "center" }} />
-
-              <Column field="desc" header="شرح" className="yekan" style={{ textAlign: "center", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }} />
-              <Column field="number" editor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "center" }} />
-              <Column field="status" header="وضعیت" className="yekan" style={{ textAlign: "center" }} />
-              <Column field="price" header="مبلغ پرداختی" className="yekan" style={{ textAlign: "center" }} />
-
-              {this.state.CreditSupport &&
-                <Column field="credit" header="کسر از اعتبار" className="yekan" style={{ textAlign: "center" }} />
-              }
-              <Column field="detail" header="جزئیات" className="yekan" style={{ textAlign: "center" }} />
+            }} selectionMode="single" dataKey="id" body={ProductBodyTemplate} resizableColumns={true} paginator={true} rows={10} value={this.state.selectedFactor}  >
+              <Column field="title" header="عنوان" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+              <Column field="subTitle" header="عنوان دوم" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               {this.state.isMainShop == 1 &&
-                <Column field="edit" header="حذف" className="yekan" style={{ textAlign: "center" }} />
+              <Column field="SellerName" header="فروشنده" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+              }
+              {this.state.isMainShop == 1 &&
+              <Column field="desc" header="شرح" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }} />
+              }
+              {this.state.isMainShop == 1 ?
+              <Column field="number" body={ProductBodyTemplate} editor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
+                :
+                <Column field="number" body={ProductBodyTemplate} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
+            }
+              <Column field="status" header="وضعیت" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+              <Column field="price" header="مبلغ پرداختی" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+
+              {this.state.CreditSupport && 
+                <Column field="credit" header="کسر از اعتبار" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+              }
+              <Column field="detail" header="جزئیات" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+              {this.state.isMainShop == 1 &&
+                <Column field="edit" header="حذف" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               }
 
             </DataTable>
+            </div>
           </div>
         </Dialog>
       </div>
@@ -567,5 +568,5 @@ const mapStateToProps = (state) => {
   }
 }
 export default withRouter(
-  connect(mapStateToProps)(Sales)
+  connect(mapStateToProps)(Sales_Registered)
 );

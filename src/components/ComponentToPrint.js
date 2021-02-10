@@ -44,7 +44,6 @@ export class  ComponentToPrint extends React.Component {
 
   }
   componentDidMount(){
-    debugger;
   }
   render() {
    

@@ -153,9 +153,7 @@ class Guarantee extends React.Component {
           text: "مشتری گرامی محصول شما با کد رهگیری "+code+" در مرحله "+statusDesc+" قرار گرفت",
           mobileNo : that.state.mobile
         }, function(response){
-          debugger;
         },function(error){
-          debugger;
         })*/
         that.onHide();
       that.GetGuarantee(that.state.mobile);

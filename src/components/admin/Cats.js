@@ -244,12 +244,12 @@ class AdminProduct extends React.Component {
           ParentCat: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Parent || '',
           CatPicPreview: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].pic ? this.state.absoluteUrl + this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].pic.split("public")[1] : this.state.absoluteUrl + '/nophoto.png',
           SelectedSpecs: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec ? this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec : [],
-          SendToCity:this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToCity || '',
-          SendToNearCity:this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToNearCity || '',
-          SendToState:this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToState || '',
-          SendToCountry:this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToCountry || '',
-          MergeableInPeyk:this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].MergeableInPeyk || '',
-          CumputeByNumberInPeyk:this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].CumputeByNumberInPeyk || '',
+          SendToCity: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToCity || '',
+          SendToNearCity: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToNearCity || '',
+          SendToState: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToState || '',
+          SendToCountry: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].SendToCountry || '',
+          MergeableInPeyk: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].MergeableInPeyk || '',
+          CumputeByNumberInPeyk: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].CumputeByNumberInPeyk || '',
         }
       );
       this.setState({
@@ -343,15 +343,15 @@ class AdminProduct extends React.Component {
     }
     this.Server.send("AdminApi/setCategory", param, SCallBack, ECallBack)
   }
-  setPeykSettings(){
+  setPeykSettings() {
     let param = {
       CategoryId: this.state.CategoryId,
-      SendToCity:this.state.SendToCity,
-      SendToNearCity:this.state.SendToNearCity,
-      SendToState:this.state.SendToState,
-      SendToCountry:this.state.SendToCountry,
-      MergeableInPeyk:this.state.MergeableInPeyk,
-      CumputeByNumberInPeyk:this.state.CumputeByNumberInPeyk
+      SendToCity: this.state.SendToCity,
+      SendToNearCity: this.state.SendToNearCity,
+      SendToState: this.state.SendToState,
+      SendToCountry: this.state.SendToCountry,
+      MergeableInPeyk: this.state.MergeableInPeyk,
+      CumputeByNumberInPeyk: this.state.CumputeByNumberInPeyk
     };
     this.setState({
       loading: 1
@@ -363,7 +363,7 @@ class AdminProduct extends React.Component {
       that.setState({
         loading: 0
       })
-      
+
     };
     let ECallBack = function (error) {
       Alert.error('عملیات انجام نشد', 5000);
@@ -503,11 +503,8 @@ class AdminProduct extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="col-12 col-md-4 col-lg-3 ">
 
-          <Dashboard list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
-        </div>
-        <div className="col-lg-9 col-md-8 col-12" style={{ marginTop: 20, background: '#fff' }}>
+        <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
 
 
 
@@ -541,7 +538,7 @@ class AdminProduct extends React.Component {
                     </div>
                   }
                   <div className="col-lg-12" >
-                    <div  style={{display:'flex',alignItems:'center'}}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Checkbox inputId="laon" value={this.state.showInSite} checked={this.state.showInSite} onChange={e => this.setState({ showInSite: e.checked })}></Checkbox>
                       <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>نمایش در صفحه اول سایت</label>
                     </div>
@@ -558,7 +555,7 @@ class AdminProduct extends React.Component {
                     </div>
 
                   }
-                  <div className="col-lg-12" style={{marginBottom:20}}>
+                  <div className="col-lg-12" style={{ marginBottom: 20 }}>
                     <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>این دسته بندی زیر مجموعه دسته زیر است</p>
                     <select className="custom-select yekan" value={this.state.ParentCat} name="ParentCat" onChange={(e) => this.setState({ ParentCat: e.target.value })} >
                       <option value="" selected=""></option>
@@ -575,38 +572,38 @@ class AdminProduct extends React.Component {
                     </select>
                   </div>
                   <div>
-                  {this.state.CategoryId && this.state.showSpecs &&
-                    <div className="row">
+                    {this.state.CategoryId && this.state.showSpecs &&
+                      <div className="row">
 
-                      <div className="col-lg-12">
-                        <div className="row" >
-                          {
-                            this.state.Spec && this.state.Spec.map((v, i) => {
-                              let id = "cb" + v.id;
-                              return (
-                                <div className="col-lg-4 " style={{ textAlign: 'right' }}>
-                                  <Checkbox inputId={id} value={v.id} style={{ verticalAlign: 'text-bottom' }} onChange={this.ChangeSpecsCheckBoxs} checked={this.state.SelectedSpecs.indexOf(v.id) !== -1}></Checkbox>
-                                  <label htmlFor={id} className="irsans">{v.title}({v.id})</label>
-                                </div>
-                              )
-                            })
-                          }
+                        <div className="col-lg-12">
+                          <div className="row" >
+                            {
+                              this.state.Spec && this.state.Spec.map((v, i) => {
+                                let id = "cb" + v.id;
+                                return (
+                                  <div className="col-lg-4 " style={{ textAlign: 'right' }}>
+                                    <Checkbox inputId={id} value={v.id} style={{ verticalAlign: 'text-bottom' }} onChange={this.ChangeSpecsCheckBoxs} checked={this.state.SelectedSpecs.indexOf(v.id) !== -1}></Checkbox>
+                                    <label htmlFor={id} className="irsans">{v.title}({v.id})</label>
+                                  </div>
+                                )
+                              })
+                            }
+                          </div>
                         </div>
+
+
+
                       </div>
+                    }
+                  </div>
 
+                  <input className="form-control yekan" autoComplete="off" type="hidden" value={this.state.CategoryId} name="CategoryId" required="true" />
 
-
-                    </div>
-                  }
-                </div>
-
-                <input className="form-control yekan" autoComplete="off" type="hidden" value={this.state.CategoryId} name="CategoryId" required="true" />
-
-                <button className="btn btn-primary yekan" type="button" onClick={() => { this.setCategory() }} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }} >{this.state.setCategory}</button>
+                  <button className="btn btn-primary yekan" type="button" onClick={() => { this.setCategory() }} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }} >{this.state.setCategory}</button>
 
                 </form>
               </Fieldset>
-              
+
 
 
               <Fieldset legend="اضافه کردن / حذف جزئیات فنی" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
@@ -615,7 +612,7 @@ class AdminProduct extends React.Component {
                   <div className="col-lg-12">
                   </div>
                   <div className="col-lg-12">
-                    <div  style={{display:'flex',alignItems:'center'}}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Checkbox inputId="laon" value={this.state.DelSpec} checked={this.state.DelSpec} onChange={e => this.setState({ DelSpec: e.checked })}></Checkbox>
                       <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>حذف</label>
                     </div>
@@ -665,13 +662,13 @@ class AdminProduct extends React.Component {
                       <label> سراسری </label>
                     </div>
                   </div>
-                  <div className="col-lg-12 col-12" style={{display:'flex',alignItems:'center'}}>
-                    <Checkbox onChange={e => this.setState({MergeableInPeyk: e.checked})} checked={this.state.MergeableInPeyk}></Checkbox>
-                    <label style={{paddingRight:5,marginTop:5}}>قابل ادغام</label>  
+                  <div className="col-lg-12 col-12" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Checkbox onChange={e => this.setState({ MergeableInPeyk: e.checked })} checked={this.state.MergeableInPeyk}></Checkbox>
+                    <label style={{ paddingRight: 5, marginTop: 5 }}>قابل ادغام</label>
                   </div>
-                  <div className="col-lg-12 col-12" style={{display:'flex',alignItems:'center'}}>
-                    <Checkbox onChange={e => this.setState({CumputeByNumberInPeyk: e.checked})} checked={this.state.CumputeByNumberInPeyk}></Checkbox>
-                    <label style={{paddingRight:5,marginTop:5}}>محاسبه ضریب تعداد</label>  
+                  <div className="col-lg-12 col-12" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Checkbox onChange={e => this.setState({ CumputeByNumberInPeyk: e.checked })} checked={this.state.CumputeByNumberInPeyk}></Checkbox>
+                    <label style={{ paddingRight: 5, marginTop: 5 }}>محاسبه ضریب تعداد</label>
                   </div>
                   <div className="col-lg-12">
 

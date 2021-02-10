@@ -71,7 +71,6 @@ class Header1 extends React.Component {
 			})
 	}
 	onSelect(event) {
-		debugger;
 		var _id = event.originalEvent.target.getAttribute("_id");
 		if (!_id) {
 			try {

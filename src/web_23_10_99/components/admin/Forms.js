@@ -228,7 +228,6 @@ class Forms extends React.Component {
   }
   GetMaps(){
     let that = this;
-    debugger;
     let param={
       token: localStorage.getItem("api_token"),
       user_Id:this.state.user_Id
@@ -286,7 +285,6 @@ class Forms extends React.Component {
   selectedComponentChange(value){
     let that = this;
     var p=[];
-    debugger;
     this.setState({
       selectedId:value._id,
       FName:value.FName,

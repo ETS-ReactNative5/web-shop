@@ -270,7 +270,6 @@ class Cart extends React.Component {
                 }
                 LastPaykAmount+=NotMargablePaykAmount.reduce((a, b) => a + b, 0);
                 LastPaykAmount+=MargablePaykAmount.length > 0 ? Math.max(...MargablePaykAmount) : 0;
-                debugger;
                 that.setState({
                     PrepareTime:Math.max(...PrepareTime),
                     paykAmount:LastPaykAmount,

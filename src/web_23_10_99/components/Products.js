@@ -735,7 +735,6 @@ class Products extends React.Component {
 
                                                 {this.state.SameData.map((item, index) => {
                                                     var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-                                                    debugger;
                                                     return (
                                                             <div className="row">
                                                                 {(item.Seller && item.Seller[0] && item.Seller[0].name) &&

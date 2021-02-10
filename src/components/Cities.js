@@ -105,7 +105,7 @@ class Cities extends React.Component {
 					</select>
 					}
 				</div>
-				<div className="col-lg-6 col-12">
+				<div className="col-lg-6 col-12 mt-lg-0 mt-4">
 					{this.state.SubCities.length > 0 &&
 					<select style={{width:'100%'}} onChange={(event)=>{
 						this.setState({

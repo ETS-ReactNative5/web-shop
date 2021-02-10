@@ -314,7 +314,6 @@ class Login extends React.Component {
         username: this.state.inputEmail
       })
       .then(response => {
-        debugger;
         
         this.setState({
           Step:response.data.result=="yes" ? 1 : 2

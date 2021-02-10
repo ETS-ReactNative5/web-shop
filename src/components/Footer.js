@@ -159,12 +159,12 @@ class Footer extends React.Component {
 				<div style={{background:'#505050'}}>
 					{this.state.GridInfo.length > 0 &&
 					<div style={{textAlign:'center'}}>
-						<p style={{margin:0}} className="iranyekanweblight">استفاده از مطالب فروشگاه اینترنتی {this.state.GridInfo[0].name} فقط برای مقاصد غیرتجاری و با ذکر منبع بلامانع است. کلیه حقوق این سایت متعلق به {this.state.GridInfo[0].name} می‌باشد.</p>
+						<p style={{margin:0}} className="yekan">استفاده از مطالب فروشگاه اینترنتی {this.state.GridInfo[0].name} فقط برای مقاصد غیرتجاری و با ذکر منبع بلامانع است. کلیه حقوق این سایت متعلق به {this.state.GridInfo[0].name} می‌باشد.</p>
 					</div>
 					
 					}
 					<div style={{textAlign:'center',paddingBottom:10}}>
-							<p style={{margin:0}} className="iranyekanweblight">طراحی و پیاده سازی توسط <a href="http://sarvapps.ir" target="_blank" style={{color:'#a9a9a9'}}>گروه نرم افزاری سرو</a></p>
+							<p style={{margin:0}} className="yekan">طراحی و پیاده سازی توسط <a href="http://sarvapps.ir" target="_blank" style={{color:'#a9a9a9'}}>گروه نرم افزاری سرو</a></p>
 					</div>
 				</div>
 			</footer>

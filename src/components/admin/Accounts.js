@@ -82,29 +82,28 @@ class Accounts extends React.Component {
 
   TransferManagement() {
     let that = this;
-    
+
     this.setState({
       loading: 1
     })
-    let status=0;
-    if(this.state.selectedStatus == "0"){
-      status=1;
+    let status = 0;
+    if (this.state.selectedStatus == "0") {
+      status = 1;
     }
-    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       _id: this.state.selectedId,
-      type:'edit',
-      status:status,
-      statusDesc:status=="0" ? "درخواست شده"  : "پرداخت شده"
+      type: 'edit',
+      status: status,
+      statusDesc: status == "0" ? "درخواست شده" : "پرداخت شده"
     };
     let SCallBack = function (response) {
       that.setState({
         loading: 0
       })
       that.setState({
-        selectedStatus:status,
-        selectedStatusDesc:status=="0" ? "درخواست شده"  : "پرداخت شده"
+        selectedStatus: status,
+        selectedStatusDesc: status == "0" ? "درخواست شده" : "پرداخت شده"
 
       })
       Alert.success('عملیات با موفقیت انجام شد', 5000);
@@ -164,10 +163,9 @@ class Accounts extends React.Component {
     this.Server.send("AdminApi/GetTransfer", param, SCallBack, ECallBack)
   }
   selectedTransferChange(value) {
-    debugger;
     let that = this;
     this.setState({
-      visibleDialog:true,
+      visibleDialog: true,
       selectedShopName: value.shop[0].name,
       selectedUserName: value.user[0].name,
       selectedStatus: value.status,
@@ -188,10 +186,10 @@ class Accounts extends React.Component {
 
     ];
     const userTemplate = (rowData) => {
-      return `${rowData.user[0].name}`;
+      return `${rowData.user[0] ? rowData.user[0].name: ''}`;
     }
     const shopTemplate = (rowData) => {
-      return `${rowData.shop[0].name}`;
+      return `${rowData.shop[0] ? rowData.shop[0].name : ''}`;
     }
     const delTemplate = (rowData) => {
       if (rowData.status == 0)
@@ -206,11 +204,8 @@ class Accounts extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12 col-md-4 col-lg-3 ">
 
-            <Dashboard list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
-          </div>
-          <div className="col-lg-9 col-md-8 col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
 
             <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ لیست درخواست های انتقال وجه </span> </div>
             <SelectButton value={this.state.Filter} options={FilterItems} style={{ fontFamily: 'Yekan', textAlign: 'right', marginBottom: 15 }} className="yekan" onChange={(e) => { this.setState({ Filter: e.value }); this.GetTransfer(e.value) }}></SelectButton>
@@ -227,34 +222,34 @@ class Accounts extends React.Component {
           </div>
 
         </div>
-        
+
         <Dialog header="جزئیات درخواست" visible={this.state.visibleDialog} style={{ width: '60vw' }} minY={70} onHide={this.onHide} maximizable={true}>
           <form  >
             <div className="row">
               <div className="col-12">
-              <div style={{display:'flex',alignItems:'baseline'}}>
-                <p className="yekan">نام  : </p><p className="yekan">{this.state.selectedShopName}</p>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <p className="yekan">نام  : </p><p className="yekan">{this.state.selectedShopName}</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <p className="yekan">نام فروشگاه : </p><p className="yekan">{this.state.selectedShopName}</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <p className="yekan">مبلغ : </p><p className="yekan">{this.state.selectedPrice}</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <p className="yekan">تاریخ درخواست : </p><p className="yekan">{this.state.selectedDate}</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <p className="yekan">وضعیت درخواست : </p>
+                  {this.state.selectedStatus == 0 ?
+                    <p className="yekan" style={{ color: 'red' }}>{this.state.selectedStatusDesc}</p>
+                    :
+                    <p className="yekan" style={{ color: 'green' }}>{this.state.selectedStatusDesc}</p>
+                  }
+                </div>
               </div>
-              <div style={{display:'flex',alignItems:'baseline'}}>
-                <p className="yekan">نام فروشگاه : </p><p className="yekan">{this.state.selectedShopName}</p>
-              </div>
-              <div style={{display:'flex',alignItems:'baseline'}}>
-                <p className="yekan">مبلغ : </p><p className="yekan">{this.state.selectedPrice}</p>
-              </div>
-              <div style={{display:'flex',alignItems:'baseline'}}>
-                <p className="yekan">تاریخ درخواست : </p><p className="yekan">{this.state.selectedDate}</p>
-              </div>
-              <div style={{display:'flex',alignItems:'baseline'}}>
-                <p className="yekan">وضعیت درخواست : </p>
-                {this.state.selectedStatus == 0 ?
-                  <p className="yekan" style={{color:'red'}}>{this.state.selectedStatusDesc}</p>
-                  :
-                  <p className="yekan" style={{color:'green'}}>{this.state.selectedStatusDesc}</p>
-                }
-              </div>
-              </div>
-              
-              
+
+
 
               <div className="col-lg-12">
                 <Button style={{ marginLeft: 5, marginTop: 10 }} color="primary" className="yekan" onClick={this.TransferManagement}>تغییر وضعیت</Button>

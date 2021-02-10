@@ -36,6 +36,7 @@ class Forms extends React.Component {
     this.handleChangeLName = this.handleChangeLName.bind(this);
     this.handleChangeFName = this.handleChangeFName.bind(this);
     this.SetComponents = this.SetComponents.bind(this);
+    this.handleChangeIcon = this.handleChangeIcon.bind(this);
 
 
     this.SetMaps = this.SetMaps.bind(this);
@@ -61,6 +62,7 @@ class Forms extends React.Component {
       FName: null,
       LName: null,
       Address: null,
+      Icon: null,
       ComponentId: null,
       loading: 0,
       user_Id: null
@@ -100,6 +102,10 @@ class Forms extends React.Component {
   }
   handleChangeAddress(event) {
     this.setState({ Address: event.target.value });
+
+  }
+  handleChangeIcon(event) {
+    this.setState({ Icon: event.target.value });
 
   }
   handleChangeLName(event) {
@@ -202,6 +208,7 @@ class Forms extends React.Component {
       ComponentId: this.state.ComponentId,
       selectedId: this.state.selectedId,
       Address: this.state.Address,
+      Icon: this.state.Icon,
       Parent: this.state.Parent,
       IsTitle: this.state.IsTitle
     };
@@ -266,6 +273,7 @@ class Forms extends React.Component {
       FName: "",
       LName: "",
       Address: "",
+      Icon: "",
       ComponentId: ""
     })
 
@@ -287,12 +295,12 @@ class Forms extends React.Component {
   selectedComponentChange(value) {
     let that = this;
     var p = [];
-    debugger;
     this.setState({
       selectedId: value._id,
       FName: value.FName,
       LName: value.LName,
       Address: value.Url,
+      Icon: value.Icon,
       ComponentId: value.CId,
       IsTitle: value.IsTitle,
       Parent: value.Parent,
@@ -359,11 +367,8 @@ class Forms extends React.Component {
           </div>
         }
         <div className="row justify-content-center">
-          <div className="col-12 col-md-4 col-lg-3 ">
 
-            <Dashboard list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
-          </div>
-          <div className="col-lg-9 col-md-8 col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
             <div className="row" >
               <div className="col-6" style={{ textAlign: 'center' }}>
                 <button className="btn btn-primary irsans" onClick={this.CreateForm} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> ساخت فرم جدید </button>
@@ -458,29 +463,34 @@ class Forms extends React.Component {
                   <label>آدرس</label>
                 </div>
               </div>
-
-                <div className="col-lg-12">
-                  <div>
-                    <label className="labelNoGroup irsans" style={{ marginTop: 10 }}>کامپوننت پدر</label>
-
-                    <select className="custom-select irsans" value={this.state.Parent} name="Parent" onChange={(event) => this.setState({
-                      Parent: event.target.value
-                    })} >
-                      <option value=""></option>
-                      {
-                        this.state.GridDataComponents && this.state.GridDataComponents.map((v, i) => {
-                          return (<option value={v.CId} >{v.FName}</option>)
-                        })
-                      }
-                    </select>
-                  </div>
-
+              <div className="col-lg-6">
+                <div className="group">
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.Icon} name="Icon" onChange={this.handleChangeIcon} required="true" />
+                  <label>آیکن</label>
                 </div>
-              <div className="col-12" style={{textAlign:'right'}} >
-                <Checkbox inputId="IsTitle" value={this.state.IsTitle} checked={this.state.IsTitle} onChange={e => this.setState({ IsTitle: e.checked })} style={{marginBottom:10}}></Checkbox>
+              </div>
+              <div className="col-lg-12">
+                <div>
+                  <label className="labelNoGroup irsans" style={{ marginTop: 10 }}>کامپوننت پدر</label>
+
+                  <select className="custom-select irsans" value={this.state.Parent} name="Parent" onChange={(event) => this.setState({
+                    Parent: event.target.value
+                  })} >
+                    <option value=""></option>
+                    {
+                      this.state.GridDataComponents && this.state.GridDataComponents.map((v, i) => {
+                        return (<option value={v.CId} >{v.FName}</option>)
+                      })
+                    }
+                  </select>
+                </div>
+
+              </div>
+              <div className="col-12" style={{ textAlign: 'right' }} >
+                <Checkbox inputId="IsTitle" value={this.state.IsTitle} checked={this.state.IsTitle} onChange={e => this.setState({ IsTitle: e.checked })} style={{ marginBottom: 10 }}></Checkbox>
                 <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>عنوان مجموعه</label>
               </div>
-              
+
 
             </div>
           </form>

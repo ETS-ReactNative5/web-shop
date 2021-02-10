@@ -37,7 +37,6 @@ class Category extends React.Component {
         };
         let SCallBack = function(response){
             let res =response.data.result;
-            debugger;
 
             that.setState({
                 GridData:response.data.result,

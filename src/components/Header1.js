@@ -225,16 +225,15 @@ class Header1 extends React.Component {
 
 
 						<div className="col-lg-5 col-12 order-lg-1 order-2 text-lg-left text-right">
-							<div className="wishlist_cart d-flex flex-row align-items-center " style={{ justifyContent: 'flex-end' }}>
+							<div className="wishlist_cart d-flex flex-row align-items-center " style={{ justifyContent: 'space-between' }}>
 
-								<div className="cart" >
-									<div className="cart_container d-flex flex-row align-items-center justify-content-end">
+									<div className="cart_container d-flex flex-row align-items-center">
 										<div className="cart_icon">
 										</div>
-										<div >
+										<div style={{marginRight:5,marginLeft:5}}>
 											<Link to={`${process.env.PUBLIC_URL}/`}><i class="fal fa-home mr-md-4 mr-1" style={{fontSize: 22, color: '#716d6d' }} /></Link>
 										</div>
-										<div>
+										<div style={{marginRight:5,marginLeft:5}}>
 											{this.state.userId &&
 												<div>
 
@@ -243,7 +242,7 @@ class Header1 extends React.Component {
 												</div>
 											}
 										</div>
-										<div>
+										<div style={{marginRight:5,marginLeft:5}}>
 											{this.state.isAdmin == "1" &&
 												<Link to={`${process.env.PUBLIC_URL}/admin/admin`}><i class="fal fa-user-plus ml-md-4 mr-md-4 mr-2 ml-2" style={{fontSize: 25, color: '#20ad31' }} /></Link>
 											}
@@ -261,8 +260,7 @@ class Header1 extends React.Component {
 										}
 									</div>
 
-								</div>
-								<div className="d-flex flex-row align-items-center justify-content-end">
+								<div className="d-flex flex-row align-items-center" style={{justifyContent:'center',width:'calc(100% - 100px)'}}>
 
 									<div className="wishlist_content">
 										{this.state.userId ?

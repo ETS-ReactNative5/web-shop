@@ -20,6 +20,12 @@ import Comments from './components/admin/Comments.js'
 import ScrollToTop from './components/ScrollToTop.js'
 import Admin from './components/admin/Admin.js'
 import Sales from './components/admin/Sales.js'
+import Sales_Registered from './components/admin/Sales_Registered.js'
+import Sales_ReadyToSend from './components/admin/Sales_ReadyToSend.js'
+import Sales_Posted from './components/admin/Sales_Posted.js'
+import Sales_Ended from './components/admin/Sales_Ended.js'
+import Sales_Cleared from './components/admin/Sales_Cleared.js'
+
 import Users from './components/admin/Users.js'
 import Maps from './components/admin/Maps.js'
 import Forms from './components/admin/Forms.js'
@@ -91,6 +97,12 @@ class App extends Component {
                   <Route path="/admin/Accounts" component={Accounts} />                  
                   <Route path="/admin/Admin" component={Admin} />
                   <Route path="/admin/Sales" component={Sales} />
+                  <Route path="/admin/Sales_Registered" component={Sales_Registered} />
+                  <Route path="/admin/Sales_ReadyToSend" component={Sales_ReadyToSend} />
+                  <Route path="/admin/Sales_Posted" component={Sales_Posted} />
+                  <Route path="/admin/Sales_Ended" component={Sales_Ended} />
+                  <Route path="/admin/Sales_Cleared" component={Sales_Cleared} />
+
                   <Route path="/admin/Users" component={Users} />
                   <Route path="/admin/Forms" component={Forms} />
                   <Route path="/admin/Maps" component={Maps} />

@@ -336,7 +336,6 @@ class MainBox2 extends React.Component {
               text5: item.text
             })
           if (item.name == "file11"){
-            debugger;
             that.setState({
               SpecialImage: that.state.absoluteUrl + item.fileUploaded.split("public")[1]
             })

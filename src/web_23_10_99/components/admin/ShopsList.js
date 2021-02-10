@@ -136,7 +136,6 @@ class ShopsList extends React.Component {
   }
   EditShopSelected(){
     let that = this;
-    debugger;
     let param={
       token: localStorage.getItem("api_token"),
       address:this.state.selectedAddress,

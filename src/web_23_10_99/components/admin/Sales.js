@@ -134,7 +134,6 @@ class Sales extends React.Component {
     this.setState({statusDesc: event.value});
   }
   handleChangeStatus(event){
-    debugger;
     let param={
       token: localStorage.getItem("api_token"),
       newStatus:event.target.value,
@@ -465,7 +464,6 @@ class Sales extends React.Component {
       }
 
       <DataTable onRowSelect={this.onRowSelect} responsive selection={this.state.selectedProduct1} onSelectionChange={e =>{
-        debugger;
         for(let i=0;i<this.state.selectedFactor.length;i++){
           if(this.state.selectedFactor[i]._id==e.value._id){
              this.setState({

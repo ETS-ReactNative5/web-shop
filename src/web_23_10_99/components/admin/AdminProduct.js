@@ -894,7 +894,6 @@ PreparEditProduct(row){
             loadedCount : `${loaded} byte of ${total}byte | ${percent}%`
           })
           if(percent == "100"){
-            debugger;
             this.setState({
               showLoadedCount:0
             })
@@ -1037,7 +1036,6 @@ PreparEditProduct(row){
       Size:this.SizeRef.current.getSelectedItems()
     };
     
-    debugger;
 
     let SCallBack = function(response){
       if(response.data.result.insertedCount)
@@ -1155,7 +1153,6 @@ PreparEditProduct(row){
   productTableAction(act,id){
     let that = this;
 
-    debugger;
     if(act=="delete"){
       confirmAlert({
         title: <span className="yekan">حذف محصول</span>,
@@ -1820,7 +1817,7 @@ PreparEditProduct(row){
                     let name = "Spec_"+v.id;
                     return (  <div className="col-6" >
                             <div className="group">
-                              <input className="form-control yekan" autoComplete="off" type="text" value={this.state[name]} name={name} onChange={(event)=>{debugger;this.setState({[event.target.name]: event.target.value})}}  required="true" />
+                              <input className="form-control yekan" autoComplete="off" type="text" value={this.state[name]} name={name} onChange={(event)=>{this.setState({[event.target.name]: event.target.value})}}  required="true" />
                               <label>{v.title}</label>
                             </div>
                           </div>

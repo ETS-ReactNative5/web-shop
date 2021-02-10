@@ -449,7 +449,6 @@ class User extends React.Component {
       OkPayment: ok
     };
     let SCallBack = function (response) {
-      debugger;
       response.data.result.map(function (v, i) {
         v.radif = i + 1;
       })

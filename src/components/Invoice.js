@@ -37,7 +37,6 @@ class Invoice extends React.Component {
 
         })
         .then(response => {
-          debugger
                 let credit = response.data.result[0].credit;
                 this.setState({
                   username:response.data.result[0].username
@@ -179,7 +178,6 @@ class Invoice extends React.Component {
 
   }
   getSetting(){
-    debugger;
     let that = this;
     axios.post(this.state.url+'getSettings', {
       token: localStorage.getItem("api_token")

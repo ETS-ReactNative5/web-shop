@@ -36,7 +36,6 @@ class Seller extends React.Component {
       };
       let that = this;
       let SCallBack = function(response){
-        debugger;
         that.setState({
           userId : response.data.authData.userId
         })

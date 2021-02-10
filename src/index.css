@@ -39,8 +39,8 @@
         src: local('YekanBakhFaMedium'), url(./NewFont/YekanBakhFaMedium.woff) format('truetype');
       }
       @font-face {
-        font-family: 'irsans';
-        src: local('irsans'), url(./NewFont/irsans.ttf) format('truetype');
+        font-family: 'YekanBakhFaLight';
+        src: local('YekanBakhFaLight'), url(./NewFont/YekanBakhFaLight.woff) format('truetype');
       }
       * {
         outline: none!important;
@@ -1224,4 +1224,11 @@ div.InlineImagesHalf{
 .p-autocomplete-loader{
     right: auto !important;
     left: 3.5rem;
+}
+.p-sidebar{
+    overflow: auto;
+}
+.p-dialog-title{
+    font-family: 'yekan';
+
 }
