@@ -210,7 +210,8 @@ class Forms extends React.Component {
       Address: this.state.Address,
       Icon: this.state.Icon,
       Parent: this.state.Parent,
-      IsTitle: this.state.IsTitle
+      IsTitle: this.state.IsTitle,
+      IsReport: this.state.IsReport
     };
     this.setState({
       loading: 1
@@ -303,6 +304,7 @@ class Forms extends React.Component {
       Icon: value.Icon,
       ComponentId: value.CId,
       IsTitle: value.IsTitle,
+      IsReport: value.IsReport,
       Parent: value.Parent,
       visibleManageComponent: true
     })
@@ -385,6 +387,7 @@ class Forms extends React.Component {
               <Column field="FName" header="نام فارسی" className="irsans" style={{ textAlign: "center" }} />
               <Column field="LName" header="نام لاتین" className="irsans" style={{ textAlign: "center" }} />
               <Column field="Url" header="آدرس" className="irsans" style={{ textAlign: "center" }} />
+
             </DataTable>
           </div>
 
@@ -489,6 +492,10 @@ class Forms extends React.Component {
               <div className="col-12" style={{ textAlign: 'right' }} >
                 <Checkbox inputId="IsTitle" value={this.state.IsTitle} checked={this.state.IsTitle} onChange={e => this.setState({ IsTitle: e.checked })} style={{ marginBottom: 10 }}></Checkbox>
                 <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>عنوان مجموعه</label>
+              </div>
+              <div className="col-12" style={{ textAlign: 'right' }} >
+                <Checkbox inputId="IsReport" value={this.state.IsReport} checked={this.state.IsReport} onChange={e => this.setState({ IsReport: e.checked })} style={{ marginBottom: 10 }}></Checkbox>
+                <label htmlFor="IsReport" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>گزارش</label>
               </div>
 
 

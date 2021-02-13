@@ -17,6 +17,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { OrganizationChart } from 'primereact/organizationchart';
 import { InputNumber } from 'primereact/inputnumber';
+import './DataTableDemo.css';
 
 const data = [{
   label: 'مراحل تسویه حساب',
@@ -246,13 +247,32 @@ class Billing extends React.Component {
   }
 
   render() {
-    const userTemplate = (rowData) => {
-      return `${rowData.user[0].name}`;
+    const ProductBodyTemplate = (rowData,props) => {
+      return (
+          <React.Fragment>
+              <span className="p-column-title">{props.header}</span>
+              <span style={{paddingRight:20}}>{rowData[props.field]}</span>
+              
+          </React.Fragment>
+      );
     }
-    const shopTemplate = (rowData) => {
-      return `${rowData.shop[0].name}`;
+    const userTemplate = (rowData,props) => {
+      return (
+      <React.Fragment>
+              <span className="p-column-title">{props.header}</span>
+              <span style={{paddingRight:20}}>{rowData.user[0].name}</span>
+      </React.Fragment>
+      )
     }
-    const delTemplate = (rowData) => {
+    const shopTemplate = (rowData,props) => {
+      return (
+      <React.Fragment>
+              <span className="p-column-title">{props.header}</span>
+              <span style={{paddingRight:20}}>{rowData.shop[0].name}</span>
+      </React.Fragment>
+      )
+    }
+    const delTemplate = (rowData,props) => {
       if (rowData.status == 0)
         return <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delTransfer(rowData)}></i>;
     }
@@ -320,16 +340,17 @@ class Billing extends React.Component {
                 <div class="row">
                   <div class="col-12">
                     <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ لیست ده درخواست آخر </span> </div>
+                    <div className="datatable-responsive-demo" >
+                      <DataTable responsive className="p-datatable-responsive-demo" value={this.state.GridDataTransferReq} selectionMode="single"   >
+                        <Column field="price"  body={ProductBodyTemplate} header="مبلغ" className="yekan" style={{ textAlign: "right", fontSize: 13 }} />
+                        <Column field="user"  body={ProductBodyTemplate} body={userTemplate} header="نام فروشنده" className="yekan" style={{ textAlign: "right", fontSize: 13 }} />
+                        <Column field="shop"  body={ProductBodyTemplate} body={shopTemplate} header="نام فروشگاه" className="yekan" style={{ textAlign: "right", fontSize: 13 }} />
+                        <Column field="date"  body={ProductBodyTemplate} header="تاریخ" className="yekan" style={{ textAlign: "right", fontSize: 13 }} />
+                        <Column field="statusDesc"  body={ProductBodyTemplate} header="وضعیت" className="yekan" style={{ textAlign: "right", fontSize: 13 }} />
+                        <Column field="del"  body={delTemplate} header="حذف درخواست" className="yekan" style={{ textAlign: "center", fontSize: 13 }} />
 
-                    <DataTable responsive value={this.state.GridDataTransferReq} selectionMode="single"   >
-                      <Column field="price" header="مبلغ" className="yekan" style={{ textAlign: "center", fontSize: 13 }} />
-                      <Column field="user" body={userTemplate} header="نام فروشنده" className="yekan" style={{ textAlign: "center", fontSize: 13 }} />
-                      <Column field="shop" body={shopTemplate} header="نام فروشگاه" className="yekan" style={{ textAlign: "center", fontSize: 13 }} />
-                      <Column field="date" header="تاریخ" className="yekan" style={{ textAlign: "center", fontSize: 13 }} />
-                      <Column field="statusDesc" header="وضعیت" className="yekan" style={{ textAlign: "center", fontSize: 13 }} />
-                      <Column field="del" body={delTemplate} header="حذف درخواست" className="yekan" style={{ textAlign: "center", fontSize: 13 }} />
-
-                    </DataTable>
+                      </DataTable>
+                    </div>
                   </div>
                 </div>
 

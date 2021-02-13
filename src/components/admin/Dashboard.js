@@ -232,11 +232,11 @@ class Dashboard extends React.Component {
       isOpen: !this.state.isOpen
     })
   }
-  GoToForm(CId) {
+  GoToForm(CId,IsReport) {
     this.setState({
       SideVisible:false
     })
-    this.props.callback({ CId: CId });
+    this.props.callback({ CId: CId , IsReport: IsReport });
   }
   render() {
     if (this.state.logout) {
@@ -289,7 +289,7 @@ class Dashboard extends React.Component {
                           >
                             {v.children.map((u, j) => {
                               return (
-                                <Dropdown.Item eventKey={i + "_" + j} icon={u.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(u.CId)} className={LiClass} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((u.FName == "لیست کاربران" && this.state.NewUsers) || (u.FName == "سفارشات" && this.state.NewFactors)) ?
+                                <Dropdown.Item eventKey={i + "_" + j} icon={u.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(u.CId,u.IsReport)} className={LiClass} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((u.FName == "لیست کاربران" && this.state.NewUsers) || (u.FName == "سفارشات" && this.state.NewFactors)) ?
                                   (
                                     v.FName == "لیست کاربران" ?
                                       <Badge content={this.state.NewUsers}>
@@ -366,7 +366,7 @@ class Dashboard extends React.Component {
                           >
                             {v.children.map((u, j) => {
                               return (
-                                <Dropdown.Item eventKey={i + "_" + j} icon={u.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(u.CId)} className={LiClass} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((u.FName == "لیست کاربران" && this.state.NewUsers) || (u.FName == "سفارشات" && this.state.NewFactors)) ?
+                                <Dropdown.Item eventKey={i + "_" + j} icon={u.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(u.CId,u.IsReport)} className={LiClass} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((u.FName == "لیست کاربران" && this.state.NewUsers) || (u.FName == "سفارشات" && this.state.NewFactors)) ?
                                   (
                                     v.FName == "لیست کاربران" ?
                                       <Badge content={this.state.NewUsers}>

@@ -22,6 +22,10 @@ import Sales_Posted from './Sales_Posted.js'
 import Sales_Ended from './Sales_Ended.js'
 import Sales_Cleared from './Sales_Cleared.js'
 import Sales from './Sales.js'
+import Create_Filter from './Create_Filter.js'
+import Create_Reports from './Create_Reports.js'
+import Show_Reports from './Show_Reports.js'
+
 
 import SalesProduct from './SalesProduct.js'
 import Set from './Set.js'
@@ -57,8 +61,11 @@ class Management extends React.Component {
 
   }
   getResponse(value) {
+    debugger;
+
     this.setState({
-      CId: value.CId
+      CId: value.CId,
+      IsReport:value.IsReport
     })
   }
 
@@ -74,81 +81,92 @@ class Management extends React.Component {
             <Dashboard callback={this.getResponse.bind(this)} list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
           </div>
           <div className="col-lg-9 col-md-8 col-12" style={{ marginTop: 20, background: '#fff' }}>
-            {this.state.CId == "100" &&
+            {this.state.CId == "100" && !this.state.IsReport &&
               <AdminProduct />
             }
-            {this.state.CId == "101" &&
+            {this.state.CId == "101" && !this.state.IsReport &&
               <Users />
             }
-            {this.state.CId == "102" &&
+            {this.state.CId == "102" && !this.state.IsReport &&
               <Cats />
             }
-            {this.state.CId == "103" &&
+            {this.state.CId == "103" && !this.state.IsReport &&
               <Set />
             }
-            {this.state.CId == "118" &&
+            {this.state.CId == "118" && !this.state.IsReport &&
               <Billing />
             }
-            {this.state.CId == "119" &&
+            {this.state.CId == "119" && !this.state.IsReport &&
               <Accounts />
             }
-            {this.state.CId == "116" &&
+            {this.state.CId == "116" && !this.state.IsReport &&
               <Blog />
             }
-            {this.state.CId == "114" &&
+            {this.state.CId == "114" && !this.state.IsReport &&
               <Brands />
             }
-            {this.state.CId == "109" &&
+            {this.state.CId == "109" && !this.state.IsReport &&
               <ChangeInformation />
             }
-            {this.state.CId == "112" &&
+            {this.state.CId == "112" && !this.state.IsReport &&
               <Comments />
             }
-            {this.state.CId == "108" &&
+            {this.state.CId == "108" && !this.state.IsReport &&
               <Forms />
             }
-            {this.state.CId == "202" &&
+            {this.state.CId == "202" && !this.state.IsReport &&
               <Guarantee />
             }
-            {this.state.CId == "201" &&
+            {this.state.CId == "201" && !this.state.IsReport &&
               <Maps />
             }
-            {this.state.CId == "115" &&
+            {this.state.CId == "115" && !this.state.IsReport &&
               <Pics />
             }
-            {this.state.CId == "106" &&
+            {this.state.CId == "106" && !this.state.IsReport &&
               <Sales />
             }
             
             {
-            this.state.CId == "200" &&
+            this.state.CId == "200" && !this.state.IsReport &&
                 <SalesProduct />
             }
             
-            {this.state.CId == "110" &&
+            {this.state.CId == "110" && !this.state.IsReport &&
               <ShopInformation />
             }
-            {this.state.CId == "111" &&
+            {this.state.CId == "111" && !this.state.IsReport &&
               <ShopsList />
             }
-            {this.state.CId == "120" &&
+            {this.state.CId == "120" && !this.state.IsReport &&
               <SiteSettings />
             }
-            {this.state.CId == "121" &&
+            {this.state.CId == "121" && !this.state.IsReport &&
               <Sales_Registered />
             }
-            {this.state.CId == "122" &&
+            {this.state.CId == "122" && !this.state.IsReport &&
               <Sales_ReadyToSend />
             }
-            {this.state.CId == "123" &&
+            {this.state.CId == "123" && !this.state.IsReport &&
               <Sales_Posted />
             }
-            {this.state.CId == "124" &&
+            {this.state.CId == "124" && !this.state.IsReport &&
               <Sales_Ended />
             }
-            {this.state.CId == "125" &&
+            {this.state.CId == "125" && !this.state.IsReport &&
               <Sales_Cleared />
             }
+            {this.state.CId == "126" && !this.state.IsReport &&
+              <Create_Filter />
+            }
+            {this.state.CId == "127" && !this.state.IsReport &&
+              <Create_Reports />
+            }
+
+            {this.state.IsReport &&
+              <Show_Reports number={this.state.CId} />
+            }
+
 
         </div>
         <div >
