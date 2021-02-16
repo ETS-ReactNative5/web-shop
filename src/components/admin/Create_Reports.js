@@ -75,7 +75,8 @@ class Create_Reports extends React.Component {
       _id: this.state.selectedId,
       name: this.state.name,
       number: this.state.number,
-      Filters : this.FilterRef.current.getSelectedItems()
+      Filters : this.FilterRef.current.getSelectedItems(),
+      method:this.state.method
     };
     this.setState({
       loading: 1
@@ -109,7 +110,8 @@ class Create_Reports extends React.Component {
       DbTableName: "",
       DBTableField: "",
       OutputField: "",
-      selectedId: null
+      selectedId: null,
+      method:""
     })
 
   }
@@ -135,7 +137,8 @@ class Create_Reports extends React.Component {
       number: value.number,
       selectedId: value._id,
       FilterSelected:value.Filters,
-      visibleManageFilter: true
+      visibleManageFilter: true,
+      method:value.method
     })
 
   }
@@ -291,6 +294,13 @@ class Create_Reports extends React.Component {
                   <label>شماره گزارش</label>
                 </div>
               </div>
+              <div className="col-lg-6">
+                <div className="group">
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.method} name="method" onChange={(event) => this.setState({ method: event.target.value })} required="true" />
+                  <label>نام متد</label>
+                </div>
+              </div>
+              
               <div className="col-lg-12">
 
                 <div className="group">

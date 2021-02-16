@@ -36,14 +36,14 @@ class Create_Filter extends React.Component {
       type: "1",
       FId: "",
       DbTableName: "",
-      DBTableField: ""
+      DBTableField: "",
+      latinName: ""
 
     }
 
 
   }
   componentDidMount() {
-    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
     };
@@ -78,7 +78,8 @@ class Create_Filter extends React.Component {
       FId: this.state.FId,
       DbTableName: this.state.DbTableName,
       DBTableFieldLabel: this.state.DBTableFieldLabel,
-      DBTableFieldValue: this.state.DBTableFieldValue
+      DBTableFieldValue: this.state.DBTableFieldValue,
+      latinName: this.state.latinName
     };
     this.setState({
       loading: 1
@@ -112,6 +113,7 @@ class Create_Filter extends React.Component {
       DbTableName: "",
       DBTableField: "",
       OutputField: "",
+      latinName: "",
       selectedId: null
     })
 
@@ -138,6 +140,7 @@ class Create_Filter extends React.Component {
       type: value.type,
       FId: value.FId,
       DbTableName: value.DbTableName,
+      latinName: value.latinName,
       DBTableFieldValue: value.DBTableFieldValue,
       DBTableFieldLabel: value.DBTableFieldLabel,
       selectedId: value._id,
@@ -271,8 +274,14 @@ class Create_Filter extends React.Component {
 
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.name} name="name" onChange={(event) => this.setState({ name: event.target.value })} required="true" />
-                  <label >عنوان</label>
+                  <label >عنوان فارسی</label>
 
+                </div>
+              </div>
+              <div className="col-lg-12">
+                <div className="group">
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.latinName} name="latinName" onChange={(event) => this.setState({ latinName: event.target.value })} required="true" />
+                  <label>عنوان لاتین</label>
                 </div>
               </div>
               <div className="col-lg-12">
@@ -281,7 +290,7 @@ class Create_Filter extends React.Component {
                   <label>نام دیتابیس</label>
                 </div>
               </div>
-
+              
               <div className="col-lg-6">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.DBTableFieldValue} name="DBTableField" onChange={(event) => this.setState({ DBTableFieldValue: event.target.value })} required="true" />
@@ -296,6 +305,7 @@ class Create_Filter extends React.Component {
                 </div>
               </div>
               }
+              
 
 
               <div className="col-lg-12">

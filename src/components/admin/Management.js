@@ -25,6 +25,8 @@ import Sales from './Sales.js'
 import Create_Filter from './Create_Filter.js'
 import Create_Reports from './Create_Reports.js'
 import Show_Reports from './Show_Reports.js'
+import SalePose from './SalePose.js'
+
 
 
 import SalesProduct from './SalesProduct.js'
@@ -61,7 +63,6 @@ class Management extends React.Component {
 
   }
   getResponse(value) {
-    debugger;
 
     this.setState({
       CId: value.CId,
@@ -161,6 +162,9 @@ class Management extends React.Component {
             }
             {this.state.CId == "127" && !this.state.IsReport &&
               <Create_Reports />
+            }
+            {this.state.CId == "130" && !this.state.IsReport &&
+              <SalePose />
             }
 
             {this.state.IsReport &&

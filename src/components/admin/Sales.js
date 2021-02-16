@@ -406,7 +406,6 @@ class Sales extends React.Component {
   
   render() {
     const BodyTemplate = (rowData,props) => {
-      debugger;
       return (
           <React.Fragment>
               <span className="p-column-title">{props.header}</span>
