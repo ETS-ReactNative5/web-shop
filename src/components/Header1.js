@@ -1,4 +1,4 @@
-import React, { useRef  } from 'react';
+import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect, Link } from 'react-router-dom'
 import axios from 'axios'
@@ -11,12 +11,12 @@ import Server from './Server.js'
 /*
 import {Autocomplete} from 'react-native-autocomplete-input'
    */
-let Cound=0;  
+let Cound = 0;
 
 class Header1 extends React.Component {
 	constructor(props) {
 		super(props);
-        this.op =  React.createRef();
+		this.op = React.createRef();
 
 		this.Server = new Server();
 		this.data = "dssddsdss"
@@ -52,8 +52,8 @@ class Header1 extends React.Component {
 				this.props.dispatch({
 					type: 'LoginTrueUser',
 					CartNumber: localStorage.getItem("CartNumber"),
-					off: localStorage.getItem("off")=="undefined" ? 0 : localStorage.getItem("off"),
-					credit: localStorage.getItem("credit") == "undefined" ? 0 : localStorage.getItem("credit") 
+					off: localStorage.getItem("off") == "undefined" ? 0 : localStorage.getItem("off"),
+					credit: localStorage.getItem("credit") == "undefined" ? 0 : localStorage.getItem("credit")
 				})
 				axios.post(this.state.absoluteUrl + 'AdminApi/ShopInformation', { main: true }).then(response => {
 					this.setState({
@@ -74,12 +74,12 @@ class Header1 extends React.Component {
 				})
 			})
 	}
-	
+
 	onSelect(event) {
 		var _id = event.originalEvent.target.getAttribute("_id");
 		this.setState({
-			brand:event.value.title
-		  })
+			brand: event.value.title
+		})
 		if (!_id) {
 			try {
 				_id = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_id");
@@ -116,12 +116,12 @@ class Header1 extends React.Component {
 					desc.push(v.desc);
 				})*/
 				let brandSuggestions = []
-				response.data.result.map(function(v,i){
-				  
-				  brandSuggestions.push({_id:((v.product_detail && v.product_detail.length > 0) ? v.product_detail[0]._id : v._id),title:v.title,subTitle:v.subTitle,desc:v.desc,img:v.fileUploaded})
+				response.data.result.map(function (v, i) {
+
+					brandSuggestions.push({ _id: ((v.product_detail && v.product_detail.length > 0) ? v.product_detail[0]._id : v._id), title: v.title, subTitle: v.subTitle, desc: v.desc, img: v.fileUploaded })
 				})
-				
-				that.setState({brandSuggestions:brandSuggestions});
+
+				that.setState({ brandSuggestions: brandSuggestions });
 				//that.setState({ _id: _id, img: img, desc: desc, brandSuggestions: title, subTitle: subTitle });
 
 
@@ -132,20 +132,20 @@ class Header1 extends React.Component {
 
 	}
 	itemTemplate(brand) {
-		Cound=0;
+		Cound = 0;
 		return (
 			<div className="p-clearfix" style={{ direction: 'rtl' }} >
 				<div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
 
 					<div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>{brand.desc &&
-						<span className="iranyekanwebregular" style={{ textAlign: 'right',overflow:'hidden' }} _id={brand._id} >
+						<span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
 							<span _id={brand._id}>{brand.title}</span><br />
 							<span _id={brand._id}>{brand.subTitle}</span>
 						</span>
 					}
 					</div>
 					<div _id={brand._id} className="col-4">{brand.img &&
-						<img src={this.state.absoluteUrl +brand.img.split("public")[1]} style={{ width: 100, height: 100, minWidth: 100 }} _id={brand._id} />
+						<img src={this.state.absoluteUrl + brand.img.split("public")[1]} style={{ width: 100, height: 100, minWidth: 100 }} _id={brand._id} />
 					} </div>
 				</div>
 			</div>
@@ -205,68 +205,72 @@ class Header1 extends React.Component {
 			<div style={{ background: '#fff', paddingBottom: 10 }}>
 				<OverlayPanel ref={this.op} showCloseIcon dismissable>
 					{this.state.name &&
-										<p  className="yekan" style={{textAlign:'right'}} ><span>{this.state.name}</span></p>
+						<p className="yekan" style={{ textAlign: 'right' }} ><span>{this.state.name}</span></p>
 
-					} 
-					{(this.props.credit !="undefined" && this.props.credit !=0 && this.props.credit !=undefined) &&
-					<p  className="yekan" ><span>موجودی اعتباری : </span><span>{this.props.credit ? this.persianNumber(this.props.credit.toString().replace(/,/g,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : 0} تومان</span></p>
-			 		}
-					
-					<Link to={`${process.env.PUBLIC_URL}/User`}><span className="yekan">مشاهده حساب کاربری</span> </Link> 
-				</OverlayPanel>
-					<div style={{height:35,padding:5,backgroundSize:'cover',backgroundRepeat:'no-repeat',backgroundPosition:'50%',backgroundImage:'url(https://dkstatics-public.digikala.com/digikala-adservice-banners/9521d61d337456b9c498ea05c7f54d76981faa19_1609858694.gif)'}} >
+					}
+					{(this.props.credit != "undefined" && this.props.credit != 0 && this.props.credit != undefined) &&
+						<p className="yekan" style={{textAlign:'right'}} ><span>موجودی اعتباری : </span><span>{this.props.credit ? this.persianNumber(this.props.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : 0} تومان</span></p>
+					}
+					<Link to={`${process.env.PUBLIC_URL}/User`} style={{ display: 'block' }}><span className="yekan">مشاهده حساب کاربری</span> </Link>
+					<div style={{display:'flex',justifyContent:'center'}}>
+					<button className="btn btn-danger btn-lg btn-block iranyekanwebregular" style={{ whiteSpace: "nowrap",marginTop:20, fontSize: 12 }} onClick={this.logout} >خروج از سیستم</button>
+
 					</div>
+
+				</OverlayPanel>
+				<div style={{ height: 35, padding: 5, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: '50%', backgroundImage: 'url(https://dkstatics-public.digikala.com/digikala-adservice-banners/9521d61d337456b9c498ea05c7f54d76981faa19_1609858694.gif)' }} >
+				</div>
 				<div >
 					<div className="row" style={{ direction: 'ltr', marginTop: 15, alignItems: 'center', marginLeft: 0, marginRight: 0 }}>
 
 
-					
+
 
 
 
 						<div className="col-lg-5 col-12 order-lg-1 order-2 text-lg-left text-right">
-							<div className="wishlist_cart d-flex flex-row align-items-center " style={{ justifyContent: 'space-between' }}>
+							<div className="wishlist_cart d-flex flex-row align-items-center " style={{ justifyContent: 'flex-start' }}>
 
-									<div className="cart_container d-flex flex-row align-items-center">
-										<div className="cart_icon">
-										</div>
-										<div style={{marginRight:5,marginLeft:5}}>
-											<Link to={`${process.env.PUBLIC_URL}/`}><i class="fal fa-home mr-md-4 mr-1" style={{fontSize: 22, color: '#716d6d' }} /></Link>
-										</div>
-										<div style={{marginRight:5,marginLeft:5}}>
-											{this.state.userId &&
-												<div>
-
-													<span onClick={(e) => this.op.current.toggle(e)} to={`${process.env.PUBLIC_URL}/user?id=` + this.state.userId}><i class="fal fa-user ml-md-4 ml-2 mr-md-4 mr-2" style={{  fontSize: 22, color: '#716d6d',cursor:'pointer' }} /></span>
-
-												</div>
-											}
-										</div>
-										<div style={{marginRight:5,marginLeft:5}}>
-											{this.state.isAdmin == "1" &&
-												<Link to={`${process.env.PUBLIC_URL}/admin/admin`}><i class="fal fa-user-plus ml-md-4 mr-md-4 mr-2 ml-2" style={{fontSize: 25, color: '#20ad31' }} /></Link>
-											}
-										</div>
-
+								<div className="cart_container d-flex flex-row align-items-baseline">
+									<div className="cart_icon">
+									</div>
+									<div style={{ marginRight: 5, marginLeft: 5 }}>
+										<Link to={`${process.env.PUBLIC_URL}/`}><i class="fal fa-home mr-md-4 mr-1" style={{ fontSize: 22, color: '#716d6d' }} /></Link>
+									</div>
+									<div style={{ marginRight: 5, marginLeft: 5 }}>
 										{this.state.userId &&
-											<div className="cart_content">
-												<div className=" iranyekanwebregular"><Link to={`${process.env.PUBLIC_URL}/cart`}><i class="fal fa-shopping-cart mr-4 mr-1" style={{ fontSize: 22, color: '#3e2c29' }} /></Link></div>
-												<div className="cart_count"><span className="iranyekanwebregular">
-													{this.props.CartNumber && this.props.CartNumber != "undefined" &&
-														this.persianNumber(this.props.CartNumber)
-													}
-												</span></div>
+											<div>
+
+												<span onClick={(e) => this.op.current.toggle(e)} to={`${process.env.PUBLIC_URL}/user?id=` + this.state.userId}><i class="fal fa-user ml-md-4 ml-2 mr-md-4 mr-2" style={{ fontSize: 22, color: '#716d6d', cursor: 'pointer' }} /></span>
+
 											</div>
 										}
 									</div>
+									<div style={{ marginRight: 5, marginLeft: 5 }}>
+										{this.state.isAdmin == "1" &&
+											<Link to={`${process.env.PUBLIC_URL}/admin/admin`}><i class="fal fa-user-plus ml-md-4 mr-md-4 mr-2 ml-2" style={{ fontSize: 25, color: '#20ad31' }} /></Link>
+										}
+									</div>
 
-								<div className="d-flex flex-row align-items-center" style={{justifyContent:'center',width:'calc(100% - 100px)'}}>
+									{this.state.userId &&
+										<div className="cart_content">
+											<div className=" iranyekanwebregular"><Link to={`${process.env.PUBLIC_URL}/cart`}><i class="fal fa-shopping-cart mr-4 mr-1" style={{ fontSize: 22, color: '#3e2c29' }} /></Link></div>
+											<div className="cart_count"><span className="iranyekanwebregular">
+												{this.props.CartNumber && this.props.CartNumber != "undefined" &&
+													this.persianNumber(this.props.CartNumber)
+												}
+											</span></div>
+										</div>
+									}
+								</div>
+
+								<div className="d-flex flex-row align-items-center" style={{ justifyContent: 'center' }}>
 
 									<div className="wishlist_content">
 										{this.state.userId ?
-											<button className="btn btn-outline-danger iranyekanwebregular" style={{ whiteSpace: "nowrap", width: 100, fontSize: 12 }} onClick={this.logout} >خروج از سیستم</button>
+											<span>&nbsp;</span>
 											:
-											<button className="btn btn-outline-info iranyekanwebregular" style={{ whiteSpace: "nowrap", fontSize: 12 }} onClick={this.logout} >ورود / ثبت نام <i className="fa fa-sign-in-alt" style={{ fontSize:7,paddingLeft:15,display:'none' }} /></button>
+											<button className="btn btn-outline-info iranyekanwebregular" style={{ whiteSpace: "nowrap", fontSize: 12 }} onClick={this.logout} >ورود / ثبت نام <i className="fa fa-sign-in-alt" style={{ fontSize: 7, paddingLeft: 15, display: 'none' }} /></button>
 										}
 									</div>
 								</div>
@@ -275,10 +279,10 @@ class Header1 extends React.Component {
 						<div className="col-lg-5 col-12 order-lg-2 order-2 text-lg-left text-right" style={{ direction: 'rtl', visibility: this.props.HideSearch ? 'hidden' : 'visible' }}>
 							<div >
 								<div style={{ position: 'relative' }}>
-									<AutoComplete placeholder="جستجو کنید ... " inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, borderColor: '#dedddd', background: '#eee',borderRadius:15,padding:7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplate.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+									<AutoComplete placeholder="جستجو کنید ... " inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, borderColor: '#dedddd', background: '#eee', borderRadius: 15, padding: 7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplate.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
 
-								     <span style={{ position: 'absolute', left: '45px', top: '3px', fontSize:20,color:'#ccc' }}>|</span>		
-									<i className="fal fa-search" style={{ position: 'absolute', left: '14px', top: '11px', fontSize:20 }} />
+									<span style={{ position: 'absolute', left: '45px', top: '3px', fontSize: 20, color: '#ccc' }}>|</span>
+									<i className="fal fa-search" style={{ position: 'absolute', left: '14px', top: '11px', fontSize: 20 }} />
 								</div>
 							</div>
 						</div>

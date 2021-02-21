@@ -23,7 +23,7 @@ import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import GoogleMapReact from 'google-map-react';
-import ReactToPrint from 'react-to-print';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
 
 
@@ -50,6 +50,7 @@ class Sales_Registered extends React.Component {
       loading: 0,
       isMainShop: 0,
       showProductStatus: 0,
+      onBeforePrint: {},
       url: this.Server.getUrl()
 
     }
@@ -307,14 +308,29 @@ class Sales_Registered extends React.Component {
           v.company = v.userData[0].company;
         }
         v.delete = <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
-        v.print = <ReactToPrint
-          trigger={() => {
-            return <i class="far fa-print" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.state.printParam = v}></i>;
-          }}
-          content={() => that.componentRef}
-        />
+        v.print =
+          <ReactToPrint
+            content={() => that.componentRef}
+          >
+            <PrintContextConsumer>
+              {({ handlePrint }) => (
+                <i class="far fa-print" onClick={()=>{
+                  that.setState({
+                    printParam: v
+                  })
+                  setTimeout(function(){
+                    handlePrint();
+
+                  },0)
+                }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
+              )}
+            </PrintContextConsumer>
+          </ReactToPrint>
+
 
       })
+
+      
       that.setState({
         GridDataFactors: response.data.result.result,
         LastAmount: response.data.result.finalPrice,
@@ -388,23 +404,23 @@ class Sales_Registered extends React.Component {
     this.EditFactor(this.state.selectedId, updatedProducts[props.rowIndex]._id, updatedProducts[props.rowIndex].title, "edit", updatedProducts[props.rowIndex])
 
   }
-  
+
   render() {
-    const BodyTemplate = (rowData,props) => {
+    const BodyTemplate = (rowData, props) => {
       return (
-          <React.Fragment>
-              <span className="p-column-title">{props.header}</span>
-              {rowData[props.field]}
-          </React.Fragment>
+        <React.Fragment>
+          <span className="p-column-title">{props.header}</span>
+          {rowData[props.field]}
+        </React.Fragment>
       );
     }
-    const ProductBodyTemplate = (rowData,props) => {
+    const ProductBodyTemplate = (rowData, props) => {
       return (
-          <React.Fragment>
-              <span className="p-column-title">{props.header}</span>
-              <span style={{paddingRight:20}}>{rowData[props.field]}</span>
-              
-          </React.Fragment>
+        <React.Fragment>
+          <span className="p-column-title">{props.header}</span>
+          <span style={{ paddingRight: 20 }}>{rowData[props.field]}</span>
+
+        </React.Fragment>
       );
     }
     let statusDesc = [
@@ -442,31 +458,31 @@ class Sales_Registered extends React.Component {
               <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی اعتباری : {this.persianNumber(parseInt(this.state.LastCredit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
             }
             <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها (پایان یافته)</span></div>
-            
-            <div className="datatable-responsive-demo">
-              <DataTable  resizableColumns={true} paginator={true} className="p-datatable-responsive-demo" rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedFactor} onSelectionChange={e => { if (e.originalEvent.target.tagName != "I") this.selectedFactorChange(e.value) }} >
-                <Column field="name" header="نام خریدار"  body={BodyTemplate}   className="yekan" style={{ textAlign: "right" }} />
-                {this.state.isMainShop == 1 &&
-                <Column field="username" header="نام کاربری" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                {this.state.isMainShop == 1 &&
-                <Column field="company" header="شرکت" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                <Column field="Amount" header="مبلغ پرداختی"  body={BodyTemplate}  className="yekan" style={{ textAlign: "right" }} />
-                {this.state.CreditSupport && this.state.isMainShop == 1 &&
-                  <Column field="Credit" header="کسر از اعتبار"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                {this.state.isMainShop == 1 &&
-                <Column field="refId" header="رسید تراکنش"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                <Column field="Date" header="تاریخ"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
 
-                <Column field="statusDesc" filter={false} header="وضعیت"  body={BodyTemplate} filterElement={StatusFilter} className="yekan" style={{ textAlign: "right" }} />
+            <div className="datatable-responsive-demo">
+              <DataTable resizableColumns={true} paginator={true} className="p-datatable-responsive-demo" rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedFactor} onSelectionChange={e => { if (e.originalEvent.target.tagName != "I") this.selectedFactorChange(e.value) }} >
+                <Column field="name" header="نام خریدار" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 {this.state.isMainShop == 1 &&
-                  <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "right" }} />
+                  <Column field="username" header="نام کاربری" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
                 {this.state.isMainShop == 1 &&
-                  <Column field="print" filter={false} header="چاپ"  className="yekan" style={{ textAlign: "right" }} />
+                  <Column field="company" header="شرکت" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                }
+                <Column field="Amount" header="مبلغ پرداختی" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                {this.state.CreditSupport && this.state.isMainShop == 1 &&
+                  <Column field="Credit" header="کسر از اعتبار" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                }
+                {this.state.isMainShop == 1 &&
+                  <Column field="refId" header="رسید تراکنش" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                }
+                <Column field="Date" header="تاریخ" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+
+                <Column field="statusDesc" filter={false} header="وضعیت" body={BodyTemplate} filterElement={StatusFilter} className="yekan" style={{ textAlign: "right" }} />
+                {this.state.isMainShop == 1 &&
+                  <Column field="delete" filter={false} header="حذف" className="yekan" style={{ textAlign: "right" }} />
+                }
+                {this.state.isMainShop == 1 &&
+                  <Column field="print" filter={false} header="چاپ" className="yekan" style={{ textAlign: "right" }} />
                 }
               </DataTable>
             </div>
@@ -476,85 +492,85 @@ class Sales_Registered extends React.Component {
 
         <Dialog header="جزئیات فاکتور" visible={this.state.selectedFactor} style={{ width: '80vw' }} minY={70} onHide={this.onHide} maximizable={false} maximized={true}>
           <div style={{ overflowY: 'auto', overflowX: 'hidden', minHeight: 400 }}>
-            <div style={{position:'fixed',backgroundColor:'#fff',zIndex:2,width:'100%'}} >
-            {this.state.isMainShop == 1 &&
-              <div>
-                <p className="yekan" style={{ float: "right" }}>تغییر وضعیت سفارش</p>
-                <select className="custom-select yekan" value={this.state.newStatus} name="status" onChange={this.handleChangeStatus} >
-                  <option value="-3">لغو محصول توسط فروشنده</option>
-                  <option value="-2">درخواست لغو توسط خریدار</option>
-                  <option value="-1">لغو شده</option>
-                  <option value="0">ناموفق</option>
-                  <option value="1">ثبت شده</option>
-                  <option value="2">آماده ارسال</option>
-                  <option value="3">ارسال شده</option>
-                  <option value="4">پایان</option>
-                  <option value="5">تسویه شده</option>
-
-                </select>
-                <br /><br />
-                <hr />
-              </div>
-
-            }
-            {this.state.showProductStatus == 1 ?
-              <div>
-                <p className="yekan" style={{ float: "right", color: 'red' }}>تغییر وضعیت {this.state.ProductSelectedTitle || "محصول"}</p>
-                <select className="custom-select yekan" value={this.state.ProductStatus} name="status" onChange={this.handleProductStatusChange} >
-
-                  <option value="0">منتظر تایید</option>
-                  <option value="1">در حال پردازش</option>
-                  <option value="2">آماده ارسال</option>
-                  <option value="3">پایان</option>
-                  <option value="-1">لغو</option>
-
-
-                </select>
-                <br /><br />
-              </div>
-              :
-              <div>
-                <p className="yekan" style={{ float: "right" }}>برای تغییر وضعیت هر محصول روی سطر آن کلیک کنید</p><br /><br />
-              </div>
-            }
-            </div>
-            <div className="datatable-responsive-demo" style={{marginTop:this.state.isMainShop == 1 ? 180 : 100}}>
-
-            <DataTable onRowSelect={this.onRowSelect} className="p-datatable-responsive-demo" responsive selection={this.state.selectedProduct1} onSelectionChange={e => {
-              for (let i = 0; i < this.state.selectedFactor.length; i++) {
-                if (this.state.selectedFactor[i]._id == e.value._id) {
-                  this.setState({
-                    ProductSelectedIndex: i,
-                    selectedProductId: e.value._id
-                  })
-                }
-              }
-            }} selectionMode="single" dataKey="id" body={ProductBodyTemplate} resizableColumns={true} paginator={true} rows={10} value={this.state.selectedFactor}  >
-              <Column field="title" header="عنوان" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              <Column field="subTitle" header="عنوان دوم" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+            <div style={{ position: 'fixed', backgroundColor: '#fff', zIndex: 2, width: '100%' }} >
               {this.state.isMainShop == 1 &&
-              <Column field="SellerName" header="فروشنده" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <div>
+                  <p className="yekan" style={{ float: "right" }}>تغییر وضعیت سفارش</p>
+                  <select className="custom-select yekan" value={this.state.newStatus} name="status" onChange={this.handleChangeStatus} >
+                    <option value="-3">لغو محصول توسط فروشنده</option>
+                    <option value="-2">درخواست لغو توسط خریدار</option>
+                    <option value="-1">لغو شده</option>
+                    <option value="0">ناموفق</option>
+                    <option value="1">ثبت شده</option>
+                    <option value="2">آماده ارسال</option>
+                    <option value="3">ارسال شده</option>
+                    <option value="4">پایان</option>
+                    <option value="5">تسویه شده</option>
+
+                  </select>
+                  <br /><br />
+                  <hr />
+                </div>
+
               }
-              {this.state.isMainShop == 1 &&
-              <Column field="desc" header="شرح" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }} />
-              }
-              {this.state.isMainShop == 1 ?
-              <Column field="number" body={ProductBodyTemplate} editor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
+              {this.state.showProductStatus == 1 ?
+                <div>
+                  <p className="yekan" style={{ float: "right", color: 'red' }}>تغییر وضعیت {this.state.ProductSelectedTitle || "محصول"}</p>
+                  <select className="custom-select yekan" value={this.state.ProductStatus} name="status" onChange={this.handleProductStatusChange} >
+
+                    <option value="0">منتظر تایید</option>
+                    <option value="1">در حال پردازش</option>
+                    <option value="2">آماده ارسال</option>
+                    <option value="3">پایان</option>
+                    <option value="-1">لغو</option>
+
+
+                  </select>
+                  <br /><br />
+                </div>
                 :
-                <Column field="number" body={ProductBodyTemplate} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
-            }
-              <Column field="status" header="وضعیت" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              <Column field="price" header="مبلغ پرداختی" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-
-              {this.state.CreditSupport && 
-                <Column field="credit" header="کسر از اعتبار" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <div>
+                  <p className="yekan" style={{ float: "right" }}>برای تغییر وضعیت هر محصول روی سطر آن کلیک کنید</p><br /><br />
+                </div>
               }
-              <Column field="detail" header="جزئیات" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              {this.state.isMainShop == 1 &&
-                <Column field="edit" header="حذف" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              }
+            </div>
+            <div className="datatable-responsive-demo" style={{ marginTop: this.state.isMainShop == 1 ? 180 : 100 }}>
 
-            </DataTable>
+              <DataTable onRowSelect={this.onRowSelect} className="p-datatable-responsive-demo" responsive selection={this.state.selectedProduct1} onSelectionChange={e => {
+                for (let i = 0; i < this.state.selectedFactor.length; i++) {
+                  if (this.state.selectedFactor[i]._id == e.value._id) {
+                    this.setState({
+                      ProductSelectedIndex: i,
+                      selectedProductId: e.value._id
+                    })
+                  }
+                }
+              }} selectionMode="single" dataKey="id" body={ProductBodyTemplate} resizableColumns={true} paginator={true} rows={10} value={this.state.selectedFactor}  >
+                <Column field="title" header="عنوان" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <Column field="subTitle" header="عنوان دوم" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                {this.state.isMainShop == 1 &&
+                  <Column field="SellerName" header="فروشنده" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                }
+                {this.state.isMainShop == 1 &&
+                  <Column field="desc" header="شرح" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }} />
+                }
+                {this.state.isMainShop == 1 ?
+                  <Column field="number" body={ProductBodyTemplate} editor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
+                  :
+                  <Column field="number" body={ProductBodyTemplate} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
+                }
+                <Column field="status" header="وضعیت" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <Column field="price" header="مبلغ پرداختی" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+
+                {this.state.CreditSupport &&
+                  <Column field="credit" header="کسر از اعتبار" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                }
+                <Column field="detail" header="جزئیات" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                {this.state.isMainShop == 1 &&
+                  <Column field="edit" header="حذف" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                }
+
+              </DataTable>
             </div>
           </div>
         </Dialog>

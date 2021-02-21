@@ -40,6 +40,8 @@ class SalePose extends React.Component {
       DBTableField: "",
       latinName: "",
       IntroducedPrice: "",
+      creditAmount:"",
+      debtorAmount:"",
       edit:false
 
     }
@@ -90,7 +92,9 @@ class SalePose extends React.Component {
       finalDate: this.state.finalDate,
       Introduced: this.state.Introduced,
       IntroducedPrice: this.state.IntroducedPrice,
-      IntroducedCombo: this.state.IntroducedPrice,
+      creditAmount: this.state.creditAmount,
+      debtorAmount: this.state.debtorAmount,
+      IntroducedCombo: this.state.IntroducedCombo,
       chequeBox: this.state.chequeBox,
       DeviceBox: this.state.DeviceBox,
       edit:this.state.edit
@@ -98,12 +102,12 @@ class SalePose extends React.Component {
     debugger;
     for (let state in this.state) {
       if (state.indexOf("chequ") > -1 && state != "chequeBox") {
-        param[state] = this.state[state].toString().replace(/,/g, "");
+        param[state] = this.state[state]?.toString().replace(/,/g, "");
       }
     }
     for (let state in this.state) {
       if (state.indexOf("Device_") > -1 && state != "DeviceBox") {
-        param[state] = this.state[state].toString().replace(/,/g, "");
+        param[state] = this.state[state]?.toString().replace(/,/g, "");
       }
     }
     this.setState({
@@ -130,6 +134,21 @@ class SalePose extends React.Component {
     this.Server.send("CompanyApi/setPoseSales", param, SCallBack, ECallBack)
   }
   CreateForm() {
+    
+    let cheque = {};
+    let device = {};
+    for (let state in this.state) {
+      if (state.indexOf("chequ") > -1 && state != "chequeBox") {
+
+        cheque[state] = ""
+      }
+    }
+    for (let state in this.state) {
+      if (state.indexOf("Device_") > -1 && state != "DeviceBox") {
+
+        device[state] = ""
+      }
+    }
     this.setState({
       visibleManageSale: true,
       customerName: '',
@@ -143,20 +162,10 @@ class SalePose extends React.Component {
       Introduced: '',
       IntroducedPrice: '',
       IntroducedCombo: '',
-      edit:false
+      edit:false,
+      ...device,
+      ...cheque,
     })
-    /*for (let v in value) {
-      if (v.indexOf("chequ") > -1 && v != "chequeBox") {
-
-        cheque[v] = value[v].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      }
-    }
-    for (let v in value) {
-      if (v.indexOf("Device_") > -1 && v != "DeviceBox") {
-
-        device[v] = value[v].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      }
-    }*/
 
   }
   onHideFormsDialog(event) {
@@ -181,16 +190,15 @@ class SalePose extends React.Component {
     let device = {};
     for (let v in value) {
       if (v.indexOf("chequ") > -1 && v != "chequeBox") {
-
-        cheque[v] = value[v].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        cheque[v] = value[v]?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       }
     }
     for (let v in value) {
       if (v.indexOf("Device_") > -1 && v != "DeviceBox") {
-
-        device[v] = value[v].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        device[v] = value[v]?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       }
     }
+    debugger;
     this.setState({
       edit:true,
       visibleManageSale: true,
@@ -210,6 +218,8 @@ class SalePose extends React.Component {
       chequeNumber: value.chequeNumber,
       chequeBox: value.chequeBox,
       DeviceBox: value.DeviceBox,
+      creditAmount:value.creditAmount,
+      debtorAmount:value.debtorAmount,
       ...cheque,
       ...device
     })
@@ -431,7 +441,7 @@ class SalePose extends React.Component {
                           <option value="S-90">S-90</option>
                           <option value="S-910">S-910</option>
                           <option value="S-58">S58</option>
-                          <option value="Verifone-x756">Verifone-x756</option>
+                          <option value="Verifone">Verifone</option>
                         </select>
                       </div>
 
@@ -508,7 +518,13 @@ class SalePose extends React.Component {
                     }
                   </div>
                   <div className="col-lg-3">
+                    {(this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
+                      <div className="group">
+                        <input className="form-control irsans" autoComplete="off"  type="text" value={this.state.debtorAmount} name="debtorAmount" onChange={(event) => this.setState({ debtorAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")})} required="true" />
+                        <label >بدهکار (تومان)</label>
 
+                      </div>
+                    }
                   </div>
                   <div className="col-lg-3">
                     {this.state.Device_Number &&

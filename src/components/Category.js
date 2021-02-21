@@ -111,10 +111,8 @@ class Category extends React.Component {
             
             let pic = car.fileUploaded.split("public")[1] ? this.state.absoluteUrl+car.fileUploaded.split("public")[1] : this.state.absoluteUrl+'nophoto.png';
              return (
-                 
                 <div className="col-12 col-lg-3 col-md-4 col-sm-6" style={{textAlign:'center',paddingRight:0,paddingLeft:0,paddingTop:0,paddingBottom:0}}>
                 <div className="product-grid-item card" style={{padding:10,minHeight:500}} >
-                    
                     <div className="product-grid-item-content YekanBakhFaMedium">
                     <img src={pic} alt={car.title} style={{height:150,borderRadius:15}} />
                         <div className="product-name YekanBakhFaMedium" style={{textAlign:'right',marginTop:30,height:50}}>{car.title}</div>
@@ -187,7 +185,7 @@ class Category extends React.Component {
         
         <div className="col-lg-10 DataViewNoBorder bs-row">
             {this.state.GridData.length > 0 && this.state.EmptyCat !=0 ?
-            <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} rows={9}  itemTemplate={this.itemTemplate}></DataView>
+            <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} rows={12}  itemTemplate={this.itemTemplate}></DataView>
 
             :
             <div>

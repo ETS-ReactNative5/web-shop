@@ -762,8 +762,8 @@ select option
 .cart_count
 {
 	position: absolute;
-	bottom: 18px;
-	right: 45px;
+	bottom: 20px;
+	right: 10px;
 	width: 23px;
 	height: 23px;
 	background: #ef5a5a;
@@ -786,10 +786,7 @@ select option
 {
 	width: 100%;
 }
-.cart_content
-{
-	margin-left: 28px;
-}
+
 .cart_text a
 {
 	font-size: 18px;

@@ -34,6 +34,7 @@ export class  ComponentToPrint extends React.Component {
     this.Server = new Server();
     this.state = {
       param:this.props.param,
+      html:'',
       url: this.Server.getUrl(),
       absoluteUrl: this.Server.getAbsoluteUrl(),
 
@@ -43,17 +44,51 @@ export class  ComponentToPrint extends React.Component {
 
 
   }
-  componentDidMount(){
+  componentWillReceiveProps(newProps){
+    if(newProps.param){
+      
+      let address = newProps.param.address ? newProps.param.address : '';
+      let name = newProps.param.name ? newProps.param.name : '';
+      let trs=""
+      for(let i=0;i<newProps.param.products.length >0 ;i++){
+        trs +="<tr><td>"+(i+1)+"</td><td>"+newProps.param.products[i].title+"</td><td>"+newProps.param.products[i].SellerName+"</td><td>"+newProps.param.products[i].number+"</td><td>"+newProps.param.products[i].UnitPrice+" تومان</td><td>"+newProps.param.products[i].price+" تومان</td></tr>"
+      }
+      let html=
+          "<div>"
+          +"<div style='border:1px solid;margin-bottom:10px'><div style='text-align:center'>فاکتور خرید</div>"
+          +"<div style='display:flex;flex-direction:row;justify-content:flex-end'>"
+          +"<div ><p class='yekan' style='text-align:right;padding-right:2px;padding-left:2px'>"+"زمان خرید: "+ newProps.param.Date+"</p></div><div ></div></div>"
+          +"<div style='display:flex;flex-direction:row;justify-content:space-between'>"
+          +"<div ><p class='yekan' style='text-align:right;padding-right:2px;padding-left:2px'>"+"نام خریدار: "+ name+"</p></div><div ><p class='yekan' style='text-align:right;padding-right:2px;padding-left:2px'>"+"تلفن همراه: "+ newProps.param.username+"</p></div></div>"
+          +"<div style='display:flex;flex-direction:row;justify-content:space-between'>"
+          +"<div ><p class='yekan' style='text-align:right;padding-right:2px;padding-left:2px'>"+"آدرس: "+ address+"</p></div><div ></div></div>"
+          +"</div><div style='display:flex;justify-content:center'><table border='1' style='text-align:center'><thead><tr><td style='width:50px'>ردیف</td><td style='width:200px'>نام کالا</td><td style='width:120px'>فروشنده</td><td style='width:120px'>تعداد</td><td style='width:120px'>قیمت واحد</td><td style='width:120px'>قیمت کل</td></tr></thead><tbody>"
+          +trs+
+          "</tbody></table></div>";
+          html+="<div style='border:1px solid;margin-top:10px'>"
+          if(newProps.param.credit > 0)
+            html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>کسر از اعتبار اقساطی : "+newProps.param.credit+" تومان</div></div>"
+          html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>جمع کل : "+newProps.param.Amount+" تومان</div></div>";
+          html+= "<div style='display:flex;justify-content: flex-start;margin-top:20px;padding-right:2px;padding-left:2px'><div>امضاء خریدار: </div></div></div>";
+          if(newProps.forUser){
+            this.setState({
+              html:"<div class='yekan' dir='rtl' style='margin-top:20px;text-align:right;width:100%;line-height:2;display:flex;justify-content:center'><div style='width:715'><div>" + html + "</div></div></div></div>"
+            })
+          }else{
+            this.setState({
+              html:"<div class='yekan' dir='rtl' style='margin-top:20px;text-align:right;width:100%;line-height:2;display:flex;justify-content:center'><div style='width:715'><div style='min-height:500px'>" + html + "</div></div><div style='border-top:1px dashed;margin-top:15px;margin-bottom:15px'></div><div style='min-height:500px'>" + html +  "</div></div></div>"
+            })
+          }
+          
+    }
   }
   render() {
-   
+
    
 
     return (
       <div style={{ direction: 'rtl' }}>
-        {this.state.param &&
-          <div>{this.state.param.Amount}</div>
-        }
+          <div dangerouslySetInnerHTML={{ __html: this.state.html}} ></div>
       </div>
     )
   }
