@@ -23,7 +23,7 @@ import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import GoogleMapReact from 'google-map-react';
-import ReactToPrint from 'react-to-print';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
 
 
@@ -307,12 +307,24 @@ class Sales_Registered extends React.Component {
           v.company = v.userData[0].company;
         }
         v.delete = <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
-        v.print = <ReactToPrint
-          trigger={() => {
-            return <i class="far fa-print" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.state.printParam = v}></i>;
-          }}
-          content={() => that.componentRef}
-        />
+        v.print =
+          <ReactToPrint
+            content={() => that.componentRef}
+          >
+            <PrintContextConsumer>
+              {({ handlePrint }) => (
+                <i class="far fa-print" onClick={()=>{
+                  that.setState({
+                    printParam: v
+                  })
+                  setTimeout(function(){
+                    handlePrint();
+
+                  },0)
+                }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
+              )}
+            </PrintContextConsumer>
+          </ReactToPrint>
 
       })
       that.setState({
@@ -426,7 +438,7 @@ class Sales_Registered extends React.Component {
     return (
       <div style={{ direction: 'rtl' }}>
         <div style={{ display: "none" }}>
-          <ComponentToPrint param={this.state.printParam} ref={el => (this.componentRef = el)} />
+        <ComponentToPrint param={this.state.printParam} ref={el => (this.componentRef = el)} />
         </div>
 
         {this.state.loading == 1 &&

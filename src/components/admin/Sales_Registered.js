@@ -307,12 +307,7 @@ class Sales_Registered extends React.Component {
           v.company = v.userData[0].company;
         }
         v.delete = <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
-        v.print = <ReactToPrint
-          trigger={() => {
-            return <i class="far fa-print" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.state.printParam = v}></i>;
-          }}
-          content={() => that.componentRef}
-        />
+        
 
       })
       that.setState({
@@ -464,9 +459,6 @@ class Sales_Registered extends React.Component {
                 <Column field="statusDesc" filter={false} header="وضعیت"  body={BodyTemplate} filterElement={StatusFilter} className="yekan" style={{ textAlign: "right" }} />
                 {this.state.isMainShop == 1 &&
                   <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "right" }} />
-                }
-                {this.state.isMainShop == 1 &&
-                  <Column field="print" filter={false} header="چاپ"  className="yekan" style={{ textAlign: "right" }} />
                 }
               </DataTable>
             </div>

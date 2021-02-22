@@ -77,7 +77,6 @@ class SalePose extends React.Component {
   }
   SetSale() {
     let that = this;
-    debugger;
     let param = {
       _id: this.state.selectedId,
       customerName: this.state.customerName,
@@ -158,6 +157,7 @@ class SalePose extends React.Component {
       totalAmount: '',
       cacheAmount: '',
       getRegisterAmount: false,
+      finalDate:'',
       selectedId: null,
       Introduced: '',
       IntroducedPrice: '',
@@ -210,6 +210,7 @@ class SalePose extends React.Component {
       totalAmount: value.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       cacheAmount: value.cacheAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       getRegisterAmount: value.getRegisterAmount,
+      finalDate:value.finalDate,
       selectedId: value._id,
       visibleManageSale: true,
       Introduced: value.Introduced,

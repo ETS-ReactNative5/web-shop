@@ -7,11 +7,11 @@ class Server extends React.Component {
      super(props);
      this.state={
         isLoading:false,/*
-        serverUrl: 'https://api.emdcctv.com/'*/
-        serverUrl: 'http://localhost:3000/'/*
-        serverUrl: 'https://marketapi.sarvapps.ir/'
+        serverUrl: 'https://api.emdcctv.com/'
+        serverUrl: 'http://localhost:3000/'*/
+        serverUrl: 'https://marketapi.sarvapps.ir/'/*
         serverUrl: 'https://api.aniabook.ir/'*/
-     }
+     };
    }
    getUrl(admin){
       return admin ? this.state.serverUrl+"AdminApi/" : this.state.serverUrl+"MainApi/" 

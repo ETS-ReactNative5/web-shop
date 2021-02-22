@@ -56,11 +56,63 @@ class Management extends React.Component {
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
       dashData: (this.props && this.props.location && this.props.location.state && this.props.location.state.data) ? this.props.location.state.data : [],
       NewFactors: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewFactors) ? this.props.location.state.NewFactors : null,
-      CId:"124"
+      CId:null
 
 
     }
 
+  }
+  componentDidMount() {
+    let param = {
+      token: localStorage.getItem("api_token"),
+    };
+    let that = this;
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+
+      that.setState({
+        loading: 0
+      })
+      that.setState({
+        user_Id: response.data.authData.userId
+      })
+      
+      that.GetMaps();
+
+    };
+    let ECallBack = function (error) {
+      that.setState({
+        loading: 0
+      })
+      console.log(error)
+    }
+    this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
+  }
+  GetMaps() {
+    let that = this;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      user_Id: this.state.user_Id,
+      sameUser:1
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      that.setState({
+        loading: 0,
+        CId:(response.data.result.length > 0 && response.data.result[0].firstForm) ? response.data.result[0].firstForm : '100'
+      });
+    };
+    let ECallBack = function (error) {
+      console.log(error)
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("AdminApi/GetMaps", param, SCallBack, ECallBack)
   }
   getResponse(value) {
 

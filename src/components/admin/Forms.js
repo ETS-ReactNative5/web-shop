@@ -138,10 +138,16 @@ class Forms extends React.Component {
     if (Components.length > 0) {
       this.state.SelectedComponents = Components;
     }
+    let firstForm="";
+    for(let list of this.state.mapList){
+      if(list._id == event.target.value)
+        firstForm = list.firstForm||"";
+    }
     this.setState({
       mapSelection: event.target.value,
       mapId: event.target.value,
-      mapListTemp: mapListTemp
+      mapListTemp: mapListTemp,
+      firstForm:firstForm
     });
   }
   handleChangeMap(event) {
@@ -152,6 +158,7 @@ class Forms extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       mapId: this.state.mapId,
+      firstForm:this.state.firstForm,
       components: this.state.SelectedComponents,
       edit: this.state.mapSelection == "" ? "0" : "1"
     };
@@ -394,10 +401,10 @@ class Forms extends React.Component {
         </div>
         <Dialog header="مدیریت دسترسی ها" visible={this.state.visibleManageMaps} width="800px" footer={footerMap} minY={70} onHide={this.onHideMapsDialog} maximizable={true}>
 
-          <form style={{ maxWidth: 700 }}>
+          <form >
             <div className="row">
               {this.state.mapList.length > 0 &&
-                <div className="col-lg-6">
+                <div className="col-lg-4">
                   <label className="labelNoGroup irsans">دسترسی را انتخاب کنید</label>
                   <select className="custom-select irsans" value={this.state.mapSelection} name="mapSelection" onChange={this.handleChangeMapSelection} >
                     <option value="" ></option>
@@ -411,11 +418,27 @@ class Forms extends React.Component {
                   </select>
                 </div>
               }
-              <div className="col-lg-6">
+              <div className="col-lg-4">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.mapId} name="mapId" onChange={this.handleChangeMap} required="true" />
                   <label>دسترسی</label>
                 </div>
+              </div>
+              <div className="col-lg-4">
+                {this.state.mapSelection &&
+                  <div>
+                  <label className="labelNoGroup irsans">نخستین امکان پنل مدیریت</label>
+                  <select className="custom-select irsans" value={this.state.firstForm} name="mapSelection" onChange={(event  )=>this.setState({firstForm:event.target.value})} >
+                    <option value="" ></option>
+
+                    {
+                      this.state.CIds && this.state.CIds.map((v, i) => {
+                        return (<option value={v.CId} >{v.name}</option>)
+                      })
+                    }
+                  </select>
+                  </div>
+              }
               </div>
 
               {
