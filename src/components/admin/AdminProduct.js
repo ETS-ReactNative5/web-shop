@@ -29,7 +29,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { AutoComplete } from 'primereact/autocomplete';
 import { confirmAlert } from 'react-confirm-alert'; // Import
-import { Multiselect } from 'multiselect-react-dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 let Count = 0;
 class AdminProduct extends React.Component {
   constructor(props) {
@@ -55,7 +55,7 @@ class AdminProduct extends React.Component {
       fileUploaded2: '',
       fileUploaded3: '',
       fileUploaded4: '',
-      UploadBoxToggle: true,
+      UploadBoxToggle: false,
       formul: '',
       formul_level: '',
       formul_off: '',
@@ -75,6 +75,7 @@ class AdminProduct extends React.Component {
       status_edit: '',
       GridData: [],
       ParentCat: null,
+      CodeFile:[],
       GridData2: {
         id: 1,
         model: "Passat",
@@ -459,35 +460,66 @@ class AdminProduct extends React.Component {
     let CatSelected = "";
 
     for (const property of this.state.CategoryList) {
-      if (property["_id"] == event.value.value)
+      if (property["_id"] == event.value)
         CatSelected = property
     }
-    let Spec = CatSelected && CatSelected.Spec;
-    this.setState({
-      CatSpecs_Edit: []
-    })
-    if (Spec && Spec.length > 0) {
-      this.GetSpecifications(Spec, 1);
-    }
+    
+    this.getCodes(CatSelected);
 
   }
   handleCategoryInProduct(event) {
+
     this.setState({ CategoryInProduct: event.value });
     let CatSelected = "";
 
     for (const property of this.state.CategoryList) {
-      if (property["_id"] == event.value.value)
+      if (property["_id"] == event.value)
         CatSelected = property
     }
-    let Spec = CatSelected && CatSelected.Spec;
-    this.setState({
-      CatSpecs: []
-    })
-    if (Spec && Spec.length > 0) {
-      this.GetSpecifications(Spec);
+    this.getCodes(CatSelected);
+
+
+  }
+  
+  getCodes(CatSelected) {
+    let that = this;
+    
+    if(CatSelected.product_selectors){
+      that.setState({
+        loading: 1
+      })
+      let SCallBack = function (response) {   
+        let Spec = CatSelected && CatSelected.Spec;
+        that.setState({
+          CatSpecs_Edit: []
+        })
+        if (Spec && Spec.length > 0) {
+          that.GetSpecifications(Spec, 1);
+        }
+        that.setState({
+          CodeFile:response.data.result,
+          loading: 0
+        })
+        
+      };
+      let ECallBack = function (error) {
+        
+        that.setState({
+          loading: 0
+        })
+        console.log(error)
+      }
+      this.Server.send("AdminApi/GetCodes", { id: CatSelected.product_selectors }, SCallBack, ECallBack)
+    }else{
+      let Spec = CatSelected && CatSelected.Spec;
+      this.setState({
+        CatSpecs_Edit: []
+      })
+      if (Spec && Spec.length > 0) {
+        this.GetSpecifications(Spec, 1);
+      }
     }
-
-
+    
   }
   GetSpecifications(Spec, edit) {
     let that = this;
@@ -603,7 +635,7 @@ class AdminProduct extends React.Component {
                 <button className="btn btn-primary yekan" onClick={() => { this.setState({ visibleModalEditProduct: true }); this.PreparEditProduct(car); }} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}>ویرایش</button>
                 {(!this.state.SeveralShop || (this.state.SellerId == this.state.MainShopId)) &&
                   <div>
-                    <button className="btn btn-primary yekan ml-lg-0 ml-4" onClick={() => { this.picToggle(car) }} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}>تصاویر</button>
+                    <button className="btn btn-primary yekan" onClick={() => { this.picToggle(car) }} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}>تصاویر</button>
                     {!this.state.SeveralShop &&
                       <button className="btn btn-primary yekan" onClick={() => { this.offToggle(car) }} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}>محاسبه قیمت / تخفیف</button>
                     }
@@ -1035,11 +1067,13 @@ class AdminProduct extends React.Component {
       SellerId: (this.state.ShopId_product && this.state.SeveralShop) ? this.state.ShopId_product : this.state.SellerId,
       SeveralShop: this.state.SeveralShop,
       PrepareTime: this.state.PrepareTime,
-      Spec: Spec,
-      Color: this.ColorsRef.current.getSelectedItems(),
-      Size: this.SizeRef.current.getSelectedItems()
+      Spec: Spec
     };
-
+    for(let code of this.state.CodeFile)
+    {
+      param[code.Etitle] = this.state[code.Etitle];
+    }
+    debugger;
 
     let SCallBack = function (response) {
       if (response.data.result.insertedCount)
@@ -1127,10 +1161,12 @@ class AdminProduct extends React.Component {
       token: localStorage.getItem("api_token"),
       SellerId: (this.state.ShopId_product_edit && this.state.SeveralShop) ? this.state.ShopId_product_edit : this.state.SellerId,
       SeveralShop: this.state.SeveralShop,
-      Spec: Spec,
-      Color: this.ColorsRef_edit.current.getSelectedItems(),
-      Size: this.SizeRef_edit.current.getSelectedItems()
+      Spec: Spec
     };
+    for(let code of this.state.CodeFile)
+    {
+      param[code.Etitle] = this.state[code.Etitle+"_edit"];
+    }
     let SCallBack = function (response) {
       that.onHide();
 
@@ -1269,13 +1305,25 @@ class AdminProduct extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
+      for(let cat of that.state.CategoryList)
+      if(cat._id == that.state.CategoryInProduct_edit){
+        that.getCodes(cat);
+      }
+
       let res = response.data.result;
       that.setState({
         loading: 0
       })
       if (res.length == 0)
         return;
-
+      let SelectedColors_edit_0=[];
+      for(let i=0;i<res[0]?.SelectedColors?.length;i++){
+        SelectedColors_edit_0.push(res[0]?.SelectedColors[i]?.value)
+      }
+      let SelectedSize_edit_0=[];
+      for(let i=0;i<res[0]?.SelectedSize?.length;i++){
+        SelectedSize_edit_0.push(res[0]?.SelectedSize[i]?.value)
+      }
       that.setState({
         price_edit: res[0].price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         off_edit: res[0].off,
@@ -1290,12 +1338,13 @@ class AdminProduct extends React.Component {
         SetHaraj_edit: res[0].HarajDate ? 1 : 0,
         PrepareTime_edit: res[0].PrepareTime ? res[0].PrepareTime : "",
         SelectedSize_edit: res[0].SelectedSize ? res[0].SelectedSize : "",
+        SelectedSize_edit_0: SelectedSize_edit_0 ? SelectedSize_edit_0 : "",
         SelectedColors_edit: res[0].SelectedColors ? res[0].SelectedColors : "",
+        SelectedColors_edit_0: SelectedColors_edit_0 ? SelectedColors_edit_0 : "",
         harajCheckBoxEdit: res[0].HarajDate ? true : false
       })
 
 
-      // that.getMainShopInfo()
 
     };
     let ECallBack = function (error) {
@@ -1480,8 +1529,8 @@ class AdminProduct extends React.Component {
 
           <div className="col-lg-6" _id={brand._id} style={{ textAlign: 'right' }}>{brand.desc &&
             <span className="iranyekanwebregular" style={{ textAlign: 'right' }} _id={brand._id} >
-              <span _id={brand._id}>{brand.title}</span><br />
-              <span _id={brand._id}>{brand.subTitle}</span>
+              <span _id={brand._id} style={{whiteSpace:'pre-wrap'}}>{brand.title}</span><br />
+              <span _id={brand._id} style={{whiteSpace:'pre-wrap'}}>{brand.subTitle}</span>
             </span>
           }
           </div>
@@ -1670,30 +1719,10 @@ class AdminProduct extends React.Component {
                     <input className="form-control yekan" autoComplete="off" type="number" min="0" max="100" value={this.state.off} name="off" onChange={this.handleChangeOff} required="true" />
                     <label>تخفیف</label>
                   </div>
-                  <div className="group">
-
-                    <Multiselect
-                      placeholder="رنگ"
-                      ref={this.ColorsRef}
-                      options={this.Colors} // Options to display in the dropdown
-                      selectedValues={this.state.selectedColors} // Preselected value to persist in dropdown
-                      displayValue="name" // Property name to display in the dropdown options
-
-                    />
-                  </div>
-                  <div className="group">
-
-                    <Multiselect
-                      placeholder="اندازه"
-                      ref={this.SizeRef}
-                      options={this.Size} // Options to display in the dropdown
-                      selectedValues={this.state.selectedSize} // Preselected value to persist in dropdown
-                      displayValue="name" // Property name to display in the dropdown options
-                    />
-                  </div>
+                 
                   <div className="group">
                     <input className="form-control yekan" autoComplete="off" type="number" min="0" max="7" value={this.state.PrepareTime} name="PrepareTime" onChange={this.handleChangePrepareTime} required="true" />
-                    <label>زمان آماده سازی محصول برای تحویل به مشتری</label>
+                    <label>زمان آماده سازی برای تحویل به مشتری</label>
                   </div>
                   {this.state.SeveralShop &&
 
@@ -1723,38 +1752,38 @@ class AdminProduct extends React.Component {
 
 
                   <div className="row" style={{ marginTop: 20, paddingRight: 10 }}>
-                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline' }}>
+                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',padding:0 }}>
                       <Checkbox inputId="ShowPriceAftLogin" value={this.state.ShowPriceAftLogin} checked={this.state.ShowPriceAftLogin} onChange={e => this.setState({ ShowPriceAftLogin: e.checked })}></Checkbox>
                       <label htmlFor="ShowPriceAftLogin" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> نمایش قیمت بعد از هویت سنجی</label>
                     </div>
-                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline' }}>
+                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',padding:0 }}>
                       <Checkbox inputId="ShowPriceAftLogin" value={this.state.NoOff} checked={this.state.NoOff} onChange={e => this.setState({ NoOff: e.checked })}></Checkbox>
                       <label htmlFor="ShowPriceAftLogin" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> در تخفیف های کلی لحاظ نشود</label>
                     </div>
-                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline' }} >
+                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',padding:0 }} >
                       <Checkbox inputId="Immediate" value={this.state.Immediate} checked={this.state.Immediate} onChange={e => this.setState({ Immediate: e.checked })}></Checkbox>
                       <label htmlFor="Immediate" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>ارسال فوری</label>
                     </div>
-                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline' }}>
+                    <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',padding:0 }}>
                       <RadioButton inputId="TypeOfSend1" name="TypeOfSend" value="1" onChange={(e) => this.setState({ TypeOfSend: e.value })} checked={this.state.TypeOfSend === '1'} />
                       <label htmlFor="TypeOfSend1" className="p-checkbox-label yekan">ارسال منطقه ای</label>
                       <RadioButton inputId="TypeOfSend2" name="TypeOfSend" value="2" onChange={(e) => this.setState({ TypeOfSend: e.value })} checked={this.state.TypeOfSend === '2'} />
                       <label htmlFor="TypeOfSend2" className="p-checkbox-label yekan">ارسال سراسری</label>
                     </div>
                   </div>
-                  <div className="row" style={{ height: 40, marginTop: 20, paddingRight: 10 }}>
+                  <div className="row" style={{alignItems: 'baseline'}}>
                     <div className="col-3" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline' }}>
                       <Checkbox inputId="harajCheckBox" value={this.state.harajCheckBox} checked={this.state.harajCheckBox} onChange={(e) => { this.setState({ SetHaraj: !this.state.SetHaraj, harajCheckBox: e.checked }) }}></Checkbox>
                       <label htmlFor="harajCheckBox" className="p-checkbox-label yekan" style={{ paddingRight: 10 }}>حراج</label>
                     </div>
-                    <div className="col-3" style={{ alignItems: 'baseline', textAlign: 'right', display: (this.state.SetHaraj ? "flex" : "none") }} >
+                    <div className="col-md-3 col-9" style={{ alignItems: 'baseline', textAlign: 'right', display: (this.state.SetHaraj ? "flex" : "none") }} >
                       <RadioButton inputId="HarajType1" name="HarajType" value="1" onChange={(e) => this.setState({ HarajType: e.value })} checked={this.state.HarajType === '1'} />
                       <label htmlFor="HarajType1" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>روز</label>
                       <RadioButton inputId="HarajType2" name="HarajType" value="2" onChange={(e) => this.setState({ HarajType: e.value })} checked={this.state.HarajType === '2'} />
                       <label htmlFor="HarajType2" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>هفته</label>
                     </div>
 
-                    <div className="col-4" style={{ marginRight: 5, display: (this.state.SetHaraj ? "flex" : "none") }} >
+                    <div className="col-md-4 col-12" style={{ marginRight: 5, display: (this.state.SetHaraj ? "flex" : "none") }} >
                       <DatePicker
                         onChange={value => this.setState({ HarajDate1: value })}
                         value={this.state.HarajDate1}
@@ -1818,6 +1847,34 @@ class AdminProduct extends React.Component {
                     </select>
                   </div>
                   <div className="row" >
+                  {this.state.CategoryInProduct && this.state.CodeFile.map((v, i) => {
+                    
+                    return(
+                      <div className="col-lg-12" style={{ marginBottom: 20,padding:0 }}>
+                        <div className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</div>
+                        <MultiSelect value={this.state[v.Etitle+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
+                          let vv=[]
+                          debugger;
+
+                          for(let val of v.values){
+
+                            if(event.value.indexOf(val.value) > -1)
+                              vv.push(val);
+                          }
+
+                          this.setState({ [v.Etitle]: vv , [v.Etitle+"_0"]:event.value }) 
+                          
+                        }} />
+                        
+                      </div>
+                    )
+                })}  
+                  </div>    
+
+
+
+
+                  <div className="row" >
                     {
                       this.state.CatSpecs && this.state.CatSpecs.map((v, i) => {
                         let name = "Spec_" + v.id;
@@ -1840,10 +1897,10 @@ class AdminProduct extends React.Component {
             }
           </div>
           <div className="row" style={{ marginTop: 50, marginBottom: 20 }} >
-            <div className="col-9" style={{ textAlign: 'right' }}>
+            <div className="col-md-9 col-12" style={{ textAlign: 'right' }}>
               <AutoComplete placeholder="نام کالای مورد نظر را جستجو کنید" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
             </div>
-            <div className="col-3 mt-0 mt-md-2" style={{ textAlign: 'right' }}>
+            <div className="col-md-3 col-12 mt-2 mt-md-2" style={{ textAlign: 'center' }}>
               <i class="fas fa-sync" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.GetProduct()} ></i>
             </div>
             <div className="col-3" style={{ textAlign: 'left', display: 'none' }}>
@@ -1915,40 +1972,12 @@ class AdminProduct extends React.Component {
                   <label>تخفیف</label>
                 </div>
               </div>
-              <div className="col-lg-6">
-                <div className="group" >
-                  <Multiselect
-                    placeholder="رنگ"
-                    ref={this.ColorsRef_edit}
-                    options={this.Colors} // Options to display in the dropdown
-                    selectedValues={this.state.SelectedColors_edit} // Preselected value to persist in dropdown
-                    displayValue="name" // Property name to display in the dropdown options
-                    disable={this.state.SellerId != this.state.MainShopId}
-
-                  />
-
-                </div>
-              </div>
-              <div className="col-lg-6">
-                <div className="group">
-                  <Multiselect
-                    placeholder="اندازه"
-                    ref={this.SizeRef_edit}
-                    options={this.Size} // Options to display in the dropdown
-                    selectedValues={this.state.SelectedSize_edit} // Preselected value to persist in dropdown
-                    displayValue="name" // Property name to display in the dropdown options
-                    style={{ fontFamily: 'iranyekanweblight' }}
-                    disable={this.state.SellerId != this.state.MainShopId}
-
-                  />
-
-                </div>
-              </div>
+             
 
               <div className="col-lg-6">
                 <div className="group">
                   <input className="form-control yekan" autoComplete="off" type="number" min="0" max="7" value={this.state.PrepareTime_edit} name="PrepareTime_edit" onChange={this.handleChangePrepareTime_edit} required="true" />
-                  <label>زمان آماده سازی محصول برای تحویل به مشتری</label>
+                  <label>زمان آماده سازی برای تحویل به مشتری</label>
                 </div>
               </div>
 
@@ -2024,6 +2053,33 @@ class AdminProduct extends React.Component {
 
                 </div>
               }
+              <div className="col-lg-12">
+              <div className="row" >
+                  {this.state.CategoryInProduct_edit && this.state.CodeFile.map((v, i) => {
+                    
+                    return(
+                      <div className="col-lg-12" style={{ marginBottom: 20 }}>
+                        <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</p>
+                        <MultiSelect value={this.state[v.Etitle+"_edit"+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
+                          let vv=[]
+                          debugger;
+
+                          for(let val of v.values){
+
+                            if(event.value.indexOf(val.value) > -1)
+                              vv.push(val);
+                          }
+
+                          this.setState({ [v.Etitle+"_edit"]: vv , [v.Etitle+"_edit"+"_0"]:event.value }) 
+                          
+                        }} />
+                        
+                      </div>
+                    )
+                })}  
+                  </div>    
+              </div>
+              
 
               {
                this.state.CatSpecs_Edit && this.state.CatSpecs_Edit.map((v, i) => {

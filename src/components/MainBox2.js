@@ -689,7 +689,7 @@ class MainBox2 extends React.Component {
                         var img = this.state.absoluteUrl + (item.fileUploaded ? item.fileUploaded.split("public")[1] : "/nophoto.png");
                         return (
 
-                          <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250 }}>
+                          <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250 }}>
                             <div className="p-grid p-nogutter" >
                               <div className="p-col-12 c-product-box__img" align="center" >
                                 <img src={img} alt="" />
@@ -778,7 +778,7 @@ class MainBox2 extends React.Component {
                         var img1 = this.state.absoluteUrl + item.fileUploaded1.split("public")[1];
                         var img2 = this.state.absoluteUrl + item.fileUploaded2.split("public")[1];
                         return (
-                          <div expiredate={item.ExpireDate} className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', margin: 5, padding: 5, borderRadius: 5, marginLeft: 0 }}>
+                          <div expiredate={item.ExpireDate} className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', margin: 5, padding: 5, borderRadius: 5, marginLeft: 0 }}>
                             <div className="row justify-content-center">
                             <div className="col-lg-6 col-12">
                                 <div className="d-md-none d-block" style={{textAlign:'center'}}>
@@ -877,7 +877,7 @@ class MainBox2 extends React.Component {
                                     </div>
                                   </div>
                                   <div >
-                                    <Link to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ display: "inline-block", textDecoration: 'none',fontSize:22 }}><span className="icon fa fa-arrow-left"></span>خرید محصول</Link>
+                                    <Link to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ display: "inline-block", textDecoration: 'none',fontSize:22 }}><span className="icon fa fa-arrow-left"></span>خرید محصول</Link>
   
                                   </div>
   
@@ -906,7 +906,7 @@ class MainBox2 extends React.Component {
             
             {
               this.state.catsList[0] &&
-              <CatList _id={this.state.catsList[0]._id} title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
+              <CatList _id={this.state.catsList[0]._id}  title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
 
             }
 
@@ -963,7 +963,7 @@ class MainBox2 extends React.Component {
                             <div className="car-subtitle yekan" style={{ textAlign: 'center', marginTop: 40 }} ><span className="iranyekanwebmedium" style={{ fontSize: 18, marginTop: 10, color: '#653c60' }}>ناموجود</span> </div>
 
                           }
-                          <Link to={`${process.env.PUBLIC_URL}/Products?id=` + ((this.state.Newproducts[0].product_detail && this.state.Newproducts[0].product_detail.length > 0) ? this.state.Newproducts[0].product_detail[0]._id : this.state.Newproducts[0]._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ marginTop: 60, display: "inline-block", textDecoration: 'none' }}><span className="icon fa fa-arrow-left"></span>مشاهده جزئیات</Link>
+                          <Link to={`${process.env.PUBLIC_URL}/Products?name=${this.state.Newproducts[0].title}&id=` + ((this.state.Newproducts[0].product_detail && this.state.Newproducts[0].product_detail.length > 0) ? this.state.Newproducts[0].product_detail[0]._id : this.state.Newproducts[0]._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ marginTop: 60, display: "inline-block", textDecoration: 'none' }}><span className="icon fa fa-arrow-left"></span>مشاهده جزئیات</Link>
 
 
                         </div>
@@ -997,7 +997,7 @@ class MainBox2 extends React.Component {
                             <div className="car-subtitle yekan" style={{ textAlign: 'center', marginTop: 40 }} ><span className="iranyekanwebmedium" style={{ fontSize: 18, marginTop: 10, color: '#653c60' }}>ناموجود</span> </div>
 
                           }
-                          <Link to={`${process.env.PUBLIC_URL}/Products?id=` + ((this.state.Newproducts[1].product_detail && this.state.Newproducts[1].product_detail.length > 0) ? this.state.Newproducts[1].product_detail[0]._id : this.state.Newproducts[1]._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ marginTop: 60, display: "inline-block", textDecoration: 'none' }}><span className="icon fa fa-arrow-left"></span>مشاهده جزئیات</Link>
+                          <Link to={`${process.env.PUBLIC_URL}/Products?name=${this.state.Newproducts[1].title}&id=` + ((this.state.Newproducts[1].product_detail && this.state.Newproducts[1].product_detail.length > 0) ? this.state.Newproducts[1].product_detail[0]._id : this.state.Newproducts[1]._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ marginTop: 60, display: "inline-block", textDecoration: 'none' }}><span className="icon fa fa-arrow-left"></span>مشاهده جزئیات</Link>
 
                         </div>
                         <div className="col-md-4 col-12">
@@ -1031,7 +1031,7 @@ class MainBox2 extends React.Component {
                             <div className="car-subtitle yekan" style={{ textAlign: 'center', marginTop: 40 }} ><span className="iranyekanwebmedium" style={{ fontSize: 18, marginTop: 10, color: '#653c60' }}>ناموجود</span> </div>
 
                           }
-                          <Link to={`${process.env.PUBLIC_URL}/Products?id=` + ((this.state.Newproducts[2].product_detail && this.state.Newproducts[2].product_detail.length > 0) ? this.state.Newproducts[2].product_detail[0]._id : this.state.Newproducts[2]._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ marginTop: 60, display: "inline-block", textDecoration: 'none' }}><span className="icon fa fa-arrow-left"></span>مشاهده جزئیات</Link>
+                          <Link to={`${process.env.PUBLIC_URL}/Products?name=${this.state.Newproducts[2].title}&id=` + ((this.state.Newproducts[2].product_detail && this.state.Newproducts[2].product_detail.length > 0) ? this.state.Newproducts[2].product_detail[0]._id : this.state.Newproducts[2]._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ marginTop: 60, display: "inline-block", textDecoration: 'none' }}><span className="icon fa fa-arrow-left"></span>مشاهده جزئیات</Link>
 
                         </div>
                         <div className="col-md-4 col-12">
@@ -1058,7 +1058,7 @@ class MainBox2 extends React.Component {
                       var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
                       return (
                         <div>
-                          <Link className="car-details hvr-underline-reveal" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 5, display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
+                          <Link className="car-details hvr-underline-reveal" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 5, display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
                             <div className="p-grid p-nogutter" >
                               <div className="p-col-12 c-product-box__img" align="center" >
                                 <img src={img} alt="" />
@@ -1132,7 +1132,7 @@ class MainBox2 extends React.Component {
                   {this.state.productsBestOff.map((item, index) => {
                     var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
                     return (
-                      <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} >
+                      <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} >
                         <div className="p-grid p-nogutter" >
                           <div className="p-col-12" align="center" >
                             <img src={img} style={{ height: 80 }} alt="" />

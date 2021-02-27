@@ -5,6 +5,8 @@ import axios from 'axios'
 import {AutoComplete} from 'primereact/autocomplete';
 import Server  from './../Server.js'
 import Header1  from './../Header1.js'
+import Footer  from './../Footer.js' 
+import Header2  from './../Header2.js'
 import { Button } from 'reactstrap';
 import LoadingOverlay from 'react-loading-overlay';
 import { Toast } from 'primereact/toast';
@@ -110,7 +112,8 @@ class Seller extends React.Component {
        <Toast ref={this.toast} position="top-right" style={{fontFamily:'YekanBakhFaBold',textAlign:'right'}} />
 
        <Header1 /> 
-       
+       <Header2 /> 
+
 			<div className="container firstInPage" >
         <div style={{backgroundColor:'#fff',marginTop:50,padding:40,borderRadius:25}}>
 				<div className="row justify-content-center">
@@ -192,6 +195,7 @@ class Seller extends React.Component {
 				</div>
       
 	</div>
+  <Footer />
 			</div>
         )
     }

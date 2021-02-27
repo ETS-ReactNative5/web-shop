@@ -136,7 +136,7 @@ class CatList extends React.Component {
 								{this.state.CatData.data.map((item, index) => {
 									var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
 									return (
-										<Link className="car-details " to={`${process.env.PUBLIC_URL}/Products?id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
+										<Link className="car-details " to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
 											<div className="p-grid p-nogutter" >
 												<div className="p-col-12 c-product-box__img" align="center" >
 													<img src={img} alt="" />

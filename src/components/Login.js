@@ -490,7 +490,7 @@ class Login extends React.Component {
                     </div>
                     }
                     <div className="group" style={{marginTop:45}}>
-                          <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
+                          <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="number" id="inputEmail"  value={this.state.inputEmail} name="inputEmail" onChange={this.handleChangeinputEmail}   required  />
                           <label className="YekanBakhFaBold">شماره موبایل</label>
                     </div>
                     </div>

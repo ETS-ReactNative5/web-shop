@@ -26,6 +26,8 @@ import Sales_Posted from './components/admin/Sales_Posted.js'
 import Sales_Ended from './components/admin/Sales_Ended.js'
 import Sales_Cleared from './components/admin/Sales_Cleared.js'
 
+import Codes_Files from './components/admin/Codes_Files.js'
+
 import Users from './components/admin/Users.js'
 import Maps from './components/admin/Maps.js'
 import Forms from './components/admin/Forms.js'
@@ -134,7 +136,9 @@ class App extends Component {
                   <Route path="/admin/ShopInformation" component={ShopInformation} />
                   <Route path="/admin/ShopsList" component={ShopsList} />
                   <Route path="/admin/SiteSettings" component={SiteSettings} />
+                  <Route path="/admin/Codes_Files" component={Codes_Files} />
 
+                  
                   
                 </Switch>
               </ScrollToTop>

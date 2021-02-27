@@ -211,7 +211,7 @@ class Products extends React.Component {
                 if (v.SelectedColors && v.SelectedColors.length > 0) {
                     let Colors = [];
                     for (let j = 0; j < v.SelectedColors.length; j++)
-                        Colors.push({ "label": v.SelectedColors[j].name, "value": v.SelectedColors[j].name })
+                        Colors.push({ "label": v.SelectedColors[j].desc||v.SelectedColors[j].name, "value": v.SelectedColors[j].value||v.SelectedColors[j].id })
                     that.setState({
                         Colors: Colors,
                         Color: Colors[0].value
@@ -220,7 +220,7 @@ class Products extends React.Component {
                 if (v.SelectedSize && v.SelectedSize.length > 0) {
                     let Sizes = [];
                     for (let j = 0; j < v.SelectedSize.length; j++)
-                        Sizes.push({ "label": v.SelectedSize[j].name, "value": v.SelectedSize[j].name })
+                        Sizes.push({ "label": v.SelectedSize[j].desc||v.SelectedSize[j].name, "value": v.SelectedSize[j].value||v.SelectedSize[j].id })
                     that.setState({
                         Sizes: Sizes,
                         Size: Sizes[0].value

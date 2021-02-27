@@ -8,6 +8,7 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { AutoComplete } from 'primereact/autocomplete';
 
 import Server from './Server.js'
+import { FlexboxGrid } from 'rsuite';
 /*
 import {Autocomplete} from 'react-native-autocomplete-input'
    */
@@ -134,13 +135,13 @@ class Header1 extends React.Component {
 	itemTemplate(brand) {
 		Cound = 0;
 		return (
-			<div className="p-clearfix" style={{ direction: 'rtl' }} >
+			<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
 				<div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
 
 					<div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>{brand.desc &&
 						<span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
-							<span _id={brand._id}>{brand.title}</span><br />
-							<span _id={brand._id}>{brand.subTitle}</span>
+							<span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.title}</span><br />
+							<span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.subTitle}</span>
 						</span>
 					}
 					</div>
@@ -266,11 +267,11 @@ class Header1 extends React.Component {
 
 								<div className="d-flex flex-row align-items-center" style={{ justifyContent: 'center' }}>
 
-									<div className="wishlist_content">
+									<div >
 										{this.state.userId ?
 											<span>&nbsp;</span>
 											:
-											<button className="btn btn-outline-info iranyekanwebregular" style={{ whiteSpace: "nowrap", fontSize: 12 }} onClick={this.logout} >ورود / ثبت نام <i className="fa fa-sign-in-alt" style={{ fontSize: 7, paddingLeft: 15, display: 'none' }} /></button>
+											<button className="btn btn-outline-info iranyekanwebregular" style={{display:'flex',alignItems:'center'}} onClick={this.logout} ><span style={{fontSize:12}}>ورود / ثبت نام</span> <i className="fa fa-sign-in-alt" style={{ fontSize: 12, paddingLeft: 15}} /></button>
 										}
 									</div>
 								</div>

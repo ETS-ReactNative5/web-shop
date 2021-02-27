@@ -289,7 +289,7 @@ class Header2 extends React.Component {
         
       </div>
 
-		<div className="nav-wrapper" style={{background:'#f7f7fa'}}>
+		<div className="nav-wrapper" style={{background:'#fff'}}>
 		<Navbar activeKey={activeKey}>
 	    
 	    <Navbar.Body>

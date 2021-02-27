@@ -287,7 +287,7 @@ class Header2 extends React.Component {
         
       </div>
 
-		<div className="nav-wrapper" style={{background:'#f7f7fa'}}>
+		<div className="nav-wrapper mr-2 mr-lg-5" style={{background:'#fff'}}>
 		<Navbar activeKey={activeKey}>
 	    
 	    <Navbar.Body>
@@ -298,7 +298,7 @@ class Header2 extends React.Component {
 			<Dropdown.Item eventKey="6">Contact</Dropdown.Item>
 		   </Dropdown>
 		   
-		   <Nav.Item eventKey="1" className="iranyekanwebmedium" onClick={()=>this.setState({OpenSideBar:true})} >
+		   <Nav.Item eventKey="1" className="YekanBakhFaBold" onClick={()=>this.setState({OpenSideBar:true})} >
 		   	
 		   	<span style={{paddingRight:5}} class="fa fa-bars"></span><span style={{paddingRight:5}}>دسته بندی کالاها</span> 
 			
@@ -306,7 +306,7 @@ class Header2 extends React.Component {
 		   
 		   {this.state.Navs.map((item,index) => {
 			  return (
-			<Nav.Item eventKey="2" className="iranyekanwebmedium">
+			<Nav.Item eventKey="2" className="YekanBakhFaBold">
 					<Link to={`${process.env.PUBLIC_URL}`+item.link} style={{textDecoration:'none'}}> 
 					{item.title}
 		   </Link></Nav.Item>
@@ -334,7 +334,7 @@ const panelStyles = {
    const headerStyles = {
 	padding: 20,
 	fontSize: 16,
-	background: '#ff1800',
+	background: 'rgb(78 185 34)',
 	color: ' #fff',
 	textAlign:'right'
    };

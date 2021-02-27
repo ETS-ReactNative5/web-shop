@@ -28,6 +28,7 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Fieldset } from 'primereact/fieldset';
+import { MultiSelect } from 'primereact/multiselect';
 
 class AdminProduct extends React.Component {
   constructor(props) {
@@ -44,6 +45,10 @@ class AdminProduct extends React.Component {
       CategoryId: "",
       Spec: [],
       SelectedSpecs: [],
+      InsertSpec:1,
+      EditSpec:0,
+      DelSpec:0,
+      CodeFile:[],
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
 
@@ -81,7 +86,7 @@ class AdminProduct extends React.Component {
       that.setState({
         loading: 0
       })
-      that.GetSpecifications("All")
+      that.getCodes("3")
     };
     let ECallBack = function (error) {
       that.setState({
@@ -90,6 +95,26 @@ class AdminProduct extends React.Component {
       console.log(error)
     }
     this.Server.send("AdminApi/ShopInformation", { UserId: that.state.SellerId }, SCallBack, ECallBack)
+  }
+  getCodes(id) {
+    let that = this;
+    that.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      that.setState({
+        CodeFile:response.data.result,
+        loading: 0
+      })
+      that.GetSpecifications("All")
+    };
+    let ECallBack = function (error) {
+      that.setState({
+        loading: 0
+      })
+      console.log(error)
+    }
+    this.Server.send("AdminApi/GetCodes", { id: id }, SCallBack, ECallBack)
   }
   FileUpload(e) {
     e.preventDefault();
@@ -234,6 +259,7 @@ class AdminProduct extends React.Component {
     this.setState({ CatsChoosen_edit: event.target.value });
     if (event.target.value != "0") {
       document.getElementById("DeleteCategory").style.display = "inline";
+      debugger;
       this.setState(
         {
           CategoryOrder: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].order || '',
@@ -252,8 +278,14 @@ class AdminProduct extends React.Component {
           CumputeByNumberInPeyk: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].CumputeByNumberInPeyk || '',
         }
       );
+      let state={}
+      for(let code of this.state.CodeFile)
+      {
+        state[code.Etitle] = this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1][code.Etitle];
+      }
       this.setState({
-        showSpecs: false
+        showSpecs: false,
+        ...state
       })
       this.GetSpecifications(this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec ? this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec : [])
 
@@ -316,8 +348,13 @@ class AdminProduct extends React.Component {
       CategoryOrder: this.state.CategoryOrder,
       showInSite: this.state.showInSite,
       pic: this.state.CatPic,
-      Spec: this.state.SelectedSpecs
+      Spec: this.state.SelectedSpecs,
+      CodeFile:this.state.CodeFile
     };
+    for(let code of this.state.CodeFile)
+    {
+      param[code.Etitle] = this.state[code.Etitle];
+    }
     this.setState({
       loading: 1
     })
@@ -325,6 +362,7 @@ class AdminProduct extends React.Component {
     let SCallBack = function (response) {
       if (response.data.result.insertedCount)
         that.GetCategory(response);
+        
       Alert.success('عملیات با موفقیت انجام شد', 5000);
       that.setState({
         loading: 0
@@ -375,9 +413,11 @@ class AdminProduct extends React.Component {
   }
   setSpec(event) {
     let param = {
-      title: this.state.AddNewLabel,
-      _id: this.state.LastId,
-      DelSpec: this.state.DelSpec
+      title: this.state.NewLabel,
+      _id: (this.state.DelSpec || this.state.EditSpec) ? parseInt(this.state.NewId) : this.state.LastId,
+      DelSpec: this.state.DelSpec,
+      EditSpec: this.state.EditSpec,
+      InsertSpec: this.state.InsertSpec
     };
     this.setState({
       loading: 1,
@@ -391,8 +431,10 @@ class AdminProduct extends React.Component {
         loading: 0
       })
       that.state.SelectedSpecs.push(that.state.LastId);
-      if (!that.state.DelSpec)
-        that.setCategory(1)
+      that.GetSpecifications("All", that.state.SelectedSpecs)
+
+      //if (!that.state.DelSpec)
+      //  that.setCategory(1)
     };
     let ECallBack = function (error) {
       Alert.error('عملیات انجام نشد', 5000);
@@ -402,7 +444,7 @@ class AdminProduct extends React.Component {
     }
     this.Server.send("AdminApi/SetSpecifications", param, SCallBack, ECallBack)
   }
-  GetSpecifications(All, SelectedSpecs) {
+  GetSpecifications(All, SelectedSpecs,Edit) {
     let that = this;
     let param = {
       token: localStorage.getItem("api_token"),
@@ -414,7 +456,13 @@ class AdminProduct extends React.Component {
     let SCallBack = function (response) {
       var Spec = [];
       let ids = [];
-
+      if(Edit){
+        that.setState({
+          NewLabel: response.data.result[0]?.title,
+          loading: 0
+        })
+        return;
+      }
       response.data.result.map(function (v, i) {
         Spec[i] = { id: v._id, title: v.title };
         ids.push(v._id)
@@ -433,6 +481,7 @@ class AdminProduct extends React.Component {
         loading: 0
       })
       if (SelectedSpecs) {
+        debugger;
         that.setState({
           showSpecs: false
         })
@@ -555,6 +604,17 @@ class AdminProduct extends React.Component {
                     </div>
 
                   }
+                  {this.state.CategoryId && this.state.CodeFile.map((v, i) => {
+                    
+                      return(
+                        <div className="col-lg-12" style={{ marginBottom: 20 }}>
+                          <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</p>
+                          <MultiSelect value={this.state[v.Etitle]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { this.setState({ [v.Etitle]: event.value }) }} />
+                          
+                        </div>
+                      )
+                  })}
+                  
                   <div className="col-lg-12" style={{ marginBottom: 20 }}>
                     <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>این دسته بندی زیر مجموعه دسته زیر است</p>
                     <select className="custom-select yekan" value={this.state.ParentCat} name="ParentCat" onChange={(e) => this.setState({ ParentCat: e.target.value })} >
@@ -612,17 +672,43 @@ class AdminProduct extends React.Component {
                   <div className="col-lg-12">
                   </div>
                   <div className="col-lg-12">
+                    <div style={{display:'flex',justifyContent:'space-evenly'}}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Checkbox inputId="laon" value={this.state.DelSpec} checked={this.state.DelSpec} onChange={e => this.setState({ DelSpec: e.checked })}></Checkbox>
+                      <Checkbox inputId="laon" value={this.state.DelSpec} checked={this.state.DelSpec} onChange={e => this.setState({ DelSpec: e.checked,EditSpec:0,InsertSpec:0 })}></Checkbox>
                       <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>حذف</label>
                     </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Checkbox inputId="laon" value={this.state.EditSpec} checked={this.state.EditSpec} onChange={e => this.setState({ EditSpec: e.checked,DelSpec:0,InsertSpec:0 })}></Checkbox>
+                      <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>ویرایش</label>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Checkbox inputId="laon" value={this.state.InsertSpec} checked={this.state.InsertSpec} onChange={e => this.setState({ InsertSpec: e.checked,DelSpec:0,EditSpec:0 })}></Checkbox>
+                      <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>ایجاد</label>
+                    </div>
+                    </div>
+                    
                     <div className="row" >
+                    {(this.state.DelSpec == 1 || this.state.EditSpec == 1) &&
                       <div className="col-12" >
                         <div className="group">
-                          <input className="form-control yekan" autoComplete="off" type="text" value={this.state.AddNewLabel} name="AddNewLabel" onChange={e => this.setState({ AddNewLabel: e.target.value })} required="true" />
-                          <label>شناسه / عنوان  </label>
+                          <input className="form-control yekan" autoComplete="off" type="text" value={this.state.NewId} name="NewId" onChange={e => {
+                            this.setState({ NewId: e.target.value,NewLabel:'' })
+
+                            this.GetSpecifications([parseInt(e.target.value)],null,1)
+                          }
+                          } required="true" />
+                          <label>شناسه   </label>
                         </div>
                       </div>
+                    }
+                      {(this.state.EditSpec == 1 || this.state.InsertSpec ==1) &&
+                      <div className="col-12" >
+                        <div className="group">
+                          <input className="form-control yekan" autoComplete="off" type="text" value={this.state.NewLabel} name="NewLabel" onChange={e => this.setState({ NewLabel: e.target.value })} required="true" />
+                          <label>عنوان  </label>
+                        </div>
+                      </div>
+                      }
                       <div className="col-12" >
                         <button className="btn btn-primary yekan" type="button" onClick={() => { this.setSpec() }} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }} >اعمال تغییرات</button>
 

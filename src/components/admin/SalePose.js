@@ -322,7 +322,7 @@ class SalePose extends React.Component {
               </div>
 
             </div>
-            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >فیلترهای گزارشات</span></div>
+            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فروش دستگاههای کارت خوان</span></div>
 
             <DataTable responsive value={this.state.GridDataSales} selectionMode="single" selection={this.state.selectedComponent} onSelectionChange={e => this.selectedComponentChange(e.value)}>
               <Column field="customerName" header="نام " className="irsans" style={{ textAlign: "center" }} />

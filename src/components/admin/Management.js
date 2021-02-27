@@ -26,6 +26,8 @@ import Create_Filter from './Create_Filter.js'
 import Create_Reports from './Create_Reports.js'
 import Show_Reports from './Show_Reports.js'
 import SalePose from './SalePose.js'
+import Codes_Files from './Codes_Files.js'
+
 
 
 
@@ -217,6 +219,9 @@ class Management extends React.Component {
             }
             {this.state.CId == "130" && !this.state.IsReport &&
               <SalePose />
+            }
+            {this.state.CId == "151" && !this.state.IsReport &&
+              <Codes_Files />
             }
 
             {this.state.IsReport &&
