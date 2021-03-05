@@ -29,6 +29,9 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Fieldset } from 'primereact/fieldset';
 import { MultiSelect } from 'primereact/multiselect';
+import { OrderList } from 'primereact/orderlist';
+
+const ReactDragListView = require('react-drag-listview');
 
 class AdminProduct extends React.Component {
   constructor(props) {
@@ -49,6 +52,8 @@ class AdminProduct extends React.Component {
       EditSpec:0,
       DelSpec:0,
       CodeFile:[],
+      target:[],
+      source:[],
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
 
@@ -259,7 +264,6 @@ class AdminProduct extends React.Component {
     this.setState({ CatsChoosen_edit: event.target.value });
     if (event.target.value != "0") {
       document.getElementById("DeleteCategory").style.display = "inline";
-      debugger;
       this.setState(
         {
           CategoryOrder: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].order || '',
@@ -284,10 +288,16 @@ class AdminProduct extends React.Component {
         state[code.Etitle] = this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1][code.Etitle];
       }
       this.setState({
-        showSpecs: false,
         ...state
       })
-      this.GetSpecifications(this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec ? this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec : [])
+      let spec = this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec ? this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec : [];
+      
+      this.setState({
+        showSpecs:spec.length >0 ? true : false,
+        Spec:spec
+      })
+      if(typeof spec[0] !=="object")
+        this.GetSpecifications(this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec ? this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Spec : [])
 
     } else {
       document.getElementById("DeleteCategory").style.display = "none";
@@ -339,6 +349,14 @@ class AdminProduct extends React.Component {
   }
 
   setCategory(GetSpecs) {
+    /*let selectedSpec=[]
+    for(let s of this.state.Spec){
+      if(s.checked !== false){
+        selectedSpec.push(s);
+      }
+    }*/
+    debugger;
+
     let param = {
       Category: this.state.Category,
       id: this.state.CategoryId,
@@ -348,7 +366,7 @@ class AdminProduct extends React.Component {
       CategoryOrder: this.state.CategoryOrder,
       showInSite: this.state.showInSite,
       pic: this.state.CatPic,
-      Spec: this.state.SelectedSpecs,
+      Spec: this.state.Spec,
       CodeFile:this.state.CodeFile
     };
     for(let code of this.state.CodeFile)
@@ -420,8 +438,7 @@ class AdminProduct extends React.Component {
       InsertSpec: this.state.InsertSpec
     };
     this.setState({
-      loading: 1,
-      showSpecs: false
+      loading: 1
     })
     let that = this;
     let SCallBack = function (response) {
@@ -430,11 +447,39 @@ class AdminProduct extends React.Component {
       that.setState({
         loading: 0
       })
-      that.state.SelectedSpecs.push(that.state.LastId);
-      that.GetSpecifications("All", that.state.SelectedSpecs)
+      let temp = that.state.Spec ;
+      if(that.state.InsertSpec){
+        response.data.result.ops[0].id=response.data.result.ops[0]._id
+        delete response.data.result.ops[0]._id
+        temp.push(response.data.result.ops[0])
+        that.setState({
+          Spec:temp
+        })
+      }
+      if(that.state.EditSpec && response.data.result.ok){
+        for(let s of temp){
+          if(s.id == that.state.NewId){
+            s.title = that.state.NewLabel;
+          }
+        }
+        that.setState({
+          Spec:temp
+        })
+      }
+      if(that.state.DelSpec && response.data.result.ok){
+        let index=-1;
+        for(let i=0; i<temp.length;i++){
+          if(temp[i].id == that.state.NewId){
+            index=i;
+          }
+        }
+        temp.splice(index, 1);
 
-      //if (!that.state.DelSpec)
-      //  that.setCategory(1)
+        that.setState({
+          Spec:temp
+        })
+      }
+      that.setCategory(0)
     };
     let ECallBack = function (error) {
       Alert.error('عملیات انجام نشد', 5000);
@@ -532,18 +577,45 @@ class AdminProduct extends React.Component {
 
   }
   ChangeSpecsCheckBoxs(e) {
-    let SelectedSpecs = this.state.SelectedSpecs;
-    if (e.checked)
-      SelectedSpecs.push(e.value);
-    else
-      SelectedSpecs.splice(SelectedSpecs.indexOf(e.value), 1);
+    let Spec = this.state.Spec;
+    for (let s of Spec) {
+      if (s.id == e.value) {
+        if (e.checked)
+          s.checked = true;
+        else
+          s.checked = false;
+      }
+      
+    }
 
     this.setState({
-      SelectedSpecs: SelectedSpecs
+      Spec: Spec
     })
   }
   render() {
+    const onChange = (event) => {
+      this.setState({
+        target:event.target,
+        source:event.source
+      })
+  }
+  const itemTemplate = (item) => {
+    let id = "cb" + item.id;
 
+    return (
+        <div className="product-item">
+            
+            <div className="product-list-detail" style={{display:'flex'}}>
+            <Checkbox inputId={id} value={item.id} style={{ verticalAlign: 'text-bottom' }} onChange={this.ChangeSpecsCheckBoxs} checked={this.state.Spec.filter(function(v){ return v.id == item.id })[0]?.checked==false ? false : true}></Checkbox>
+
+                <h5 className="p-mb-2">{item.title}</h5>
+                <i className="pi pi-tag product-category-icon"></i>
+                <span className="product-category">{item.id}</span>
+            </div>
+            
+        </div>
+    );
+}
     return (
 
       <div className="row">
@@ -600,7 +672,7 @@ class AdminProduct extends React.Component {
                     </div>
                   }{this.state.CategoryId &&
                     <div className="col-lg-6" style={{ marginTop: 20 }}>
-                      <img src={this.state.CatPicPreview} style={{ width: 150, height: 150 }} />
+                      <img src={this.state.CatPicPreview} />
                     </div>
 
                   }
@@ -636,7 +708,9 @@ class AdminProduct extends React.Component {
                       <div className="row">
 
                         <div className="col-lg-12">
-                          <div className="row" >
+                        <OrderList value={this.state.Spec} itemTemplate={itemTemplate} header="مشخصات محصول" onChange={(e) => this.setState({Spec:e.value})}></OrderList>
+
+                          <div className="row" style={{display:'none'}}>
                             {
                               this.state.Spec && this.state.Spec.map((v, i) => {
                                 let id = "cb" + v.id;
@@ -693,7 +767,7 @@ class AdminProduct extends React.Component {
                         <div className="group">
                           <input className="form-control yekan" autoComplete="off" type="text" value={this.state.NewId} name="NewId" onChange={e => {
                             this.setState({ NewId: e.target.value,NewLabel:'' })
-
+                            if(this.state.EditSpec || this.state.DelSpec)
                             this.GetSpecifications([parseInt(e.target.value)],null,1)
                           }
                           } required="true" />
@@ -701,14 +775,12 @@ class AdminProduct extends React.Component {
                         </div>
                       </div>
                     }
-                      {(this.state.EditSpec == 1 || this.state.InsertSpec ==1) &&
                       <div className="col-12" >
                         <div className="group">
                           <input className="form-control yekan" autoComplete="off" type="text" value={this.state.NewLabel} name="NewLabel" onChange={e => this.setState({ NewLabel: e.target.value })} required="true" />
                           <label>عنوان  </label>
                         </div>
                       </div>
-                      }
                       <div className="col-12" >
                         <button className="btn btn-primary yekan" type="button" onClick={() => { this.setSpec() }} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }} >اعمال تغییرات</button>
 

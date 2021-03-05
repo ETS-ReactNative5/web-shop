@@ -15,3 +15,6 @@
 .card{
 	border: 1px solid #ebebeb !important;
 }
+a:hover{
+	text-decoration: none !important;
+}

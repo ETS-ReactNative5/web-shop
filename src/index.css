@@ -1239,6 +1239,9 @@ div.InlineImagesHalf{
     font-family: 'yekan';
 
 }
+.product-item , .p-orderlist-header{
+    font-family: 'yekan';
+}
 .rs-dropdown-menu-collapse-in{
     background-color: rgb(240, 240, 241) !important;
 }
@@ -1247,7 +1250,9 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
+.product-list-detail h5 {
+    font-family: 'YekanBakhFaBold';
+}
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;

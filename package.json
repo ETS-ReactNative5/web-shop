@@ -33,6 +33,7 @@
     "react-dennis-progressbar": "^1.0.9",
     "react-device-detect": "^1.12.1",
     "react-dom": "16.13.1",
+    "react-drag-listview": "^0.1.8",
     "react-ga": "^3.3.0",
     "react-helmet": "^5.2.1",
     "react-http-request": "^2.0.0",

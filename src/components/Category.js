@@ -3,15 +3,11 @@ import './Category.css';
 import Server  from './Server.js'
 import axios from 'axios'  
 import {DataView, DataViewLayoutOptions} from 'primereact/dataview';
-import {BrowserRouter , Route,withRouter,Redirect} from 'react-router-dom'
+import {BrowserRouter , Link,withRouter,Redirect} from 'react-router-dom'
 import Header1  from './Header1.js'
 import { connect } from 'react-redux';
-import MainBox3  from './MainBox3.js'
 import Footer  from './Footer.js' 
 import Header2  from './Header2.js'
-import { Button } from 'primereact/button';
-import { Rating } from 'primereact/rating';
-import { AutoComplete } from 'rsuite';
 
 class Category extends React.Component {
     constructor(props){
@@ -152,8 +148,11 @@ class Category extends React.Component {
                         
                     <div  style={{textAlign:'right'}}><i className="fas fa-id-card-alt" style={{paddingRight:8,paddingLeft:8,fontSize:16}} ></i><span className="iranyekanwebmedium">فروشنده:</span> <span className="YekanBakhFaBold">{car.Seller[0].name}</span></div>
                     <div  style={{textAlign:'right'}}><i className="fas fa-truck" style={{paddingRight:8,paddingLeft:8,fontSize:16}} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.PrepareTime||"3")} روز کاری</span></div>
-                    <div style={{position:'absolute',bottom:6,width:'100%',left:0}}>
-                    <Button label="Secondary"  className="p-button-secondary" icon="pi pi-shopping-cart " onClick={()=>{this.GoToProduct((car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id,car.title)}} style={{marginTop:10,width:'85%',fontFamily:'YekanBakhFaBold'}} label="مشاهده جزئیات / خرید"></Button>
+                    <div style={{position:'absolute',bottom:15,width:'100%',left:0}}>
+                    <Link className="p-button-secondary btn-light" to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#"  style={{padding:10,marginTop:10,width:'85%',fontFamily:'YekanBakhFaBold'}}>
+                    مشاهده جزئیات / خرید
+
+                    </Link>    
 
                     </div>
                 </div>

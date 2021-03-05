@@ -183,6 +183,7 @@ class Products extends React.Component {
                 })
                 
             }
+            debugger;
             res.map((v, i) => {
                 that.setState({
                     id: v._id,
@@ -848,7 +849,7 @@ class Products extends React.Component {
                                                     <div style={{ color: '#333', fontSize: 20 }}>مشخصات فنی</div>
                                                     <div style={{ color: '#333', fontSize: 14, marginBottom: 30 }} className="YekanBakhFaLight">{this.state.title}</div>
                                                     {this.state.Spec.map((v, i) => {
-                                                        if (v.value != "-")
+                                                        if (v.value && v.value != "-")
                                                             return (<p className="iranyekanwebmedium" style={{ display: 'flex', flexDirection: 'row' }}><div className="YekanBakhFaBold" style={{ width: "30%", background: "#f2f2f2", padding: 10 }}>{v.title}</div><div style={{ width: "5%" }}></div><div className="YekanBakhFaMedium" style={{ width: "65%", background: "#f2f2f2", padding: 10 }}>{v.value}</div></p>)
                                                     })
                                                     }

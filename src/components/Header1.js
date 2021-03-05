@@ -31,6 +31,7 @@ class Header1 extends React.Component {
 			brand: "",
 			logo: "",
 			selectedproductId: null,
+			selectedCatId: null,
 			_id: [],
 			img: [],
 			desc: [],
@@ -78,18 +79,27 @@ class Header1 extends React.Component {
 
 	onSelect(event) {
 		var _id = event.originalEvent.target.getAttribute("_id");
+		var _catId = event.originalEvent.target.getAttribute("_catId")
+
 		this.setState({
 			brand: event.value.title
 		})
-		if (!_id) {
+		if (!_id && !_catId) {
 			try {
 				_id = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_id");
+				_catId = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_catId");
+
 			} catch (e) {
 
 			}
 		}
+		if(_id){
+			this.setState({ brand: event.value, selectedproductId: _id })
 
-		this.setState({ brand: event.value, selectedproductId: _id })
+		}else{
+			this.setState({ brand: event.value, selectedCatId: _catId })
+
+		}
 		setTimeout(function () {
 			window.location.reload();
 		}, 0)
@@ -104,26 +114,14 @@ class Header1 extends React.Component {
 			title: event.query
 		})
 			.then(response => {
-				/*let title = [];
-				let _id = [],
-					img = [],
-					desc = [],
-					subTitle = [];
-				response.data.result.map(function (v, i) {
-					title.push(v.title);
-					subTitle.push(v.subTitle);
-					_id.push(((v.product_detail && v.product_detail.length > 0) ? v.product_detail[0]._id : v._id));
-					img.push(v.fileUploaded);
-					desc.push(v.desc);
-				})*/
-				let brandSuggestions = []
-				response.data.result.map(function (v, i) {
 
-					brandSuggestions.push({ _id: ((v.product_detail && v.product_detail.length > 0) ? v.product_detail[0]._id : v._id), title: v.title, subTitle: v.subTitle, desc: v.desc, img: v.fileUploaded })
+				let brandSuggestions = []
+				response.data.result.reverse().map(function (v, i) {
+
+					brandSuggestions.push({ _id: ((v.product_detail && v.product_detail.length > 0) ? v.product_detail[0]._id : v._id),name:v.name,catId:v.name ? v._id : null, title: v.title, subTitle: v.subTitle, desc: v.desc, img: v.fileUploaded })
 				})
 
 				that.setState({ brandSuggestions: brandSuggestions });
-				//that.setState({ _id: _id, img: img, desc: desc, brandSuggestions: title, subTitle: subTitle });
 
 
 			})
@@ -134,23 +132,41 @@ class Header1 extends React.Component {
 	}
 	itemTemplate(brand) {
 		Cound = 0;
-		return (
-			<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
-				<div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
-
-					<div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>{brand.desc &&
-						<span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
-							<span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.title}</span><br />
-							<span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.subTitle}</span>
-						</span>
-					}
+		if(!brand.catId){
+			return (
+				<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
+					<div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
+	
+						<div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>{brand.desc &&
+							<span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
+								<span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.title}</span><br />
+								<span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.subTitle}</span>
+							</span>
+						}
+						</div>
+						<div _id={brand._id} className="col-4">{brand.img &&
+							<img src={this.state.absoluteUrl + brand.img.split("public")[1]} style={{ width: 100, height: 100, minWidth: 100 }} _id={brand._id} />
+						} </div>
 					</div>
-					<div _id={brand._id} className="col-4">{brand.img &&
-						<img src={this.state.absoluteUrl + brand.img.split("public")[1]} style={{ width: 100, height: 100, minWidth: 100 }} _id={brand._id} />
-					} </div>
 				</div>
-			</div>
-		);
+			);
+		}else{
+			return (
+				<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
+					<div style={{ margin: '10px 10px 0 0' }} className="row" _catId={brand.catId} >
+	
+						<div className="col-12" _id={brand.catId} style={{ textAlign: 'right' }}>
+							<span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _catId={brand.catId} >
+								
+								<span _catId={brand.catId} style={{color:'#ccc'}}>مشاهده دسته بندی : </span><span style={{whiteSpace:'pre-wrap'}} _catId={brand.catId}>{brand.name}</span><br />
+							</span>
+						</div>
+						
+					</div>
+				</div>
+			);
+		}
+		
 
 	}
 
@@ -198,6 +214,9 @@ class Header1 extends React.Component {
 
 		if (this.state.selectedproductId)
 			return <Redirect to={"/products?id=" + this.state.selectedproductId} push={true} />;
+		if (this.state.selectedCatId)
+			return <Redirect to={"/category?id=" + this.state.selectedCatId} push={true} />;
+			
 		if (this.state.GotoLogin)
 			return <Redirect to='/login' />;
 		/*if (this.state.logout)

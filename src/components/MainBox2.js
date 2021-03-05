@@ -243,15 +243,33 @@ class MainBox2 extends React.Component {
           UId: response.data.authData.userId,
           levelOfUser: response.data.authData.levelOfUser
         })
-        this.getPics();
+        this.getSettings();
       })
       .catch(error => {
-        this.getPics();
+        this.getSettings();
+
       })
 
 
 
 
+  }
+  getSettings(){
+    axios.post(this.state.url+'getSettings', {
+        token: localStorage.getItem("api_token")
+      })
+      .then(response => {
+        this.setState({
+            Template:response.data.result ? response.data.result.Template : "1",
+        })
+        this.getPics();
+
+      })
+      .catch(error => {
+        console.log(error)
+        this.getPics();
+
+      })
   }
   persianNumber(input) {
     var persian = { 0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹' };

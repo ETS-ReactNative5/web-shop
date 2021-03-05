@@ -6,11 +6,11 @@ class Server extends React.Component {
    constructor(props){
      super(props);
      this.state={
-        isLoading:false,/*
-        serverUrl: 'https://api.emdcctv.com/'
-        serverUrl: 'http://localhost:3000/'*/
-        serverUrl: 'https://marketapi.sarvapps.ir/'/*
-        serverUrl: 'https://api.aniabook.ir/'*/
+        isLoading:false,
+        //serverUrl: 'https://api.emdcctv.com/'
+        //serverUrl: 'http://localhost:3000/',
+        serverUrl: 'https://marketapi.sarvapps.ir/',
+        //  serverUrl: 'https://foodapi.sarvapps.ir/'
      };
    }
    getUrl(admin){

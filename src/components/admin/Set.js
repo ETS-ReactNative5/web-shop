@@ -47,6 +47,7 @@ class Set extends React.Component {
       SelectedHOrder: null,
       ActiveBank: null,
       ActiveSms: null,
+      Template: 1,
       ParsianTerminal: '',
       ParsianPin: '',
       ZarinPalCode: '',
@@ -188,7 +189,8 @@ class Set extends React.Component {
           STitle: response.data.result[0].STitle,
           FactorChangeSmsText: response.data.result[0].FactorChangeSmsText,
           UserChangeSmsText: response.data.result[0].UserChangeSmsText,
-          RegSmsText: response.data.result[0].RegSmsText
+          RegSmsText: response.data.result[0].RegSmsText,
+          Template: response.data.result[0].Template
         })
       }
 
@@ -234,7 +236,8 @@ class Set extends React.Component {
           STitle: this.state.STitle,
           FactorChangeSmsText: this.state.FactorChangeSmsText,
           UserChangeSmsText: this.state.UserChangeSmsText,
-          RegSmsText: this.state.RegSmsText
+          RegSmsText: this.state.RegSmsText,
+          Template: this.state.Template
         }
       };
     }
@@ -282,6 +285,19 @@ class Set extends React.Component {
           <div className=" col-12" style={{ marginTop: 20, background: '#fff' }}>
             <Panel header="تنظیمات سیستم" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <div className="row" >
+              <div className="col-12" >
+                  <div class="row">
+                      <div className="col-lg-3 col-md-5 col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                        <RadioButton value="1" style={{ textAlign: "center", fontSize: 18 }} className="yekan" name="Template" onChange={(e) => this.setState({ Template: e.value })} checked={this.state.Template === '1'} />
+                        <label style={{ textAlign: "center", fontSize: 18 }} className="yekan">قالب مبتنی بر محصول</label>
+                      </div>
+                      <div className="col-lg-6 col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                        <RadioButton value="2" style={{ textAlign: "center", fontSize: 18 }} className="yekan" name="Template" onChange={(e) => this.setState({ Template: e.value })} checked={this.state.Template === '2'} />
+                        <label style={{ textAlign: "center", fontSize: 18 }} className="yekan">قالب مبتنی بر فروشگاه</label>
+                      </div>
+                  </div>
+
+                </div>
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ SeveralShop: e.checked })} checked={this.state.SeveralShop}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>استفاده از امکانات چند فروشگاهی - برای تغییر این فیلد لازم است با طراحان سیستم هماهنگی شود</label>

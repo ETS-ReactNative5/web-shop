@@ -345,7 +345,10 @@ class Users extends React.Component {
       address: "",
       credit: 0,
       HasError: null,
-      ShopId: null
+      ShopId: null,
+      map:null,
+      status:0,
+      level:0
     });
 
   }

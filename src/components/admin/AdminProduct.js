@@ -392,8 +392,8 @@ class AdminProduct extends React.Component {
           Category: event.nativeEvent.target[event.nativeEvent.target.selectedIndex].text,
           CategoryId: event.target.value,
           ParentCat: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Parent || '',
-          CatPicPreview: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].pic ? this.state.absoluteUrl + this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].pic.split("public")[1] : this.state.absoluteUrl + '/nophoto.png'/*,
-          CatSpecs:this.state.CategoryList[event.nativeEvent.target.selectedIndex-1].Spec ? this.state.CategoryList[event.nativeEvent.target.selectedIndex-1].Spec : []*/
+          CatPicPreview: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].pic ? this.state.absoluteUrl + this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].pic.split("public")[1] : this.state.absoluteUrl + '/nophoto.png',
+          CatSpecs:this.state.CategoryList[event.nativeEvent.target.selectedIndex-1].Spec ? this.state.CategoryList[event.nativeEvent.target.selectedIndex-1].Spec : []
 
         }
       );
@@ -464,7 +464,7 @@ class AdminProduct extends React.Component {
         CatSelected = property
     }
     
-    this.getCodes(CatSelected);
+    this.getCodes(CatSelected,1);
 
   }
   handleCategoryInProduct(event) {
@@ -476,12 +476,12 @@ class AdminProduct extends React.Component {
       if (property["_id"] == event.value)
         CatSelected = property
     }
-    this.getCodes(CatSelected);
+    this.getCodes(CatSelected,0);
 
 
   }
   
-  getCodes(CatSelected) {
+  getCodes(CatSelected,edit) {
     let that = this;
     
     if(CatSelected.product_selectors){
@@ -490,11 +490,16 @@ class AdminProduct extends React.Component {
       })
       let SCallBack = function (response) {   
         let Spec = CatSelected && CatSelected.Spec;
-        that.setState({
-          CatSpecs_Edit: []
-        })
+        if(edit)
+          that.setState({
+            CatSpecs_Edit: Spec
+          })
+        else
+          that.setState({
+            CatSpecs: Spec
+          })
         if (Spec && Spec.length > 0) {
-          that.GetSpecifications(Spec, 1);
+          that.GetSpecifications(Spec, edit);
         }
         that.setState({
           CodeFile:response.data.result,
@@ -513,16 +518,25 @@ class AdminProduct extends React.Component {
     }else{
       let Spec = CatSelected && CatSelected.Spec;
       this.setState({
-        CatSpecs_Edit: []
+        CatSpecs_Edit: Spec
       })
       if (Spec && Spec.length > 0) {
-        this.GetSpecifications(Spec, 1);
+        if(edit)
+          that.setState({
+            CatSpecs_Edit: Spec
+          })
+        else
+          that.setState({
+            CatSpecs: Spec
+          })
+        this.GetSpecifications(Spec, edit);
       }
     }
     
   }
   GetSpecifications(Spec, edit) {
     let that = this;
+    return;
     let param = {
       token: localStorage.getItem("api_token"),
       Spec: Spec
@@ -1039,7 +1053,8 @@ class AdminProduct extends React.Component {
 
     let Spec = [];
     for (let i = 0; i < this.state.CatSpecs.length; i++) {
-      Spec.push({ id: this.state.CatSpecs[i].id, title: this.state.CatSpecs[i].title, value: this.state["Spec_" + this.state.CatSpecs[i].id] })
+      if(this.state.CatSpecs[i].checked !== false)
+        Spec.push({ id: this.state.CatSpecs[i].id, title: this.state.CatSpecs[i].title, value: this.state["Spec_" + this.state.CatSpecs[i].id] })
       //param["Spec_"+this.state.CatSpecs[i].id]=this.state["Spec_"+this.state.CatSpecs[i].id]
     }
     let param = {
@@ -1135,7 +1150,8 @@ class AdminProduct extends React.Component {
     let Spec = [];
     if (this.state.CatSpecs_Edit) {
       for (let i = 0; i < this.state.CatSpecs_Edit.length; i++) {
-        Spec.push({ id: this.state.CatSpecs_Edit[i].id, title: this.state.CatSpecs_Edit[i].title, value: this.state["Spec_edit_" + this.state.CatSpecs_Edit[i].id] })
+        if(this.state.CatSpecs_Edit[i].checked !== false)
+          Spec.push({ id: this.state.CatSpecs_Edit[i].id, title: this.state.CatSpecs_Edit[i].title, value: this.state["Spec_edit_" + this.state.CatSpecs_Edit[i].id] })
       }
     }
     this.state.off_edit = this.state.off_edit ? this.state.off_edit : 0;
@@ -1246,6 +1262,33 @@ class AdminProduct extends React.Component {
     else if (act == "edit") {
       this.setState({ visibleModalEditProduct: true });
     }
+  }
+  GetProductsOfCategory(catId){
+    let that = this;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      id: catId
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      debugger;
+      that.setState({
+        GridData: response.data.result
+      })
+      that.setState({
+        loading: 0
+      })
+
+    };
+    let ECallBack = function (error) {
+      Alert.error('عملیات انجام نشد', 5000);
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("MainApi/GetProductsPerCat", param, SCallBack, ECallBack)
   }
   GetProduct(id) {
     let that = this;
@@ -1475,18 +1518,26 @@ class AdminProduct extends React.Component {
   }
   onSelect(event) {
     var _id = event.originalEvent.target.getAttribute("_id");
+    var _catId = event.originalEvent.target.getAttribute("_catId")
+
     this.setState({
       brand: event.value.title
     })
     if (!_id) {
       try {
         _id = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_id");
+        _catId = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_catId");
+
       } catch (e) {
 
       }
     }
+    if(_id){
+      this.GetProduct(_id)
 
-    this.GetProduct(_id)
+    }else{
+      this.GetProductsOfCategory(_catId)
+    }
   }
   suggestBrands(event) {
     let that = this;
@@ -1501,9 +1552,9 @@ class AdminProduct extends React.Component {
 
 
       let brandSuggestions = []
-      response.data.result.map(function (v, i) {
+      response.data.result.reverse().map(function (v, i) {
 
-        brandSuggestions.push({ _id: v._id, title: v.title, subTitle: v.subTitle, desc: v.desc, img: v.fileUploaded })
+        brandSuggestions.push({ _id: v._id,name:v.name,catId:v.name ? v._id : null, title: v.title, subTitle: v.subTitle, desc: v.desc, img: v.fileUploaded })
       })
 
       that.setState({ brandSuggestions: brandSuggestions });
@@ -1522,7 +1573,7 @@ class AdminProduct extends React.Component {
 
   }
   itemTemplateSearch(brand) {
-
+    if(!brand.catId){
     return (
       <div className="p-clearfix" style={{ direction: 'rtl' }} >
         <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
@@ -1540,6 +1591,22 @@ class AdminProduct extends React.Component {
         </div>
       </div>
     );
+        }else{
+          return (
+            <div className="p-clearfix" style={{ direction: 'rtl' }} >
+              <div style={{ margin: '10px 10px 0 0' }} className="row" _catId={brand.catId} >
+      
+                <div className="col-lg-6" _id={brand.catId} style={{ textAlign: 'right' }}>
+                  <span className="iranyekanwebregular" style={{ textAlign: 'right' }} _catId={brand.catId} >
+                    <span _catId={brand.catId} style={{color:'#ccc'}}>مشاهده محصولات دسته بندی : </span><span style={{whiteSpace:'pre-wrap'}} _catId={brand.catId}>{brand.name}</span><br />
+                  </span>
+                </div>
+               
+              </div>
+            </div>
+          );
+        }
+
 
   }
   TableLayoutGetSet(Set, updatedProducts, rowIndex) {
@@ -1877,14 +1944,17 @@ class AdminProduct extends React.Component {
                   <div className="row" >
                     {
                       this.state.CatSpecs && this.state.CatSpecs.map((v, i) => {
-                        let name = "Spec_" + v.id;
-                        return (<div className="col-6" >
-                          <div className="group">
-                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state[name]} name={name} onChange={(event) => { this.setState({ [event.target.name]: event.target.value }) }} required="true" />
-                            <label>{v.title}</label>
+                        if(v.checked !== false){
+                          let name = "Spec_" + v.id;
+                          return (<div className="col-6" >
+                            <div className="group">
+                              <textarea className="form-control yekan"  autoComplete="off" type="text" value={this.state[name]} name={name} onChange={(event) => { this.setState({ [event.target.name]: event.target.value }) }}  />
+                              <label>{v.title}</label>
+                            </div>
                           </div>
-                        </div>
-                        )
+                          )
+                        }
+                        
 
                       })
                     }
@@ -1898,7 +1968,7 @@ class AdminProduct extends React.Component {
           </div>
           <div className="row" style={{ marginTop: 50, marginBottom: 20 }} >
             <div className="col-md-9 col-12" style={{ textAlign: 'right' }}>
-              <AutoComplete placeholder="نام کالای مورد نظر را جستجو کنید" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+              <AutoComplete placeholder="نام دسته بندی یا کالای مورد نظر را جستجو کنید" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
             </div>
             <div className="col-md-3 col-12 mt-2 mt-md-2" style={{ textAlign: 'center' }}>
               <i class="fas fa-sync" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.GetProduct()} ></i>
@@ -2083,16 +2153,19 @@ class AdminProduct extends React.Component {
 
               {
                this.state.CatSpecs_Edit && this.state.CatSpecs_Edit.map((v, i) => {
+                if(v.checked !== false){
+
                   let name = "Spec_edit_" + v.id;
                   return (<div className="col-lg-4 col-md-6 col-12" >
                     <div className="group">
-                      <input className="form-control yekan" disabled={this.state.SellerId != this.state.MainShopId} value={v.value} autoComplete="off" type="text" value={this.state[name]} name={name} onChange={(event) => { this.setState({ [event.target.name]: event.target.value }) }} required="true" />
+                      <textarea className="form-control yekan" disabled={this.state.SellerId != this.state.MainShopId} value={v.value} autoComplete="off" type="text" value={this.state[name]} name={name} onChange={(event) => { this.setState({ [event.target.name]: event.target.value }) }} />
                       <label>{v.title}</label>
                     </div>
                   </div>
                   )
-
+                }
                 })
+                
               }
             </div>
           </form>
