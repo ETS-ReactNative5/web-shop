@@ -172,7 +172,7 @@ class CatList extends React.Component {
 
 												</div>
 												{
-													((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" &&
+													item.number > 0 && ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" &&
 													<div className="car-title yekan off" style={{ position: 'absolute', top: 0 }} >{this.persianNumber(((!item.NoOff ? parseInt(this.props.off) : 0) + item.off))} %</div>
 
 												}

@@ -134,6 +134,7 @@ class ShopInformation extends React.Component {
           boxAcc: response.data.result[0].boxAcc,
           cash: response.data.result[0].cash,
           laon: response.data.result[0].laon,
+          main: response.data.result[0].main,
           AllowCredit: response.data.result[0].AllowCredit,
           CreditCommission: response.data.result[0].CreditCommission,
           logo: response.data.result[0].logo ? that.state.absoluteUrl + response.data.result[0].logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
@@ -309,10 +310,10 @@ class ShopInformation extends React.Component {
 
                       <p className="yekan">
                         شماره حساب های زیر جهت انجام تسویه حساب دوره ای استفاده می شود
-        </p>
+                      </p>
                       <p className="yekan">
                         تسویه حساب با فروشندگان در روز پایانی هفته انجام می شود
-        </p>
+                      </p>
                     </div>
                   </div>
 
@@ -341,15 +342,19 @@ class ShopInformation extends React.Component {
                   <div className="col-6" style={{ marginTop: 20 }}>
                     <img src={this.state.logo} style={{ width: 150, height: 150 }} />
                   </div>
+                  {this.state.main &&
                   <div className="col-6" style={{ marginTop: 20 }} >
                     <div className="group">
                       <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="logoCopyRight" />
                       <label> آپلود لوگو کپی رایت</label>
                     </div>
                   </div>
+                  }
+                  {this.state.main &&
                   <div className="col-6" style={{ marginTop: 20 }}>
                     <img src={this.state.logoCopyRight} style={{ width: 150, height: 150 }} />
                   </div>
+                  }
 
                   <div className="col-12" style={{ marginTop: 20 }}>
 

@@ -96,6 +96,7 @@ class Cart extends React.Component {
     
     }
     Payment(){
+        debugger;
         let that = this;
         if(!this.state.AcceptAddress){
             axios.post(this.state.url+'getuserInformation' , {
@@ -126,7 +127,8 @@ class Cart extends React.Component {
                 let url = that.state.ActiveBank=="z" ? this.state.url+'payment' : this.state.url+'payment2';
                 axios.post(url , {
                     paykAmount: this.state.paykAmount,
-                    Amount: parseInt(this.state.lastPrice)+parseInt(this.state.paykAmount),
+                    Amount: parseInt(this.state.lastPrice),
+                    finalAmount: parseInt(this.state.lastPrice)+parseInt(this.state.paykAmount),
                     Credit:this.state.finalCreditReducer,
                     userId:this.state.userId,
                     products_id:products_id,
@@ -362,6 +364,7 @@ class Cart extends React.Component {
 
     }
     itemTemplate(car, layout) {
+        debugger;
         if (layout === 'list' && car && car.products[0]) {
             let pic = car.products[0].fileUploaded.split("public")[1] ? this.state.absoluteUrl+car.products[0].fileUploaded.split("public")[1] : this.state.absoluteUrl+'nophoto.png';
             let rowPrice = car.price//car.products[0].getFromCredit ? car.products[0].price : (car.products[0].price - (car.products[0].price * ((!car.products[0].NoOff ? parseInt(this.props.off) : 0)+car.products[0].off))/100);

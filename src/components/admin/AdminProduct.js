@@ -1783,7 +1783,7 @@ class AdminProduct extends React.Component {
                     <label>تعداد</label>
                   </div>
                   <div className="group">
-                    <input className="form-control yekan" autoComplete="off" type="number" min="0" max="100" value={this.state.off} name="off" onChange={this.handleChangeOff} required="true" />
+                    <input className="form-control yekan" autoComplete="off"  min="0" max="100" value={this.state.off} name="off" onChange={this.handleChangeOff} required="true" />
                     <label>تخفیف</label>
                   </div>
                  
@@ -2038,7 +2038,7 @@ class AdminProduct extends React.Component {
               </div>
               <div className="col-lg-6">
                 <div className="group">
-                  <input className="form-control yekan" autoComplete="off" type="number" min="0" max="100" value={this.state.off_edit} name="off_edit" onChange={this.handleChangeOff_edit} required="true" />
+                  <input className="form-control yekan" autoComplete="off"  min="0" max="100" value={this.state.off_edit} name="off_edit" onChange={this.handleChangeOff_edit} required="true" />
                   <label>تخفیف</label>
                 </div>
               </div>

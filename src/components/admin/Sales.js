@@ -294,6 +294,8 @@ class Sales extends React.Component {
         loading: 0
       })
       let NewFactors = 0;
+
+      debugger;
       response.data.result.result.map(function (v, i) {
         v.Amount = !v.Amount ? "0" : v.Amount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         v.Credit = !v.Credit ? "0" : v.Credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -473,7 +475,11 @@ class Sales extends React.Component {
                 {this.state.isMainShop == 1 &&
                 <Column field="company" header="شرکت" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
+                {this.state.isMainShop == 1 ?
+                  <Column field="finalAmount" header="مبلغ فاکتور (با محاسبه هزینه پیک)"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                :
                 <Column field="Amount" header="مبلغ پرداختی"  body={BodyTemplate}  className="yekan" style={{ textAlign: "right" }} />
+                }
                 {this.state.CreditSupport && this.state.isMainShop == 1 &&
                   <Column field="Credit" header="کسر از اعتبار"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }

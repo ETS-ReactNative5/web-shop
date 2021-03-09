@@ -238,7 +238,7 @@ class Header1 extends React.Component {
 					</div>
 
 				</OverlayPanel>
-				<div style={{ height: 35, padding: 5, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: '50%', backgroundImage: 'url(https://dkstatics-public.digikala.com/digikala-adservice-banners/9521d61d337456b9c498ea05c7f54d76981faa19_1609858694.gif)' }} >
+				<div style={{ height: 35, padding: 5, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: '50%', backgroundImage: 'url(https://marketapi.sarvapps.ir//uploads/IMAGE-1615139815024.jpg)' }} >
 				</div>
 				<div >
 					<div className="row" style={{ direction: 'ltr', marginTop: 15, alignItems: 'center', marginLeft: 0, marginRight: 0 }}>

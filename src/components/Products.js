@@ -457,6 +457,7 @@ class Products extends React.Component {
                     userLocation=3;
                 else
                     userLocation=4;
+                debugger;    
                 if((userLocation==4 && !PeykInfo[0].SendToCountry) || (userLocation==3 && !PeykInfo[0].SendToState) || (userLocation==2 && !PeykInfo[0].SendToNearCity)|| (userLocation==1 && !PeykInfo[0].SendToCity)){
                     //alert("امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد");
                     that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: <div><span>امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد</span><br/><br/><Link to={`${process.env.PUBLIC_URL}/User?Active=5`} style={{ textDecoration: 'none', color: '#333' }}>ویرایش آدرس</Link></div>, life: 8000});
@@ -812,7 +813,7 @@ class Products extends React.Component {
                                                                         }
                                                                     </div>
                                                                     <div className="col-lg-2 col-md-6 col-12" style={{textAlign:'center'}}>
-                                                                        <button className="btn btn-outline-success iranyekanwebmedium" onClick={() => { this.SendToCart(item._id, item.product_id, 1, null, (this.roundPrice(item.price - ((item.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)))); return false; } }><span style={{float:'right'}} ></span>افزودن به سبد</button>
+                                                                    <Link  className="btn btn-outline-success iranyekanwebmedium" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)}><span style={{float:'right'}} ></span>مشاهده جزئیات محصول</Link>
     
                                                                     </div>
     
