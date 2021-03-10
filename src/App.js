@@ -27,6 +27,9 @@ import Sales_Ended from './components/admin/Sales_Ended.js'
 import Sales_Cleared from './components/admin/Sales_Cleared.js'
 
 import Codes_Files from './components/admin/Codes_Files.js'
+import Cancel_Products from './components/admin/Cancel_Products.js'
+import Canceled_Products from './components/admin/Canceled_Products.js'
+
 
 import Users from './components/admin/Users.js'
 import Maps from './components/admin/Maps.js'
@@ -104,7 +107,11 @@ class App extends Component {
                   <Route path="/admin/Sales_Posted" component={Sales_Posted} />
                   <Route path="/admin/Sales_Ended" component={Sales_Ended} />
                   <Route path="/admin/Sales_Cleared" component={Sales_Cleared} />
+                  <Route path="/admin/Cancel_Products" component={Cancel_Products} />
+                  <Route path="/admin/Canceled_Products" component={Canceled_Products} />
 
+                  
+                  
                   <Route path="/admin/Users" component={Users} />
                   <Route path="/admin/Forms" component={Forms} />
                   <Route path="/admin/Maps" component={Maps} />

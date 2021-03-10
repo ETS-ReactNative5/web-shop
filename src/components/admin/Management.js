@@ -27,16 +27,13 @@ import Create_Reports from './Create_Reports.js'
 import Show_Reports from './Show_Reports.js'
 import SalePose from './SalePose.js'
 import Codes_Files from './Codes_Files.js'
-
-
-
-
+import Cancel_Products from './Cancel_Products.js'
+import Canceled_Products from './Canceled_Products.js'
 import SalesProduct from './SalesProduct.js'
 import Set from './Set.js'
 import ShopInformation from './ShopInformation.js'
 import ShopsList from './ShopsList.js'
 import SiteSettings from './SiteSettings.js'
-
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
@@ -220,8 +217,14 @@ class Management extends React.Component {
             {this.state.CId == "130" && !this.state.IsReport &&
               <SalePose />
             }
-            {this.state.CId == "151" && !this.state.IsReport &&
+            {this.state.CId == "151" && !this.state.IsReport && 
               <Codes_Files />
+            }
+            {this.state.CId == "152" && !this.state.IsReport &&
+              <Cancel_Products />
+            }
+            {this.state.CId == "153" && !this.state.IsReport &&
+              <Canceled_Products />
             }
 
             {this.state.IsReport &&

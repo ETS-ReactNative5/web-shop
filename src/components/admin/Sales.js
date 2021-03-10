@@ -25,6 +25,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import GoogleMapReact from 'google-map-react';
 import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
+import { Knob } from 'primereact/knob';
 
 const FilterItems = [
   { label: 'همه', value: 'All' },
@@ -298,6 +299,9 @@ class Sales extends React.Component {
       debugger;
       response.data.result.result.map(function (v, i) {
         v.Amount = !v.Amount ? "0" : v.Amount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        v.paykAmount = !v.paykAmount ? "0" : v.paykAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
         v.Credit = !v.Credit ? "0" : v.Credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         if (v.status == "1")
           NewFactors++;
@@ -344,6 +348,7 @@ class Sales extends React.Component {
           </ReactToPrint>
 
       })
+      debugger;
       that.setState({
         GridDataFactors: response.data.result.result,
         LastAmount: response.data.result.finalPrice,
@@ -475,10 +480,9 @@ class Sales extends React.Component {
                 {this.state.isMainShop == 1 &&
                 <Column field="company" header="شرکت" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
-                {this.state.isMainShop == 1 ?
-                  <Column field="finalAmount" header="مبلغ فاکتور (با محاسبه هزینه پیک)"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                :
-                <Column field="Amount" header="مبلغ پرداختی"  body={BodyTemplate}  className="yekan" style={{ textAlign: "right" }} />
+                <Column field="finalAmount" header="مبلغ فاکتور"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                {this.state.isMainShop == 1 &&
+                  <Column field="paykAmount" header="هزینه پیک"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
                 {this.state.CreditSupport && this.state.isMainShop == 1 &&
                   <Column field="Credit" header="کسر از اعتبار"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
@@ -495,6 +499,7 @@ class Sales extends React.Component {
                 {this.state.isMainShop == 1 &&
                   <Column field="print" filter={false} header="چاپ"  className="yekan" style={{ textAlign: "right" }} />
                 }
+                
               </DataTable>
             </div>
           </div>
@@ -533,6 +538,8 @@ class Sales extends React.Component {
                   <option value="2">آماده ارسال</option>
                   <option value="3">پایان</option>
                   <option value="-1">لغو</option>
+                  <option value="-2">درخواست مرجوعی توسط کاربر</option>
+                  <option value="-3">مرجوعی</option>
 
 
                 </select>

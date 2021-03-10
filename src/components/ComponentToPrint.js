@@ -68,7 +68,8 @@ export class  ComponentToPrint extends React.Component {
           html+="<div style='border:1px solid;margin-top:10px'>"
           if(newProps.param.credit > 0)
             html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>کسر از اعتبار اقساطی : "+newProps.param.credit+" تومان</div></div>"
-          html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>جمع کل : "+newProps.param.Amount+" تومان</div></div>";
+          html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>جمع کل : "+parseInt(newProps.param.Amount) + parseInt(newProps.param.paykAmount||0) +" تومان</div></div>";
+          
           html+= "<div style='display:flex;justify-content: flex-start;margin-top:20px;padding-right:2px;padding-left:2px'><div>امضاء خریدار: </div></div></div>";
           if(newProps.forUser){
             this.setState({

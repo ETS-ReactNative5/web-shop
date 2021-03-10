@@ -119,6 +119,7 @@ class User extends React.Component {
 
     this.handleChangeAddress = this.handleChangeAddress.bind(this);
     this.handleChangeMail = this.handleChangeMail.bind(this);
+    this.handleChangeSheba = this.handleChangeSheba.bind(this);
     this.handleChangeCompany = this.handleChangeCompany.bind(this);
     this.Edituser = this.Edituser.bind(this);
     this.changePass = this.changePass.bind(this);
@@ -187,21 +188,29 @@ class User extends React.Component {
       SelectedSubCity: value.SelectedSubCity
     })
   }
-  Cancel(p,f){
+  Cancel(verify,p,f){
     let that = this;
-    let param = {
-      token: localStorage.getItem("api_token_admin"),
-      username: f.username,
-      Factor_id: f._id,
-      Factor_Amount: f.Amount,
-      Factor_finalAmount: f.finalAmount,
-      Factor_credit: f.credit,
-      Factor_paykAmount:f.paykAmount,
-      Product_Id:p._id,
-      Seller_Id:p.SellerId,
-      UnitPrice:p.UnitPrice,
-      number:p.number
-    };
+    if(!verify){
+      let param = {
+        token: localStorage.getItem("api_token_admin"),
+        username: f.username,
+        Factor_id: f._id,
+        Factor_Amount: f.Amount,
+        Factor_finalAmount: f.finalAmount,
+        Factor_credit: f.credit,
+        Factor_paykAmount:f.paykAmount,
+        Product_Id:p._id,
+        Seller_Id:p.SellerId,
+        UnitPrice:p.UnitPrice,
+        number:p.number
+      }
+      this.setState({
+        selectedCancel:true,
+        cancelParam:param
+      })
+      return;
+    }
+    let param = this.state.cancelParam;
     let SCallBack = function (response) {
       
       Alert.success('عملیات با موفقیت انجام شد', 2500);
@@ -211,7 +220,7 @@ class User extends React.Component {
 
       console.log(error)
     }
-    this.Server.send("AdminApi/CancelProduct", param, SCallBack, ECallBack)
+    this.Server.send("MainApi/CancelProduct", param, SCallBack, ECallBack)
   }
   itemTemplateForCancel(car, layout){
     if (layout === 'list' && car && car.products[0]) {
@@ -265,7 +274,11 @@ class User extends React.Component {
                         {v.title}
                       </div>
                       <div className="col-lg-3">
-                        <button className="btn btn-info YekanBakhFaMedium" onClick={()=>this.Cancel(v,car)}>درخواست مرجوعی کالا</button>
+                        { (v.status == "-2" || v.status == "-3") ?
+                        <p className="YekanBakhFaMedium" style={{ color:'red' }}>{v.status == "-2" ? 'برای این محصول درخواست مرجوعی ثبت شده است' : 'مرجوع شده'}</p>
+                        :
+                        <button className="btn btn-info YekanBakhFaMedium" onClick={()=>this.Cancel(false,v,car)}>درخواست مرجوعی کالا</button>
+                        }
                       </div>
                     </div>
                   )
@@ -481,6 +494,10 @@ class User extends React.Component {
   handleChangeMail(event) {
     this.setState({ mail: event.target.value });
   }
+  handleChangeSheba(event){
+    this.setState({ sheba: event.target.value });
+
+  }
   selectedFactorChange(value) {
     let that = this;
     var p = [];
@@ -511,7 +528,7 @@ class User extends React.Component {
   }
   onHide(event) {
 
-    this.setState({ selectedFactor: null });
+    this.setState({ selectedFactor: null,selectedCancel:false,cancelParam:null });
   }
   GetFactors(Stat,Cancel) {
     let that = this;
@@ -606,6 +623,7 @@ class User extends React.Component {
         SelectedSubCity: response.data.result[0].subCity,
         mail: response.data.result[0].mail,
         company: response.data.result[0].company,
+        sheba:response.data.result[0].sheba||'',
         loading: 0,
         levelName: (response.data.result[0].offs && response.data.result[0].offs.length > 0) ? response.data.result[0].offs[0].levelName : "تعیین نشده"
       })
@@ -658,6 +676,7 @@ class User extends React.Component {
       subCity: this.state.SelectedSubCity,
       company: this.state.company,
       mail: this.state.mail,
+      sheba: this.state.sheba,
       MyAccount: "1",
       level: "0",
       inMap: this.state.ActiveLi == 3 ? 0 : 1
@@ -824,6 +843,12 @@ class User extends React.Component {
                 </div>
                 <div className="col-lg-6">
                   <div className="group">
+                    <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.sheba} name="sheba" onChange={this.handleChangeSheba} style={{ textAlign: 'right' }} required="true" />
+                    <label>شماره شبا حساب بانکی</label>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="group">
                     <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.company} name="company" onChange={this.handleChangeCompany} style={{ textAlign: 'right' }} required="true" />
                     <label>نام شرکت</label>
                   </div>
@@ -946,7 +971,17 @@ class User extends React.Component {
 
 
 
+              <Dialog header="درخواست مرجوعی" visible={this.state.selectedCancel} style={{ minWidth: '30vw' }} minY={70} onHide={this.onHide} maximizable={false}>
+                <div>
+                  <p style={{fontFamily: 'YekanBakhFaBold',color:'red',textAlign:'right'}} >در صورت تایید درخواست شما توسط کارشناس ، پس از اطلاع رسانی پیک فروشگاه برای دریافت محصول به آدرس شما مراجعه خواهد کرد</p>
+                  <p style={{fontFamily: 'YekanBakhFaBold',color:'#000',textAlign:'right'}} >برای تغییر کد شبا به منوی ویرایش مشخصات مراجعه کنید </p><br/>
 
+                  <p style={{fontFamily: 'YekanBakhFaBold',color:'#000',textAlign:'right'}} >کد شبا ثبت شده در سیستم برای واریز مبلغ : </p><br/>
+                  <p style={{fontFamily: 'YekanBakhFaBold',color:'#000',textAlign:'right'}} >{this.state.sheba}</p>
+                  <button className="btn btn-info YekanBakhFaMedium" onClick={()=>this.Cancel(true)}>تایید درخواست مرجوعی کالا</button>
+
+                </div>
+              </Dialog>
 
 
             <div style={{ display: 'none' }}>

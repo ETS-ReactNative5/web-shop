@@ -282,7 +282,9 @@ class Sales_Registered extends React.Component {
       let NewFactors = 0;
       response.data.result.result.map(function (v, i) {
         v.Amount = !v.Amount ? "0" : v.Amount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        v.Credit = !v.Credit ? "0" : v.Credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        v.Credit = !v.Credit ? "0" : v.Credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        v.paykAmount = !v.paykAmount ? "0" : v.paykAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         if (v.status == "1")
           NewFactors++;
         if (v.status == "-2")
@@ -451,7 +453,10 @@ class Sales_Registered extends React.Component {
                 {this.state.isMainShop == 1 &&
                   <Column field="company" header="شرکت" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
-                <Column field="Amount" header="مبلغ پرداختی" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <Column field="finalAmount" header="مبلغ فاکتور"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                {this.state.isMainShop == 1 &&
+                  <Column field="paykAmount" header="هزینه پیک"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                }
                 {this.state.CreditSupport && this.state.isMainShop == 1 &&
                   <Column field="Credit" header="کسر از اعتبار" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
@@ -496,13 +501,15 @@ class Sales_Registered extends React.Component {
               {this.state.showProductStatus == 1 ?
                 <div>
                   <p className="yekan" style={{ float: "right", color: 'red' }}>تغییر وضعیت {this.state.ProductSelectedTitle || "محصول"}</p>
-                  <select className="custom-select yekan" value={this.state.ProductStatus} name="status" onChange={this.handleProductStatusChange} >
+                  <select className="custom-select yekan" value={this.state.ProductStatus} disabled={(!this.state.isMainShop && (this.state.ProductStatus == "-2" || this.state.ProductStatus == "-3"))} name="status" onChange={this.handleProductStatusChange} >
 
                     <option value="0">منتظر تایید</option>
                     <option value="1">در حال پردازش</option>
                     <option value="2">آماده ارسال</option>
                     <option value="3">پایان</option>
                     <option value="-1">لغو</option>
+                    <option value="-2">درخواست مرجوعی توسط کاربر</option>
+                    <option value="-3">مرجوعی</option>
 
 
                   </select>
