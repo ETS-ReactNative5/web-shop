@@ -49,6 +49,7 @@ class Sales_Registered extends React.Component {
       LastCredit: 0,
       loading: 0,
       isMainShop: 0,
+      AllowChangeStatusReadyToSend:true,
       showProductStatus: 0,
       url: this.Server.getUrl()
 
@@ -109,6 +110,17 @@ class Sales_Registered extends React.Component {
       ProductStatus: event.data.status,
       showProductStatus: true
     })
+    let that = this;
+    setTimeout(function(){
+      
+      let x = that;
+      debugger;  
+      let selectedP = that.state.GridDataFactors[0].products[that.state.ProductSelectedIndex];
+      that.setState({
+        AllowChangeStatusReadyToSend:((Date.now() - selectedP.LastChangeDate_num) > 1200000 && selectedP.status == "3") ? false : true
+
+      })
+    },0)
   }
   persianNumber(input) {
     var persian = { 0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹' };
@@ -301,7 +313,7 @@ class Sales_Registered extends React.Component {
         if (v.status == "3")
           v.statusDesc = "ارسال شده"
         if (v.status == "4")
-          v.statusDesc = "پایان"
+          v.statusDesc = "تحویل شده"
         if (v.status == "5")
           v.statusDesc = "تسویه شده"
         if (v.userData && v.userData[0]) {
@@ -412,7 +424,7 @@ class Sales_Registered extends React.Component {
       { label: "ثبت شده", value: "ثبت شده" },
       { label: "آماده ارسال", value: "آماده ارسال" },
       { label: "ارسال شده", value: "ارسال شده" },
-      { label: "پایان", value: "پایان" },
+      { label: "تحویل شده", value: "تحویل شده" },
       { label: "تسویه شده", value: "تسویه شده" },
       { label: "همه", value: null }
 
@@ -485,7 +497,7 @@ class Sales_Registered extends React.Component {
                   <option value="1">ثبت شده</option>
                   <option value="2">آماده ارسال</option>
                   <option value="3">ارسال شده</option>
-                  <option value="4">پایان</option>
+                  <option value="4">تحویل شده</option>
                   <option value="5">تسویه شده</option>
 
                 </select>
@@ -499,11 +511,11 @@ class Sales_Registered extends React.Component {
                 <p className="yekan" style={{ float: "right", color: 'red' }}>تغییر وضعیت {this.state.ProductSelectedTitle || "محصول"}</p>
                 <select className="custom-select yekan" value={this.state.ProductStatus} name="status" onChange={this.handleProductStatusChange} >
 
-                  <option value="0">منتظر تایید</option>
-                  <option value="1">در حال پردازش</option>
-                  <option value="2">آماده ارسال</option>
-                  <option value="3">پایان</option>
-                  <option value="-1">لغو</option>
+                  <option value="0" disabled={this.state.isMainShop ? false : true}>منتظر تایید</option>
+                  <option value="1" disabled={this.state.isMainShop ? false : true}>در حال پردازش</option>
+                  <option value="2" disabled={(this.state.isMainShop || this.state.AllowChangeStatusReadyToSend) ? false : true }>آماده ارسال</option>
+                  <option value="3" >تحویل شده</option>
+                  <option value="-1" disabled={this.state.isMainShop ? false : true}>لغو</option>
                   
 
 

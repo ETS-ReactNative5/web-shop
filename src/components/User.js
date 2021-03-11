@@ -343,6 +343,7 @@ class User extends React.Component {
               </div>
               {
                 car.products.map((v,i) => {
+                  debugger;
                   let pic = (v.fileUploaded && v.fileUploaded.split("public")[1]) ? this.state.absoluteUrl + v.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
 
                   return (
@@ -352,7 +353,7 @@ class User extends React.Component {
                           <img src={pic} style={{ height: "100px" }}  alt="" />
                         </Link>
                       </div>
-                      <div className="col-9">
+                      <div className="col-6">
                         {v.title}
                       </div>
                     </div>

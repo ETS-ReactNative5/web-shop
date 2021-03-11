@@ -301,7 +301,7 @@ class Sales_Registered extends React.Component {
         if (v.status == "3")
           v.statusDesc = "ارسال شده"
         if (v.status == "4")
-          v.statusDesc = "پایان"
+          v.statusDesc = "تحویل شده"
         if (v.status == "5")
           v.statusDesc = "تسویه شده"
         if (v.userData && v.userData[0]) {
@@ -412,7 +412,7 @@ class Sales_Registered extends React.Component {
       { label: "ثبت شده", value: "ثبت شده" },
       { label: "آماده ارسال", value: "آماده ارسال" },
       { label: "ارسال شده", value: "ارسال شده" },
-      { label: "پایان", value: "پایان" },
+      { label: "تحویل شده", value: "تحویل شده" },
       { label: "تسویه شده", value: "تسویه شده" },
       { label: "همه", value: null }
 
@@ -485,7 +485,7 @@ class Sales_Registered extends React.Component {
                   <option value="1">ثبت شده</option>
                   <option value="2">آماده ارسال</option>
                   <option value="3">ارسال شده</option>
-                  <option value="4">پایان</option>
+                  <option value="4">تحویل شده</option>
                   <option value="5">تسویه شده</option>
 
                 </select>
@@ -499,11 +499,11 @@ class Sales_Registered extends React.Component {
                 <p className="yekan" style={{ float: "right", color: 'red' }}>تغییر وضعیت {this.state.ProductSelectedTitle || "محصول"}</p>
                 <select className="custom-select yekan" value={this.state.ProductStatus} name="status" onChange={this.handleProductStatusChange} >
 
-                  <option value="0">منتظر تایید</option>
-                  <option value="1">در حال پردازش</option>
-                  <option value="2">آماده ارسال</option>
-                  <option value="3">پایان</option>
-                  <option value="-1">لغو</option>
+                  <option value="0" disabled={this.state.isMainShop ? false : true}>منتظر تایید</option>
+                  <option value="1" disabled={this.state.isMainShop ? false : true}>در حال پردازش</option>
+                  <option value="2" disabled={this.state.isMainShop ? false : true}>آماده ارسال</option>
+                  <option value="3" disabled={this.state.isMainShop ? false : true}>تحویل شده</option>
+                  <option value="-1" disabled={this.state.isMainShop ? false : true}>لغو</option>
 
 
                 </select>
