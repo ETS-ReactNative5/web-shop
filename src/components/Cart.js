@@ -589,7 +589,7 @@ class Cart extends React.Component {
                         :
                         <div style={{ zIndex: 10000 }} >
                         <p style={{ textAlign: 'center' }}>
-                          <img src={require('../public/loading.gif')} style={{ width: 320 }} />
+                          <img src={require('../public/loading.gif')} style={{ width: 320,display:'none' }} />
                         </p>
               
                          </div>
@@ -605,7 +605,7 @@ class Cart extends React.Component {
         
         <div className="card mt-md-0 mt-5" style={{padding:10,borderRadius:20}}>
         <div style={{textAlign:'left',marginRight:10,borderBottom:'1px solid #eee'}} >
-                <p className="YekanBakhFaBold">موجودی اعتباری : {this.props.credit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
+                <p className="YekanBakhFaBold">موجودی اعتباری : {this.props.credit?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
 
                 </div>
                 {
@@ -649,7 +649,7 @@ class Cart extends React.Component {
         </div>
         {this.state.CatId &&
         <div style={{marginTop:90}}>
-                <CatList _id={this.state.CatId} name="پیشنهاد برای شما"  paddingLeft="70" paddingRight="70"  />
+                <CatList _id={this.state.CatId} UId={this.state.userId} name="پیشنهاد برای شما"  paddingLeft="70" paddingRight="70"  />
         </div>
         }
         <Footer />

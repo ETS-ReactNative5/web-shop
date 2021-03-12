@@ -146,7 +146,7 @@ class Category extends React.Component {
                     </div>
                     
                         
-                    <div  style={{textAlign:'right'}}><i className="fas fa-id-card-alt" style={{paddingRight:8,paddingLeft:8,fontSize:16}} ></i><span className="iranyekanwebmedium">فروشنده:</span> <span className="YekanBakhFaBold">{car.Seller[0].name}</span></div>
+                    <div  style={{textAlign:'right'}}><i className="fas fa-id-card-alt" style={{paddingRight:8,paddingLeft:8,fontSize:16}} ></i><span className="iranyekanwebmedium">فروشنده:</span> <span className="YekanBakhFaBold">{car.Seller[0]?.name}</span></div>
                     <div  style={{textAlign:'right'}}><i className="fas fa-truck" style={{paddingRight:8,paddingLeft:8,fontSize:16}} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.PrepareTime||"3")} روز کاری</span></div>
                     <div style={{position:'absolute',bottom:15,width:'100%',left:0}}>
                     <Link className="p-button-secondary btn-light" to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#"  style={{padding:10,marginTop:10,width:'85%',fontFamily:'YekanBakhFaBold'}}>
@@ -194,7 +194,7 @@ class Category extends React.Component {
                 :
                 <div style={{ zIndex: 10000 }} >
                             <p style={{ textAlign: 'center' }}>
-                            <img src={require('../public/loading.gif')} style={{ width: 320 }} />
+                            <img src={require('../public/loading.gif')} style={{ width: 320,display:'none' }} />
                             </p>
                 
                  </div>

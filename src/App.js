@@ -29,6 +29,7 @@ import Sales_Cleared from './components/admin/Sales_Cleared.js'
 import Codes_Files from './components/admin/Codes_Files.js'
 import Cancel_Products from './components/admin/Cancel_Products.js'
 import Canceled_Products from './components/admin/Canceled_Products.js'
+import Server from './components/Server.js'
 
 
 import Users from './components/admin/Users.js'
@@ -62,12 +63,19 @@ class App extends Component {
   store = createStore(reducer);
   constructor(props) {
     super(props)
+    this.Server = new Server();
+    this.state = {
+      STitle:"",
+      Tags:"",
+      ChatId: "",
+      absoluteUrl: this.Server.getAbsoluteUrl(),
+      url: this.Server.getUrl(1)
+    }
   }
   componentDidMount () {
     // Include the Crisp code here, without the <script></script> tags
     window.$crisp = [];
-    window.CRISP_WEBSITE_ID = "ea0f60d8-ddbc-426f-ad20-287596e0b0ea";
-
+    this.getSettings();
     (function() {
       var d = document;
       var s = d.createElement("script");
@@ -77,6 +85,26 @@ class App extends Component {
       d.getElementsByTagName("head")[0].appendChild(s);
     })();
    };
+   getSettings() {
+    let that = this;
+
+    that.Server.send("AdminApi/getSettings", {}, function (response) {
+
+      if (response.data.result) {
+        that.setState({
+          STitle: response.data.result[0] ? response.data.result[0].STitle : "فروشگاه آنلاین ",
+          Tags: response.data.result[0] ? response.data.result[0].Tags : '',
+          ChatId: response.data.result[0] ? response.data.result[0].ChatId : ''
+        })
+        window.CRISP_WEBSITE_ID = response.data.result[0] ? response.data.result[0].ChatId : '';
+
+      }
+    }, function (error) {
+    })
+
+
+  }
+  
   render() {
     return (
       <div >
@@ -84,14 +112,13 @@ class App extends Component {
           <HashRouter >
             <div>
               <Helmet>
-                {/*<title>امداد الکترونیک | emdcctv.com</title>*/}
-                <title>آنیاشاپ | aniashop.ir</title>
+                <title>{this.state.STitle}</title>
                 <link rel="shortcut icon" href="/favicon.png"></link>
                 <meta name="theme-color" content="#20ad31" />
                 <meta name="description"
-                    content="فروشگاه آنلاین ، خرید اینترنتی ، اصفهان ، خرید اقساطی"/>
+                    content={this.state.Tags}/>
                 <meta name="keywords"
-                    content="کالای دیجیتال ، لپ تاپ ، موبایل ، خرید ، آنلاین"/>
+                    content={this.state.Tags}/>
                 </Helmet>
               <ScrollToTop>
                 <Switch>

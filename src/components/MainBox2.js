@@ -325,37 +325,44 @@ class MainBox2 extends React.Component {
         response.data.result.map(function (item, index) {
           if (item.name == "file1")
             that.setState({
-              logo1: that.state.absoluteUrl + item.fileUploaded.split("public")[1],
+              logo1: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
               link1: item.link,
               text1: item.text
             })
           if (item.name == "file2")
             that.setState({
-              logo2: that.state.absoluteUrl + item.fileUploaded.split("public")[1],
+              logo2: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
               link2: item.link,
               text2: item.text
             })
           if (item.name == "file3")
             that.setState({
-              logo3: that.state.absoluteUrl + item.fileUploaded.split("public")[1],
+              logo3: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
               link3: item.link,
               text3: item.text
             })
           if (item.name == "file4")
             that.setState({
-              logo4: that.state.absoluteUrl + item.fileUploaded.split("public")[1],
+              logo4: item.fileUploaded ? that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1] : null,
               link4: item.link,
               text4: item.text
             })
+            
           if (item.name == "file5")
             that.setState({
-              logo5: that.state.absoluteUrl + item.fileUploaded.split("public")[1],
+              logo5: item.fileUploaded ? that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1]:null,
               link5: item.link,
               text5: item.text
             })
           if (item.name == "file11"){
             that.setState({
-              SpecialImage: that.state.absoluteUrl + item.fileUploaded.split("public")[1]
+              SpecialImage: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1]
+            })
+          }
+          if (item.name == "file13"){
+
+            that.setState({
+              loading_pic: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1]
             })
           }
               
@@ -586,7 +593,7 @@ class MainBox2 extends React.Component {
             <div className="col-lg-12 col-12" >
               <div className="row" style={{ marginTop: 10, marginBottom: 20 }}>
 
-                <div className="col-lg-9 col-12 TopSlider"  >
+                <div className={this.state.logo4 && this.state.logo5 ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
                   <Swiper {...params5} style={{ position: 'absolute' }}>
                     <div>
                       {this.state.link1 && this.state.link1.indexOf("http") > -1 ?
@@ -594,7 +601,7 @@ class MainBox2 extends React.Component {
                           {this.state.text1 &&
                             <p className="iranyekanweblight  p-md-3 d-md-block d-none animate__animated animate__fadeInLeftBig " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text1}</p>
                           }
-                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text1} />
+                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text1} />
                         </Link>
                         :
                         <Link to={`${process.env.PUBLIC_URL}/` + this.state.link1} className="" target="_blank" href="#" style={{ textDecoration: 'none' }}>
@@ -645,49 +652,52 @@ class MainBox2 extends React.Component {
                     </div>
                   </Swiper>
                 </div>
-                <div className="col-lg-3 col-0 d-lg-block d-none "  >
-                  <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                    <div style={{ height: '49%', overflow: 'hidden' }}>
-                      {this.state.link4 && this.state.link4.indexOf("http") > -1 ?
-                        <a href={this.state.link4} className="" target="_blank" style={{ textDecoration: 'none' }}>
-                          {this.state.text4 &&
-                            <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgba(20, 15, 21, 0.09)', paddingBottom: 5, width: '37%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text4}</p>
-                          }
-                          <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo4})` }} ></div>
-                        </a>
-                        :
-                        <Link to={`${process.env.PUBLIC_URL}/` + this.state.link4} className="" href="#" target="_blank" style={{ textDecoration: 'none' }}>
-                          {this.state.text4 &&
-                            <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgba(20, 15, 21, 0.09)', paddingBottom: 5, width: '37%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text4}</p>
-                          }
-                          <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo4})` }} ></div>
-                        </Link>
-                      }
-                    </div>
-                    <div style={{ height: '2%' }}>
+                
+                {this.state.logo4 && this.state.logo5 &&
+                  <div className="col-lg-3 col-0 d-lg-block d-none "  >
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      <div style={{ height: '49%', overflow: 'hidden' }}>
+                        {this.state.link4 && this.state.link4.indexOf("http") > -1 ?
+                          <a href={this.state.link4} className="" target="_blank" style={{ textDecoration: 'none' }}>
+                            {this.state.text4 &&
+                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgba(20, 15, 21, 0.09)', paddingBottom: 5, width: '37%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text4}</p>
+                            }
+                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo4})` }} ></div>
+                          </a>
+                          :
+                          <Link to={`${process.env.PUBLIC_URL}/` + this.state.link4} className="" href="#" target="_blank" style={{ textDecoration: 'none' }}>
+                            {this.state.text4 &&
+                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgba(20, 15, 21, 0.09)', paddingBottom: 5, width: '37%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text4}</p>
+                            }
+                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo4})` }} ></div>
+                          </Link>
+                        }
+                      </div>
+                      <div style={{ height: '2%' }}>
 
-                    </div>
-                    <div style={{ height: '49%', overflow: 'hidden' }}>
-                      {this.state.link5 && this.state.link5.indexOf("http") > -1 ?
-                        <a href={this.state.link5} className="" target="_blank" style={{ textDecoration: 'none' }}>
-                          {this.state.text5 &&
-                            <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgb(20 15 21 / 76%)', paddingBottom: 5, width: '50%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text5}</p>
-                          }
-                          <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo5})` }} ></div>
-                        </a>
-                        :
-                        <Link to={`${process.env.PUBLIC_URL}/` + this.state.link5} className="" href="#" target="_blank" style={{ textDecoration: 'none' }}>
-                          {this.state.text5 &&
-                            <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgb(20 15 21 / 76%)', paddingBottom: 5, width: '50%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text5}</p>
-                          }
-                          <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo5})` }} ></div>
-                        </Link>
-                      }
+                      </div>
+                      <div style={{ height: '49%', overflow: 'hidden' }}>
+                        {this.state.link5 && this.state.link5.indexOf("http") > -1 ?
+                          <a href={this.state.link5} className="" target="_blank" style={{ textDecoration: 'none' }}>
+                            {this.state.text5 &&
+                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgb(20 15 21 / 76%)', paddingBottom: 5, width: '50%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text5}</p>
+                            }
+                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo5})` }} ></div>
+                          </a>
+                          :
+                          <Link to={`${process.env.PUBLIC_URL}/` + this.state.link5} className="" href="#" target="_blank" style={{ textDecoration: 'none' }}>
+                            {this.state.text5 &&
+                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgb(20 15 21 / 76%)', paddingBottom: 5, width: '50%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text5}</p>
+                            }
+                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo5})` }} ></div>
+                          </Link>
+                        }
 
+                      </div>
                     </div>
+
                   </div>
-
-                </div>
+                }
 
               </div>
             </div>
@@ -924,14 +934,14 @@ class MainBox2 extends React.Component {
             
             {
               this.state.catsList[0] &&
-              <CatList _id={this.state.catsList[0]._id}  title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
+              <CatList _id={this.state.catsList[0]._id} UId={this.state.UId}  title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
 
             }
 
             <Photos name="file6" Class="InlineImages" borderRadius="30" padding="20" width="100%" height="180" />
             {
               this.state.catsList[1] &&
-              <CatList _id={this.state.catsList[1]._id} title={this.state.catsList[1].name} name={this.state.catsList[1].name} />
+              <CatList _id={this.state.catsList[1]._id} UId={this.state.UId}  title={this.state.catsList[1].name} name={this.state.catsList[1].name} />
 
             }
             <div class="row" >
@@ -944,14 +954,14 @@ class MainBox2 extends React.Component {
             </div>
             {
               this.state.catsList[2] &&
-              <CatList _id={this.state.catsList[2]._id} title={this.state.catsList[2].name} name={this.state.catsList[2].name} />
+              <CatList _id={this.state.catsList[2]._id} UId={this.state.UId}  title={this.state.catsList[2].name} name={this.state.catsList[2].name} />
 
             }
             <Photos name="file7" Class="InlineImages" borderRadius="30" padding="20" width="100%" height="180" />
 
             {
               this.state.catsList[3] &&
-              <CatList _id={this.state.catsList[3]._id} title={this.state.catsList[3].name} name={this.state.catsList[3].name} />
+              <CatList _id={this.state.catsList[3]._id} UId={this.state.UId}  title={this.state.catsList[3].name} name={this.state.catsList[3].name} />
 
             }
 
@@ -1203,7 +1213,8 @@ class MainBox2 extends React.Component {
         :
         <div style={{ zIndex: 10000 }} >
           <p style={{ textAlign: 'center' }}>
-            <img src={require('../public/loading.gif')} style={{ width: 320 }} />
+            
+            <img src={this.state.loading_pic} style={{ width: 320 }} />
           </p>
 
         </div>

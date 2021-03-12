@@ -32,6 +32,8 @@ class Header1 extends React.Component {
 			logo: "",
 			selectedproductId: null,
 			selectedCatId: null,
+			top_image: '',
+			RegisterByMob: true,
 			_id: [],
 			img: [],
 			desc: [],
@@ -61,6 +63,7 @@ class Header1 extends React.Component {
 					this.setState({
 						logo: response.data.result[0].logo
 					})
+					this.getPics();
 				}).catch(error => {
 					console.log(error)
 				})
@@ -71,6 +74,7 @@ class Header1 extends React.Component {
 					this.setState({
 						logo: response.data.result[0].logo
 					})
+					this.getPics();
 				}).catch(error => {
 					console.log(error)
 				})
@@ -174,6 +178,41 @@ class Header1 extends React.Component {
 		return;
 
 	}
+	getPics(l, type) {
+		let that = this;
+	
+		axios.post(this.state.url + 'getPics', {})
+		  .then(response => {
+			  debugger;
+			response.data.result.map(function (item, index) {
+			  if (item.name == "file12")
+				that.setState({
+				  top_image: that.state.absoluteUrl + item.fileUploaded?.split("public")[1]
+				})
+			that.getSettings();	  
+			})
+		  })
+		  .catch(error => {
+		  })
+	
+	  }
+	  getSettings() {
+		let that = this;
+	
+		that.Server.send("AdminApi/getSettings", {}, function (response) {
+	
+		  if (response.data.result) {
+			that.setState({
+			  RegisterByMob: response.data.result[0] ? response.data.result[0].RegisterByMob : false
+			})
+			window.CRISP_WEBSITE_ID = response.data.result[0] ? response.data.result[0].ChatId : '';
+	
+		  }
+		}, function (error) {
+		})
+	
+	
+	  }
 	persianNumber(input) {
 		var persian = { 0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹' };
 		var string = (input + '').split('');
@@ -219,6 +258,8 @@ class Header1 extends React.Component {
 			
 		if (this.state.GotoLogin)
 			return <Redirect to='/login' />;
+		if (this.state.GotoRegister)
+			return <Redirect to='/Register' />;	
 		/*if (this.state.logout)
 		 return <Redirect to='/' />; */
 		return (
@@ -238,8 +279,9 @@ class Header1 extends React.Component {
 					</div>
 
 				</OverlayPanel>
-				<div style={{ height: 35, padding: 5, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: '50%', backgroundImage: 'url(https://marketapi.sarvapps.ir//uploads/IMAGE-1615139815024.jpg)' }} >
-				</div>
+				{this.state.top_image &&
+				<div style={{ height: 35, padding: 5, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: '50%', backgroundImage: `url(${this.state.top_image})` }} ></div>
+				}
 				<div >
 					<div className="row" style={{ direction: 'ltr', marginTop: 15, alignItems: 'center', marginLeft: 0, marginRight: 0 }}>
 
@@ -290,7 +332,16 @@ class Header1 extends React.Component {
 										{this.state.userId ?
 											<span>&nbsp;</span>
 											:
-											<button className="btn btn-outline-info iranyekanwebregular" style={{display:'flex',alignItems:'center'}} onClick={this.logout} ><span style={{fontSize:12}}>ورود / ثبت نام</span> <i className="fa fa-sign-in-alt" style={{ fontSize: 12, paddingLeft: 15}} /></button>
+											(
+												this.state.RegisterByMob ?
+											 <button className="btn btn-outline-info iranyekanwebregular" style={{display:'flex',alignItems:'center'}} onClick={this.logout} ><span style={{fontSize:12}}>ورود / ثبت نام</span> <i className="fa fa-sign-in-alt" style={{ fontSize: 12, paddingLeft: 15}} /></button>
+													:
+											<div style={{display:'flex'}}>
+											<button className="btn btn-outline-info iranyekanwebregular" style={{display:'flex',alignItems:'center',marginRight:5}} onClick={this.logout} ><span style={{fontSize:12}}>ورود</span> <i className="fa fa-user" style={{ fontSize: 12, paddingLeft: 15}} /></button>
+
+											<button className="btn btn-outline-info iranyekanwebregular" style={{display:'flex',alignItems:'center'}} onClick={()=>this.setState({GotoRegister:true})} ><span style={{fontSize:12}}>ثبت نام</span> <i className="fa fa-sign-in-alt" style={{ fontSize: 12, paddingLeft: 15}} /></button>
+											</div>
+											)
 										}
 									</div>
 								</div>
@@ -312,7 +363,7 @@ class Header1 extends React.Component {
 									<div style={{ textAlign: 'center' }}>
 
 										<Link to={`${process.env.PUBLIC_URL}`}>
-											<img src={this.state.absoluteUrl + this.state.logo.split("public")[1]} className="hvr-pulse-shrink" />
+											<img src={this.state.absoluteUrl + this.state.logo.split("public")[1]} style={{maxHeight:50}} className="hvr-pulse-shrink" />
 										</Link>
 									</div>
 								}

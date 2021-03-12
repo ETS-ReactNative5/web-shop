@@ -140,6 +140,7 @@ class AdminProduct extends React.Component {
       filteredSize: null,
       SelectedSize_edit: null,
       SelectedColors_edit: null,
+      ShowProductsInTable:false,
       grid: [
         [{ value: 5, expr: '1 + 4' }, { value: 6, expr: '6' }, { value: "qqqqqqqqqq" }],
         [{ value: 5, expr: '1 + 4' }, { value: 5, expr: '1 + 4' }, { value: "qqqqqqqqqqqq" }]
@@ -585,7 +586,8 @@ class AdminProduct extends React.Component {
       if (response.data.result) {
         that.setState({
           ShowPriceAftLogin: !response.data.result[0].AccessAfterReg,
-          SeveralShop: response.data.result[0].SeveralShop
+          SeveralShop: response.data.result[0].SeveralShop,
+          ShowProductsInTable:response.data.result[0].ShowProductsInTable
         })
       }
       that.getMainShopInfo()
@@ -1750,7 +1752,7 @@ class AdminProduct extends React.Component {
           </div>
         }
         <div className="col-lg-12">
-          {!this.state.SeveralShop &&
+          {this.state.ShowProductsInTable &&
             <div style={{ position: 'fixed', bottom: 0, zIndex: 5, left: 5, background: '#9c2ac1', color: '#fff', borderRadius: 5, padding: 10, cursor: 'pointer' }} onClick={this.TableLayout} className="IRANYekan">نمایش جدولی محصولات</div>
           }
 
@@ -2289,16 +2291,16 @@ class AdminProduct extends React.Component {
 
                   <div className="card" style={{ maxHeight: '400px' }} >
                     <DataTable value={this.state.grid} editMode="cell" className="editable-cells-table" paginator={true} rows={14}  >
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="title" header="عنوان" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="subTitle" header="عنوان دوم"  ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="level" header="کد درجه کاربری"></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="levelName" header="درجه کاربری" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="price" header="قیمت خرید" editor={(props) => this.gridEditor('price', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="relativeLevel" header="نسبت به" editor={(props) => this.gridEditor('relativeLevel', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="off" header="درصد تخفیف" editor={(props) => this.gridEditor('off', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="opr" header="عمل" editor={(props) => this.gridEditor('opr', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="result" header="قیمت نهایی" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="number" header="موجودی" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="title" header="عنوان" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="subTitle" header="عنوان دوم"  ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="level" header="کد درجه کاربری"></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="levelName" header="درجه کاربری" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="price" header="قیمت خرید" editor={(props) => this.gridEditor('price', props)}></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="relativeLevel" header="نسبت به" editor={(props) => this.gridEditor('relativeLevel', props)}></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="off" header="درصد تخفیف" editor={(props) => this.gridEditor('off', props)}></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="opr" header="عمل" editor={(props) => this.gridEditor('opr', props)}></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="result" header="قیمت نهایی" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="number" header="موجودی" ></Column>
 
 
 

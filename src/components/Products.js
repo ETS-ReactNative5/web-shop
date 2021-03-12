@@ -175,9 +175,9 @@ class Products extends React.Component {
                 const SellerInfo = extra.Seller;
                 const UserInfo = [extra.user];
                 const CatInfo = extra.category;
-                let PeykInfo = [{city:SellerInfo[0].city,subCity:SellerInfo[0].subCity,SelectedSubCities:SellerInfo[0].SelectedSubCities,SendToCity:SellerInfo[0].SendToCity,SendToState:SellerInfo[0].SendToState,SendToCountry:SellerInfo[0].SendToCountry,SendToNearCity:SellerInfo[0].SendToNearCity,FreeInExpensive:SellerInfo[0].FreeInExpensive},
-                {CumputeByNumberInPeyk:CatInfo[0].CumputeByNumberInPeyk,MergeableInPeyk:CatInfo[0].MergeableInPeyk,SendToCity:CatInfo[0].SendToCity,SendToCountry:CatInfo[0].SendToCountry,SendToNearCity:CatInfo[0].SendToNearCity,SendToState:CatInfo[0].SendToState  },
-                {city:UserInfo[0].city,subCity:UserInfo[0].subCity }];
+                let PeykInfo = [{city:SellerInfo[0]?.city,subCity:SellerInfo[0]?.subCity,SelectedSubCities:SellerInfo[0]?.SelectedSubCities,SendToCity:SellerInfo[0]?.SendToCity,SendToState:SellerInfo[0]?.SendToState,SendToCountry:SellerInfo[0]?.SendToCountry,SendToNearCity:SellerInfo[0]?.SendToNearCity,FreeInExpensive:SellerInfo[0]?.FreeInExpensive},
+                {CumputeByNumberInPeyk:CatInfo[0]?.CumputeByNumberInPeyk,MergeableInPeyk:CatInfo[0]?.MergeableInPeyk,SendToCity:CatInfo[0]?.SendToCity,SendToCountry:CatInfo[0]?.SendToCountry,SendToNearCity:CatInfo[0]?.SendToNearCity,SendToState:CatInfo[0]?.SendToState  },
+                {city:UserInfo[0]?.city,subCity:UserInfo[0]?.subCity }];
                 that.setState({
                     PeykInfo:PeykInfo
                 })

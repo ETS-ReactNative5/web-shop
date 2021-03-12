@@ -343,17 +343,17 @@ class ShopInformation extends React.Component {
                     <img src={this.state.logo} style={{ width: 150, height: 150 }} />
                   </div>
                   {this.state.main &&
-                  <div className="col-6" style={{ marginTop: 20 }} >
-                    <div className="group">
-                      <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="logoCopyRight" />
-                      <label> آپلود لوگو کپی رایت</label>
+                    <div className="col-6" style={{ marginTop: 20 }} >
+                      <div className="group">
+                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="logoCopyRight" />
+                        <label> آپلود لوگو کپی رایت</label>
+                      </div>
                     </div>
-                  </div>
                   }
                   {this.state.main &&
-                  <div className="col-6" style={{ marginTop: 20 }}>
-                    <img src={this.state.logoCopyRight} style={{ width: 150, height: 150 }} />
-                  </div>
+                    <div className="col-6" style={{ marginTop: 20 }}>
+                      <img src={this.state.logoCopyRight} style={{ width: 150, height: 150 }} />
+                    </div>
                   }
 
                   <div className="col-12" style={{ marginTop: 20 }}>
@@ -380,7 +380,7 @@ class ShopInformation extends React.Component {
                           <div class="col-12" style={{ marginTop: 20, marginBottom: 20 }}>
                             <p className="yekan">
                               شهرهای مجاور شهر خود را انتخاب کنید
-                </p>
+                            </p>
                             <MultiSelect optionLabel="label" style={{ width: '100%' }} value={this.state.SelectedSubCities} options={this.state.SubCities} onChange={(e) => this.setState({ SelectedSubCities: e.value })} />
 
                           </div>

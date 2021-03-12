@@ -58,9 +58,13 @@ class Set extends React.Component {
       SmsIrUser: '',
       SmsIrPass: '',
       AccessAfterReg: false,
+      ShowProductsInTable: false,
+      RegisterByMob:false,
       SeveralShop: false,
       CreditSupport: false,
       STitle: '',
+      Tags: '',
+      ChatId:'',
       FactorChangeSmsText: '',
       UserChangeSmsText: '',
       RegSmsText: ''
@@ -184,9 +188,13 @@ class Set extends React.Component {
           SmartPass: response.data.result[0].SmartPass,
           ActiveSms: response.data.result[0].ActiveSms,
           AccessAfterReg: response.data.result[0].AccessAfterReg,
+          ShowProductsInTable: response.data.result[0].ShowProductsInTable,
+          RegisterByMob: response.data.result[0].RegisterByMob,
           SeveralShop: response.data.result[0].SeveralShop,
           CreditSupport: response.data.result[0].CreditSupport,
           STitle: response.data.result[0].STitle,
+          Tags: response.data.result[0].Tags,
+          ChatId: response.data.result[0].ChatId,
           FactorChangeSmsText: response.data.result[0].FactorChangeSmsText,
           UserChangeSmsText: response.data.result[0].UserChangeSmsText,
           RegSmsText: response.data.result[0].RegSmsText,
@@ -231,9 +239,13 @@ class Set extends React.Component {
       param = {
         updateQuery: {
           AccessAfterReg: this.state.AccessAfterReg,
+          ShowProductsInTable: this.state.ShowProductsInTable,
+          RegisterByMob: this.state.RegisterByMob,
           SeveralShop: this.state.SeveralShop,
           CreditSupport: this.state.CreditSupport,
           STitle: this.state.STitle,
+          Tags: this.state.Tags,
+          ChatId: this.state.ChatId,
           FactorChangeSmsText: this.state.FactorChangeSmsText,
           UserChangeSmsText: this.state.UserChangeSmsText,
           RegSmsText: this.state.RegSmsText,
@@ -285,7 +297,7 @@ class Set extends React.Component {
           <div className=" col-12" style={{ marginTop: 20, background: '#fff' }}>
             <Panel header="تنظیمات سیستم" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <div className="row" >
-              <div className="col-12" >
+                <div className="col-12" style={{display:'none'}} >
                   <div class="row">
                       <div className="col-lg-3 col-md-5 col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                         <RadioButton value="1" style={{ textAlign: "center", fontSize: 18 }} className="yekan" name="Template" onChange={(e) => this.setState({ Template: e.value })} checked={this.state.Template === '1'} />
@@ -314,10 +326,26 @@ class Set extends React.Component {
                   <label style={{ paddingRight: 5, marginTop: 5 }}>پس از ثبت نام امکان دسترسی بلافاصله به سیستم وجود داشته باشد</label>
 
                 </div>
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ ShowProductsInTable: e.checked })} checked={this.state.ShowProductsInTable}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>نمایش جدولی محصولات در فرم ثبت محصول</label>
+
+                </div>
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ RegisterByMob: e.checked })} checked={this.state.RegisterByMob}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>ثبت نام تنها از طریق ثبت شماره موبایل انجام شود</label>
+
+                </div>
                 <div className="col-12" >
                   <div className="group">
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.STitle} name="STitle" onChange={(event) => this.setState({ STitle: event.target.value })} required="true" />
-                    <label className="yekan">عنوان فروشگاه (در پیامک ها و آلارم ها استفاده می شود)</label>
+                    <label className="yekan">عنوان فروشگاه (در عنوان سایت و پیامک ها و آلارم ها استفاده می شود)</label>
+                  </div>
+                </div>
+                <div className="col-12" >
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Tags} name="Tags" onChange={(event) => this.setState({ Tags: event.target.value })} required="true" />
+                    <label className="yekan">متاتگ ها (تگ ها را با کاما از هم جدا کنید)</label>
                   </div>
                 </div>
                 <div className="col-12" >
@@ -336,6 +364,12 @@ class Set extends React.Component {
                   <div className="group">
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.FactorChangeSmsText} name="FactorChangeSmsText" onChange={(event) => this.setState({ FactorChangeSmsText: event.target.value })} required="true" />
                     <label className="yekan">متن پیامک پس از تغییر وضعیت سفارش</label>
+                  </div>
+                </div>
+                <div className="col-12" >
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.ChatId} name="ChatId" onChange={(event) => this.setState({ ChatId: event.target.value })} required="true" />
+                    <label className="yekan">شناسه کاربری سیستم چت (CRISP_WEBSITE_ID)</label>
                   </div>
                 </div>
               </div>

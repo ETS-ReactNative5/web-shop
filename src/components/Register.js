@@ -238,43 +238,43 @@ class Register extends React.Component {
    <div className="container p-md-5 p-3" style={{direction:'rtl',minHeight:600}}>
     <div className="row">
       <div className="col-md-12 col-lg-9 mx-auto">
-        <div className="card card-signin">
+        <div className="card">
           <div className="card-body">
             <h5 className="card-title text-center yekan">ثبت نام کاربران</h5>
             <form className="form-signin">
            <div className="row" >
             
-            <div className="col-md-6 col-12" >
+            <div className="col-md-12 col-12" >
             <div className="group">
                   <input className="form-control yekan" type="text" id="Mobile"  value={this.state.Mobile} name="Mobile" onChange={this.handleChangeMobile}   required  />
                   <label className="yekan">شماره موبایل</label>
 					  </div>
             </div>
-            <div className="col-md-6 col-12" >
+            <div className="col-md-12 col-12" >
             <div className="group">
                   <input className="form-control yekan" type="text" id="name"  value={this.state.Mobnameile} name="name" onChange={this.handleChangeName}  required   />
                   <label className="yekan">نام و نام خانوادگی</label>
 					  </div>
             </div>
-            <div className="col-md-6 col-12" >
+            <div className="col-md-12 col-12" >
             <div className="group">
                   <input type="password" dir="ltr" className="form-control yekan" id="Password" name="Password" value={this.state.Password} onChange={this.handleChangePassword} required />
                   <label className="yekan">رمز عبور</label>
 					  </div>
             </div>
-            <div className="col-md-6 col-12" >
+            <div className="col-md-12 col-12" >
             <div className="group">
                   <input type="password" dir="ltr" className="form-control yekan" id="Password2" name="Password2" value={this.state.Password2} onChange={this.handleChangePassword2} required />
                   <label>تکرار رمز عبور</label>
 					  </div>
             </div>
-            <div className="col-md-6 col-12" >
+            <div className="col-md-12 col-12" >
             <div className="group">
                   <input className="form-control yekan" dir="ltr" type="text" id="mail"  value={this.state.mail} name="mail" onChange={this.handleChangeMail}   required  />
                   <label className="yekan">پست الکترونیکی</label>
 					  </div>
             </div>
-            <div className="col-md-6 col-12" >
+            <div className="col-md-12 col-12" >
             <div className="group">
                   <input className="form-control yekan" type="text" id="company"  value={this.state.company} name="company" onChange={this.handleChangeCompany}  required   />
                   <label className="yekan">نام شرکت</label>

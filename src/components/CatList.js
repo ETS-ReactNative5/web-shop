@@ -44,7 +44,7 @@ class CatList extends React.Component {
 		this.state = {
 			products: [],
 			id: null,
-			UId: null,
+			UId: this.props.UId,
 			Cat: null,
 			CatData: [],
 			levelOfUser: null,
