@@ -15,7 +15,7 @@ class Register extends React.Component {
 
     this.state={
       name:'',
-      Mobile:'',
+      Mobile:this.props.Mobile||'',
       Password:'',
       Password2:'',
       company:'',

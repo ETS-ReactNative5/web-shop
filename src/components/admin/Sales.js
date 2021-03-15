@@ -205,8 +205,11 @@ class Sales extends React.Component {
     var p = [];
     for (let i = 0; i < value.products.length; i++) {
       value.products[i].credit = value.products[i].credit ? value.products[i].credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
+      value.products[i].CustomerPrice = value.products[i].price ? (value.products[i].price - value.products[i].Commission).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
+
       value.products[i].price = value.products[i].price ? value.products[i].price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].UnitPrice = value.products[i].UnitPrice ? value.products[i].UnitPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
+      value.products[i].Commission = value.products[i].Commission ? value.products[i].Commission.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
 
       value.products[i].detail = "";
       value.products[i].edit = <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(value._id, value.products[i]._id, value.products[i].title, "del")}></i>
@@ -298,7 +301,13 @@ class Sales extends React.Component {
 
       debugger;
       response.data.result.result.map(function (v, i) {
-        v.Amount = !v.Amount ? "0" : v.Amount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        let Commission=0;  
+        for(let pp of v.products)
+          Commission+= pp.Commission||0;
+
+        v.Commission = Commission.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        v.CustomerAmount = !v.Amount ? "0" : (v.Amount - Commission).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
         v.paykAmount = !v.paykAmount ? "0" : v.paykAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -348,7 +357,6 @@ class Sales extends React.Component {
           </ReactToPrint>
 
       })
-      debugger;
       that.setState({
         GridDataFactors: response.data.result.result,
         LastAmount: response.data.result.finalPrice,
@@ -484,6 +492,10 @@ class Sales extends React.Component {
                 {this.state.isMainShop == 1 &&
                   <Column field="paykAmount" header="هزینه پیک"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
+                  <Column field="Commission" header="سود آنیاشاپ"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                  <Column field="CustomerAmount" header="قابل پرداخت به فروشگاه"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+
+                  
                 {this.state.CreditSupport && this.state.isMainShop == 1 &&
                   <Column field="Credit" header="کسر از اعتبار"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
@@ -568,7 +580,10 @@ class Sales extends React.Component {
               <Column field="number" editor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "center" }} />
               <Column field="status" header="وضعیت" className="yekan" style={{ textAlign: "center" }} />
               <Column field="price" header="مبلغ پرداختی" className="yekan" style={{ textAlign: "center" }} />
+              <Column field="CustomerPrice" header="قابل پرداخت به فروشگاه" className="yekan" style={{ textAlign: "center" }} />
 
+              
+              <Column field="Commission" header="سود آنیاشاپ" className="yekan" style={{ textAlign: "center" }} />
               {this.state.CreditSupport &&
                 <Column field="credit" header="کسر از اعتبار" className="yekan" style={{ textAlign: "center" }} />
               }

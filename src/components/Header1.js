@@ -183,7 +183,6 @@ class Header1 extends React.Component {
 	
 		axios.post(this.state.url + 'getPics', {})
 		  .then(response => {
-			  debugger;
 			response.data.result.map(function (item, index) {
 			  if (item.name == "file12")
 				that.setState({

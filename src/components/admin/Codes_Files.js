@@ -113,6 +113,7 @@ class Codes_Files extends React.Component {
       token: localStorage.getItem("api_token"),
       title: this.state.title,
       Etitle: this.state.Etitle,
+      PriceChange: this.state.PriceChange,
       id: this.state.id,
 
     };
@@ -161,6 +162,7 @@ class Codes_Files extends React.Component {
       FName: "",
       LName: "",
       Address: "",
+      PriceChange:false,
       Icon: "",
       ComponentId: ""
     })
@@ -188,6 +190,7 @@ class Codes_Files extends React.Component {
       id: value.id,
       title: value.title,
       Etitle: value.Etitle,
+      PriceChange: value.PriceChange,
       Count: value?.values.length,
       Values: value?.values,
       CountArr: Array.from(Array(parseInt(value?.values.length)).keys()),
@@ -301,6 +304,11 @@ class Codes_Files extends React.Component {
                   <label>عنوان لاتین</label>
                 </div>
               </div>
+              <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ PriceChange: e.checked })} checked={this.state.PriceChange}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }} className="irsans">ثبت اختلاف قیمت</label>
+
+                </div>
               <div className="col-lg-12" style={{ marginTop: 20, marginRight: 5,textAlign:'right' }}>
                 <button className="irsans" onClick={() => {
                   let Count = this.state.Count+1;

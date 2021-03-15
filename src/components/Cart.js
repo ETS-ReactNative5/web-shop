@@ -96,7 +96,6 @@ class Cart extends React.Component {
     
     }
     Payment(){
-        debugger;
         let that = this;
         if(!this.state.AcceptAddress){
             axios.post(this.state.url+'getuserInformation' , {
@@ -113,12 +112,13 @@ class Cart extends React.Component {
                })
             return;
         }else{
+            debugger;
             if(this.state.lastPrice != 0){
                 let user_id = this.state.GridData[0].user_id;
                 let products_id=[];
                 for(let i=0;i<this.state.GridData.length;i++){
                     if(this.state.GridData[i].products[0])
-                        products_id.push({_id:this.state.GridData[i].product_id,SellerId:((this.state.GridData[i].product_detail&&this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId),SellerName:((this.state.GridData[i].Seller&&this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : ""),number:this.state.GridData[i].number,title:this.state.GridData[i].products[0].title,subTitle:this.state.GridData[i].products[0].subTitle,desc:this.state.GridData[i].products[0].desc,price:(this.roundPrice(this.state.GridData[i].number*this.state.GridData[i].price)),UnitPrice:this.state.GridData[i].price,credit:this.state.GridData[i].getFromCredit,SellerId:this.state.GridData[i].products[0].SellerId,fileUploaded:this.state.GridData[i].products[0].fileUploaded,status:"0",color:this.state.GridData[i].Color,size:this.state.GridData[i].Size});
+                        products_id.push({_id:this.state.GridData[i].product_id,SellerId:((this.state.GridData[i].product_detail&&this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId),SellerName:((this.state.GridData[i].Seller&&this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : ""),number:this.state.GridData[i].number,CatId:this.state.GridData[i].products[0].category_id,title:this.state.GridData[i].products[0].title,subTitle:this.state.GridData[i].products[0].subTitle,desc:this.state.GridData[i].products[0].desc,price:(this.roundPrice(this.state.GridData[i].number*this.state.GridData[i].price)),UnitPrice:this.state.GridData[i].price,credit:this.state.GridData[i].getFromCredit,SellerId:this.state.GridData[i].products[0].SellerId,fileUploaded:this.state.GridData[i].products[0].fileUploaded,status:"0",color:this.state.GridData[i].Color,size:this.state.GridData[i].Size});
                 }
                 that.setState({
                     StepNumber:3
@@ -133,7 +133,7 @@ class Cart extends React.Component {
                     userId:this.state.userId,
                     products_id:products_id,
                     needPay:that.state.ActiveBank=="none" ? 0 : 1
-                    }) 
+                    })  
                     .then(response => {
                     if(that.state.ActiveBank != "none"){
                         let res;
@@ -364,7 +364,6 @@ class Cart extends React.Component {
 
     }
     itemTemplate(car, layout) {
-        debugger;
         if (layout === 'list' && car && car.products[0]) {
             let pic = car.products[0].fileUploaded.split("public")[1] ? this.state.absoluteUrl+car.products[0].fileUploaded.split("public")[1] : this.state.absoluteUrl+'nophoto.png';
             let rowPrice = car.price//car.products[0].getFromCredit ? car.products[0].price : (car.products[0].price - (car.products[0].price * ((!car.products[0].NoOff ? parseInt(this.props.off) : 0)+car.products[0].off))/100);

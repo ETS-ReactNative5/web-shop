@@ -70,9 +70,10 @@ class AdminProduct extends React.Component {
     this.handleChangeChooseCategoryForEdit = this.handleChangeChooseCategoryForEdit.bind(this);
     this.handleChangeCategory = this.handleChangeCategory.bind(this);
     this.handleChangeCategoryOrder = this.handleChangeCategoryOrder.bind(this);
+    this.handleChangeCommission = this.handleChangeCommission.bind(this);
 
     this.setCategory = this.setCategory.bind(this);
-
+    
 
 
   }
@@ -264,9 +265,11 @@ class AdminProduct extends React.Component {
     this.setState({ CatsChoosen_edit: event.target.value });
     if (event.target.value != "0") {
       document.getElementById("DeleteCategory").style.display = "inline";
+      debugger;
       this.setState(
         {
           CategoryOrder: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].order || '',
+          Commission: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].Commission || '',
           showInSite: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].showInSite || false,
           setCategory: "ویرایش",
           Category: event.nativeEvent.target[event.nativeEvent.target.selectedIndex].text,
@@ -317,7 +320,10 @@ class AdminProduct extends React.Component {
     this.setState({ CategoryOrder: event.target.value });
 
   }
+  handleChangeCommission(event){
+    this.setState({ Commission: event.target.value });
 
+  }
   DeleteCategory(event) {
     let that = this;
     let param = {
@@ -364,6 +370,7 @@ class AdminProduct extends React.Component {
       SellerId: this.state.SellerId,
       ParentCat: this.state.ParentCat,
       CategoryOrder: this.state.CategoryOrder,
+      Commission: this.state.Commission,
       showInSite: this.state.showInSite,
       pic: this.state.CatPic,
       Spec: this.state.Spec,
@@ -656,6 +663,12 @@ class AdminProduct extends React.Component {
                     <div className="group">
                       <input className="form-control yekan" autoComplete="off" type="text" value={this.state.CategoryOrder} name="CategoryOrder" onChange={this.handleChangeCategoryOrder} required="true" />
                       <label> ترتیب نمایش  </label>
+                    </div>
+                  }
+                  {this.state.Category &&
+                    <div className="group">
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Commission} name="Commission" onChange={this.handleChangeCommission} required="true" />
+                      <label> درصد پورسانت آنیاشاپ  </label>
                     </div>
                   }
                   <div className="col-lg-12" >

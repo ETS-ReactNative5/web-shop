@@ -46,7 +46,6 @@ export class  ComponentToPrint extends React.Component {
   }
   componentWillReceiveProps(newProps){
     if(newProps.param){
-      debugger;
       let address = newProps.param.address ? newProps.param.address : '';
       let name = newProps.param.name ? newProps.param.name : '';
       let trs=""

@@ -89,7 +89,20 @@ class CatList extends React.Component {
 	}
 	
 	componentDidMount(){
-		this.getProductsPerCat({name:this.props.name,_id:this.props._id});  
+		axios.post(this.state.url + 'checktoken', {
+			token: localStorage.getItem("api_token")
+		  })
+			.then(response => {
+			  this.setState({
+				UId: response.data.authData.userId,
+				levelOfUser: response.data.authData.levelOfUser
+			  })
+			  this.getProductsPerCat({name:this.props.name,_id:this.props._id});  
+			})
+			.catch(error => {
+				this.getProductsPerCat({name:this.props.name,_id:this.props._id});  
+	  
+			})
 	 }
 
 	persianNumber(input) {
@@ -120,7 +133,7 @@ class CatList extends React.Component {
 		};
 		let ECallBack = function (error) {
 		}
-		that.Server.send("MainApi/GetProductsPerCat", { id: param._id, limit: 10, getSubs: 1 }, SCallBack, ECallBack)
+		that.Server.send("MainApi/GetProductsPerCat", { id: param._id, limit: 10, getSubs: 1,levelOfUser:that.state.levelOfUser }, SCallBack, ECallBack)
 	}
 	render() {
 		if (this.state.id) {

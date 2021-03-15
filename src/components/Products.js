@@ -83,6 +83,7 @@ class Products extends React.Component {
             pic4: '',
             pic5: '',
             price: 0,
+            originalPrice: 0,
             ShowPriceAftLogin: false,
             off: 0,
             rating: 0,
@@ -199,6 +200,7 @@ class Products extends React.Component {
                     pic4: v.fileUploaded3 ? that.state.absoluteUrl + v.fileUploaded3.split("public")[1] : that.state.absoluteUrl + 'nophoto.png',
                     pic5: v.fileUploaded4 ? that.state.absoluteUrl + v.fileUploaded4.split("public")[1] : that.state.absoluteUrl + 'nophoto.png',
                     price: v.price,
+                    originalPrice: v.price,
                     ShowPriceAftLogin: v.ShowPriceAftLogin,
                     off: v.off,
                     NoOff: v.NoOff,
@@ -212,19 +214,19 @@ class Products extends React.Component {
                 if (v.SelectedColors && v.SelectedColors.length > 0) {
                     let Colors = [];
                     for (let j = 0; j < v.SelectedColors.length; j++)
-                        Colors.push({ "label": v.SelectedColors[j].desc||v.SelectedColors[j].name, "value": v.SelectedColors[j].value||v.SelectedColors[j].id })
+                        Colors.push({ "label": v.SelectedColors[j].desc||v.SelectedColors[j].name, "value": v.SelectedColors[j].value||v.SelectedColors[j].id, "priceChange": v.SelectedColors[j].priceChange||0 })
                     that.setState({
-                        Colors: Colors,
-                        Color: Colors[0].value
+                        Colors: Colors/*,
+                        Color: Colors[0].value*/
                     })
                 }
                 if (v.SelectedSize && v.SelectedSize.length > 0) {
                     let Sizes = [];
                     for (let j = 0; j < v.SelectedSize.length; j++)
-                        Sizes.push({ "label": v.SelectedSize[j].desc||v.SelectedSize[j].name, "value": v.SelectedSize[j].value||v.SelectedSize[j].id })
+                        Sizes.push({ "label": v.SelectedSize[j].desc||v.SelectedSize[j].name, "value": v.SelectedSize[j].value||v.SelectedSize[j].id, "priceChange": v.SelectedColors[j].priceChange||0 })
                     that.setState({
-                        Sizes: Sizes,
-                        Size: Sizes[0].value
+                        Sizes: Sizes/*,
+                        Size: Sizes[0].value*/
                     })
                 }
                 var point = 0,
@@ -435,6 +437,16 @@ class Products extends React.Component {
     }
     SendToCart(PDId, PId, Number, UId, Price) {
         let that = this;
+        if(this.state.Colors && this.state.Colors.length > 0 && !this.state.Color){
+            that.toast.current.show({severity: 'warn', summary: 'رنگ محصول', detail: <div>رنگ محصول را انتخاب کنید</div>, life: 8000});
+
+            return;
+        }
+        if(this.state.Sizes && this.state.Sizes.length > 0 && !this.state.Size){
+            that.toast.current.show({severity: 'warn', summary: 'اندازه محصول', detail: <div>اندازه محصول را انتخاب کنید</div>, life: 8000});
+
+            return;
+        }
         if (!this.state.IsSeveralShop)
             PId = PDId;
         axios.post(that.state.url + 'checktoken', {
@@ -457,7 +469,6 @@ class Products extends React.Component {
                     userLocation=3;
                 else
                     userLocation=4;
-                debugger;    
                 if((userLocation==4 && !PeykInfo[0].SendToCountry) || (userLocation==3 && !PeykInfo[0].SendToState) || (userLocation==2 && !PeykInfo[0].SendToNearCity)|| (userLocation==1 && !PeykInfo[0].SendToCity)){
                     //alert("امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد");
                     that.toast.current.show({severity: 'warn', summary: 'عدم امکان خرید', detail: <div><span>امکان خرید این محصول با توجه به آدرس محل سکونت شما وجود ندارد</span><br/><br/><Link to={`${process.env.PUBLIC_URL}/User?Active=5`} style={{ textDecoration: 'none', color: '#333' }}>ویرایش آدرس</Link></div>, life: 8000});
@@ -610,12 +621,32 @@ class Products extends React.Component {
 
                                             {this.state.Colors && this.state.Colors.length > 0 &&
                                                 <div style={{ textAlign: 'right' }} >
-                                                    <SelectButton style={{ textAlign: 'right', marginTop: 20 }} value={this.state.Color} options={this.state.Colors} onChange={(e) => this.setState({ Color: e.value })}></SelectButton>
+                                                    <SelectButton style={{ textAlign: 'right', marginTop: 20 }} value={this.state.Color} options={this.state.Colors} onChange={(e) => {
+                                                       debugger;
+                                                       let price = this.state.originalPrice;
+                                                        for(let c of this.state.Colors){
+                                                            if(c.value == e.value){
+                                                                price = parseInt(price) + (parseInt(c.priceChange)||0);    
+                                                            }
+                                                        }
+                                                        this.setState({ Color: e.value,price:price.toString() })
+                                                
+                                                }}></SelectButton>
                                                 </div>
                                             }
                                             {this.state.Sizes && this.state.Sizes.length > 0 &&
                                                 <div style={{ textAlign: 'right', marginTop: 20 }} >
-                                                    <SelectButton value={this.state.Size} options={this.state.Sizes} onChange={(e) => this.setState({ Size: e.value })}></SelectButton>
+                                                    <SelectButton value={this.state.Size} options={this.state.Sizes} onChange={(e) => {
+                                                        let price = this.state.originalPrice;
+                                                        for(let s of this.state.Sizes){
+                                                            if(s.value == e.value){
+                                                                price = parseInt(price) + (parseInt(s.priceChange)||0);    
+                                                            }
+                                                        }
+                                                        this.setState({ Size: e.value,price:price.toString() })
+
+                                                        }}
+                                                    ></SelectButton>
 
                                                 </div>
                                             }

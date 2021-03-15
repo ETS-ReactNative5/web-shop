@@ -65,7 +65,8 @@ class Login extends React.Component {
         ActiveSms:response.data.result ? response.data.result.ActiveSms : "none",
         STitle:response.data.result ? response.data.result.STitle : "",
         AccessAfterReg:response.data.result ? response.data.result.AccessAfterReg : 0,
-        RegSmsText:response.data.result ? response.data.result.RegSmsText : ''
+        RegSmsText:response.data.result ? response.data.result.RegSmsText : '',
+        RegisterByMob: response.data.result ? response.data.result.RegisterByMob : false
 
       })
     })
@@ -182,7 +183,12 @@ class Login extends React.Component {
     
     if(this.state.Step==2){
 
-  
+      if(!this.state.RegisterByMob){
+        this.setState({
+          registerState:true
+        })
+        return;
+      }
       axios.post(this.state.url+'Register' , {
         username: this.state.inputEmail.trim(),
         Step: "1",
@@ -450,7 +456,7 @@ class Login extends React.Component {
   }
     render(){
       if(this.state.registerState){
-        return <Redirect to='/Register' />;
+        return <Redirect to='/Register' Mobile={this.state.mobileNo} />;
 
       }  
     if (this.state.AutenticatedUser == true) {

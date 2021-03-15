@@ -1090,7 +1090,6 @@ class AdminProduct extends React.Component {
     {
       param[code.Etitle] = this.state[code.Etitle];
     }
-    debugger;
 
     let SCallBack = function (response) {
       if (response.data.result.insertedCount)
@@ -1923,7 +1922,6 @@ class AdminProduct extends React.Component {
                         <div className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</div>
                         <MultiSelect value={this.state[v.Etitle+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
                           let vv=[]
-                          debugger;
 
                           for(let val of v.values){
 
@@ -1934,6 +1932,27 @@ class AdminProduct extends React.Component {
                           this.setState({ [v.Etitle]: vv , [v.Etitle+"_0"]:event.value }) 
                           
                         }} />
+                        <div className="row" >
+                    {
+                      
+                      v.PriceChange && this.state[v.Etitle] && this.state[v.Etitle].map((u, j) => {
+                         
+                          return (<div className="col-6" >
+                            <div className="group">
+                              <input className="form-control yekan" autoComplete="off" type="text" value={this.state[v.Etitle][j].priceChange}  onChange={(event) => { 
+                                debugger; 
+                                let temp = this.state[v.Etitle];
+                                 temp[j].priceChange = event.target.value;
+                                  this.setState({ [v.Etitle]: temp }) }} required="true" />
+                              <label>اختلاف قیمت رنگ {u.desc} (تومان)</label>
+                            </div>
+                          </div>
+                          )
+                        
+
+                      })
+                    }
+                  </div>
                         
                       </div>
                     )
@@ -2145,6 +2164,27 @@ class AdminProduct extends React.Component {
                           this.setState({ [v.Etitle+"_edit"]: vv , [v.Etitle+"_edit"+"_0"]:event.value }) 
                           
                         }} />
+                           <div className="row" >
+                    {
+                      
+                      v.PriceChange && this.state[v.Etitle+"_edit"] && this.state[v.Etitle+"_edit"].map((u, j) => {
+                         
+                          return (<div className="col-6" >
+                            <div className="group">
+                              <input className="form-control yekan" autoComplete="off" type="text" value={this.state[v.Etitle+"_edit"][j].priceChange}  onChange={(event) => { 
+                                debugger; 
+                                let temp = this.state[v.Etitle+"_edit"];
+                                 temp[j].priceChange = event.target.value;
+                                  this.setState({ [v.Etitle+"_edit"]: temp }) }} required="true" />
+                              <label>اختلاف قیمت رنگ {u.desc} (تومان)</label>
+                            </div>
+                          </div>
+                          )
+                        
+
+                      })
+                    }
+                  </div>
                         
                       </div>
                     )

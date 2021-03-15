@@ -285,7 +285,7 @@ class MainBox2 extends React.Component {
     return string.join('');
   }
   getCategory(p) {
-    let condition = p ? { condition: { Parent: '', pic: { $ne: null } } } : { condition: { showInSite: true } };
+    let condition = p ? { condition: { $or: [{Parent: ''},{Parent: null}], pic: { $ne: null } } } : { condition: { showInSite: true } };
     axios.post(this.state.url + 'GetCategory', condition)
       .then(response => {
         let resp = [];
