@@ -28,7 +28,10 @@ import Show_Reports from './Show_Reports.js'
 import SalePose from './SalePose.js'
 import Codes_Files from './Codes_Files.js'
 import Cancel_Products from './Cancel_Products.js'
-import Canceled_Products from './Canceled_Products.js'
+import Canceled_Products from './Canceled_Products.js';
+import Company_Actions from './Company_Actions.js';
+
+
 import SalesProduct from './SalesProduct.js'
 import Set from './Set.js'
 import ShopInformation from './ShopInformation.js'
@@ -226,6 +229,11 @@ class Management extends React.Component {
             {this.state.CId == "153" && !this.state.IsReport &&
               <Canceled_Products />
             }
+            {this.state.CId == "154" && !this.state.IsReport &&
+              <Company_Actions />
+            }
+
+
 
             {this.state.IsReport &&
               <Show_Reports number={this.state.CId} />

@@ -1260,3 +1260,9 @@ input[type=number] {
 .rs-navbar.rs-navbar-default{
     background-color: #fff !important;
 }
+.calendarContainer div , input.datepicker-input , .p-fieldset-legend-text , ::placeholder {
+    font-family: 'IRANYekan';
+}
+.calendarContainer button.prev , .calendarContainer button.next{
+    transform: rotate(180deg);
+}

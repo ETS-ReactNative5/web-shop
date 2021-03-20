@@ -18,3 +18,7 @@
 a:hover{
 	text-decoration: none !important;
 }
+.p-button.p-component {
+    height: 30px;
+	border:0px;
+}

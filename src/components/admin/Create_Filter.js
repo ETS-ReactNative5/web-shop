@@ -82,10 +82,8 @@ class Create_Filter extends React.Component {
       latinName: this.state.latinName
     };
     this.setState({
+      HasErrorForMaps: null,
       loading: 1
-    })
-    this.setState({
-      HasErrorForMaps: null
     })
     let SCallBack = function (response) {
       that.onHideFormsDialog();
@@ -315,6 +313,8 @@ class Create_Filter extends React.Component {
                   <option value="2">چک باکس</option>
                   <option value="3">کامبو باکس</option>
                   <option value="4">اتوکامپلت</option>
+                  <option value="5">تاریخ</option>
+
                 </select>
               </div>
 

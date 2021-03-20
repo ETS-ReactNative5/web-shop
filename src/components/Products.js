@@ -622,7 +622,6 @@ class Products extends React.Component {
                                             {this.state.Colors && this.state.Colors.length > 0 &&
                                                 <div style={{ textAlign: 'right' }} >
                                                     <SelectButton style={{ textAlign: 'right', marginTop: 20 }} value={this.state.Color} options={this.state.Colors} onChange={(e) => {
-                                                       debugger;
                                                        let price = this.state.originalPrice;
                                                         for(let c of this.state.Colors){
                                                             if(c.value == e.value){

@@ -133,7 +133,7 @@ class CatList extends React.Component {
 		};
 		let ECallBack = function (error) {
 		}
-		that.Server.send("MainApi/GetProductsPerCat", { id: param._id, limit: 10, getSubs: 1,levelOfUser:that.state.levelOfUser }, SCallBack, ECallBack)
+		that.Server.send("MainApi/GetProductsPerCat", { id: param._id, limit: 10, getSubs: 1,levelOfUser:that.state.levelOfUser,Exist:true }, SCallBack, ECallBack)
 	}
 	render() {
 		if (this.state.id) {
