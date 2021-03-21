@@ -108,12 +108,12 @@ class Codes_Files extends React.Component {
 
   SetCodes() {
     let that = this;
-    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       title: this.state.title,
       Etitle: this.state.Etitle,
       PriceChange: this.state.PriceChange,
+      MultiSelect: this.state.MultiSelect,
       id: this.state.id,
 
     };
@@ -155,6 +155,11 @@ class Codes_Files extends React.Component {
     this.Server.send("AdminApi/SetCodes", param, SCallBack, ECallBack)
   }
   CreateForm() {
+    let state={};
+    for(let i=0;i<200;i++){
+        state["value_" + i] = undefined;
+        state["desc_" + i] = undefined;
+    }
     this.setState({
       visibleManageComponent: true,
       selectedId: null,
@@ -163,9 +168,15 @@ class Codes_Files extends React.Component {
       LName: "",
       Address: "",
       PriceChange:false,
+      MultiSelect:false,
+      CountArr:[],
+      Values:[],
       Icon: "",
-      ComponentId: ""
+      ComponentId: "",
+      Count:0,
+      ...state
     })
+    
 
   }
   onHideFormsDialog(event) {
@@ -191,6 +202,7 @@ class Codes_Files extends React.Component {
       title: value.title,
       Etitle: value.Etitle,
       PriceChange: value.PriceChange,
+      MultiSelect: value.MultiSelect,
       Count: value?.values.length,
       Values: value?.values,
       CountArr: Array.from(Array(parseInt(value?.values.length)).keys()),
@@ -203,7 +215,6 @@ class Codes_Files extends React.Component {
       }
       
     }
-    debugger;
 
     this.setState(state);
 
@@ -218,9 +229,6 @@ class Codes_Files extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
-      debugger;
-      
-      
       that.setState({
         GridDataComponents: response.data.result
       })
@@ -308,9 +316,15 @@ class Codes_Files extends React.Component {
                   <Checkbox onChange={e => this.setState({ PriceChange: e.checked })} checked={this.state.PriceChange}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }} className="irsans">ثبت اختلاف قیمت</label>
 
-                </div>
+              </div>
+              <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ MultiSelect: e.checked })} checked={this.state.MultiSelect}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }} className="irsans">قابلیت انتخاب چند آیتم</label>
+
+              </div>
               <div className="col-lg-12" style={{ marginTop: 20, marginRight: 5,textAlign:'right' }}>
                 <button className="irsans" onClick={() => {
+                  debugger;
                   let Count = this.state.Count+1;
                   this.setState({
                     Count: Count

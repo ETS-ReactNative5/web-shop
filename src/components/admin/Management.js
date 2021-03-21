@@ -30,6 +30,7 @@ import Codes_Files from './Codes_Files.js'
 import Cancel_Products from './Cancel_Products.js'
 import Canceled_Products from './Canceled_Products.js';
 import Company_Actions from './Company_Actions.js';
+import Company_Request from './Company_Request.js';
 
 
 import SalesProduct from './SalesProduct.js'
@@ -232,6 +233,12 @@ class Management extends React.Component {
             {this.state.CId == "154" && !this.state.IsReport &&
               <Company_Actions />
             }
+
+            {this.state.CId == "155" && !this.state.IsReport &&
+              <Company_Request />
+            }
+
+
 
 
 
