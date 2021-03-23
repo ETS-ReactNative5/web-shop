@@ -206,6 +206,8 @@ class Cart extends React.Component {
                 ActiveBank:response.data.result ? response.data.result.ActiveBank : "none",
                 ActiveSms:response.data.result ? response.data.result.ActiveSms : "none",
                 STitle:response.data.result ? response.data.result.STitle : "",
+                ProductBase: response.data.result ? response.data.result.ProductBase : false
+
             })
             that.getCartItems();
           })
@@ -236,10 +238,11 @@ class Cart extends React.Component {
                 let paykAmount = [],
                     LastPaykAmount=0,
                     PrepareTime=[];
+                debugger;    
                 response.data.result.map((res) =>{
                     if(res.price)
                         lastPrice+=res.number*parseInt(that.roundPrice(res.price));
-                    PrepareTime.push(res.products[0].PrepareTime);
+                    PrepareTime.push(that.state.ProductBase ? res.products[0].PrepareTime : (res.Seller[0].PreparTime||"30"));
                     CartNumber+=parseInt(res.number);
                     switch(res.PeykInfo[2].userLocation){
                         case 1 :{
@@ -391,7 +394,16 @@ class Cart extends React.Component {
                             <i className="fal fa-id-card-alt" style={{paddingLeft:5}}></i><span>{car.Seller[0].name} </span>
                             </div> 
                             <div style={{paddingBottom:5,fontSize:13}}>
-                            <i className="fal fa-rocket" style={{paddingLeft:5}}></i><span>ارسال تا {this.persianNumber(car.product_detail[0].PrepareTime||"3")} روز کاری دیگر</span>
+                              
+                                <i className="fal fa-rocket" style={{paddingLeft:5}}></i>
+                                {this.state.ProductBase ?  
+                                <span>ارسال تا {this.persianNumber(car.product_detail[0].PrepareTime||"3")} روز کاری دیگر</span>
+                                :
+                                <span>ارسال تا {this.persianNumber(car.Seller[0].PrepareTime||"30")} دقیقه بعد از پرداخت</span>
+
+                                }
+
+                            
                             </div> 
                         </div>
                      }
@@ -535,14 +547,15 @@ class Cart extends React.Component {
                 finalCreditReducer=0;
             for(let i=0;i<GridData.length;i++){
                 if(GridData[i].getFromCredit)
-                    finalCreditReducer+=parseInt(GridData[i].getFromCredit)
+                    finalCreditReducer+=parseInt(GridData[i].getFromCredit);
+                lastPrice+=parseInt(GridData[i].price * GridData[i].number);  
             }
             this.setState({
                 finalCreditReducer:finalCreditReducer,
-                lastPrice:this.roundPrice(parseInt(this.state.orgLastPrice)+Comm-finalCreditReducer),
+                lastPrice:lastPrice/*this.roundPrice(parseInt(this.state.orgLastPrice)+Comm-finalCreditReducer)*/,
                 GridData:GridData
             })
-        }
+        }    
         this.setState({
             displayReduse:false,
             ShowAlarm:false,

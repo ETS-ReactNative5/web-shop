@@ -61,6 +61,8 @@ class Set extends React.Component {
       ShowProductsInTable: false,
       RegisterByMob:false,
       SeveralShop: false,
+      SaleFromMultiShops:false,
+      ProductBase:false,
       CreditSupport: false,
       STitle: '',
       Tags: '',
@@ -191,6 +193,8 @@ class Set extends React.Component {
           ShowProductsInTable: response.data.result[0].ShowProductsInTable,
           RegisterByMob: response.data.result[0].RegisterByMob,
           SeveralShop: response.data.result[0].SeveralShop,
+          SaleFromMultiShops:response.data.result[0].SaleFromMultiShops,
+          ProductBase:response.data.result[0].ProductBase,
           CreditSupport: response.data.result[0].CreditSupport,
           STitle: response.data.result[0].STitle,
           Tags: response.data.result[0].Tags,
@@ -242,6 +246,8 @@ class Set extends React.Component {
           ShowProductsInTable: this.state.ShowProductsInTable,
           RegisterByMob: this.state.RegisterByMob,
           SeveralShop: this.state.SeveralShop,
+          SaleFromMultiShops:this.state.SaleFromMultiShops,
+          ProductBase:this.state.ProductBase,
           CreditSupport: this.state.CreditSupport,
           STitle: this.state.STitle,
           Tags: this.state.Tags,
@@ -313,6 +319,16 @@ class Set extends React.Component {
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ SeveralShop: e.checked })} checked={this.state.SeveralShop}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>استفاده از امکانات چند فروشگاهی - برای تغییر این فیلد لازم است با طراحان سیستم هماهنگی شود</label>
+
+                </div>
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ ProductBase: e.checked })} checked={this.state.ProductBase}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>خرید بر پایه محصول</label>
+
+                </div>
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ SaleFromMultiShops: e.checked })} checked={this.state.SaleFromMultiShops}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>امکان خرید همزمان از چند فروشگاه وجود دارد</label>
 
                 </div>
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>

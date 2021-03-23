@@ -206,7 +206,7 @@ class Sales extends React.Component {
     for (let i = 0; i < value.products.length; i++) {
       value.products[i].credit = value.products[i].credit ? value.products[i].credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].CustomerPrice = value.products[i].price ? (value.products[i].price - value.products[i].Commission).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
-
+      value.products[i].CustomerPrice = value.products[i].CustomerPrice < 0 ? 0 : value.products[i].CustomerPrice;
       value.products[i].price = value.products[i].price ? value.products[i].price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].UnitPrice = value.products[i].UnitPrice ? value.products[i].UnitPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].Commission = value.products[i].Commission ? value.products[i].Commission.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
@@ -299,7 +299,6 @@ class Sales extends React.Component {
       })
       let NewFactors = 0;
 
-      debugger;
       response.data.result.result.map(function (v, i) {
         let Commission=0;  
         for(let pp of v.products)
@@ -307,7 +306,7 @@ class Sales extends React.Component {
 
         v.Commission = Commission.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         v.CustomerAmount = !v.Amount ? "0" : (v.Amount - Commission).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
+        v.CustomerAmount = v.CustomerAmount < 0 ? 0 : v.CustomerAmount;
         v.paykAmount = !v.paykAmount ? "0" : v.paykAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 

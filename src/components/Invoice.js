@@ -342,7 +342,7 @@ class Invoice extends React.Component {
           <div className="row">
             <div className="col-lg-12 col-md-9 col-12 mx-auto">
               <div className="card" style={{ padding: 40 }}>
-                <div className="alert alert-success" style={{ borderRadius: 20 }}>
+                <div className="alert alert-secondary" style={{ borderRadius: 20 }}>
                   {this.state.refId && this.state.refId != -1 &&
                     <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert text-secondary">
                       پرداخت با موفقیت انجام شد  <br />
@@ -352,7 +352,7 @@ class Invoice extends React.Component {
                   {this.state.refId && this.state.refId != -1 ?
                     <div style={{ textAlign: "center", opacity: 1,display:'flex',alignItems:'center',flexDirection:'column' }} className="alert  YekanBakhFaBold">
                       <div>از خرید شما سپاسگزاریم</div><br />
-                      <div style={{ fontSize: 21, color: '#fff',backgroundColor:'#ff003b',borderRadius:20,justifyContent:'center',padding:10 }} className="row"> <span className="col-12">رسید تراکنش: </span> <span className="col-12"> {this.persianNumber(this.state.refId)} </span> </div><br />
+                      <div style={{ fontSize: 21, color: '#fff',backgroundColor:'#24bf30',borderRadius:20,justifyContent:'center',padding:10 }} className="row"> <span className="col-12">رسید تراکنش: </span> <span className="col-12"> {this.persianNumber(this.state.refId)} </span> </div><br />
                       <div>محصولات خریداری شده به زودی آماده و به آدرس شما ارسال می شود</div>
                     </div>
                     :

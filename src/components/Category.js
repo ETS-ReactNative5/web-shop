@@ -38,13 +38,28 @@ class Category extends React.Component {
                     UId: response.data.authData.userId,
                     levelOfUser: response.data.authData.levelOfUser
                 })
-                this.getProducts({ Exist: true });
-
+                this.getSettings();
             })
             .catch(error => {
-                this.getProducts({ Exist: true });
+                this.getSettings();
             })
     }
+    getSettings() {
+		let that = this;
+		that.Server.send("AdminApi/getSettings", {}, function (response) {
+	
+		  if (response.data.result) {
+			that.setState({
+              ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
+              SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+			})
+		  }
+          that.getProducts({ Exist: true });
+		}, function (error) {
+		})
+	
+	
+	}
     getProducts(p) {
         let that = this;
         let param = {
@@ -57,7 +72,6 @@ class Category extends React.Component {
         };
         let SCallBack = function (response) {
             let res = response.data.result;
-
             that.setState({
                 GridData: response.data.result,
                 EmptyCat: response.data.result.length == 0 ? 0 : 1
@@ -116,7 +130,6 @@ class Category extends React.Component {
     }
     itemTemplate(car, layout) {
         if (layout === 'list' && car) {
-
             let pic = car.fileUploaded.split("public")[1] ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
             return (
                 <div className="col-12 col-lg-3 col-md-4 col-sm-6" style={{ textAlign: 'center', paddingRight: 0, paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}>
@@ -159,7 +172,11 @@ class Category extends React.Component {
 
 
                         <div style={{ textAlign: 'right' }}><i className="fas fa-id-card-alt" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="iranyekanwebmedium">فروشنده:</span> <span className="YekanBakhFaBold">{car.Seller[0]?.name}</span></div>
-                        <div style={{ textAlign: 'right' }}><i className="fas fa-truck" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.PrepareTime || "3")} روز کاری</span></div>
+                        {this.state.ProductBase ?
+                            <div style={{ textAlign: 'right' }}><i className="fas fa-truck" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.PrepareTime || "3")} روز کاری</span></div>
+                        :
+                            <div style={{ textAlign: 'right' }}><i className="fas fa-truck" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.Seller[0].PrepareTime || "30")} دقیقه پس از پرداخت</span></div>
+                        }
                         <div style={{ position: 'absolute', bottom: 15, width: '100%', left: 0 }}>
                             <Link className="p-button-secondary btn-light" to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#" style={{ padding: 10, marginTop: 10, width: '85%', fontFamily: 'YekanBakhFaBold' }}>
                                 مشاهده جزئیات / خرید

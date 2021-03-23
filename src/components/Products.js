@@ -116,6 +116,34 @@ class Products extends React.Component {
             url: this.Server.getUrl()
         }
 
+        
+
+
+    }
+    getMainShopInfo(){
+        let that = this;
+        let param = {
+            main: true
+        };
+        
+        let SCallBack = function (response) {
+            that.setState({
+                MainShopInfo:response.data.result
+            })
+            that.getComment();
+
+        };
+
+        let ECallBack = function (error) {
+
+        }
+        that.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
+    }
+    componentDidMount() {
+        document.getElementsByTagName("body")[0].scrollTo(0, 0);
+        this.getSettings();      
+    }
+    getProduct(){
         let that = this;
         let param = {
             id: null,
@@ -160,6 +188,7 @@ class Products extends React.Component {
                         }
                     }, 1000);
                 }
+                that.getComment();
 
             };
             let ECallBack = function (error) {
@@ -172,6 +201,17 @@ class Products extends React.Component {
         let SCallBack = function (response) {
             let res = response.data.result;
             let extra = response.data.extra;
+            let OpenedTime= (extra && extra.Seller[0].OpenedTime) ? (extra.Seller[0].OpenedTime[extra.WeekDay] ? extra.Seller[0].OpenedTime[extra.WeekDay]["day"+(parseInt(extra.WeekDay)+1)] : null ) : null;
+            let Time1 ="00:00";
+            let Time2 ="24:00";
+            let Time3 ="00:00";
+            let Time4 ="24:00";
+            if(OpenedTime){
+                Time1 = OpenedTime ? OpenedTime[0] : "00:00";
+                Time2 = OpenedTime ? OpenedTime[1] : "24:00";
+                Time3 = OpenedTime ? OpenedTime[2] : "00:00";
+                Time4 = OpenedTime ? OpenedTime[3] : "24:00";
+            }
             if(extra){
                 const SellerInfo = extra.Seller;
                 const UserInfo = [extra.user];
@@ -184,7 +224,6 @@ class Products extends React.Component {
                 })
                 
             }
-            debugger;
             res.map((v, i) => {
                 that.setState({
                     id: v._id,
@@ -209,7 +248,13 @@ class Products extends React.Component {
                     CatId:v.category_id,
                     SellerName: response.data.extra.Seller[0] ? response.data.extra.Seller[0].name : "",
                     SellerId: response.data.extra.Seller[0] ? response.data.extra.Seller[0]._id : "",
-                    PrepareTime:v.PrepareTime
+                    PrepareTime:that.state.ProductBase ? v.PrepareTime : response.data.extra.Seller[0].PrepareTime ,
+                    Time1:Time1,
+                    Time2:Time2,
+                    Time3:Time3,
+                    Time4:Time4,
+                    ShopIsOpen: extra.Seller[0].Opened,
+                    InTime: ((Time1 <= extra.Time && extra.Time <=  Time2) || (Time3 <= extra.Time && extra.Time <=  Time4))
                 })
                 if (v.SelectedColors && v.SelectedColors.length > 0) {
                     let Colors = [];
@@ -270,31 +315,6 @@ class Products extends React.Component {
                 };
                 this.Server.send("MainApi/getProducts", param, SCallBack, ECallBack)
             })
-
-
-    }
-    getMainShopInfo(){
-        let that = this;
-        let param = {
-            main: true
-        };
-        
-        let SCallBack = function (response) {
-            that.setState({
-                MainShopInfo:response.data.result
-            })
-            that.getComment()
-
-        };
-
-        let ECallBack = function (error) {
-
-        }
-        that.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
-    }
-    componentDidMount() {
-        document.getElementsByTagName("body")[0].scrollTo(0, 0);
-        //this.myRef.current.scrollTo(0, 0);   
     }
     componentWillReceiveProps(nextProps) {
         if((nextProps.location.search && nextProps.location.search.split("id=")[1] != this.state.id) || (!nextProps.location.search && this.state.id) ){
@@ -435,8 +455,55 @@ class Products extends React.Component {
                 })
             })
     }
-    SendToCart(PDId, PId, Number, UId, Price) {
+    getSettings() {
+		let that = this;
+		that.Server.send("AdminApi/getSettings", {}, function (response) {
+	
+		  if (response.data.result) {
+			that.setState({
+              ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
+              SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+
+			})
+	
+		  }
+          that.getProduct();
+
+		}, function (error) {
+		})
+	
+	
+	  }
+    SendToCart(PDId, PId, Number, UId, Price,Allow) {
         let that = this;
+        if(!this.state.SaleFromMultiShops && !Allow){
+            this.getCartItems(PDId, PId, Number, UId, Price);
+            return;
+        }
+        if(!this.state.ProductBase && !this.state.ShopIsOpen){
+            that.toast.current.show({severity: 'error', summary: 'فروشگاه بسته است', detail: <div>امکان خرید از این فروشگاه وجود ندارد</div>, life: 8000});
+            return;
+        }
+        if(!this.state.ProductBase && !this.state.InTime){
+            if(this.state.Time1 && this.state.Time3){
+                that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
+                صبح  از ساعت {this.state.Time1} تا ساعت {this.state.Time2}  <br/> عصر  از ساعت {this.state.Time3} تا ساعت {this.state.Time4}
+                </div>, life: 8000});
+            }
+            else if(this.state.Time1){
+                that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
+                صبح  از ساعت {this.state.Time1} تا ساعت {this.state.Time2} 
+            </div>, life: 8000});
+            }
+            else if(this.state.Time3){
+                that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
+                 عصر  از ساعت {this.state.Time3} تا ساعت {this.state.Time4}
+            </div>, life: 8000});
+            }
+            
+            return;
+        }
+        
         if(this.state.Colors && this.state.Colors.length > 0 && !this.state.Color){
             that.toast.current.show({severity: 'warn', summary: 'رنگ محصول', detail: <div>رنگ محصول را انتخاب کنید</div>, life: 8000});
 
@@ -514,6 +581,39 @@ class Products extends React.Component {
             })
 
 
+    }
+    getCartItems(PDId, PId, Number, UId, Price){
+        let that=this;
+        let param={
+            UId : this.state.UId,
+            levelOfUser:this.state.levelOfUser
+
+            };
+            let SCallBack = function(response){
+                let SellerId = that.state.SellerId;
+                let sellerName="";
+                for(let i=0; i<response.data.result.length ; i++ ){
+                    if(SellerId != response.data.result[i].Seller[0]._id){
+                        SellerId =null;
+                        sellerName = response.data.result[i].Seller[0].name;
+                    }
+                }
+                if(!SellerId){
+                    that.toast.current.show({severity: 'error', summary: 'عدم امکان خرید از چند فروشگاه', detail: <div>با توجه به محصولات موجود در سبد خرید شما در حال حاضر فقط می توانید از محصولات فروشگاه {sellerName} خرید کنید <br/>
+                    <Link to={`${process.env.PUBLIC_URL}/Cart`} style={{ textDecoration: 'none', color: '#333' }}>ویرایش سبد خرید</Link>
+                    </div>, life: 8000});
+
+                }else{
+                    that.SendToCart(PDId, PId, Number, UId, Price,true);
+
+                }
+                
+            };
+            let ECallBack = function(error){
+              
+                console.log(error)
+            }
+        this.Server.send("MainApi/getCartPerId",param,SCallBack,ECallBack)
     }
     changeRating(e) {
         this.setState({ rating: e.value });
@@ -672,7 +772,11 @@ class Products extends React.Component {
                                                                 <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-shipping-fast" style={{fontSize:21,color:'green',paddingLeft:7}}></i>آماده ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span></p></div>
 
                                                                 <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-box-open" style={{fontSize:21,color:'green',paddingLeft:7}}></i>موجود در انبار فروشنده</p></div>
+                                                                {this.state.ProductBase ?
                                                                 <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-rocket" style={{fontSize:21,color:'green',paddingLeft:7}}></i>ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span>  تا <span style={{ color: '#333', fontSize: 20 }}>{this.state.PrepareTime||3} </span>روز کاری دیگر</p></div>
+                                                                :
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-rocket" style={{fontSize:21,color:'green',paddingLeft:7}}></i>ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span>  تا <span style={{ color: '#333', fontSize: 20 }}>{this.state.PrepareTime||30} </span> دقیقه پس از پرداخت </p></div>
+                                                                }
 
                                                         </div>
                                                      
@@ -827,8 +931,12 @@ class Products extends React.Component {
                                                                     }
                                                                     <div className="col-lg-3 col-md-6 col-12">
                                                                     <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
+                                                                                {this.state.ProductBase ?
                                                                                <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-truck" style={{fontSize:20,color:'#000'}} /> ارسال توسط {this.state.MainShopInfo[0].name} تا {this.persianNumber(item.PrepareTime||"3")} کاری دیگر</span>
-                                                                            </div>
+                                                                                    :
+                                                                                    <span style={{ fontSize: 13, fontWeight: 'bold' }}><i className="fal fa-truck" style={{fontSize:20,color:'#000'}} /> ارسال توسط {this.state.MainShopInfo[0].name} تا {this.persianNumber(item.PrepareTime||"30")} دقیقه پس از پرداخت </span>
+                                                                                }
+                                                                               </div>
                                                                     </div>
                                                                     <div className="col-lg-3 col-md-6 col-12">
                                                                             <div className="car-title yekan" style={{ textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>
