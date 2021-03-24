@@ -19,6 +19,7 @@ import './Cart.css'
 import CatList from './CatList.js'
 import { InputNumber } from 'primereact/inputnumber';
 
+import { RadioButton } from 'primereact/radiobutton';
 
 class Cart extends React.Component {
     constructor(props){
@@ -46,6 +47,7 @@ class Cart extends React.Component {
             ActiveSms:"none",
             PriceAfterCompute:0,
             finalCreditReducer:0,
+            TypeOfPayment:'1',
             info:this.Server.getInfo(),
             absoluteUrl:this.Server.getAbsoluteUrl(),
             url: this.Server.getUrl()
@@ -112,7 +114,6 @@ class Cart extends React.Component {
                })
             return;
         }else{
-            debugger;
             if(this.state.lastPrice != 0){
                 let user_id = this.state.GridData[0].user_id;
                 let products_id=[];
@@ -155,7 +156,7 @@ class Cart extends React.Component {
                         that.setState({
                             GridData:[],
                             refId:response.data.refId,
-                            EndMessage:<div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId) } <br/><br/><p className="YekanBakhFaMedium" style={{fontSize:25}}>سفارش شما ثبت شد . جهت ادامه ی عملیات خرید با شما تماس گرفته خواهد شد</p> </div> 
+                            EndMessage:<div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId) } <br/><br/><p className="YekanBakhFaMedium" style={{fontSize:25}}>سفارش شما ثبت شد <br/> </p> </div> 
     
                         })
                         if(this.state.ActiveSms != "none"){
@@ -204,6 +205,7 @@ class Cart extends React.Component {
           .then(response => {
             that.setState({
                 ActiveBank:response.data.result ? response.data.result.ActiveBank : "none",
+                OriginalActiveBank: response.data.result ? response.data.result.OriginalActiveBank : "none",
                 ActiveSms:response.data.result ? response.data.result.ActiveSms : "none",
                 STitle:response.data.result ? response.data.result.STitle : "",
                 ProductBase: response.data.result ? response.data.result.ProductBase : false
@@ -238,7 +240,6 @@ class Cart extends React.Component {
                 let paykAmount = [],
                     LastPaykAmount=0,
                     PrepareTime=[];
-                debugger;    
                 response.data.result.map((res) =>{
                     if(res.price)
                         lastPrice+=res.number*parseInt(that.roundPrice(res.price));
@@ -375,6 +376,7 @@ class Cart extends React.Component {
              return (
                  <div style={{marginTop:15}}>    
                  <div className="row" style={{alignItems:'center'}}>
+                     
                  <div className="col-lg-3 col-md-3  col-12 YekanBakhFaMedium" style={{textAlign:'center'}}>
                  <Link target="_blank" to={`${process.env.PUBLIC_URL}/Products?id=`+car.product_detail_id||car.products[0]._id} >
                       <img  src={pic} style={{height:"140px"}} name="pic3" onClick={this.Changepic}  alt="" /> 
@@ -568,7 +570,7 @@ class Cart extends React.Component {
         
         <Header1 /> 
         <Header2 /> 
-        <div className="row justify-content-center d-lg-flex d-md-flex d-none" style={{direction:'ltr',marginBottom:50,marginTop:30}}  >
+        <div className="row justify-content-center d-lg-flex d-md-flex" style={{direction:'ltr',marginBottom:50,marginTop:30}}  >
         <div className="col-9  yekan alert-light" style={{padding:20,display:'none'}} >
         {this.state.GridData.length > 0 && 
             <Steps current={this.state.StepNumber}  vertical={this.state.StepVertical} >
@@ -583,11 +585,30 @@ class Cart extends React.Component {
         
         <div className="row justify-content-center firstInPage" style={{direction:'rtl'}}   >
         
-        <div className="col-lg-8">
+        <div className="col-lg-8" style={{backgroundColor:'#fff',borderRadius:5}}>
             
             {this.state.GridData.length > 0 ? 
             <div>
-                
+            <div className="col-12" style={{textAlign:'right',marginBottom:50}}>
+                    <div>
+                        <p className="yekan" style={{paddingTop:20}}>شیوه پرداخت</p>
+                    </div>
+                    <div style={{display:'flex',flexDirection:'column'}}>
+                      <div style={{display:'flex',alignItems:'center'}}>  
+                      <RadioButton inputId="TypeOfPayment1" name="TypeOfPayment" value="1" onChange={(e) => {this.setState({ActiveBank:this.state.OriginalActiveBank});this.setState({ TypeOfPayment: e.value });}} checked={this.state.TypeOfPayment === '1'} />
+                      <label htmlFor="TypeOfPayment1" className="p-checkbox-label yekan" style={{marginRight:20,color:'rgb(185 185 185)'}}>
+                          پرداخت اینترنتی <br/>
+                          آنلاین با تمامی کارت‌های بانکی
+                      </label>
+                      </div>
+                      <div style={{display:'flex'}}>
+                      <RadioButton inputId="TypeOfPayment2" name="TypeOfPayment" value="2" onChange={(e) => {this.setState({ActiveBank:'none'});this.setState({ TypeOfPayment: e.value });}} checked={this.state.TypeOfPayment === '2'} />
+                      <label htmlFor="TypeOfPayment2" className="p-checkbox-label yekan" style={{marginRight:20,color:'rgb(185 185 185)'}}>پرداخت در محل</label>    
+                      </div>  
+                    </div>  
+                    <hr />  
+            </div>  
+   
             <DataView value={this.state.GridData} layout={this.state.layout}  rows={100} itemTemplate={this.itemTemplate}></DataView>
             </div>
             :

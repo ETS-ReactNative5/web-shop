@@ -135,10 +135,19 @@ class ShopInformation extends React.Component {
         })
         let Time = {};
         if (response.data.result[0].OpenedTime) {
-          for (let i = 0; i < response.data.result[0].OpenedTime?.length; i++) {
-            for (let j = 0; j < response.data.result[0]?.OpenedTime[i]["day" + (i + 1)]?.length; j++) {
-              Time["Time" + (i + 1) + "_" + (j + 1)] = response.data.result[0]?.OpenedTime[i]["day" + (i + 1)][j];
+          let Count=0;
+          for (let i = 0; i < 7; i++) {
+            if(response.data.result[0] && response.data.result[0].OpenedTime[Count]){
+              if(response.data.result[0].OpenedTime[Count]["day" + (i+1)]){
+
+                for (let j = 0; j < response.data.result[0].OpenedTime[Count]["day" + (i+1)]?.length; j++) {
+                  Time["Time" + (i+1) + "_" + (j + 1)] = response.data.result[0]?.OpenedTime[Count]["day" + (i+1)][j];
+                }
+                Count++;             
+              }
+              
             }
+            
           }
         }
 

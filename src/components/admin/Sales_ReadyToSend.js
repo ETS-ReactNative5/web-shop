@@ -316,6 +316,10 @@ class Sales_Registered extends React.Component {
           v.statusDesc = "تحویل شده"
         if (v.status == "5")
           v.statusDesc = "تسویه شده"
+        if (v.InPlace)
+          v.InPlace = <span class="text-warning">در محل</span>
+        else
+          v.InPlace = <span class="text-success">نقدی</span>  
         if (v.userData && v.userData[0]) {
           v.name = v.userData[0].name;
           v.company = v.userData[0].company;
@@ -472,6 +476,7 @@ class Sales_Registered extends React.Component {
                 <Column field="refId" header="رسید تراکنش"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
                 <Column field="Date" header="تاریخ"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <Column field="InPlace" header=" پرداخت"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
 
                 <Column field="statusDesc" filter={false} header="وضعیت"  body={BodyTemplate} filterElement={StatusFilter} className="yekan" style={{ textAlign: "right" }} />
                 {this.state.isMainShop == 1 &&

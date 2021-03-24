@@ -941,6 +941,9 @@
   .swiper-wrapper{
       z-index: auto !important;
   }
+  .swiper-container-multirow-column > .swiper-wrapper {
+    flex-direction: row !important ;
+    }
   .section-title:after {
     content: "";
     position: absolute;
@@ -1265,4 +1268,8 @@ input[type=number] {
 }
 .calendarContainer button.prev , .calendarContainer button.next{
     transform: rotate(180deg);
+}
+.limitHeight{
+    max-height: 200px;
+    overflow: hidden;
 }

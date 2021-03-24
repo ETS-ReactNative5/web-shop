@@ -108,7 +108,7 @@ const params2 = {
   spaceBetween: 30,
   pagination: {
     el: '.swiper-pagination',
-    clickable: true
+    clickable: true,
   },
   breakpoints: {
     1024: {
@@ -116,19 +116,18 @@ const params2 = {
       slidesPerView: 3,
       spaceBetween: 20
     },
+    
     768: {
       centeredSlides: false,
-      slidesPerView: 3,
+      slidesPerView: 2,
       spaceBetween: 15
     },
     640: {
       centeredSlides: false,
-      slidesPerView: 2,
-      spaceBetween: 10
+      slidesPerView: 1
     },
     320: {
-      slidesPerView: 1,
-      spaceBetween: 10
+      slidesPerView: 1
     }
   }
 
@@ -261,6 +260,8 @@ class MainBox2 extends React.Component {
       .then(response => {
         this.setState({
             Template:response.data.result ? response.data.result.Template : "1",
+            ProductBase: response.data.result ? response.data.result.ProductBase : false,
+            SaleFromMultiShops: response.data.result ? response.data.result.SaleFromMultiShops : false
         })
         this.getPics();
 
@@ -703,16 +704,16 @@ class MainBox2 extends React.Component {
             </div>
             {this.state.products.length > 0 &&
               <div className="col-lg-12 col-12"  >
-                <div style={{ background: 'rgb(102 90 210)', marginTop: 20, borderTopRightRadius: 50, borderBottomRightRadius: 100, borderTopLeftRadius: 50, borderBottomLeftRadius: 100, marginRight: 20, marginBottom: 20 }} >
-                  <div className=" backgroundsvg" style={{ direction: 'rtl', padding:40 }}>
-
-                    <Swiper {...params2}>
-                      <div style={{ maxWidth: 230}}>
-                        <p class="YekanBakhFaBold" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center' }}>محصولات شگفت انگیز</p>
+                <div style={{ background: 'rgb(85 216 255)', marginTop: 50, borderTopRightRadius: 5, borderBottomRightRadius: 5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, marginRight: 20, marginBottom: 50 }} >
+                  <div className=" backgroundsvg" style={{ direction: 'rtl', padding:40,display:'flex',alignItems:'center' }}>
+                    <div style={{ maxWidth: 230}}>
+                        <p class="YekanBakhFaBold" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',display:'none' }}>محصولات شگفت انگیز</p>
                         {this.state.SpecialImage &&
-                        <img src={this.state.SpecialImage} style={{height:250}}  />
+                        <img src={this.state.SpecialImage}   />
                         }
                       </div>
+                    <Swiper {...params2}>
+                      
                       {this.state.products.map((item, index) => {
                         var img = this.state.absoluteUrl + (item.fileUploaded ? item.fileUploaded.split("public")[1] : "/nophoto.png");
                         return (
@@ -784,7 +785,7 @@ class MainBox2 extends React.Component {
                   return (
                     <div className="col-md-3 col-12 mb-md-0 mb-3">
                       <Link to={`${process.env.PUBLIC_URL}/category?id=` + item._id} href="#" target="_blank" style={{ textDecoration: 'none', height: 120 }}>
-                        <img style={{ height: 150, width: '100%' }} src={this.state.absoluteUrl + item.pic.split("public")[1]}></img>
+                        <img style={{ width: '100%' }} src={this.state.absoluteUrl + item.pic.split("public")[1]}></img>
                       </Link></div>
                   )
                 }
@@ -796,8 +797,8 @@ class MainBox2 extends React.Component {
 
             {this.state.MaxObj.length > 0 &&
               <div className="col-lg-12 col-12"  >
-                <div style={{ background: '#fce82e',border:'5px solid #fce82e', marginTop: 20, borderTopRightRadius: 50, borderBottomRightRadius: 100, borderTopLeftRadius: 50, borderBottomLeftRadius: 100, marginRight: 20, marginBottom: 20 }} >
-                  <div className=" backgroundsvg2" style={{ direction: 'rtl', padding:20 }}>
+                <div style={{ background: 'rgb(157 232 156)',border:'5px solid rgb(157 232 156)', marginTop: 20, borderTopRightRadius: 5, borderBottomRightRadius: 5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, marginRight: 20, marginBottom: 20 }} >
+                  <div className=" backgroundsvg2" style={{ direction: 'rtl' }}>
 
                     <Swiper {...params3}>
                       
@@ -808,25 +809,14 @@ class MainBox2 extends React.Component {
                         return (
                           <div expiredate={item.ExpireDate} className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', margin: 5, padding: 5, borderRadius: 5, marginLeft: 0 }}>
                             <div className="row justify-content-center">
-                            <div className="col-lg-6 col-12">
+                            <div >
                                 <div className="d-md-none d-block" style={{textAlign:'center'}}>
                                 <img src={img} alt="" style={{ borderRadius: 36, height: '100%', maxHeight: 200 }} />
 
                                 </div>
-                                <div   className=" row d-md-flex d-none" style={{ height: '100%',backgroundColor:'#fff',boxShadow:'5px 5px 5px 5px #8888883d',borderRadius:50 }} >
-                                {item.fileUploaded1 &&
-                                    <div className="col-md-3 d-md-block d-none">
-                                      <div style={{  borderRadius: 25 }}>
-                                        <img src={img1} alt="" style={{ padding: 10, height: 150,borderRadius: 25 }} />
-                                      </div>
-                                      <div style={{  borderRadius: 25, marginTop: 15 }}>
-                                        <img src={img2} alt="" style={{ padding: 10, height: 150,borderRadius: 25 }} />
-                                      </div>
-  
-  
-                                    </div>
-                                  }
-                                  <div className="col-md-8 col-12 d-md-block d-none">
+                                <div   className=" row d-md-flex d-none" style={{ height: '100%',backgroundColor:'#fff',boxShadow:'5px 5px 5px 5px #8888883d',borderRadius:5 }} >
+                                
+                                  <div className="col-md-12 col-12 d-md-block d-none">
                                     <img src={img} alt="" style={{ borderRadius: 5, height: '100%', maxHeight: 350 }} />
   
                                   </div>
@@ -838,10 +828,7 @@ class MainBox2 extends React.Component {
                               <div className="col-lg-6  col-12" align="center" >
   
                                 <div className="car-title yekan  mt-md-5" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 22 }}>{item.title}</div>
-                                {item.subTitle != "-" &&
-                                    <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 15, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
-
-                                }  
+                                  
                                 {
                                   item.number > 0
                                     ?
@@ -850,9 +837,9 @@ class MainBox2 extends React.Component {
                                         <div>
                                           {
                                             ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" ?
-                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#8e7b7b' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
+                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 25, color: '#8e7b7b' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
                                               :
-                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#8e7b7b', height: 16 }} ></div>
+                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 25, color: '#8e7b7b', height: 16 }} ></div>
   
                                           }
                                           <div className="car-subtitle yekan" style={{ maxWidth:260,display:'flex',justifyContent:'space-evenly',textAlign: 'center', marginBottom: 15 }} > <span className="iranyekanwebblack" style={{ fontSize: 40 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> <span className="yekan" style={{ float: 'left', fontSize: 22, marginTop: 10 }}>تومان</span> </div>

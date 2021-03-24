@@ -13,6 +13,8 @@ import ReactImageMagnify from 'react-image-magnify';
 import MainBox3 from './MainBox3.js'
 import './Products.css'
 import CatList from './CatList.js'
+import ShopList from './ShopList.js'
+
 
 import Footer from './Footer.js'
 import Header2 from './Header2.js'
@@ -112,6 +114,7 @@ class Products extends React.Component {
             SameData: [],
             MainShopInfo:[],
             PeykInfo:[],
+            ShowDescLimit:false,
             absoluteUrl: this.Server.getAbsoluteUrl(),
             url: this.Server.getUrl()
         }
@@ -224,6 +227,7 @@ class Products extends React.Component {
                 })
                 
             }
+            debugger;
             res.map((v, i) => {
                 that.setState({
                     id: v._id,
@@ -485,7 +489,10 @@ class Products extends React.Component {
             return;
         }
         if(!this.state.ProductBase && !this.state.InTime){
-            if(this.state.Time1 && this.state.Time3){
+            if((this.state.Time1=="00:00" && this.state.Time2=="00:00") && (this.state.Time3=="00:00" && this.state.Time4=="00:00")){
+                that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', life: 8000});
+            }
+            else if(this.state.Time1 && this.state.Time3){
                 that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
                 صبح  از ساعت {this.state.Time1} تا ساعت {this.state.Time2}  <br/> عصر  از ساعت {this.state.Time3} تا ساعت {this.state.Time4}
                 </div>, life: 8000});
@@ -714,7 +721,7 @@ class Products extends React.Component {
 
 
                                     <div className="col-lg-4 col-12 order-1 order-lg-2" style={{ borderLeft: '1px solid #eee' }}>
-                                        <div className="product_description">
+                                        <div className="product_description" style={{textAlign:'right'}}>
                                             <div className="product_category YekanBakhFaBold" style={{ display: "none" }}>Laptops</div>
                                             <div className="product_name YekanBakhFaBold" style={{ textAlign: 'right' }}>{this.state.title} <br /> <div style={{ fontSize: 14, marginTop: 15, color: '#b5b5b5' }}>{this.state.subtitle}</div></div>
 
@@ -749,7 +756,13 @@ class Products extends React.Component {
 
                                                 </div>
                                             }
-                                            <div className="product_text"><p className="iranyekanwebmedium" style={{ padding: "10px", textAlign: 'right', whiteSpace: 'pre-wrap',marginTop:30 }}>{this.state.desc}</p></div>
+                                            <div className={this.state.ShowDescLimit ? "" : "limitHeight"}>
+                                                <p className="iranyekanwebmedium " style={{ padding: "10px", textAlign: 'right', whiteSpace: 'pre-wrap',marginTop:30 }}>{this.state.desc}</p>
+                                                
+                                            </div>
+                                            <div style={{cursor:'pointer',marginTop:20,color:'rgb(195 195 195)'}} className="iranyekanwebmedium " onClick={()=>this.setState({
+                                                    ShowDescLimit:!this.state.ShowDescLimit
+                                                })}>{!this.state.ShowDescLimit ? ' بیشتر... ' : ''}</div>
 
 
 
@@ -973,11 +986,17 @@ class Products extends React.Component {
                                     </div>
                                 </div>
                                  }
-                                {this.state.CatId &&
+                                {(this.state.CatId && this.state.ProductBase) ? 
                                     <div style={{marginTop:20}}>
                                         <CatList _id={this.state.CatId} name="محصولات مرتبط"  paddingLeft="0" paddingRight="0" />
 
                                     </div>    
+                                :
+                                this.state.SellerId &&
+                                    <div style={{marginTop:20}}>
+                                        <ShopList _id={this.state.SellerId} name={this.state.SellerName}  paddingLeft="0" paddingRight="0" />
+                                    </div>
+                                
                                 }
                                 <div style={{marginTop:30}} >
                                     <TabView renderActiveOnly={false} style={{ textAlign: 'right', direction: 'rtl' }} activeIndex={0}  >
