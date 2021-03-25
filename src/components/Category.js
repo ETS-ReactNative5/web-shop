@@ -10,6 +10,7 @@ import Footer from './Footer.js'
 import Header2 from './Header2.js'
 import { SelectButton } from 'primereact/selectbutton';
 import { ToggleButton } from 'primereact/togglebutton';
+import {InputSwitch} from 'primereact/inputswitch';
 
 class Category extends React.Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class Category extends React.Component {
             getSubs: this.props.location.search.split("getSubs=")[1],
             GridData: [],
             layout: 'list',
-            Exist: true,
+            Exist: false,
             PId: null,
             UId: null,
             EmptyCat: -1,
@@ -54,7 +55,7 @@ class Category extends React.Component {
               SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
 			})
 		  }
-          that.getProducts({ Exist: true });
+          that.getProducts({ Exist: false });
 		}, function (error) {
 		})
 	
@@ -226,13 +227,19 @@ class Category extends React.Component {
                                     ></SelectButton>
                                 </div>
                                 <div class="col-lg-2 col-sm-12 col-12">
-                                    <ToggleButton onLabel="موجود" offLabel="ناموجود" onIcon="pi pi-check" offIcon="pi pi-times" checked={this.state.Exist} onChange={(e) => {
+                                <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-evenly',borderRadius:5,padding:5}} >
+
+                                    <InputSwitch  checked={this.state.Exist} onChange={(e) => {
                                         this.setState({
                                             Exist: e.value
                                         });
                                         this.getProducts({ Exist: e.value });
                                     }
                                     } />
+                                <label className="yekan">
+                                        فقط کالاهای موجود
+                                </label>
+                                </div>    
 
                                 </div>
 

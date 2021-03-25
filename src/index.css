@@ -1273,3 +1273,7 @@ input[type=number] {
     max-height: 200px;
     overflow: hidden;
 }
+.p-paginator-page{
+    font-family: 'YekanBakhFaBold' !important;
+ 
+}

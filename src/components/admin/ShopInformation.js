@@ -48,6 +48,34 @@ class ShopInformation extends React.Component {
       SubCities: [],
       SelectedSubCities: [],
       loading: 0,
+      Time1_1:"",
+      Time1_2:"",
+      Time1_3:"",
+      Time1_4:"",
+      Time2_1:"",
+      Time2_2:"",
+      Time2_3:"",
+      Time2_4:"",
+      Time3_1:"",
+      Time3_2:"",
+      Time3_3:"",
+      Time3_4:"",
+      Time4_1:"",
+      Time4_2:"",
+      Time4_3:"",
+      Time4_4:"",
+      Time5_1:"",
+      Time5_2:"",
+      Time5_3:"",
+      Time5_4:"",
+      Time6_1:"",
+      Time6_2:"",
+      Time6_3:"",
+      Time6_4:"",
+      Time7_1:"",
+      Time7_2:"",
+      Time7_3:"",
+      Time7_4:"",
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
     }
@@ -65,7 +93,8 @@ class ShopInformation extends React.Component {
     let name = e.target.name;
     if (name == "logoCopyRight")
       formData.append('logoCopyRight', "1");
-
+    if (name == "SpecialPic")
+      formData.append('SpecialPic', "1");
     formData.append('myImage', e.target.files[0]);
     if (this.state.ShopId) {
       formData.append('ShopId', this.state.ShopId);
@@ -85,7 +114,10 @@ class ShopInformation extends React.Component {
           this.setState({
             logoCopyRight: this.state.absoluteUrl + response.data.split("public")[1]
           })
-
+        if (name == "SpecialPic")
+          this.setState({
+            SpecialPic: this.state.absoluteUrl + response.data.split("public")[1]
+          })
 
       })
       .catch((error) => {
@@ -134,6 +166,7 @@ class ShopInformation extends React.Component {
           loading: 0
         })
         let Time = {};
+        debugger;
         if (response.data.result[0].OpenedTime) {
           let Count=0;
           for (let i = 0; i < 7; i++) {
@@ -177,6 +210,7 @@ class ShopInformation extends React.Component {
           CreditCommission: response.data.result[0].CreditCommission,
           logo: response.data.result[0].logo ? that.state.absoluteUrl + response.data.result[0].logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
           logoCopyRight: response.data.result[0].logoCopyRight ? that.state.absoluteUrl + response.data.result[0].logoCopyRight.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
+          SpecialPic: response.data.result[0].SpecialPic ? that.state.absoluteUrl + response.data.result[0].SpecialPic.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
           ...Time
 
         })
@@ -221,27 +255,28 @@ class ShopInformation extends React.Component {
   EditShopInformation() {
     let that = this;
     let Time = [];
+    debugger;
     for (let s in this.state) {
       if (s == "Time1_1") {
-        Time.push({ day1: [this.state["Time1_1"], this.state["Time1_2"], this.state["Time1_3"], this.state["Time1_4"]] });
+        Time[0] = { day1: [this.state["Time1_1"], this.state["Time1_2"], this.state["Time1_3"], this.state["Time1_4"]] };
       }
       if (s == "Time2_1") {
-        Time.push({ day2: [this.state["Time2_1"], this.state["Time2_2"], this.state["Time2_3"], this.state["Time2_4"]] });
+        Time[1] = { day2: [this.state["Time2_1"], this.state["Time2_2"], this.state["Time2_3"], this.state["Time2_4"]] };
       }
       if (s == "Time3_1") {
-        Time.push({ day3: [this.state["Time3_1"], this.state["Time3_2"], this.state["Time3_3"], this.state["Time3_4"]] });
+        Time[2] = { day3: [this.state["Time3_1"], this.state["Time3_2"], this.state["Time3_3"], this.state["Time3_4"]] };
       }
       if (s == "Time4_1") {
-        Time.push({ day4: [this.state["Time4_1"], this.state["Time4_2"], this.state["Time4_3"], this.state["Time4_4"]] });
+        Time[3] = { day4: [this.state["Time4_1"], this.state["Time4_2"], this.state["Time4_3"], this.state["Time4_4"]] };
       }
       if (s == "Time5_1") {
-        Time.push({ day5: [this.state["Time5_1"], this.state["Time5_2"], this.state["Time5_3"], this.state["Time5_4"]] });
+        Time[4] = { day5: [this.state["Time5_1"], this.state["Time5_2"], this.state["Time5_3"], this.state["Time5_4"]] };
       }
       if (s == "Time6_1") {
-        Time.push({ day6: [this.state["Time6_1"], this.state["Time6_2"], this.state["Time6_3"], this.state["Time6_4"]] });
+        Time[5] = { day6: [this.state["Time6_1"], this.state["Time6_2"], this.state["Time6_3"], this.state["Time6_4"]] };
       }
       if (s == "Time7_1") {
-        Time.push({ day7: [this.state["Time7_1"], this.state["Time7_2"], this.state["Time7_3"], this.state["Time7_4"]] });
+        Time[6] = { day7: [this.state["Time7_1"], this.state["Time7_2"], this.state["Time7_3"], this.state["Time7_4"]] };
       }
     }
     let param = {
@@ -732,6 +767,15 @@ class ShopInformation extends React.Component {
 
                     </div>
                   </div>
+                    <div className="col-6" style={{ marginTop: 20 }} >
+                      <div className="group">
+                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="SpecialPic" />
+                        <label> آپلود تصویر اختصاصی</label>
+                      </div>
+                    </div>
+                    <div className="col-6" style={{ marginTop: 20 }}>
+                      <img src={this.state.SpecialPic} />
+                    </div>
                   <div className="col-6" style={{ marginTop: 20 }} >
                     <div className="group">
                       <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file" />

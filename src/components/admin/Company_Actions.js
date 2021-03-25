@@ -327,8 +327,8 @@ class Company_Actions extends React.Component {
                   <option value="بررسی و تحلیل">بررسی و تحلیل</option>
                   <option value="طراحی ui">طراحی ui</option>
                   <option value="ثبت و ویرایش اطلاعات">ثبت و ویرایش اطلاعات</option>
+                  <option value="ماموریت درون شهری">ماموریت درون شهری</option>
                   <option value="فاقد کار">فاقد کار</option>
-
                 </select>
               </div>
               <div className="col-lg-12">

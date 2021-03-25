@@ -210,10 +210,10 @@ class Products extends React.Component {
             let Time3 ="00:00";
             let Time4 ="24:00";
             if(OpenedTime){
-                Time1 = OpenedTime ? OpenedTime[0] : "00:00";
-                Time2 = OpenedTime ? OpenedTime[1] : "24:00";
-                Time3 = OpenedTime ? OpenedTime[2] : "00:00";
-                Time4 = OpenedTime ? OpenedTime[3] : "24:00";
+                Time1 = (OpenedTime && OpenedTime[0]) ? OpenedTime[0] : "00:00";
+                Time2 = (OpenedTime && OpenedTime[1]) ? OpenedTime[1] : "24:00";
+                Time3 = (OpenedTime && OpenedTime[2]) ? OpenedTime[2] : "00:00";
+                Time4 = (OpenedTime && OpenedTime[3]) ? OpenedTime[3] : "24:00";
             }
             if(extra){
                 const SellerInfo = extra.Seller;
@@ -227,7 +227,6 @@ class Products extends React.Component {
                 })
                 
             }
-            debugger;
             res.map((v, i) => {
                 that.setState({
                     id: v._id,
@@ -777,7 +776,7 @@ class Products extends React.Component {
                                                     <form action="#">
 
                                                         {this.state.SellerName &&
-                                                            <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}> فروشنده : <span style={{ color: '#333', fontSize: 20 }}>{this.state.SellerName} </span> </p></div>
+                                                            <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}> فروشنده : <Link to={`${process.env.PUBLIC_URL}/Shop?&name=${this.state.SellerName}&id=` + this.state.SellerId} className="title iranyekanwebmedium" ><span style={{ color: '#333', fontSize: 20 }}>{this.state.SellerName} </span></Link> </p></div>
                                                         }
                                                         {this.state.MainShopInfo.length >0  &&
                                                         <div>

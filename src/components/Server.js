@@ -8,9 +8,9 @@ class Server extends React.Component {
      this.state={
         isLoading:false,
           //   serverUrl: 'https://api.emdcctv.com/'
-          //   serverUrl: 'http://localhost:3000/',
-          //     serverUrl: 'https://marketapi.sarvapps.ir/',
-             serverUrl: 'https://foodapi.sarvapps.ir/'
+               serverUrl: 'http://localhost:3000/',
+          //   serverUrl: 'https://marketapi.sarvapps.ir/',
+          //   serverUrl: 'https://foodapi.sarvapps.ir/'
      };
    }
    getUrl(admin){
