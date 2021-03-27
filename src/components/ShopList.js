@@ -6,32 +6,32 @@ import Swiper from 'react-id-swiper';
 import { connect } from 'react-redux';
 
 const params = {
-	slidesPerView: 4,
-	slidesPerColumn: 2,
-	spaceBetween: 30,
-	pagination: {
-	  el: '.swiper-pagination',
-	  clickable: true,
+	slidesPerView: 5,
+	spaceBetween: 5,
+	loop: 1,
+	navigation: {
+		nextEl: '.swiper-button-next',
+		prevEl: '.swiper-button-prev'
 	},
 	breakpoints: {
 		1024: {
-		  slidesPerView: 4,
-		  spaceBetween: 40
+			slidesPerView: 5,
+			spaceBetween: 5
 		},
 		768: {
-		  slidesPerView: 3,
-		  spaceBetween: 30
+			slidesPerView: 4,
+			spaceBetween: 5
 		},
 		640: {
-		  slidesPerView: 2,
-		  spaceBetween: 20
+			slidesPerView: 2,
+			spaceBetween: 5
 		},
 		320: {
-		  slidesPerView: 1,
-		  spaceBetween: 10
+			slidesPerView: 1,
+			spaceBetween: 0
 		}
-	  }
-  }
+	}
+}
 
 
 
@@ -39,7 +39,8 @@ class CatList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.Server = new Server();
-
+		params.slidesPerColumn = this.props.multiColumn ? 2 : 1;
+		params.slidesPerView = this.props.multiColumn ? 6 : 4;
 		this.state = {
 			products: [],
 			id: null,
@@ -141,11 +142,11 @@ class CatList extends React.Component {
 			return <Redirect to={"/products?id=" + this.state.id} push={true} />;
 		}
 		return (
-			<div className="col-12" style={{ paddingLeft: this.props.paddingLeft||20, paddingRight: this.props.paddingRight||20 }}>
+			<div className="col-12" style={{ marginTop:15,marginBottom:15, paddingLeft: this.props.paddingLeft||20, paddingRight: this.props.paddingRight||20 }}>
 				<div className="row justify-content-center" style={{ marginRight: 15, marginLeft: 15 }} >
 					{this.state.ShopList.data && this.state.ShopList.data.length > 0 &&
 						<div className="col-lg-12 col-md-12 col-12" style={{ direction: 'rtl', backgroundColor: '#fff', borderRadius: 10 }}>
-							<div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍سایر محصولات فروشگاه {this.props.name} </span> <Link to={`${process.env.PUBLIC_URL}/Shop?&name=${this.props.name}&id=` + this.props._id} className="title iranyekanwebmedium" style={{ fontSize: 13, float: 'left', color: '#000', textDecoration: 'none' }}>   مشاهده محصولات بیشتر  ...</Link></div>
+							<div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray',color:'red' }} >‍‍‍‍‍‍‍ فروشگاه {this.props.name} </span> <Link to={`${process.env.PUBLIC_URL}/Shop?&name=${this.props.name}&id=` + this.props._id} className="title iranyekanwebmedium" style={{ fontSize: 13, float: 'left', color: '#000', textDecoration: 'none' }}>   مشاهده محصولات بیشتر  ...</Link></div>
 							<Swiper {...params}>
 								{this.state.ShopList.data.map((item, index) => {
 									var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];

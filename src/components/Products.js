@@ -227,6 +227,7 @@ class Products extends React.Component {
                 })
                 
             }
+            
             res.map((v, i) => {
                 that.setState({
                     id: v._id,
@@ -491,20 +492,21 @@ class Products extends React.Component {
             if((this.state.Time1=="00:00" && this.state.Time2=="00:00") && (this.state.Time3=="00:00" && this.state.Time4=="00:00")){
                 that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', life: 8000});
             }
-            else if(this.state.Time1 && this.state.Time3){
-                that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
-                صبح  از ساعت {this.state.Time1} تا ساعت {this.state.Time2}  <br/> عصر  از ساعت {this.state.Time3} تا ساعت {this.state.Time4}
-                </div>, life: 8000});
-            }
-            else if(this.state.Time1){
+           
+            else if(this.state.Time1 && (this.state.Time3=="00:00" && this.state.Time4=="00:00")){
                 that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
                 صبح  از ساعت {this.state.Time1} تا ساعت {this.state.Time2} 
             </div>, life: 8000});
             }
-            else if(this.state.Time3){
+            else if(this.state.Time3 && (this.state.Time1=="00:00" && this.state.Time2=="00:00")){
                 that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
                  عصر  از ساعت {this.state.Time3} تا ساعت {this.state.Time4}
             </div>, life: 8000});
+            }
+            else if(this.state.Time1 && this.state.Time3){
+                that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', detail: <div>ساعت کار امروز فروشگاه <br/>
+                صبح  از ساعت {this.state.Time1} تا ساعت {this.state.Time2}  <br/> عصر  از ساعت {this.state.Time3} تا ساعت {this.state.Time4}
+                </div>, life: 8000});
             }
             
             return;
@@ -756,12 +758,15 @@ class Products extends React.Component {
                                                 </div>
                                             }
                                             <div className={this.state.ShowDescLimit ? "" : "limitHeight"}>
+                                                {this.state.desc != "-" &&
                                                 <p className="iranyekanwebmedium " style={{ padding: "10px", textAlign: 'right', whiteSpace: 'pre-wrap',marginTop:30 }}>{this.state.desc}</p>
-                                                
+                                                }   
                                             </div>
+                                            {this.state.desc && this.state.desc != "-" &&
                                             <div style={{cursor:'pointer',marginTop:20,color:'rgb(195 195 195)'}} className="iranyekanwebmedium " onClick={()=>this.setState({
                                                     ShowDescLimit:!this.state.ShowDescLimit
                                                 })}>{!this.state.ShowDescLimit ? ' بیشتر... ' : ''}</div>
+                                            }
 
 
 
@@ -800,11 +805,11 @@ class Products extends React.Component {
                                                         {
                                                             (this.state.UId || !this.state.ShowPriceAftLogin) ?
                                                                 <div className=" row" style={{marginTop:95}}>
-                                                                    <div className="col-lg-4 col-12 ">
+                                                                    <div className="col-lg-4 col-12 " style={{textAlign:'center'}}>
                                                                         <InputNumber value={this.state.reqNumber} inputStyle={{borderRadius:0,padding:0,textAlign:'center',fontSize:20}} mode="decimal" showButtons onValueChange={(e) => this.setState({ reqNumber: e.value })} min={1} max={this.state.number} />
 
                                                                         </div>
-                                                                    <div className="col-lg-8 col-12 ">
+                                                                    <div className="col-lg-8 col-12 " style={{textAlign:'center'}}>
                                                                     {
                                                                         ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off) != "0" &&
                                                                         <div className="mt-lg-0 mt-4"> 
@@ -820,7 +825,7 @@ class Products extends React.Component {
                                                                     }
                                                                     {
                                                                         ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off) == "0" &&
-                                                                        <div className="product_price YekanBakhFaBold" style={{ textAlign: 'right', fontSize: 25 }}>{this.persianNumber(this.roundPrice(this.state.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
+                                                                        <div className="product_price YekanBakhFaBold mt-md-0 mt-4" style={{ textAlign: 'center', fontSize: 25 }}>{this.persianNumber(this.roundPrice(this.state.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
 
                                                                     }
                                                                     </div>
@@ -855,7 +860,7 @@ class Products extends React.Component {
 
                                     </div>
                                     <div className="col-12 d-md-none d-block" >
-                                        {this.state.pic1 != "" &&
+                                        {this.state.pic1 != "" && 
                                             <Swiper {...params5} style={{ position: 'absolute' }}>
                                                 <div>
                                                     <img src={this.state.pic1} />
@@ -894,6 +899,7 @@ class Products extends React.Component {
                                                     </div>
                                                 }
                                             </div>
+                                            {(this.state.pic2.indexOf("nophoto.png") < 0 ||  this.state.pic3.indexOf("nophoto.png") < 0 || this.state.pic4.indexOf("nophoto.png") < 0 ) &&
                                             <div >
                                                 <ul className="image_list" style={{ display: 'flex', flexDirection: 'row' }}>
                                                     <li onClick={() => {
@@ -916,6 +922,7 @@ class Products extends React.Component {
                                                     }} ><img src={this.state.pic4} name="pic1" alt="" /> </li>
                                                 </ul>
                                             </div>
+                                            }
                                         </div>
                                     </div>
 

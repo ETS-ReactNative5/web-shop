@@ -7,8 +7,9 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Server from './Server.js'
 import { connect } from 'react-redux';
+import {defaults } from 'react-chartjs-2';
+import {Bar} from 'react-chartjs-2';
 import {Pie} from 'react-chartjs-2';
-import { defaults } from 'react-chartjs-2';
 
 defaults.global.defaultFontFamily   = 'iranyekanwebmedium';
 
@@ -25,26 +26,21 @@ class Charts extends React.Component {
       dashList: (this.props && this.props.location && this.props.location.state && this.props.location.state.list) ? this.props.location.state.list : [],
       NewFactors: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewFactors) ? this.props.location.state.NewFactors : null,
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
-
+      type:this.props.type||"pie",
       loading: 0,
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
     }
     data = {
-      labels: [
-        'نقدی',
-        'اعتباری'
-      ],
+      labels: this.props.labels,
       datasets: [{
         data: this.props.data,
-        backgroundColor: [
-        '#FF6384',
-        '#36A2EB'
-        ],
+        backgroundColor: this.props.backgroundColor || ['#FF6384','#36A2EB'],
         hoverBackgroundColor: [
         '#FF6384',
         '#36A2EB'
-        ]
+        ],
+        label:this.props.label||""
       }]
     };
     let that = this;
@@ -80,7 +76,12 @@ class Charts extends React.Component {
 
     return (
       <div>
-        <Pie data={data} />
+        {this.state.type == "pie" &&
+          <Pie data={data} />
+        }
+        {this.state.type == "bar" &&
+          <Bar data={data}  />
+        }
       </div>
 
     )

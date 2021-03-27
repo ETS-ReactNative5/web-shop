@@ -45,6 +45,34 @@ class ShopsList extends React.Component {
       statusDesc: null,
       SellerId: null,
       LastAmount: 0,
+      Time1_1:"",
+      Time1_2:"",
+      Time1_3:"",
+      Time1_4:"",
+      Time2_1:"",
+      Time2_2:"",
+      Time2_3:"",
+      Time2_4:"",
+      Time3_1:"",
+      Time3_2:"",
+      Time3_3:"",
+      Time3_4:"",
+      Time4_1:"",
+      Time4_2:"",
+      Time4_3:"",
+      Time4_4:"",
+      Time5_1:"",
+      Time5_2:"",
+      Time5_3:"",
+      Time5_4:"",
+      Time6_1:"",
+      Time6_2:"",
+      Time6_3:"",
+      Time6_4:"",
+      Time7_1:"",
+      Time7_2:"",
+      Time7_3:"",
+      Time7_4:"",
       loading: 0
 
     }
@@ -81,6 +109,7 @@ class ShopsList extends React.Component {
   }
 
   onHide(event) {
+    
     this.setState({
       selectedId: null,
       selectedName: null,
@@ -90,7 +119,37 @@ class ShopsList extends React.Component {
       selectedMainShop: null,
       AllowCredit: false,
       CreditCommission: 0,
-      visibleDialog: false
+      visibleDialog: false,
+      PrepareTime: '',
+      Opened: false,
+      Time1_1:"",
+      Time1_2:"",
+      Time1_3:"",
+      Time1_4:"",
+      Time2_1:"",
+      Time2_2:"",
+      Time2_3:"",
+      Time2_4:"",
+      Time3_1:"",
+      Time3_2:"",
+      Time3_3:"",
+      Time3_4:"",
+      Time4_1:"",
+      Time4_2:"",
+      Time4_3:"",
+      Time4_4:"",
+      Time5_1:"",
+      Time5_2:"",
+      Time5_3:"",
+      Time5_4:"",
+      Time6_1:"",
+      Time6_2:"",
+      Time6_3:"",
+      Time6_4:"",
+      Time7_1:"",
+      Time7_2:"",
+      Time7_3:"",
+      Time7_4:"",
 
 
     });
@@ -99,7 +158,23 @@ class ShopsList extends React.Component {
   selectedListChange(value) {
     let that = this;
     var p = [];
+        let Time = {};
+        if (value.OpenedTime) {
+          let Count=0;
+          for (let i = 0; i < 7; i++) {
+            if(value && value.OpenedTime[Count]){
+              if(value.OpenedTime[Count]["day" + (i+1)]){
 
+                for (let j = 0; j < value.OpenedTime[Count]["day" + (i+1)]?.length; j++) {
+                  Time["Time" + (i+1) + "_" + (j + 1)] = value?.OpenedTime[Count]["day" + (i+1)][j];
+                }
+                Count++;             
+              }
+              
+            }
+            
+          }
+        }
     this.setState({
       visibleDialog: true,
       selectedId: value._id,
@@ -109,8 +184,29 @@ class ShopsList extends React.Component {
       CreditCommission: value.CreditCommission,
       selectedName: value.name,
       selectedAddress: value.address,
-      selectedCall: value.call || ""
+      selectedCall: value.call || "",
+      PrepareTime: value.PrepareTime,
+      Opened: value.Opened,
+      ...Time
     })
+
+  }
+  getSettings() {
+    let that = this;
+    that.Server.send("AdminApi/getSettings", {}, function (response) {
+
+      if (response.data.result) {
+        that.setState({
+          ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
+          SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+
+        })
+      }
+      that.getShopInformation();
+
+    }, function (error) {
+    })
+
 
   }
   GetShopList() {
@@ -137,6 +233,30 @@ class ShopsList extends React.Component {
   }
   EditShopSelected() {
     let that = this;
+    let Time=[];
+    for (let s in this.state) {
+      if (s == "Time1_1") {
+        Time[0] = { day1: [this.state["Time1_1"], this.state["Time1_2"], this.state["Time1_3"], this.state["Time1_4"]] };
+      }
+      if (s == "Time2_1") {
+        Time[1] = { day2: [this.state["Time2_1"], this.state["Time2_2"], this.state["Time2_3"], this.state["Time2_4"]] };
+      }
+      if (s == "Time3_1") {
+        Time[2] = { day3: [this.state["Time3_1"], this.state["Time3_2"], this.state["Time3_3"], this.state["Time3_4"]] };
+      }
+      if (s == "Time4_1") {
+        Time[3] = { day4: [this.state["Time4_1"], this.state["Time4_2"], this.state["Time4_3"], this.state["Time4_4"]] };
+      }
+      if (s == "Time5_1") {
+        Time[4] = { day5: [this.state["Time5_1"], this.state["Time5_2"], this.state["Time5_3"], this.state["Time5_4"]] };
+      }
+      if (s == "Time6_1") {
+        Time[5] = { day6: [this.state["Time6_1"], this.state["Time6_2"], this.state["Time6_3"], this.state["Time6_4"]] };
+      }
+      if (s == "Time7_1") {
+        Time[6] = { day7: [this.state["Time7_1"], this.state["Time7_2"], this.state["Time7_3"], this.state["Time7_4"]] };
+      }
+    }
     let param = {
       token: localStorage.getItem("api_token"),
       address: this.state.selectedAddress,
@@ -147,6 +267,9 @@ class ShopsList extends React.Component {
       main: this.state.selectedMainShop,
       AllowCredit: this.state.AllowCredit,
       CreditCommission: this.state.CreditCommission,
+      PrepareTime: this.state.PrepareTime,
+      Opened: this.state.Opened,
+      OpenedTime: Time,
       edit: "1"
     };
     that.setState({
@@ -155,7 +278,7 @@ class ShopsList extends React.Component {
     let SCallBack = function (response) {
       that.onHide();
       that.setState({
-        loading: 1
+  
       })
       Alert.success('عملیات با موفقیت انجام شد', 5000);
     };
@@ -198,7 +321,7 @@ class ShopsList extends React.Component {
 
         </div>
 
-        <Dialog header="جزئیات فاکتور" visible={this.state.visibleDialog} style={{ width: '60vw' }} minY={70} onHide={this.onHide} maximizable={true}>
+        <Dialog header="مشخصات فروشگاه" visible={this.state.visibleDialog} style={{ width: '60vw' }} minY={70} onHide={this.onHide} maximizable={true}>
           <form  >
             <div className="row">
 
@@ -233,8 +356,28 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
+              {!this.state.ProductBase &&
+                  <div className="col-7">
+                    <div className="group">
+
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.PrepareTime} name="PrepareTime" onChange={(event) => this.setState({ PrepareTime: event.target.value })} required="true" />
+                      <label className="yekan">زمان تقریبی آماده سازی محصولات (دقیقه) </label>
+
+                    </div>
+                  </div>
+                  }
+             
+              
+              <div className="col-lg-12">
+                <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
+
+                  <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
+                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>به بخش فروش اقساطی متصل است</label>
+
+                </div>
+              </div>
               {this.state.AllowCredit &&
-                <div className="col-lg-3">
+                <div className="col-lg-3" style={{marginBottom:50}}>
                   <div className="group">
 
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.CreditCommission} name="CreditCommission" onChange={(event) => this.setState({ CreditCommission: event.target.value })} required="true" />
@@ -244,21 +387,320 @@ class ShopsList extends React.Component {
                 </div>
               }
               <div className="col-lg-12">
-                <div style={{ paddingRight: 8, textAlign: 'right' }}>
-
-                  <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>به بخش فروش اقساطی متصل است</label>
-
-                </div>
-              </div>
-              <div className="col-lg-12">
-                <div style={{ paddingRight: 8, textAlign: 'right' }}>
+                <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
 
                   <Checkbox inputId="laon" value={this.state.selectedMainShop} checked={this.state.selectedMainShop} onChange={e => this.setState({ selectedMainShop: e.checked })}></Checkbox>
                   <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>فروشگاه اصلی</label>
 
                 </div>
               </div>
+              {!this.state.ProductBase &&
+                  <div className="col-lg-12 col-12">
+                    <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' ,display:'flex' }} >
+                      <Checkbox inputId="Opened" value={this.state.Opened} checked={this.state.Opened} onChange={e => this.setState({ Opened: e.checked })}></Checkbox>
+                      <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>فروشگاه باز است</label>
+                    </div>
+
+                  </div>
+                  }
+                  {this.state.Opened && !this.state.ProductBase &&
+                    <div className="col-lg-12">
+                      <div className="row">
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <label className="yekan">شنبه  </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time1_1} name="Time1_1" onChange={(event) => this.setState({ Time1_1: event.target.value })} required="true" />
+                            <label className="yekan"> صبح ها از ساعت </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time1_2} name="Time1_2" onChange={(event) => this.setState({ Time1_2: event.target.value })} required="true" />
+                            <label className="yekan">صبح ها تا ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time1_3} name="Time1_3" onChange={(event) => this.setState({ Time1_3: event.target.value })} required="true" />
+                            <label className="yekan">عصرها از ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time1_4} name="Time1_4" onChange={(event) => this.setState({ Time1_4: event.target.value })} required="true" />
+                            <label className="yekan">عصرها تا ساعت</label>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="row">
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <label className="yekan">یکشنبه  </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time2_1} name="Time2_1" onChange={(event) => this.setState({ Time2_1: event.target.value })} required="true" />
+                            <label className="yekan"> صبح ها از ساعت </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time2_2} name="Time2_2" onChange={(event) => this.setState({ Time2_2: event.target.value })} required="true" />
+                            <label className="yekan">صبح ها تا ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time2_3} name="Time2_3" onChange={(event) => this.setState({ Time2_3: event.target.value })} required="true" />
+                            <label className="yekan">عصرها از ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time2_4} name="Time2_4" onChange={(event) => this.setState({ Time2_4: event.target.value })} required="true" />
+                            <label className="yekan">عصرها تا ساعت</label>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="row">
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <label className="yekan">دوشنبه  </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time3_1} name="Time3_1" onChange={(event) => this.setState({ Time3_1: event.target.value })} required="true" />
+                            <label className="yekan"> صبح ها از ساعت </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time3_2} name="Time3_2" onChange={(event) => this.setState({ Time3_2: event.target.value })} required="true" />
+                            <label className="yekan">صبح ها تا ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time3_3} name="Time3_3" onChange={(event) => this.setState({ Time3_3: event.target.value })} required="true" />
+                            <label className="yekan">عصرها از ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time3_4} name="Time3_4" onChange={(event) => this.setState({ Time3_4: event.target.value })} required="true" />
+                            <label className="yekan">عصرها تا ساعت</label>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="row">
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <label className="yekan">سه شنبه  </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time4_1} name="Time4_1" onChange={(event) => this.setState({ Time4_1: event.target.value })} required="true" />
+                            <label className="yekan"> صبح ها از ساعت </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time4_2} name="Time4_2" onChange={(event) => this.setState({ Time4_2: event.target.value })} required="true" />
+                            <label className="yekan">صبح ها تا ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time4_3} name="Time4_3" onChange={(event) => this.setState({ Time4_3: event.target.value })} required="true" />
+                            <label className="yekan">عصرها از ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time4_4} name="Time4_4" onChange={(event) => this.setState({ Time4_4: event.target.value })} required="true" />
+                            <label className="yekan">عصرها تا ساعت</label>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="row">
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <label className="yekan">چهارشنبه  </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time5_1} name="Time5_1" onChange={(event) => this.setState({ Time5_1: event.target.value })} required="true" />
+                            <label className="yekan"> صبح ها از ساعت </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time5_2} name="Time5_2" onChange={(event) => this.setState({ Time5_2: event.target.value })} required="true" />
+                            <label className="yekan">صبح ها تا ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time5_3} name="Time5_3" onChange={(event) => this.setState({ Time5_3: event.target.value })} required="true" />
+                            <label className="yekan">عصرها از ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time5_4} name="Time5_4" onChange={(event) => this.setState({ Time5_4: event.target.value })} required="true" />
+                            <label className="yekan">عصرها تا ساعت</label>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="row">
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <label className="yekan">پنجشنبه  </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time6_1} name="Time6_1" onChange={(event) => this.setState({ Time6_1: event.target.value })} required="true" />
+                            <label className="yekan"> صبح ها از ساعت </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time6_2} name="Time6_2" onChange={(event) => this.setState({ Time6_2: event.target.value })} required="true" />
+                            <label className="yekan">صبح ها تا ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time6_3} name="Time6_3" onChange={(event) => this.setState({ Time6_3: event.target.value })} required="true" />
+                            <label className="yekan">عصرها از ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time6_4} name="Time6_4" onChange={(event) => this.setState({ Time6_4: event.target.value })} required="true" />
+                            <label className="yekan">عصرها تا ساعت</label>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="row">
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <label className="yekan">جمعه  </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time7_1} name="Time7_1" onChange={(event) => this.setState({ Time7_1: event.target.value })} required="true" />
+                            <label className="yekan"> صبح ها از ساعت </label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time7_2} name="Time7_2" onChange={(event) => this.setState({ Time7_2: event.target.value })} required="true" />
+                            <label className="yekan">صبح ها تا ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time7_3} name="Time7_3" onChange={(event) => this.setState({ Time7_3: event.target.value })} required="true" />
+                            <label className="yekan">عصرها از ساعت</label>
+
+                          </div>
+                        </div>
+                        <div className="col-lg-2 col-12">
+                          <div className="group">
+
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Time7_4} name="Time7_4" onChange={(event) => this.setState({ Time7_4: event.target.value })} required="true" />
+                            <label className="yekan">عصرها تا ساعت</label>
+
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  }
 
               <div className="col-lg-12">
                 <Button style={{ marginLeft: 5, marginTop: 10 }} color="primary" className="yekan" onClick={this.EditShopSelected}>ثیت اطلاعات</Button>

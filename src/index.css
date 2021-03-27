@@ -191,7 +191,7 @@
       border-bottom: 1px solid #dadada;
   }
   .section-title  .title{
-      color:#333 !important;
+      color:#333 ;
   }
   .section-title small {
       color: #998a9b;

@@ -255,7 +255,6 @@ class ShopInformation extends React.Component {
   EditShopInformation() {
     let that = this;
     let Time = [];
-    debugger;
     for (let s in this.state) {
       if (s == "Time1_1") {
         Time[0] = { day1: [this.state["Time1_1"], this.state["Time1_2"], this.state["Time1_3"], this.state["Time1_4"]] };

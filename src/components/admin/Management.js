@@ -31,8 +31,7 @@ import Cancel_Products from './Cancel_Products.js'
 import Canceled_Products from './Canceled_Products.js';
 import Company_Actions from './Company_Actions.js';
 import Company_Request from './Company_Request.js';
-
-
+import Board from './Board.js';
 import SalesProduct from './SalesProduct.js'
 import Set from './Set.js'
 import ShopInformation from './ShopInformation.js'
@@ -236,6 +235,9 @@ class Management extends React.Component {
 
             {this.state.CId == "155" && !this.state.IsReport &&
               <Company_Request />
+            }
+            {this.state.CId == "157" && !this.state.IsReport &&
+              <Board />
             }
 
 

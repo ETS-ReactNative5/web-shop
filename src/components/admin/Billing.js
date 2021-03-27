@@ -299,7 +299,7 @@ class Billing extends React.Component {
                     </div>
                     <div className="mt-4">
 
-                      <Charts data={[this.state.LastAmount, this.state.LastCredit]} />
+                      <Charts data={[this.state.LastAmount, this.state.LastCredit]} labels={['نقدی','اعتباری']} />
                     </div>
                   </div>
                   :

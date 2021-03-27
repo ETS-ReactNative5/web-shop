@@ -305,12 +305,22 @@ class Header2 extends React.Component {
 		   </Nav.Item>
 		   
 		   {this.state.Navs.map((item,index) => {
-			  return (
-			<Nav.Item eventKey="2" className="YekanBakhFaBold">
-					<Link to={`${process.env.PUBLIC_URL}`+item.link} style={{textDecoration:'none'}}> 
-					{item.title}
-		   </Link></Nav.Item>
-			  )
+			 if(item.link && item.link.indexOf("http") > -1){
+				return (
+					<Nav.Item eventKey="2" className="YekanBakhFaBold">
+							<a href={item.link} style={{textDecoration:'none'}}> 
+							{item.title}
+				   </a></Nav.Item>
+					  )
+			 }else{
+				return (
+					<Nav.Item eventKey="2" className="YekanBakhFaBold">
+							<Link to={`${process.env.PUBLIC_URL}`+item.link} style={{textDecoration:'none'}}> 
+							{item.title}
+				   </Link></Nav.Item>
+					  )
+			 }  
+			  
 		   })
 			}
 		 </Nav>

@@ -8,7 +8,9 @@ import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import CatList from './CatList.js'
 import Photos from './Photos.js'
+import { Skeleton } from 'primereact/skeleton';
 
+import ShopList from './ShopList.js'
 
 import './Header1.css'
 import Server from './Server.js'
@@ -207,6 +209,7 @@ class MainBox2 extends React.Component {
       GotoCart: false,
       pics: [],
       Randproducts: [],
+      shopList:[],
       days: 0,
       hours: 0,
       minutes: 0,
@@ -303,7 +306,11 @@ class MainBox2 extends React.Component {
           this.setState({
             catsList: response.data.result
           })
-          this.getProducts(3, "new")
+          if(this.state.ProductBase){
+            this.getProducts(3, "new")
+          }else{
+            this.getShops();
+          }
         }
 
 
@@ -312,24 +319,44 @@ class MainBox2 extends React.Component {
         if (p)
           this.getCategory();
         else
-          this.getProducts(3, "new")
 
         console.log(error)
       })
 
   }
+  getShops(){
+      let condition = {};
+      axios.post(this.state.url + 'getShops', condition)
+        .then(response => {
+            this.getProducts(3, "new")
+
+            this.setState({
+              shopList: response.data.result
+            })
+            
+  
+  
+        })
+        .catch(error => {
+            this.getProducts(3, "new")
+
+        })
+  
+  }
   getPics(l, type) {
     let that = this;
-
     axios.post(this.state.url + 'getPics', {})
       .then(response => {
         response.data.result.map(function (item, index) {
-          if (item.name == "file1")
+          if (item.name == "file1"){
+            debugger;
             that.setState({
               logo1: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
               link1: item.link,
               text1: item.text
             })
+          }
+           
           if (item.name == "file2")
             that.setState({
               logo2: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
@@ -355,6 +382,18 @@ class MainBox2 extends React.Component {
               link5: item.link,
               text5: item.text
             })
+          if (item.name == "file8")
+            that.setState({
+              logo8: item.fileUploaded ? that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1]:null,
+              link8: item.link,
+              text8: item.text
+            })
+          if (item.name == "file9")
+            that.setState({
+              logo9: item.fileUploaded ? that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1]:null,
+              link9: item.link,
+              text9: item.text
+            })  
           if (item.name == "file11"){
             that.setState({
               SpecialImage: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1]
@@ -594,7 +633,7 @@ class MainBox2 extends React.Component {
             <div className="col-lg-12 col-12" >
               <div className="row" style={{ marginTop: 10, marginBottom: 20 }}>
 
-                <div className={this.state.logo4 && this.state.logo5 ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
+                <div className={(this.state.ProductBase || !this.state.logo5) ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
                   <Swiper {...params5} style={{ position: 'absolute' }}>
                     <div>
                       {this.state.link1 && this.state.link1.indexOf("http") > -1 ?
@@ -653,11 +692,12 @@ class MainBox2 extends React.Component {
                     </div>
                   </Swiper>
                 </div>
-                
-                {this.state.logo4 && this.state.logo5 &&
+
+                {this.state.ProductBase &&
                   <div className="col-lg-3 col-0 d-lg-block d-none "  >
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                       <div style={{ height: '49%', overflow: 'hidden' }}>
+                        
                         {this.state.link4 && this.state.link4.indexOf("http") > -1 ?
                           <a href={this.state.link4} className="" target="_blank" style={{ textDecoration: 'none' }}>
                             {this.state.text4 &&
@@ -702,6 +742,46 @@ class MainBox2 extends React.Component {
 
               </div>
             </div>
+            {!this.state.ProductBase &&
+            <div className="col-lg-12 col-12" >
+            <div className="row" style={{ marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20, padding: 20, borderRadius: 20 }}>
+              
+                    <div className="col-md-3 col-12 mb-md-0 mb-3">
+                      {!this.state.logo4 &&
+                           <Skeleton width="100%" height="100%"/>
+                      }
+                      <Link to={`${process.env.PUBLIC_URL}/` + this.state.link4} href="#" target="_blank" style={{ textDecoration: 'none', height: 120 }}>
+                        <img style={{ width: '100%' }} src={this.state.logo4}></img>
+                      </Link>
+                      
+                      </div>
+                      <div className="col-md-3 col-12 mb-md-0 mb-3">
+                      {!this.state.logo5 &&
+                           <Skeleton width="100%" height="100%"/>
+                      }
+                      <Link to={`${process.env.PUBLIC_URL}/` + this.state.link5} href="#" target="_blank" style={{ textDecoration: 'none', height: 120 }}>
+                        <img style={{ width: '100%' }} src={this.state.logo5}></img>
+                      </Link></div>
+                      <div className="col-md-3 col-12 mb-md-0 mb-3">
+                      {!this.state.logo8 &&
+                           <Skeleton width="100%" height="100%"/>
+                      }
+                      <Link to={`${process.env.PUBLIC_URL}/` + this.state.link8} href="#" target="_blank" style={{ textDecoration: 'none', height: 120 }}>
+                        <img style={{ width: '100%' }} src={this.state.logo8}></img>
+                      </Link></div>
+                      <div className="col-md-3 col-12 mb-md-0 mb-3">
+                      {!this.state.logo9 &&
+                           <Skeleton width="100%" height="100%"/>
+                      }
+                      <Link to={`${process.env.PUBLIC_URL}/` + this.state.link9} href="#" target="_blank" style={{ textDecoration: 'none', height: 120 }}>
+                        <img style={{ width: '100%' }} src={this.state.logo9}></img>
+                      </Link></div>
+                      
+                  
+
+            </div>
+            </div>
+            }
             {this.state.products.length > 0 &&
               <div className="col-lg-12 col-12"  >
                 <div style={{ background: 'rgb(85 216 255)', marginTop: 50, borderTopRightRadius: 5, borderBottomRightRadius: 5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, marginRight: 20, marginBottom: 50 }} >
@@ -794,6 +874,7 @@ class MainBox2 extends React.Component {
 
             </div>
             </div>
+            
 
             {this.state.MaxObj.length > 0 &&
               <div className="col-lg-12 col-12"  >
@@ -924,6 +1005,12 @@ class MainBox2 extends React.Component {
               <CatList _id={this.state.catsList[0]._id} UId={this.state.UId}  title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
 
             }
+            {
+              this.state.shopList[0] &&
+                 <ShopList _id={this.state.shopList[0]._id} name={this.state.shopList[0].name} style={{marginTop:30,marginBottom:30}} />
+            }
+
+            
 
             <Photos name="file6" Class="InlineImages" borderRadius="30" padding="20" width="100%" height="180" />
             {
@@ -931,6 +1018,11 @@ class MainBox2 extends React.Component {
               <CatList _id={this.state.catsList[1]._id} UId={this.state.UId}  title={this.state.catsList[1].name} name={this.state.catsList[1].name} />
 
             }
+            {
+              this.state.shopList[1] &&
+                 <ShopList _id={this.state.shopList[1]._id} name={this.state.shopList[1].name} style={{marginTop:30,marginBottom:30}} />
+            }
+            {this.state.ProductBase &&
             <div class="row" >
               <div className="col-md-6 col-12">
                 <Photos name="file8" Class="InlineImagesHalf"  />
@@ -939,17 +1031,26 @@ class MainBox2 extends React.Component {
                 <Photos name="file9" Class="InlineImagesHalf"  />
               </div>
             </div>
+            }
+            
+            <Photos name="file7" Class="InlineImages" borderRadius="30" padding="20" width="100%" height="180" />
             {
               this.state.catsList[2] &&
               <CatList _id={this.state.catsList[2]._id} UId={this.state.UId}  title={this.state.catsList[2].name} name={this.state.catsList[2].name} />
 
             }
-            <Photos name="file7" Class="InlineImages" borderRadius="30" padding="20" width="100%" height="180" />
-
+            {
+              this.state.shopList[2] &&
+                 <ShopList _id={this.state.shopList[2]._id} name={this.state.shopList[2].name} style={{marginTop:30,marginBottom:30}} />
+            }
             {
               this.state.catsList[3] &&
               <CatList _id={this.state.catsList[3]._id} UId={this.state.UId}  title={this.state.catsList[3].name} name={this.state.catsList[3].name} />
 
+            }
+            {
+              this.state.shopList[3] &&
+                 <ShopList _id={this.state.shopList[3]._id} name={this.state.shopList[3].name} style={{marginTop:30,marginBottom:30}} />
             }
 
             <div className="col-lg-8 col-12" style={{ background: '#fff', display: 'none' }} >
@@ -1064,7 +1165,7 @@ class MainBox2 extends React.Component {
               </Swiper>
 
             </div>
-            
+                
             <div className="col-lg-12 col-12" style={{ backgroundColor: '#fff', marginTop: 20, display: 'none' }}   >
               {this.state.productsBestOff.length > 0 &&
                 <div><div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ محصولات پر تخفیف</span></div>
@@ -1185,7 +1286,10 @@ class MainBox2 extends React.Component {
 
 
             </div>
-
+            {
+              this.state.shopList[3] &&
+                 <ShopList _id={this.state.shopList[3]._id} name={this.state.shopList[3].name}  />
+            }
 
             <div className="col-lg-12 col-12" style={{ backgroundColor: '#fff', marginTop: 20, display: 'none' }}   >
               ///////////////////
