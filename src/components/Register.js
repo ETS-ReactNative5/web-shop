@@ -104,7 +104,7 @@ class Register extends React.Component {
               if(this.state.ActiveSms=="smart"){
                 axios.post(this.state.url+'sendsms_smartSms', {
                   token: response.data.result.TokenKey,
-                  text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                  text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد  ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
                   mobileNo : this.state.Mobile
                 })
                 .then(response => {
@@ -123,7 +123,7 @@ class Register extends React.Component {
                       })
                       axios.post(this.state.url+'sendsms_SmsIr', {
                         token: response.data.result.TokenKey,
-                        text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                        text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد  ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
                         mobileNo : this.state.Mobile
                       })
                       .then(response => {

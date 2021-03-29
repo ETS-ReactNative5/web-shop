@@ -324,7 +324,6 @@ class Codes_Files extends React.Component {
               </div>
               <div className="col-lg-12" style={{ marginTop: 20, marginRight: 5,textAlign:'right' }}>
                 <button className="irsans" onClick={() => {
-                  debugger;
                   let Count = this.state.Count+1;
                   this.setState({
                     Count: Count
@@ -335,7 +334,7 @@ class Codes_Files extends React.Component {
                       CountArr: Arr
                     })
                 }
-                } style={{ textAlign: 'right',cursor:'pointer' }}><i class="fa fa-plus" /><span style={{ marginRight: 10 }}> اضافه کردن ردیف جدید </span>
+                } style={{ textAlign: 'right',cursor:'pointer' }}><i className="fa fa-plus" /><span style={{ marginRight: 10 }}> اضافه کردن ردیف جدید </span>
               </button>
               
               </div>

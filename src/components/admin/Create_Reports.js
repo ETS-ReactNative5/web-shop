@@ -253,7 +253,7 @@ class Create_Reports extends React.Component {
     );
 
     const delTemplate = (rowData, props) => {
-      return <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delFilter(rowData)}></i>;
+      return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delFilter(rowData)}></i>;
     }
     return (
 

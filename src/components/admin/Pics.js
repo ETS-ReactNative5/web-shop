@@ -386,7 +386,6 @@ class Pics extends React.Component {
         that.setState({
           loading: 0
         })
-        debugger;
         response.data.result.map(function (item, key) {
 
           if (item.name == "file1")
@@ -462,7 +461,6 @@ class Pics extends React.Component {
               logo12: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
               id12:item._id
             })
-            debugger;
 
           }
             
@@ -534,7 +532,7 @@ class Pics extends React.Component {
                       <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id1,'logo1')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                     </div>
-                    <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                    <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
                     <div className="col-2" >
                       <div className="group">
                         <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file2" />
@@ -556,7 +554,7 @@ class Pics extends React.Component {
                       <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id2,'logo2')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                     </div>
-                    <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                    <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
 
                     <div className="col-2" >
                       <div className="group">
@@ -579,7 +577,7 @@ class Pics extends React.Component {
                       <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id3,'logo3')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                     </div>
-                    <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                    <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
 
                     <div className="col-2" >
                       <div className="group">
@@ -602,7 +600,7 @@ class Pics extends React.Component {
                       <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id4,'logo4')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                     </div>
-                    <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                    <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
 
                     <div className="col-2" >
                       <div className="group">
@@ -625,7 +623,7 @@ class Pics extends React.Component {
                       <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id5,'logo5')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                     </div>
-                    <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                    <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
 
 
                   </div>
@@ -657,7 +655,7 @@ class Pics extends React.Component {
                         <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id6,'logo6')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                       </div>
-                      <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                      <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
 
                       <div className="col-2" >
                         <div className="group">
@@ -680,7 +678,7 @@ class Pics extends React.Component {
                         <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id7,'logo7')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                       </div>
-                      <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                      <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
 
                       <div className="col-2" >
                         <div className="group">
@@ -703,7 +701,7 @@ class Pics extends React.Component {
                         <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id8,'logo8')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
                       </div>
-                      <div class="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                      <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
 
                       <div className="col-2" >
                         <div className="group">

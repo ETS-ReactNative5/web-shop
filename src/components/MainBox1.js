@@ -14,10 +14,7 @@ import Haraj  from './Haraj.js'
 import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom'
 
-import axios from 'axios'  
-import ReactGA from 'react-ga';
-ReactGA.initialize('G-C524RVK7ZJ');
-ReactGA.pageview(window.location.pathname + window.location.search);
+import axios from 'axios' 
 
 class MainBox1 extends React.Component {
     constructor(props){
@@ -30,9 +27,7 @@ class MainBox1 extends React.Component {
             url:this.Server.getUrl()
 
         }
-        ReactGA.event({
-            pageLoaded: true
-          });
+   
         axios.post(this.state.url+'checktoken', {
             token: localStorage.getItem("api_token")
         })

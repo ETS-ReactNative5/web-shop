@@ -223,14 +223,14 @@ class Invoice extends React.Component {
           v.name = v.userData[0].name;
           v.company = v.userData[0].company;
         }
-        v.delete = <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
+        v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
         v.print =
           <ReactToPrint
             content={() => that.componentRef}
           >
             <PrintContextConsumer>
               {({ handlePrint }) => (
-                <i class="far fa-print" onClick={()=>{
+                <i className="far fa-print" onClick={()=>{
                   that.setState({
                     printParam: v
                   })
@@ -246,7 +246,7 @@ class Invoice extends React.Component {
       that.setState({
         GridDataFactors: response.data.result[0]
       })
-      this.getSetting();
+      that.getSetting();
     };
     let ECallBack = function (error) {
       that.setState({

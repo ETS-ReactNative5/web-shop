@@ -38,7 +38,6 @@ class Show_Reports extends React.Component {
     this.showReports = this.showReports.bind(this);
   }
   GetFilters() {
-    debugger;
     let that = this;
     let param = {
       token: localStorage.getItem("api_token"),
@@ -105,7 +104,6 @@ class Show_Reports extends React.Component {
     })
 
     let SCallBack = function (response) {
-      debugger;
       that.setState({
         output:response.data.result,
         loading: 0

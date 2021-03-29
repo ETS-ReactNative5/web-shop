@@ -30,6 +30,7 @@ import Codes_Files from './components/admin/Codes_Files.js'
 import Cancel_Products from './components/admin/Cancel_Products.js'
 import Canceled_Products from './components/admin/Canceled_Products.js'
 import Server from './components/Server.js'
+import withTracker from './components/withTracker';
 
 
 import Users from './components/admin/Users.js'
@@ -57,6 +58,7 @@ import { BrowserRouter, Switch, Route, HashRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import reducer from './reducer.js'
 import { createStore } from 'redux'
+import ReactGA  from 'react-ga';
 
 class App extends Component {
 
@@ -75,6 +77,8 @@ class App extends Component {
   componentDidMount () {
     // Include the Crisp code here, without the <script></script> tags
     window.$crisp = [];
+    ReactGA.initialize('G-TWHDY0YJDL');
+
     this.getSettings();
     (function() {
       var d = document;
@@ -111,6 +115,7 @@ class App extends Component {
         <Provider store={this.store}>
           <HashRouter >
             <div>
+              
               <Helmet>
                 <title>{this.state.STitle}</title>
                 <link rel="shortcut icon" href="/favicon.png"></link>
@@ -122,7 +127,7 @@ class App extends Component {
                 </Helmet>
               <ScrollToTop>
                 <Switch>
-                  <Route path="/" component={MainBox1} exact />
+                  <Route path="/" component={withTracker(MainBox1)} exact />
                   <Route path="/admin/Cats" component={Cats} />
                   <Route path="/Charts" component={Charts} />
                   <Route path="/admin/Billing" component={Billing} />
@@ -153,12 +158,12 @@ class App extends Component {
                   <Route path="/admin/Set" component={Set} />
                   <Route path="/admin/Dashboard" component={Dashboard} />
                   <Route path="/admin/ChangeInformation" component={ChangeInformation} />
-                  <Route path="/Products" component={Products} />
+                  <Route path="/Products"  component={withTracker(Products)}  />
                   <Route path="/Photos" component={Photos} />
                   <Route path="/Map" component={Map} />
                   <Route path="/CatList" component={CatList} />
-                  <Route path="/MainBox1" component={MainBox1} exact />
-                  <Route path="/Login" component={Login} />
+                  <Route path="/MainBox1"  component={withTracker(MainBox1)}  exact />
+                  <Route path="/Login"  component={withTracker(Login)} />
                   <Route path="/admin/" component={AdminLogin} exact />
                   <Route path="/Shop" component={Shop} />
                   <Route path="/Cart" component={Cart} />

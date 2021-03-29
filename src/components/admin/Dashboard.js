@@ -250,7 +250,7 @@ class Dashboard extends React.Component {
 
             <div style={styles}>
             
-             <div  class="d-md-none d-block">
+             <div  className="d-md-none d-block">
                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end'}}>
                <a href="/" style={{ textDecoration: 'none' }}>
                     <img src={this.state.logo} style={{ marginTop: 20,height:40 }}  />
@@ -263,7 +263,7 @@ class Dashboard extends React.Component {
             
             
                </div>   
-            <div class="d-md-block d-none" style={{position:'inherit',height:'auto',overflowY:'auto'}}  >
+            <div className="d-md-block d-none" style={{position:'inherit',height:'auto',overflowY:'auto'}}  >
                <Sidenav defaultOpenKeys={['0', '2']} appearance="default" expanded={true} >
                 <Sidenav.Header>
                   <a href="/" style={{ textDecoration: 'none' }}>

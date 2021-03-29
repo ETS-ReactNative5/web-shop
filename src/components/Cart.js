@@ -20,6 +20,7 @@ import CatList from './CatList.js'
 import { InputNumber } from 'primereact/inputnumber';
 
 import { RadioButton } from 'primereact/radiobutton';
+import { Toast } from 'primereact/toast';
 
 class Cart extends React.Component {
     constructor(props){
@@ -29,6 +30,8 @@ class Cart extends React.Component {
         this.Payment = this.Payment.bind(this);
         this.computeReduce = this.computeReduce.bind(this);
         this.Server = new Server();
+        this.toast =  React.createRef();
+
         this.state={
             GridData:[],
             layout: 'list',
@@ -119,7 +122,7 @@ class Cart extends React.Component {
                 let products_id=[];
                 for(let i=0;i<this.state.GridData.length;i++){
                     if(this.state.GridData[i].products[0])
-                        products_id.push({_id:this.state.GridData[i].product_id,SellerId:((this.state.GridData[i].product_detail&&this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId),SellerName:((this.state.GridData[i].Seller&&this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : ""),number:this.state.GridData[i].number,CatId:this.state.GridData[i].products[0].category_id,title:this.state.GridData[i].products[0].title,subTitle:this.state.GridData[i].products[0].subTitle,desc:this.state.GridData[i].products[0].desc,price:(this.roundPrice(this.state.GridData[i].number*this.state.GridData[i].price)),UnitPrice:this.state.GridData[i].price,credit:this.state.GridData[i].getFromCredit,SellerId:this.state.GridData[i].products[0].SellerId,fileUploaded:this.state.GridData[i].products[0].fileUploaded,status:"0",color:this.state.GridData[i].Color,size:this.state.GridData[i].Size});
+                        products_id.push({_id:this.state.GridData[i].product_id,SellerId:((this.state.GridData[i].product_detail&&this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId),SellerName:((this.state.GridData[i].Seller&&this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : ""),SellerMobile:((this.state.GridData[i].Seller&&this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].mobile : ""),number:this.state.GridData[i].number,CatId:this.state.GridData[i].products[0].category_id,title:this.state.GridData[i].products[0].title,subTitle:this.state.GridData[i].products[0].subTitle,desc:this.state.GridData[i].products[0].desc,price:(this.roundPrice(this.state.GridData[i].number*this.state.GridData[i].price)),UnitPrice:this.state.GridData[i].price,credit:this.state.GridData[i].getFromCredit,SellerId:this.state.GridData[i].products[0].SellerId,fileUploaded:this.state.GridData[i].products[0].fileUploaded,status:"0",color:this.state.GridData[i].Color,size:this.state.GridData[i].Size});
                 }
                 that.setState({
                     StepNumber:3
@@ -142,6 +145,8 @@ class Cart extends React.Component {
                             res = response.data.result ? response.data.result.SalePaymentRequestResult : {}; 
                             if(res.Token > 0 && res.Status=="0"){
                                 window.location = "https://pec.shaparak.ir/NewIPG/?token="+res.Token;
+                            }else{
+                                this.toast.current.show({severity: 'error', summary: <div> {res.Message} <br/>برای اتمام خرید می توانید در زمان دیگری مراجعه کنید یا از امکان پرداخت در محل استفاده کنید</div>, life: 8000});
                             }
                         }else if(that.state.ActiveBank == "z"){
                             res = response.data.result; 
@@ -412,7 +417,7 @@ class Cart extends React.Component {
                      <br/>
                      </div>
                      <div className="col-12 mb-3">
-                         <div class="row" style={{alignItems:'center'}} >
+                         <div className="row" style={{alignItems:'center'}} >
                          
                          <div className="col-lg-3 col-12 YekanBakhFaMedium mt-lg-0 mt-4" style={{textAlign:'center'}}>
                  
@@ -586,7 +591,8 @@ class Cart extends React.Component {
         <div className="row justify-content-center firstInPage" style={{direction:'rtl'}}   >
         
         <div className="col-lg-8" style={{backgroundColor:'#fff',borderRadius:5}}>
-            
+            <Toast ref={this.toast} position="top-right" style={{fontFamily:'YekanBakhFaBold',textAlign:'right'}} />
+  
             {this.state.GridData.length > 0 ? 
             <div>
             <div className="col-12" style={{textAlign:'right',marginBottom:50}}>

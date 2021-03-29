@@ -102,7 +102,7 @@ class Brands extends React.Component {
             address: v.address,
             logo: logo ? <img src={logo} style={{ height: 80 }} alt="" /> : null,
             logoTemp: logo ? logo : null,
-            showInSite: v.showInSite ? <i class="fa fa-check text-success" style={{ fontSize: 18 }} /> : null
+            showInSite: v.showInSite ? <i className="fa fa-check text-success" style={{ fontSize: 18 }} /> : null
 
           })
         })

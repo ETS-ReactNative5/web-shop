@@ -19,10 +19,10 @@ class Category extends React.Component {
         this.Server = new Server();
         this.state = {
             id: this.props.location.search.split("id=")[1],
-            getSubs: this.props.location.search.split("getSubs=")[1],
+            getSubs: this.props.location.search.indexOf("getSubs=") > -1 ? true : false,
             GridData: [],
             layout: 'list',
-            Exist: false,
+            Exist: false,   
             PId: null,
             UId: null,
             EmptyCat: -1,
@@ -179,7 +179,7 @@ class Category extends React.Component {
                             <div style={{ textAlign: 'right' }}><i className="fas fa-truck" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.Seller[0].PrepareTime || "30")} دقیقه پس از پرداخت</span></div>
                         }
                         <div style={{ position: 'absolute', bottom: 15, width: '100%', left: 0 }}>
-                            <Link className="p-button-secondary btn-light" to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#" style={{ padding: 10, marginTop: 10, width: '85%', fontFamily: 'YekanBakhFaBold' }}>
+                            <Link className="p-button-info btn-warning " to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#" style={{ padding: 10, marginTop: 10, width: '85%', fontFamily: 'YekanBakhFaBold' }}>
                                 مشاهده جزئیات / خرید
 
                     </Link>
@@ -217,17 +217,17 @@ class Category extends React.Component {
 
                         <div>
                             <div style={{ backgroundColor: '#fff', alignItems: 'center', justifyContent: 'space-between', borderRadius: 5, marginBottom: 5, padding: 20 }} className="row iranyekanwebmedium">
-                                <div class="col-lg-2 col-sm-4 col-12" style={{ textAlign: 'center' }}>مرتب سازی براساس : </div>
-                                <div class="col-lg-8 col-sm-12 col-12">
-                                    <SelectButton optionLabel="name" optionValue="value" style={{ textAlign: 'right', direction: 'ltr' }} value={this.state.Sort} options={this.state.SortOptions} onChange={(e) => {
+                                <div className="col-lg-2 col-sm-4 col-12  mt-md-0 mt-3" style={{ textAlign: 'center' }}>مرتب سازی براساس : </div>
+                                <div className="col-lg-7 col-md-6 col-12 mt-md-0 mt-5" className="mt-md-0 mt-5">
+                                    <SelectButton optionLabel="name" optionValue="value" style={{ textAlign: 'right', direction: 'ltr',display:'flex',justifyContent:'space-around',flexWrap:'wrap' }} value={this.state.Sort} options={this.state.SortOptions} onChange={(e) => {
                                         this.setState({ Sort: e.value });
                                         this.getProducts({ Exist: this.state.Exist, Sort: e.value })
 
                                     }}
                                     ></SelectButton>
                                 </div>
-                                <div class="col-lg-2 col-sm-12 col-12">
-                                <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-evenly',borderRadius:5,padding:5}} >
+                                <div className="col-lg-3 col-sm-12 col-12  mt-md-0 mt-5" style={{border:'1px solid #eee',borderRadius:5}}>
+                                <div style={{display:'flex',alignItems:'center',justifyContent:'space-evenly',borderRadius:5,padding:5}} >
 
                                     <InputSwitch  checked={this.state.Exist} onChange={(e) => {
                                         this.setState({
@@ -236,7 +236,7 @@ class Category extends React.Component {
                                         this.getProducts({ Exist: e.value });
                                     }
                                     } />
-                                <label className="yekan">
+                                <label className="yekan" style={{marginBottom:0}}>
                                         فقط کالاهای موجود
                                 </label>
                                 </div>    
@@ -249,7 +249,7 @@ class Category extends React.Component {
                                 :
                                 <div>
                                     {this.state.EmptyCat == 0 ?
-                                        <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i class="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
+                                        <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i className="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
                                         :
                                         <div style={{ zIndex: 10000 }} >
                                             <p style={{ textAlign: 'center' }}>

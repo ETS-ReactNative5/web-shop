@@ -193,7 +193,7 @@ class Accounts extends React.Component {
     }
     const delTemplate = (rowData) => {
       if (rowData.status == 0)
-        return <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delTransfer(rowData)}></i>;
+        return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delTransfer(rowData)}></i>;
     }
     return (
       <div style={{ direction: 'rtl' }}>

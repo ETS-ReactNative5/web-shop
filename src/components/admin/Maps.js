@@ -163,7 +163,6 @@ class Maps extends React.Component {
   selectedUserChange(value) {
     let that = this;
     var p = [];
-    debugger;
     this.setState({
       selectedId: value._id,
       name: value.name,

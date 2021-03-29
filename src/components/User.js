@@ -343,7 +343,6 @@ class User extends React.Component {
               </div>
               {
                 car.products.map((v,i) => {
-                  debugger;
                   let pic = (v.fileUploaded && v.fileUploaded.split("public")[1]) ? this.state.absoluteUrl + v.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
 
                   return (
@@ -769,15 +768,15 @@ class User extends React.Component {
 
                 <li><hr /></li>
 
-                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 1 }); this.GetFactors(['1']) }}><p className={this.state.ActiveLi == 1 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i class="fal fa-shopping-bag" style={{ marginLeft: 10, fontSize: 17 }}></i> سفارش های من  </p> </li>
-                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 2 }); this.GetPayment(1); }}><p className={this.state.ActiveLi == 2 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i class="fal fa-id-card" style={{ marginLeft: 10, fontSize: 17 }}></i> گزارش تراکنش ها</p> </li>
-                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 3 }); }}><p className={this.state.ActiveLi == 3 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i class="fal fa-user" style={{ marginLeft: 10, fontSize: 17 }}></i> ویرایش مشخصات</p> </li>
-                <li style={{ display: 'none' }} onClick={() => { this.setState({ ActiveLi: 4 }); }}><p className={this.state.ActiveLi == 4 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i class="fal fa-comments" style={{ marginLeft: 10, fontSize: 17 }}></i> نظرات</p> </li>
-                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 5 }); }}><p className={this.state.ActiveLi == 5 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i class="fal fa-map-marker" style={{ marginLeft: 10, fontSize: 17 }}></i> آدرس</p> </li>
-                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 8 }); this.GetFactors("4",1); }}><p className={this.state.ActiveLi == 8 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i class="fal fa-trash" style={{ marginLeft: 10, fontSize: 17 }}></i> درخواست مرجوعی</p> </li>
+                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 1 }); this.GetFactors(['1']) }}><p className={this.state.ActiveLi == 1 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i className="fal fa-shopping-bag" style={{ marginLeft: 10, fontSize: 17 }}></i> سفارش های من  </p> </li>
+                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 2 }); this.GetPayment(1); }}><p className={this.state.ActiveLi == 2 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i className="fal fa-id-card" style={{ marginLeft: 10, fontSize: 17 }}></i> گزارش تراکنش ها</p> </li>
+                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 3 }); }}><p className={this.state.ActiveLi == 3 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i className="fal fa-user" style={{ marginLeft: 10, fontSize: 17 }}></i> ویرایش مشخصات</p> </li>
+                <li style={{ display: 'none' }} onClick={() => { this.setState({ ActiveLi: 4 }); }}><p className={this.state.ActiveLi == 4 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i className="fal fa-comments" style={{ marginLeft: 10, fontSize: 17 }}></i> نظرات</p> </li>
+                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 5 }); }}><p className={this.state.ActiveLi == 5 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i className="fal fa-map-marker" style={{ marginLeft: 10, fontSize: 17 }}></i> آدرس</p> </li>
+                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 8 }); this.GetFactors("4",1); }}><p className={this.state.ActiveLi == 8 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i className="fal fa-trash" style={{ marginLeft: 10, fontSize: 17 }}></i> درخواست مرجوعی</p> </li>
 
                 <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 6 }); }}><hr /></li>
-                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 7 }); this.logout(); }}><p className={this.state.ActiveLi == 6 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i class="fal fa-times" style={{ marginLeft: 10, fontSize: 17 }}></i> خروج از حساب</p> </li>
+                <li style={{ cursor: 'pointer' }} onClick={() => { this.setState({ ActiveLi: 7 }); this.logout(); }}><p className={this.state.ActiveLi == 6 ? 'YekanBakhFaBold side-active' : 'YekanBakhFaBold'} style={{ fontSize: 17 }} ><i className="fal fa-times" style={{ marginLeft: 10, fontSize: 17 }}></i> خروج از حساب</p> </li>
 
 
               </ul>

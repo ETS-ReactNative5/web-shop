@@ -71,7 +71,6 @@ class Board extends React.Component {
       that.setState({
         loading: 0
       })
-      debugger;
       that.setState({
         SellerId: response.data.authData.shopId,
         UserId: response.data.authData.userId,

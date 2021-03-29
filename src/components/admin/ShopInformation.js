@@ -35,6 +35,7 @@ class ShopInformation extends React.Component {
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
       address: null,
       call: null,
+      mobile:null,
       about: null,
       user_id: null,
       ShopId: null,
@@ -166,7 +167,6 @@ class ShopInformation extends React.Component {
           loading: 0
         })
         let Time = {};
-        debugger;
         if (response.data.result[0].OpenedTime) {
           let Count=0;
           for (let i = 0; i < 7; i++) {
@@ -196,6 +196,7 @@ class ShopInformation extends React.Component {
           FreeInExpensive: response.data.result[0].FreeInExpensive,
           SelectedSubCities: response.data.result[0].SelectedSubCities,
           call: response.data.result[0].call,
+          mobile: response.data.result[0].mobile,
           about: response.data.result[0].about,
           user_id: response.data.result[0].UserId,
           name: response.data.result[0].name,
@@ -290,6 +291,7 @@ class ShopInformation extends React.Component {
       FreeInExpensive: this.state.FreeInExpensive,
       SelectedSubCities: this.state.SelectedSubCities,
       call: this.state.call,
+      mobile: this.state.mobile,
       about: this.state.about,
       ShopId: this.state.ShopId,
       name: this.state.name,
@@ -368,6 +370,14 @@ class ShopInformation extends React.Component {
 
                       <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.call} name="call" onChange={(event) => this.setState({ call: event.target.value })} required="true" />
                       <label className="yekan">اطلاعات تماس فروشگاه</label>
+
+                    </div>
+                  </div>
+                  <div className="col-lg-7">
+                    <div className="group">
+
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.mobile} name="mobile" onChange={(event) => this.setState({ mobile: event.target.value })} required="true" />
+                      <label className="yekan">شماره تلفن همراه - جهت دریافت پیامک های مربوط به سفارشات</label>
 
                     </div>
                   </div>
@@ -819,7 +829,7 @@ class ShopInformation extends React.Component {
                           <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال سزاسری</label>
                         </div>
                         {this.state.SendToNearCity &&
-                          <div class="col-12" style={{ marginTop: 20, marginBottom: 20 }}>
+                          <div className="col-12" style={{ marginTop: 20, marginBottom: 20 }}>
                             <p className="yekan">
                               شهرهای مجاور شهر خود را انتخاب کنید
                             </p>

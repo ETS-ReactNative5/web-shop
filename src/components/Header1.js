@@ -4,6 +4,7 @@ import { withRouter, Redirect, Link } from 'react-router-dom'
 import axios from 'axios'
 import { OverlayPanel } from 'primereact/overlaypanel';
 
+import ReactGA from 'react-ga';
 
 import { AutoComplete } from 'primereact/autocomplete';
 
@@ -84,7 +85,11 @@ class Header1 extends React.Component {
 	onSelect(event) {
 		var _id = event.originalEvent.target.getAttribute("_id");
 		var _catId = event.originalEvent.target.getAttribute("_catId")
-
+		ReactGA.event({
+			category: 'Search',
+			action: 'Search',
+			label: 'Search'
+		  });
 		this.setState({
 			brand: event.value.title
 		})
@@ -289,33 +294,33 @@ class Header1 extends React.Component {
 
 
 
-						<div className="col-lg-5 col-12 order-lg-1 order-2 text-lg-left text-right">
+						<div className="col-lg-5 col-7 order-lg-1 order-1 text-lg-left text-right">
 							<div className="wishlist_cart d-flex flex-row align-items-center " style={{ justifyContent: 'flex-start' }}>
 
 								<div className="cart_container d-flex flex-row align-items-baseline">
 									<div className="cart_icon">
 									</div>
 									<div style={{ marginRight: 5, marginLeft: 5 }}>
-										<Link to={`${process.env.PUBLIC_URL}/`}><i class="fal fa-home mr-md-4 mr-1" style={{ fontSize: 22, color: '#716d6d' }} /></Link>
+										<Link to={`${process.env.PUBLIC_URL}/`}><i className="fal fa-home mr-md-4 mr-1" style={{ fontSize: 22, color: '#716d6d' }} /></Link>
 									</div>
 									<div style={{ marginRight: 5, marginLeft: 5 }}>
 										{this.state.userId &&
 											<div>
 
-												<span onClick={(e) => this.op.current.toggle(e)} to={`${process.env.PUBLIC_URL}/user?id=` + this.state.userId}><i class="fal fa-user ml-md-4 ml-2 mr-md-4 mr-2" style={{ fontSize: 22, color: '#716d6d', cursor: 'pointer' }} /></span>
+												<span onClick={(e) => this.op.current.toggle(e)} to={`${process.env.PUBLIC_URL}/user?id=` + this.state.userId}><i className="fal fa-user ml-md-4 ml-2 mr-md-4 mr-2" style={{ fontSize: 22, color: '#716d6d', cursor: 'pointer' }} /></span>
 
 											</div>
 										}
 									</div>
 									<div style={{ marginRight: 5, marginLeft: 5 }}>
 										{this.state.isAdmin == "1" &&
-											<Link to={`${process.env.PUBLIC_URL}/admin/admin`}><i class="fal fa-user-plus ml-md-4 mr-md-4 mr-2 ml-2" style={{ fontSize: 25, color: '#20ad31' }} /></Link>
+											<Link to={`${process.env.PUBLIC_URL}/admin/admin`}><i className="fal fa-user-plus ml-md-4 mr-md-4 mr-2 ml-2" style={{ fontSize: 25, color: '#20ad31' }} /></Link>
 										}
 									</div>
 
 									{this.state.userId &&
 										<div className="cart_content">
-											<div className=" iranyekanwebregular"><Link to={`${process.env.PUBLIC_URL}/cart`}><i class="fal fa-shopping-cart mr-4 mr-1" style={{ fontSize: 22, color: '#3e2c29' }} /></Link></div>
+											<div className=" iranyekanwebregular"><Link to={`${process.env.PUBLIC_URL}/cart`}><i className="fal fa-shopping-cart mr-4 mr-1" style={{ fontSize: 22, color: '#3e2c29' }} /></Link></div>
 											<div className="cart_count"><span className="iranyekanwebregular">
 												{this.props.CartNumber && this.props.CartNumber != "undefined" &&
 													this.persianNumber(this.props.CartNumber)
@@ -346,7 +351,7 @@ class Header1 extends React.Component {
 								</div>
 							</div>
 						</div>
-						<div className="col-lg-5 col-12 order-lg-2 order-2 text-lg-left text-right" style={{ direction: 'rtl', visibility: this.props.HideSearch ? 'hidden' : 'visible' }}>
+						<div className="col-lg-5 col-12 order-lg-1 order-3 text-lg-left text-right" style={{ direction: 'rtl', visibility: this.props.HideSearch ? 'hidden' : 'visible' }}>
 							<div >
 								<div style={{ position: 'relative' }}>
 									<AutoComplete placeholder="جستجو کنید ... " inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, borderColor: '#dedddd', background: '#eee', borderRadius: 15, padding: 7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplate.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
@@ -356,7 +361,7 @@ class Header1 extends React.Component {
 								</div>
 							</div>
 						</div>
-						<div className="col-lg-2 col-12 order-lg-3 order-1">
+						<div className="col-lg-2 col-5 order-lg-3 order-2">
 							<div className="text-lg-right text-center mr-lg-4 mr-0 ">
 								{this.state.logo &&
 									<div style={{ textAlign: 'center' }}>

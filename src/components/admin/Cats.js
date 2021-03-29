@@ -265,7 +265,6 @@ class AdminProduct extends React.Component {
     this.setState({ CatsChoosen_edit: event.target.value });
     if (event.target.value != "0") {
       document.getElementById("DeleteCategory").style.display = "inline";
-      debugger;
       this.setState(
         {
           CategoryOrder: this.state.CategoryList[event.nativeEvent.target.selectedIndex - 1].order || '',
@@ -361,7 +360,6 @@ class AdminProduct extends React.Component {
         selectedSpec.push(s);
       }
     }*/
-    debugger;
 
     let param = {
       Category: this.state.Category,
@@ -533,7 +531,6 @@ class AdminProduct extends React.Component {
         loading: 0
       })
       if (SelectedSpecs) {
-        debugger;
         that.setState({
           showSpecs: false
         })

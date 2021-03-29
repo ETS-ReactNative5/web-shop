@@ -179,16 +179,16 @@ class Header1 extends React.Component {
 									<div className="cart_icon">
 									</div>
 									<div >
-										<Link to={`${process.env.PUBLIC_URL}/`}><i class="fa fa-home" style={{marginRight:20,fontSize:22,color:'#af7e7e'}} /></Link>
+										<Link to={`${process.env.PUBLIC_URL}/`}><i className="fa fa-home" style={{marginRight:20,fontSize:22,color:'#af7e7e'}} /></Link>
 									</div>
 									<div>
 										{this.state.userId &&
-											<Link to={`${process.env.PUBLIC_URL}/user?id=`+this.state.userId}><i class="fa fa-user" style={{marginRight:20,marginLeft:20,fontSize:22,color:'#716d6d'}} /></Link>
+											<Link to={`${process.env.PUBLIC_URL}/user?id=`+this.state.userId}><i className="fa fa-user" style={{marginRight:20,marginLeft:20,fontSize:22,color:'#716d6d'}} /></Link>
 										}
 									</div>
 									
 									<div className="cart_content">
-										<div className=" yekan"><Link to={`${process.env.PUBLIC_URL}/cart`}><i class="fa fa-shopping-cart" style={{marginRight:20,fontSize:22,color:'#614d4d'}} /></Link></div>
+										<div className=" yekan"><Link to={`${process.env.PUBLIC_URL}/cart`}><i className="fa fa-shopping-cart" style={{marginRight:20,fontSize:22,color:'#614d4d'}} /></Link></div>
 										<div className="cart_count"><span>
 										{this.props.CartNumber && this.props.CartNumber !="undefined" &&
 											this.persianNumber(this.props.CartNumber)

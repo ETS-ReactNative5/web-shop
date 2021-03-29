@@ -16,7 +16,7 @@ class Dialog extends React.Component {
 
         return (
 					<div>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onClick={this.handleClickButton}>
+<button type="button" className="btn btn-primary" data-toggle="modal" data-target="#myModal" onClick={this.handleClickButton}>
   Open modal
 </button>
 

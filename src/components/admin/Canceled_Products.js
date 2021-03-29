@@ -194,7 +194,7 @@ class Canceled_Products extends React.Component {
       value.products[i].UnitPrice = value.products[i].UnitPrice ? value.products[i].UnitPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
 
       value.products[i].detail = "";
-      value.products[i].edit = <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(value._id, value.products[i]._id, value.products[i].title, "del")}></i>
+      value.products[i].edit = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(value._id, value.products[i]._id, value.products[i].title, "del")}></i>
       if (value.products[i].color)
         value.products[i].detail += "رنگ : " + value.products[i].color + "\n";
       if (value.products[i].size)
@@ -310,7 +310,7 @@ class Canceled_Products extends React.Component {
           v.name = v.userData[0].name;
           v.company = v.userData[0].company;
         }
-        v.delete = <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
+        v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
         
 
 
@@ -483,9 +483,9 @@ class Canceled_Products extends React.Component {
                 <div>
                   <p className="yekan" style={{ float: "right" }}>تغییر وضعیت سفارش</p>
                   <select className="custom-select yekan" value={this.state.newStatus} name="status" onChange={this.handleChangeStatus} >
-                    <option value="-3">لغو محصول توسط فروشنده</option>
-                    <option value="-2">درخواست لغو توسط خریدار</option>
-                    <option value="-1">لغو شده</option>
+                    <option value="-3" style={{display:'none'}}>لغو محصول توسط فروشنده</option>
+                    <option value="-2" style={{display:'none'}}>درخواست لغو توسط خریدار</option>
+                    <option value="-1" style={{display:'none'}}>لغو شده</option>
                     <option value="0">ناموفق</option>
                     <option value="1">ثبت شده</option>
                     <option value="2">آماده ارسال</option>

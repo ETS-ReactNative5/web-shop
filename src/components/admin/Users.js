@@ -452,22 +452,40 @@ class Users extends React.Component {
       })
       that.GetMaps();
       let NewUsers = 0;
+      let managers = 0;
+      let SiteUsers = 0 ;
+      let ActiveUsers = 0;
+      let NotActiveUsers = 0;
       response.data.result.map(function (v, i) {
         if (v.level == "0" && (v.levelOfUser == -1 || v.levelOfUser == null))
           NewUsers++;
-        if (v.level == "0")
+        if (v.level == "0"){
           v.level = "کاربر";
-        else
+          SiteUsers++;
+        }
+        else{
           v.level = "مدیر";
-        if (v.status == "1")
+          managers++;
+        }
+        if (v.status == "1"){
+          ActiveUsers++;
           v.status = "فعال"
-        else
+
+        }
+        else{
+          NotActiveUsers++;
           v.status = "غیر فعال";
+        }
+        v.Radif = i+1;
         v.delete = <button className="btn btn-primary irsans" onClick={() => that.DelUser(v._id, v.name)}>حذف</button>
       })
       that.setState({
         GridDataUsers: response.data.result,
-        NewUsers: NewUsers
+        NewUsers: NewUsers,
+        managers: managers,
+        SiteUsers: SiteUsers,
+        ActiveUsers:ActiveUsers,
+        NotActiveUsers: NotActiveUsers
       })
     };
     let ECallBack = function (error) {
@@ -549,9 +567,20 @@ class Users extends React.Component {
               </div>
             </div>
 
+            <div className="section-title " style={{ textAlign: 'right',display:'flex',justifyContent:'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >‍‍‍‍‍‍‍لیست اعضا</span>
+            
+            <div style={{display:'flex',justifyContent:'space-around',width:'calc(100% - 200px)'}}>
+              <div><span className="IRANYekan">کاربران عادی : </span><span className="IRANYekan">{this.state.SiteUsers}</span></div>
+              <div><span className="IRANYekan">مدیران و فروشندگان : </span><span className="IRANYekan">{this.state.managers}</span></div>
+              <div><span className="IRANYekan">فعال : </span><span className="IRANYekan">{this.state.ActiveUsers}</span></div>
+              <div><span className="IRANYekan">غیر فعال : </span><span className="IRANYekan">{this.state.NotActiveUsers}</span></div>
 
-            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >‍‍‍‍‍‍‍لیست اعضا</span></div>
+            </div>
+            </div>
+            
             <DataTable rowClassName={this.rowClass} rows={15} paginator={true} responsive ref={(el) => this.dt = el} value={this.state.GridDataUsers} selectionMode="single" selection={this.state.selectedUser} onSelectionChange={e => this.selectedUserChange(e.value)}>
+              
+              <Column field="Radif" header="ردیف" className="irsans" style={{ textAlign: "center" }} /> 
               <Column field="username" filter={true} header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
               <Column field="name" filter={true} header="نام" className="irsans" style={{ textAlign: "center" }} />
               <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />

@@ -98,7 +98,6 @@ class SalePose extends React.Component {
       DeviceBox: this.state.DeviceBox,
       edit:this.state.edit
     };
-    debugger;
     for (let state in this.state) {
       if (state.indexOf("chequ") > -1 && state != "chequeBox") {
         param[state] = this.state[state]?.toString().replace(/,/g, "");
@@ -198,7 +197,6 @@ class SalePose extends React.Component {
         device[v] = value[v]?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       }
     }
-    debugger;
     this.setState({
       edit:true,
       visibleManageSale: true,
@@ -224,7 +222,6 @@ class SalePose extends React.Component {
       ...cheque,
       ...device
     })
-    debugger;
   }
   GetSale() {
     let that = this;
@@ -303,7 +300,7 @@ class SalePose extends React.Component {
     );
 
     const delTemplate = (rowData, props) => {
-      return <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delFilter(rowData)}></i>;
+      return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delFilter(rowData)}></i>;
     }
     return (
 
@@ -539,7 +536,7 @@ class SalePose extends React.Component {
               </div>
 
               {this.state.type && this.state.type == "4" &&
-                <div class="col-12" >
+                <div className="col-12" >
                   <div className="row">
 
                     <div className="col-lg-2 col-md-6 col-12">

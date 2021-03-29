@@ -248,7 +248,7 @@ class Shop extends React.Component {
             <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} rows={12} itemTemplate={this.itemTemplate}></DataView>
             :
                                 <div>
-                                        <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i class="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
+                                        <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i className="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
                                         
 
                                 </div>

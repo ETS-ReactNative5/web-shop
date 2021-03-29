@@ -224,7 +224,6 @@ class Company_Request extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
-      debugger;
       that.setState({
         CodeFile:response.data.result,
         loading: 0
@@ -300,7 +299,7 @@ class Company_Request extends React.Component {
     );
 
     const delTemplate = (rowData, props) => {
-      return <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delAction(rowData)}></i>;
+      return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delAction(rowData)}></i>;
     }
     return (
 

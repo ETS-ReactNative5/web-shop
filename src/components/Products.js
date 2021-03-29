@@ -786,20 +786,20 @@ class Products extends React.Component {
                                                         {this.state.MainShopInfo.length >0  &&
                                                         <div>
 
-                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-shipping-fast" style={{fontSize:21,color:'green',paddingLeft:7}}></i>آماده ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span></p></div>
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i className="fal fa-shipping-fast" style={{fontSize:21,color:'green',paddingLeft:7}}></i>آماده ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span></p></div>
 
-                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-box-open" style={{fontSize:21,color:'green',paddingLeft:7}}></i>موجود در انبار فروشنده</p></div>
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i className="fal fa-box-open" style={{fontSize:21,color:'green',paddingLeft:7}}></i>موجود در انبار فروشنده</p></div>
                                                                 {this.state.ProductBase ?
-                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-rocket" style={{fontSize:21,color:'green',paddingLeft:7}}></i>ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span>  تا <span style={{ color: '#333', fontSize: 20 }}>{this.state.PrepareTime||3} </span>روز کاری دیگر</p></div>
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i className="fal fa-rocket" style={{fontSize:21,color:'green',paddingLeft:7}}></i>ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span>  تا <span style={{ color: '#333', fontSize: 20 }}>{this.state.PrepareTime||3} </span>روز کاری دیگر</p></div>
                                                                 :
-                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i class="fal fa-rocket" style={{fontSize:21,color:'green',paddingLeft:7}}></i>ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span>  تا <span style={{ color: '#333', fontSize: 20 }}>{this.state.PrepareTime||30} </span> دقیقه پس از پرداخت </p></div>
+                                                                <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><i className="fal fa-rocket" style={{fontSize:21,color:'green',paddingLeft:7}}></i>ارسال توسط <span style={{ color: '#333', fontSize: 20 }}>{this.state.MainShopInfo[0].name} </span>  تا <span style={{ color: '#333', fontSize: 20 }}>{this.state.PrepareTime||30} </span> دقیقه پس از پرداخت </p></div>
                                                                 }
 
                                                         </div>
                                                      
                                                         }
 
-                                                        <div className="product_text "><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><span class="fa fa-star " style={{ marginLeft: 5, color: "#f18517" }}></span>{this.state.ratingText}</p></div>
+                                                        <div className="product_text "><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><span className="fa fa-star " style={{ marginLeft: 5, color: "#f18517" }}></span>{this.state.ratingText}</p></div>
 
                                                         <div className="product_text borderBottom" style={{ marginTop: 0 }}><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}><Rating value={this.state.rating} readonly={this.state.UId ? false : true} cancel={false} onChange={(e) => this.changeRating(e)}></Rating></p></div>
                                                         {

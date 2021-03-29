@@ -356,8 +356,11 @@ class AdminProduct extends React.Component {
   }
   onHide(event) {
     this.setState({ visibleModalPic: false, visibleModalEditProduct: false, visibleModalOff: false, TableLayoutModal: false });
-    this.GetCategory();
-    this.GetProduct();
+    if(this.state.selectedCatId || (!this.state.selectedId && !this.state.selectedCatId))
+      this.GetCategory(this.state.selectedCatId);
+    if(this.state.selectedId || (!this.state.selectedId && !this.state.selectedCatId))
+      this.GetProduct(this.state.selectedId);
+    
 
   }
   handleClose() {
@@ -692,6 +695,20 @@ class AdminProduct extends React.Component {
       if (property["value"] == row.category_id)
         CatSelectedName = property["name"]
     }
+    let ShopArraySelected = [];
+    if(row.product_detail){
+      for(let i=0;i<row.product_detail.length;i++){
+        ShopArraySelected[this.state.ShopArray.indexOf(row.product_detail[i].SellerId)]=1;
+
+      }
+    }else{
+      for(let i=0;i<row.SellerId.length;i++){
+        ShopArraySelected[this.state.ShopArray.indexOf(row.SellerId[i])]=1;
+      }
+    }
+    
+    
+    
     this.setState({
       id_edit: (this.state.SellerId != this.state.MainShopId) ? row.product_id || row.product_detail[0].product_id : row._id,
       title_edit: row.title,
@@ -713,7 +730,8 @@ class AdminProduct extends React.Component {
       ShopId_product_edit: "",
       CatSpecs_Edit: row.Spec,
       SelectedColors_edit: null,
-      SelectedSize_edit: null
+      SelectedSize_edit: null,
+      ShopArraySelected:ShopArraySelected
     })
     if (row.Spec) {
       for (let i = 0; i < row.Spec.length; i++) {
@@ -1274,7 +1292,6 @@ class AdminProduct extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
-      debugger;
       that.setState({
         GridData: response.data.result
       })
@@ -1292,6 +1309,12 @@ class AdminProduct extends React.Component {
     this.Server.send("MainApi/GetProductsPerCat", param, SCallBack, ECallBack)
   }
   GetProduct(id) {
+    if(!id){
+      this.setState({
+        selectedCatId: null,
+        selectedId: null,
+      })
+    }
     let that = this;
     let param = {
       token: localStorage.getItem("api_token"),
@@ -1482,15 +1505,18 @@ class AdminProduct extends React.Component {
     let SCallBack = function (response) {
 
       let ShopArray = [],
-        ShopArrayName = [];
+        ShopArrayName = [],
+        ShopArraySelected = [];
       for (let i = 0; i < response.data.result.length; i++) {
         ShopArray[i] = response.data.result[i]._id;
         ShopArrayName[i] = response.data.result[i].name;
+        ShopArraySelected[i] = 0;
       }
       that.setState({
         ShopArray: ShopArray,
         ShopArrayName: ShopArrayName,
         ShopId: ShopArray[0],
+        ShopArraySelected:0,
         loading: 0
       })
       that.GetProduct();
@@ -1534,9 +1560,15 @@ class AdminProduct extends React.Component {
       }
     }
     if(_id){
+      this.setState({
+        selectedId:_id
+      })
       this.GetProduct(_id)
 
     }else{
+      this.setState({
+        selectedCatId:_catId
+      })
       this.GetProductsOfCategory(_catId)
     }
   }
@@ -1940,7 +1972,6 @@ class AdminProduct extends React.Component {
                           return (<div className="col-6" >
                             <div className="group">
                               <input className="form-control yekan" autoComplete="off" type="text" value={this.state[v.Etitle][j].priceChange}  onChange={(event) => { 
-                                debugger; 
                                 let temp = this.state[v.Etitle];
                                  temp[j].priceChange = event.target.value;
                                   this.setState({ [v.Etitle]: temp }) }} required="true" />
@@ -1992,7 +2023,7 @@ class AdminProduct extends React.Component {
               <AutoComplete placeholder="نام دسته بندی یا کالای مورد نظر را جستجو کنید" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
             </div>
             <div className="col-md-3 col-12 mt-2 mt-md-2" style={{ textAlign: 'center' }}>
-              <i class="fas fa-sync" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.GetProduct()} ></i>
+              <i className="fas fa-sync" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.GetProduct()} ></i>
             </div>
             <div className="col-3" style={{ textAlign: 'left', display: 'none' }}>
               <Dropdown options={this.sortOptions} value={this.state.sortKey} optionLabel="label" placeholder="مرتب سازی" onChange={this.onSortChange} />
@@ -2023,7 +2054,7 @@ class AdminProduct extends React.Component {
                       <option value=""></option>
                       {
                         this.state.ShopArray && this.state.ShopArray.map((v, i) => {
-                          return (<option value={v} >{this.state.ShopArrayName[i]}</option>)
+                          return (<option value={v} >{this.state.ShopArrayName[i]} {this.state.ShopArraySelected[i] ? '*' : ''}</option>)
                         })
                       }
                     </select>
@@ -2153,8 +2184,6 @@ class AdminProduct extends React.Component {
                         <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</p>
                         <MultiSelect value={this.state[v.Etitle+"_edit"+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
                           let vv=[]
-                          debugger;
-
                           for(let val of v.values){
 
                             if(event.value.indexOf(val.value) > -1)
@@ -2172,7 +2201,6 @@ class AdminProduct extends React.Component {
                           return (<div className="col-6" >
                             <div className="group">
                               <input className="form-control yekan" autoComplete="off" type="text" value={this.state[v.Etitle+"_edit"][j].priceChange}  onChange={(event) => { 
-                                debugger; 
                                 let temp = this.state[v.Etitle+"_edit"];
                                  temp[j].priceChange = event.target.value;
                                   this.setState({ [v.Etitle+"_edit"]: temp }) }} required="true" />

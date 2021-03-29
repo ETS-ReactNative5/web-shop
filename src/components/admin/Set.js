@@ -304,7 +304,7 @@ class Set extends React.Component {
             <Panel header="تنظیمات سیستم" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <div className="row" >
                 <div className="col-12" style={{display:'none'}} >
-                  <div class="row">
+                  <div className="row">
                       <div className="col-lg-3 col-md-5 col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                         <RadioButton value="1" style={{ textAlign: "center", fontSize: 18 }} className="yekan" name="Template" onChange={(e) => this.setState({ Template: e.value })} checked={this.state.Template === '1'} />
                         <label style={{ textAlign: "center", fontSize: 18 }} className="yekan">قالب مبتنی بر محصول</label>

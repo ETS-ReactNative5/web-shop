@@ -40,6 +40,7 @@ class ShopsList extends React.Component {
       selectedName: null,
       selectedAddress: null,
       selectedCall: null,
+      selectedMobile: null,
       selectedId: null,
       visibleDialog: false,
       statusDesc: null,
@@ -115,6 +116,7 @@ class ShopsList extends React.Component {
       selectedName: null,
       selectedAddress: null,
       selectedCall: null,
+      selectedMobile: null,
       selectedCommission: null,
       selectedMainShop: null,
       AllowCredit: false,
@@ -185,6 +187,7 @@ class ShopsList extends React.Component {
       selectedName: value.name,
       selectedAddress: value.address,
       selectedCall: value.call || "",
+      selectedMobile: value.mobile || "",
       PrepareTime: value.PrepareTime,
       Opened: value.Opened,
       ...Time
@@ -261,6 +264,7 @@ class ShopsList extends React.Component {
       token: localStorage.getItem("api_token"),
       address: this.state.selectedAddress,
       call: this.state.selectedCall,
+      mobile: this.state.selectedMobile,
       ShopId: this.state.selectedId,
       name: this.state.selectedName,
       commission: this.state.selectedCommission,
@@ -270,7 +274,8 @@ class ShopsList extends React.Component {
       PrepareTime: this.state.PrepareTime,
       Opened: this.state.Opened,
       OpenedTime: Time,
-      edit: "1"
+      edit: "1",
+      editByAdmin:"1"
     };
     that.setState({
       loading: 0
@@ -314,7 +319,6 @@ class ShopsList extends React.Component {
               <Column field="UserId" header="شناسه فروشنده" className="yekan" style={{ textAlign: "center" }} />
               <Column field="name" header="نام فروشگاه" className="yekan" style={{ textAlign: "center" }} />
               <Column field="address" header="آدرس" className="yekan" style={{ textAlign: "center" }} />
-              <Column field="commission" header="پورسانت" className="yekan" style={{ textAlign: "center" }} />
 
             </DataTable>
           </div>
@@ -329,14 +333,6 @@ class ShopsList extends React.Component {
                 <div className="group">
                   <input className="form-control yekan" autoComplete="off" type="text" value={this.state.selectedName} name="selectedName" onChange={(event) => this.setState({ selectedName: event.target.value })} required="true" />
                   <label className="yekan">نام فروشگاه</label>
-                </div>
-              </div>
-              <div className="col-lg-3">
-                <div className="group">
-
-                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.selectedCommission} name="selectedCommission" onChange={(event) => this.setState({ selectedCommission: event.target.value })} required="true" />
-                  <label className="yekan">پورسانت</label>
-
                 </div>
               </div>
 
@@ -356,6 +352,15 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
+              <div className="col-lg-12">
+                <div className="group">
+
+                  <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.selectedMobile} name="selectedMobile" onChange={(event) => this.setState({ selectedMobile: event.target.value })} required="true" />
+                  <label className="yekan">شماره تلفن همراه - جهت دریافت پیامک های مربوط به سفارشات</label>
+
+                </div>
+              </div>
+              
               {!this.state.ProductBase &&
                   <div className="col-7">
                     <div className="group">

@@ -214,7 +214,7 @@ class Header2 extends React.Component {
 						<Link to={"/category?id="+item._id}   style={{textDecoration:'none',textAlign:'right'}} className="iranyekanweblight">{item.name}</Link>
 					</Nav.Item>
 					:
-					<Dropdown icon={<Link to={"/category?id="+item._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} eventKey={index+"-"+1} title={item.name} className="iranyekanweblight"  style={{textAlign:'right'}}>
+					<Dropdown icon={<Link to={"/category?getSubs=1&&id="+item._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} eventKey={index+"-"+1} title={item.name} className="iranyekanweblight"  style={{textAlign:'right'}}>
 						{
 						  item.children.map((itemC,indexC) => {
 							let C = indexC+1;  
@@ -226,7 +226,7 @@ class Header2 extends React.Component {
 								<Link to={"/category?id="+itemC._id}   style={{textDecoration:'none',textAlign:'right'}} className="iranyekanweblight">{itemC.name}</Link>
 							</Dropdown.Item>
 							:
-							<Dropdown.Menu icon={<Link to={"/category?id="+itemC._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} title={itemC.name} eventKey={EventKey+"-"+1} >
+							<Dropdown.Menu icon={<Link to={"/category?getSubs=1&&id="+itemC._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} title={itemC.name} eventKey={EventKey+"-"+1} >
 									{itemC.children.map((itemD,indexD) => {
 										let D = indexD+1;  
 										let EventKey = indexD+"-"+1;
@@ -236,7 +236,7 @@ class Header2 extends React.Component {
 												<Link to={"/category?id="+itemD._id}   style={{textDecoration:'none',textAlign:'right'}} className="iranyekanweblight">{itemD.name}</Link>
 											</Dropdown.Item>
 											:
-											<Dropdown.Menu icon={<Link to={"/category?id="+itemD._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} title={itemD.name} eventKey={EventKey+"-"+1} >
+											<Dropdown.Menu icon={<Link to={"/category?getSubs=1&&id="+itemD._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} title={itemD.name} eventKey={EventKey+"-"+1} >
 													{itemD.children.map((itemE,indexE) => {
 														let D = itemE+1;  
 														let EventKey = itemE+"-"+1;
@@ -246,7 +246,7 @@ class Header2 extends React.Component {
 																<Link to={"/category?id="+itemE._id}   style={{textDecoration:'none',textAlign:'right'}} className="iranyekanweblight">{itemE.name}</Link>
 															</Dropdown.Item>
 															:
-															<Dropdown.Menu icon={<Link to={"/category?id="+itemE._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} title={itemE.name} eventKey={EventKey+"-"+1} >
+															<Dropdown.Menu icon={<Link to={"/category?getSubs=1&&id="+itemE._id}   style={{textDecoration:'none',textAlign:'right',float:'left'}} className="iranyekanweblight" ><Icon icon="page-top" style={{fontSize:17,color:'#333'}} /></Link>} title={itemE.name} eventKey={EventKey+"-"+1} >
 																	{itemE.children.map((itemF,indexF) => {
 																		let D = itemF+1;  
 																		let EventKey = itemF+"-"+1;
@@ -300,7 +300,7 @@ class Header2 extends React.Component {
 		   
 		   <Nav.Item eventKey="1" className="YekanBakhFaBold" onClick={()=>this.setState({OpenSideBar:true})} >
 		   	
-		   	<span style={{paddingRight:5}} class="fa fa-bars"></span><span style={{paddingRight:5}}>دسته بندی کالاها</span> 
+		   	<span style={{paddingRight:5}} className="fa fa-bars"></span><span style={{paddingRight:5}}>دسته بندی کالاها</span> 
 			
 		   </Nav.Item>
 		   

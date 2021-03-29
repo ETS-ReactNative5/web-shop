@@ -204,7 +204,7 @@ class Login extends React.Component {
               if(this.state.ActiveSms=="smart"){
                 axios.post(this.state.url+'sendsms_smartSms', {
                   token: response.data.result.TokenKey,
-                  text: this.state.AccessAfterReg ? "کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                  text: this.state.AccessAfterReg ? "کد ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
                   mobileNo : this.state.inputEmail.trim()
                 })
                 .then(response => {
@@ -223,7 +223,7 @@ class Login extends React.Component {
                       })
                       axios.post(this.state.url+'sendsms_SmsIr', {
                         token: response.data.result.TokenKey,
-                        text: this.state.AccessAfterReg ? "کد امنیتی ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                        text: this.state.AccessAfterReg ? "کد  ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
                         mobileNo : this.state.inputEmail.trim()  
                       })
                       .then(response => {
@@ -480,7 +480,7 @@ class Login extends React.Component {
                     <div style={{display:'flex',justifyContent:'spaceBetween'}}>
                       <div>
                         {this.state.Step != 0 &&
-                          <i class="fal fa-arrow-circle-right" style={{cursor:'pointer',fontSize:28}} onClick={()=>{this.setState({Step:0,inputPassword:"",HasError:0})}} />
+                          <i className="fal fa-arrow-circle-right" style={{cursor:'pointer',fontSize:28}} onClick={()=>{this.setState({Step:0,inputPassword:"",HasError:0})}} />
                         }
                       </div>
                       <div>
@@ -509,7 +509,7 @@ class Login extends React.Component {
 
 
                     <div>
-                      <div onClick={this.getPassword} className="YekanBakhFaBold" style={{cursor:'pointer',textAlign:'right',marginTop:30,display:'flex',alignItems:'center',color:'blue'}}><span>بازیابی رمز عبور</span><i class="fal fa-arrow-left" style={{marginRight:7}}></i></div>
+                      <div onClick={this.getPassword} className="YekanBakhFaBold" style={{cursor:'pointer',textAlign:'right',marginTop:30,display:'flex',alignItems:'center',color:'blue'}}><span>بازیابی رمز عبور</span><i className="fal fa-arrow-left" style={{marginRight:7}}></i></div>
                     </div>
                     </div>
                    }

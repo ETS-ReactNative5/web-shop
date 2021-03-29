@@ -274,7 +274,7 @@ class Billing extends React.Component {
     }
     const delTemplate = (rowData,props) => {
       if (rowData.status == 0)
-        return <i class="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delTransfer(rowData)}></i>;
+        return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delTransfer(rowData)}></i>;
     }
 
     return (
@@ -337,8 +337,8 @@ class Billing extends React.Component {
 
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-12">
+                <div className="row">
+                  <div className="col-12">
                     <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ لیست ده درخواست آخر </span> </div>
                     <div className="datatable-responsive-demo" >
                       <DataTable responsive className="p-datatable-responsive-demo" value={this.state.GridDataTransferReq} selectionMode="single"   >

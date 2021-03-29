@@ -78,7 +78,7 @@ class Footer extends React.Component {
 							  {this.state.GridInfo[0] &&
 							     
 								<p className="YekanBakhFaBold" style={{color:'green',textAlign:'center',fontSize:14,whiteSpace:'pre-wrap',lineHeight:2}}>
-									<i class="fal fa-phone-plus" style={{color:'#333',display:'block',fontSize:40,marginBottom:20}}></i>
+									<i className="fal fa-phone-plus" style={{color:'#333',display:'block',fontSize:40,marginBottom:20}}></i>
 									{this.persianNumber(this.state.GridInfo[0].call)}
 								</p>
     							  }
@@ -99,7 +99,7 @@ class Footer extends React.Component {
 								this.state.GridBlogs && this.state.GridBlogs.length > 0 &&
 							<div>
 
-							<p  className="YekanBakhFaBold" style={{textAlign:'right'}}><i class="fal fa-link"></i> آخرین مقالات</p>
+							<p  className="YekanBakhFaBold" style={{textAlign:'right'}}><i className="fal fa-link"></i> آخرین مقالات</p>
 							{
 								this.state.GridBlogs.map(function(item,index){
 									if(!item.FixPage){
