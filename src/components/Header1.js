@@ -274,7 +274,7 @@ class Header1 extends React.Component {
 
 					}
 					{(this.props.credit != "undefined" && this.props.credit != 0 && this.props.credit != undefined) &&
-						<p className="yekan" style={{textAlign:'right'}} ><span>موجودی اعتباری : </span><span>{this.props.credit ? this.persianNumber(this.props.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : 0} تومان</span></p>
+						<p className="yekan" style={{textAlign:'right'}} ><span>موجودی کیف پول : </span><span>{this.props.credit ? this.persianNumber(this.props.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : 0} تومان</span></p>
 					}
 					<Link to={`${process.env.PUBLIC_URL}/User`} style={{ display: 'block' }}><span className="yekan">مشاهده حساب کاربری</span> </Link>
 					<div style={{display:'flex',justifyContent:'center'}}>
@@ -294,7 +294,7 @@ class Header1 extends React.Component {
 
 
 
-						<div className="col-lg-5 col-7 order-lg-1 order-1 text-lg-left text-right">
+						<div className="col-lg-5 col-8 order-lg-1 order-1 text-lg-left text-right">
 							<div className="wishlist_cart d-flex flex-row align-items-center " style={{ justifyContent: 'flex-start' }}>
 
 								<div className="cart_container d-flex flex-row align-items-baseline">
@@ -361,7 +361,7 @@ class Header1 extends React.Component {
 								</div>
 							</div>
 						</div>
-						<div className="col-lg-2 col-5 order-lg-3 order-2">
+						<div className="col-lg-2 col-4 order-lg-3 order-2">
 							<div className="text-lg-right text-center mr-lg-4 mr-0 ">
 								{this.state.logo &&
 									<div style={{ textAlign: 'center' }}>

@@ -142,9 +142,32 @@ class Products extends React.Component {
         }
         that.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
     }
+    getPics(l, type) {
+        let that = this;
+        this.setState({
+            loading:true
+        })
+        axios.post(this.state.url + 'getPics', {})
+          .then(response => {
+            response.data.result.map(function (item, index) {
+              
+              if (item.name == "file13"){
+                that.setState({
+                  loading_pic: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1]
+                })
+              }
+                  
+            })
+            this.getSettings();      
+        })
+          .catch(error => {
+            this.getSettings();      
+        })
+    
+      }
     componentDidMount() {
         document.getElementsByTagName("body")[0].scrollTo(0, 0);
-        this.getSettings();      
+        this.getPics();
     }
     getProduct(){
         let that = this;
@@ -355,6 +378,9 @@ class Products extends React.Component {
     }
     getComment(limit) {
         let that = this;
+        this.setState({
+            loading:false
+        })
         let param = {
             ProductId: this.state.id,
             limit: limit || 5,
@@ -675,6 +701,8 @@ class Products extends React.Component {
 
                 <Header1 />
                 <Header2 />
+                
+
                 <Dialog header={this.state.title} visible={this.state.visibleDialog} style={{ width: '700px' }} modal={true} onHide={() => this.setState({ visibleDialog: false })}>
                     <div className="row" >
                         <div className="col-12" style={{ textAlign: 'center' }}>
@@ -712,6 +740,8 @@ class Products extends React.Component {
                         </div>
                     </div>
                 </Dialog>
+                {
+                !this.state.loading ? 
                 <div className="single_product firstInPage" style={{ direction: 'rtl' }} >
 
                     <div >
@@ -907,19 +937,19 @@ class Products extends React.Component {
                                                             visibleDialog: true,
                                                             DialogPic: this.state.pic2
                                                         })
-                                                    }} ><img src={this.state.pic2} name="pic1" alt="" /> </li>
+                                                    }} ><img src={this.state.pic2} style={{maxHeight:170}} name="pic2" alt="" /> </li>
                                                     <li onClick={() => {
                                                         this.setState({
                                                             visibleDialog: true,
                                                             DialogPic: this.state.pic3
                                                         })
-                                                    }} ><img src={this.state.pic3} name="pic1" alt="" /> </li>
+                                                    }} ><img src={this.state.pic3} style={{maxHeight:170}} name="pic3" alt="" /> </li>
                                                     <li onClick={() => {
                                                         this.setState({
                                                             visibleDialog: true,
                                                             DialogPic: this.state.pic4
                                                         })
-                                                    }} ><img src={this.state.pic4} name="pic1" alt="" /> </li>
+                                                    }} ><img src={this.state.pic4} style={{maxHeight:170}} name="pic4" alt="" /> </li>
                                                 </ul>
                                             </div>
                                             }
@@ -1149,8 +1179,26 @@ class Products extends React.Component {
                     </div>
 
                 </div>
-                <Footer />
+                :
+                <div style={{ zIndex: 10000 }} >
+                  <p style={{ textAlign: 'center' }}>
+                    
+                    <img src={this.state.loading_pic}  />
+                  </p>
+        
+                </div>
+                }
+                {!this.state.loading ? 
+                
+                <Footer /> 
+                : 
+                <div>
+
+                </div>
+
+                }
             </div>
+            
         )
     }
 }

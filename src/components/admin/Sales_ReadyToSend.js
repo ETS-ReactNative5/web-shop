@@ -114,7 +114,6 @@ class Sales_Registered extends React.Component {
     setTimeout(function(){
       
       let x = that;
-      debugger;  
       let selectedP = that.state.GridDataFactors[0].products[that.state.ProductSelectedIndex];
       that.setState({
         AllowChangeStatusReadyToSend:((Date.now() - selectedP.LastChangeDate_num) > 1200000 && selectedP.status == "3") ? false : true
@@ -450,10 +449,8 @@ class Sales_Registered extends React.Component {
         <div className="row justify-content-center">
 
           <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
-            <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی نقدی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
-            {this.state.CreditSupport &&
-              <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی اعتباری : {this.persianNumber(parseInt(this.state.LastCredit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
-            }
+            <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
+            
             <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها (آماده ارسال)</span></div>
             
             <div className="datatable-responsive-demo">
@@ -470,7 +467,7 @@ class Sales_Registered extends React.Component {
                   <Column field="paykAmount" header="هزینه پیک"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
                 {this.state.CreditSupport && this.state.isMainShop == 1 &&
-                  <Column field="Credit" header="کسر از اعتبار"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                  <Column field="Credit" header="کسر از کیف پول"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
                 {this.state.isMainShop == 1 &&
                 <Column field="refId" header="رسید تراکنش"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
@@ -562,7 +559,7 @@ class Sales_Registered extends React.Component {
               <Column field="price" header="مبلغ پرداختی" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
 
               {this.state.CreditSupport && 
-                <Column field="credit" header="کسر از اعتبار" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <Column field="credit" header="کسر از کیف پول" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               }
               <Column field="detail" header="جزئیات" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               {this.state.isMainShop == 1 &&

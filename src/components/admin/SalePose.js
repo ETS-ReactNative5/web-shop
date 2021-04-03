@@ -19,6 +19,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import { connect } from 'react-redux';
 import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
+import { parse } from 'query-string';
 
 class SalePose extends React.Component {
   constructor(props) {
@@ -42,10 +43,14 @@ class SalePose extends React.Component {
       IntroducedPrice: "",
       creditAmount:"",
       debtorAmount:"",
+      Device_UnitAmount_Price_S90:"2300000",
+      Device_UnitAmount_Price_S90_color:"2450000",
+      Device_UnitAmount_Price_S910:"2850000",
+      Device_UnitAmount_Price_S58:"1450000",
+      Device_UnitAmount_Price_Verifone:"2650000",
       edit:false
 
     }
-
 
   }
   componentDidMount() {
@@ -85,6 +90,7 @@ class SalePose extends React.Component {
       user: this.state.user,
       type: this.state.type,
       totalAmount: this.state.totalAmount.toString().replace(/,/g, ""),
+      offAmount : this.state.offAmount.toString().replace(/,/g, ""),
       cacheAmount: this.state.cacheAmount.toString().replace(/,/g, ""),
       getRegisterAmount: this.state.getRegisterAmount,
       model: this.state.model,
@@ -142,7 +148,7 @@ class SalePose extends React.Component {
       }
     }
     for (let state in this.state) {
-      if (state.indexOf("Device_") > -1 && state != "DeviceBox") {
+      if (state.indexOf("Device_") > -1 && state != "DeviceBox" && state.indexOf("UnitAmount") == -1) {
 
         device[state] = ""
       }
@@ -154,6 +160,7 @@ class SalePose extends React.Component {
       customerFamily: '',
       type: '1',
       totalAmount: '',
+      offAmount: 0,
       cacheAmount: '',
       getRegisterAmount: false,
       finalDate:'',
@@ -205,8 +212,9 @@ class SalePose extends React.Component {
       customerFamily: value.customerFamily,
       user: value.user,
       type: value.type,
-      totalAmount: value.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-      cacheAmount: value.cacheAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      totalAmount: value.totalAmount ? value.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
+      offAmount: value.offAmount ? value.offAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
+      cacheAmount: value.cacheAmount ? value.cacheAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
       getRegisterAmount: value.getRegisterAmount,
       finalDate:value.finalDate,
       selectedId: value._id,
@@ -326,6 +334,9 @@ class SalePose extends React.Component {
               <Column field="customerFamily" header="نام خانوادگی " className="irsans" style={{ textAlign: "center" }} />
 
               <Column field="totalAmount" header="مبلغ کل (تومان)" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="offAmount" header="تخفیف" className="irsans" style={{ textAlign: "center" }} />
+
+              
               <Column field="cacheAmount" header="مبلغ نقدی (تومان)" className="irsans" style={{ textAlign: "center" }} />
               <Column field="del" body={delTemplate} header="حذف" className="irsans" style={{ textAlign: "center" }} />
             </DataTable>
@@ -365,7 +376,7 @@ class SalePose extends React.Component {
               </div>
               <div className="col-lg-3">
                 <label className="labelNoGroup irsans">نوع</label>
-                <select className="custom-select irsans" value={this.state.type} name="type" onChange={(event) => this.setState({ type: event.target.value })} style={{ marginBottom: 20 }} >
+                <select className="custom-select irsans" value={this.state.type} name="type" onChange={(event) => this.setState({ type: event.target.value,creditAmount:event.target.value == 4 ? 0 : this.state.creditAmount })} style={{ marginBottom: 20 }} >
                   <option value="1">نقد</option>
                   <option value="2">اقساط</option>
                   <option value="3">نقد-اقساط</option>
@@ -417,6 +428,9 @@ class SalePose extends React.Component {
                 <div className="group">
                   <input min={0} max={9} className="form-control irsans" style={{ width: 150 }} autoComplete="off" type="text" value={this.state.Device_Number} name="Device_Number" onChange={(event) => {
                     let that = this;
+                    for(let i=0;i<event.target.value;i++){
+                      this.setState({ ["Device_UnitAmount_" + i]: this.state["Device_UnitAmount_Price_S90"] });
+                    }
                     this.setState({ Device_Number: event.target.value })
                     if (isNaN(parseInt(event.target.value)))
                       that.setState({ DeviceBox: [] })
@@ -430,22 +444,28 @@ class SalePose extends React.Component {
                 </div>
               </div>
               {this.state.DeviceBox && this.state.DeviceBox.map((item, index) => {
+
+
+
                 return (
                   <div className="col-12">
                     <div className="row">
                       <div className="col-lg-3">
                         <label className="labelNoGroup irsans">مدل دستگاه</label>
-                        <select className="custom-select irsans" id={"Device_Model_" + index} name={"Device_Model_" + index} value={this.state["Device_Model_" + index]} onChange={(event) => { this.setState({ ["Device_Model_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} style={{ marginBottom: 20 }} >
-                          <option value="S-90">S-90</option>
-                          <option value="S-910">S-910</option>
-                          <option value="S-58">S58</option>
+                        <select className="custom-select irsans" id={"Device_Model_" + index} name={"Device_Model_" + index} value={this.state["Device_Model_" + index]} onChange={(event) => {
+                          this.setState({ ["Device_Model_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),["Device_UnitAmount_" + index]: this.state["Device_UnitAmount_Price_"+event.target.value],["Device_TotalAmount_" + index]: (this.state["Device_UnitAmount_Price_"+event.target.value] ? parseInt(this.state["Device_UnitAmount_Price_"+event.target.value].toString().replace(/,/g, "")) : 0) + (this.state["Device_RegisterAmount_" + index] ? parseInt(this.state["Device_RegisterAmount_" + index].toString().replace(/,/g, "")) : 0) }) 
+                          }} style={{ marginBottom: 20 }} >
+                          <option value="S90">S90</option>
+                          <option value="S90_color">S90 (رنگی)</option>
+                          <option value="S910">S910</option>
+                          <option value="S58">S58</option>
                           <option value="Verifone">Verifone</option>
                         </select>
                       </div>
 
                       <div className="col-lg-3">
                         <div className="group">
-                          <input className="form-control irsans" autoComplete="off" type="text" id={"Device_RegisterAmount_" + index} name={"Device_RegisterAmount_" + index} value={this.state["Device_RegisterAmount_" + index]} onChange={(event) => {
+                          <input className="form-control irsans" autoComplete="off"  type="text" id={"Device_RegisterAmount_" + index} name={"Device_RegisterAmount_" + index} value={this.state["Device_RegisterAmount_" + index]} onChange={(event) => {
                              let computedPrice =(parseInt(event.target.value.toString().replace(/,/g, "") || 0) + parseInt(this.state["Device_UnitAmount_" + index] ? this.state["Device_UnitAmount_" + index].toString().replace(/,/g, "") : 0))
                             this.setState({ creditAmount:'',cacheAmount:'',["Device_TotalAmount_" + index]: computedPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") , ["Device_RegisterAmount_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })
                             let that = this;
@@ -464,7 +484,7 @@ class SalePose extends React.Component {
                       </div>
                       <div className="col-lg-3">
                         <div className="group">
-                          <input className="form-control irsans" autoComplete="off" type="text" id={"Device_UnitAmount_" + index} name={"Device_UnitAmount_" + index} value={this.state["Device_UnitAmount_" + index]} onChange={(event) => {
+                          <input className="form-control irsans" autoComplete="off" disabled type="text" id={"Device_UnitAmount_" + index} name={"Device_UnitAmount_" + index} value={this.state["Device_UnitAmount_" + index]} onChange={(event) => {
                             let computedPrice = (parseInt(event.target.value.toString().replace(/,/g, "") || 0) + parseInt(this.state["Device_RegisterAmount_" + index] ? this.state["Device_RegisterAmount_" + index].toString().replace(/,/g, "") : 0));
                             this.setState({ creditAmount:'',cacheAmount:'',["Device_TotalAmount_" + index]: computedPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","), ["Device_UnitAmount_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })
                             let that = this;
@@ -498,16 +518,40 @@ class SalePose extends React.Component {
               <div className="col-12">
                 <div className="row">
                   <div className="col-lg-3">
-                    {(this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
+                    {(this.state.type == "1" || this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
                       <div className="group">
-                        <input className="form-control irsans" autoComplete="off" type="text" value={this.state.cacheAmount} name="cacheAmount" onChange={(event) => this.setState({ creditAmount:(parseInt(this.state.totalAmount.toString().replace(/,/g, "")) - parseInt(event.target.value.toString().replace(/,/g, ""))).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),cacheAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
+                        <input className="form-control irsans" autoComplete="off" type="text" value={this.state.cacheAmount} name="cacheAmount" onChange={(event) => this.setState({ creditAmount:(parseInt(this.state.totalAmount.toString().replace(/,/g, "")) - parseInt(this.state.offAmount.toString().replace(/,/g, "")) - parseInt(event.target.value.toString().replace(/,/g, ""))).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),cacheAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
                         <label >مبلغ نقدی (تومان)</label>
 
                       </div>
                     }
                   </div>
                   <div className="col-lg-3">
-                    {(this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
+                    {this.state.totalAmount &&
+                      <div className="group">
+                        <input className="form-control irsans" autoComplete="off" type="text" value={this.state.offAmount} name="offAmount" onChange={(event) => {
+                          this.setState({ offAmount:event.target.value ? parseInt(event.target.value.toString().replace(/,/g, "")).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0
+                        })
+                        let that = this;
+                        setTimeout(function(){
+                          let totalPrice=0;
+                          
+                          for(let i=0;i<that.state.DeviceBox.length;i++){
+                            totalPrice+= parseInt(that.state["Device_TotalAmount_" + i] ? that.state["Device_TotalAmount_" + i].toString().replace(/,/g, "") : 0)
+                          }
+                          that.setState({ totalAmount: totalPrice - parseInt(that.state.offAmount.toString().replace(/,/g, "")),
+                          creditAmount:totalPrice - parseInt(that.state.offAmount.toString().replace(/,/g, "")) - parseInt(that.state.cacheAmount.toString().replace(/,/g, ""))
+                        })
+
+                        },0)
+                        }} required="true" />
+                        <label >تخفیف</label>
+
+                      </div>
+                    }
+                  </div>
+                  <div className="col-lg-3">
+                    {(this.state.type == "3" ) && this.state.totalAmount &&
                       <div className="group">
                         <input className="form-control irsans" autoComplete="off" disabled type="text" value={this.state.creditAmount} name="creditAmount" onChange={(event) => this.setState({ creditAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
                         <label >مبلغ اقساطی (تومان)</label>
@@ -518,7 +562,18 @@ class SalePose extends React.Component {
                   <div className="col-lg-3">
                     {(this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
                       <div className="group">
-                        <input className="form-control irsans" autoComplete="off"  type="text" value={this.state.debtorAmount} name="debtorAmount" onChange={(event) => this.setState({ debtorAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")})} required="true" />
+                        <input className="form-control irsans" autoComplete="off"  type="text" value={this.state.debtorAmount} name="debtorAmount" onChange={(event) => {this.setState({ debtorAmount: event.target.value ? event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0})
+                        let that = this;
+                      setTimeout(function(){
+                        let totalPrice=0;
+                        
+                        for(let i=0;i<that.state.DeviceBox.length;i++){
+                          totalPrice+= parseInt(that.state["Device_TotalAmount_" + i] ? that.state["Device_TotalAmount_" + i].toString().replace(/,/g, "") : 0)
+                        }
+                        that.setState({ totalAmount: totalPrice - (that.state.debtorAmount ? parseInt(that.state.debtorAmount.toString().replace(/,/g, "")) : 0)  })
+
+                      },0)
+                      }} required="true" />
                         <label >بدهکار (تومان)</label>
 
                       </div>

@@ -24,6 +24,7 @@ class MainBox1 extends React.Component {
         this.state={
             Autenticated:false,
             username : null,
+            loading:true,
             url:this.Server.getUrl()
 
         }
@@ -42,17 +43,26 @@ class MainBox1 extends React.Component {
             console.log(error)
         })
     }
+    getResponse(){
+        debugger;
+        this.setState({
+            loading: false
+        })
+    }
     render(){
     return (
-            <div style={{backgroundColor:'#eee'}}>
+            <div>
                 <Header1 /> 
                 <Header2 /> 
                 <div className="A-container" >
-                    <MainBox2 /> 
+                    <MainBox2 callback={this.getResponse.bind(this)} /> 
                     <MainBox4 /> 
                 </div>
-                
-                <Footer />
+                {!this.state.loading ?
+                    <Footer />
+                :
+                    <div style={{ textAlign: 'center' }}></div>
+                }
            </div>
             
             

@@ -717,11 +717,11 @@ class ShopInformation extends React.Component {
                   <div className="col-lg-7" style={{ marginTop: 10 }}>
                     <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }} >
                       <Checkbox inputId="AllowCredit" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                      <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>به بخش فروش اقساطی متصل است</label>
+                      <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>امکان پرداخت از  کیف پول وجود دارد</label>
                     </div>
                   </div>
                   {this.state.AllowCredit &&
-                    <div className="col-lg-6">
+                    <div className="col-lg-6" style={{display:'none'}}>
                       <div className="row">
                         <div className="col-12">
                           <div className="group">
@@ -776,12 +776,14 @@ class ShopInformation extends React.Component {
 
                     </div>
                   </div>
+                  {this.state.main &&
                     <div className="col-6" style={{ marginTop: 20 }} >
                       <div className="group">
                         <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="SpecialPic" />
                         <label> آپلود تصویر اختصاصی</label>
                       </div>
                     </div>
+                  }
                     <div className="col-6" style={{ marginTop: 20 }}>
                       <img src={this.state.SpecialPic} />
                     </div>

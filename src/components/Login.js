@@ -116,15 +116,7 @@ class Login extends React.Component {
       .catch(error => {
       })
     }else if(this.state.ActiveSms=="smsir"){
-      axios.post(this.state.url+'GetSmsToken', {
-      })
-      .then(response => {
-            
-            this.setState({
-              SmsToken:response.data.result.TokenKey
-            })
             axios.post(this.state.url+'sendsms_SmsIr', {
-              token: response.data.result.TokenKey,
               text: "رمز عبور جدید شما  : \n"+text+"\n در اولین فرصت رمز عبور خود را تغییر دهید" + this.state.STitle,
               mobileNo : this.state.inputEmail
             })
@@ -141,12 +133,7 @@ class Login extends React.Component {
             })
         
         
-      })
-      .catch(error => {
-        alert(error);
-        console.log(error)
-      })
-    }  
+    }    
     /*axios.post('https://RestfulSms.com/api/Token', {})
             .then(response => {
                   

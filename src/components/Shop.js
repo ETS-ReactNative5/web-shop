@@ -179,9 +179,9 @@ class Shop extends React.Component {
             <div style={{position:'relative',marginBottom:30}}>
                 <div>
                     {this.state.shop.SpecialPic ?
-                        <img src={this.state.absoluteUrl+this.state.shop.SpecialPic.split("public")[1]} style={{marginTop:30,marginBottom:50}} />
+                        <img src={this.state.absoluteUrl+this.state.shop.SpecialPic.split("public")[1]} style={{marginTop:30,marginBottom:50,maxHeight:450,width:'100%'}} />
                     :
-                        <img src={require('../public/bg-seller.png')} style={{marginTop:30,marginBottom:30,marginBottom:50}} />
+                        <img src={require('../public/bg-seller.png')} style={{marginTop:30,marginBottom:30,marginBottom:50,maxHeight:450,width:'100%'}} />
 
                     }
                     <div style={{position:'absolute',display:'flex',bottom:0,alignItems:'center',backgroundColor:'#fff',width:'100%',height:50,justifyContent:'space-between'}} >

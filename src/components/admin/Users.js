@@ -711,7 +711,7 @@ class Users extends React.Component {
                 <div className="col-lg-6">
                   <div className="group">
                     <input className="form-control irsans" autoComplete="off" type="text" value={this.state.credit} name="credit" onChange={this.handleChangeCredit} required="true" />
-                    <label>موجودی اعتباری</label>
+                    <label>موجودی کیف پول</label>
                   </div>
                 </div>
               }

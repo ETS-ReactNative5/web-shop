@@ -333,7 +333,7 @@ class Set extends React.Component {
                 </div>
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ CreditSupport: e.checked })} checked={this.state.CreditSupport}></Checkbox>
-                  <label style={{ paddingRight: 5, marginTop: 5 }}>ویژگی های مربوط به خرید اقساطی و اعتباری فعال باشد</label>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>امکانات مربوط به کیف پول فعال باشد</label>
 
                 </div>
 
@@ -466,7 +466,7 @@ class Set extends React.Component {
                       </div>
                       <div className="col-lg-4 col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                         <RadioButton value="smsir" style={{ textAlign: "center", fontSize: 18 }} className="yekan" name="ActiveSms" onChange={(e) => this.setState({ ActiveSms: e.value })} checked={this.state.ActiveSms === 'smsir'} />
-                        <label style={{ textAlign: "center", fontSize: 18 }} className="yekan">Sms.ir</label>
+                        <label style={{ textAlign: "center", fontSize: 18 }} className="yekan">NikSms.ir</label>
                       </div>
                       <div className="col-lg-4 col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                         <RadioButton value="smart" style={{ textAlign: "center", fontSize: 18 }} className="yekan" name="ActiveSms" onChange={(e) => this.setState({ ActiveSms: e.value })} checked={this.state.ActiveSms === 'smart'} />
@@ -501,7 +501,7 @@ class Set extends React.Component {
 
                   </div>
                 </TabPanel>
-                <TabPanel header="sms.ir" headerStyle={{ fontFamily: 'yekan' }}>
+                <TabPanel header="NikSms.ir" headerStyle={{ fontFamily: 'yekan' }}>
                   <div className="row">
 
                     <div className="col-lg-4 col-12" >

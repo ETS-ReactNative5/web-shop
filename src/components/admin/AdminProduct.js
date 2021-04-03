@@ -30,6 +30,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { AutoComplete } from 'primereact/autocomplete';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import { MultiSelect } from 'primereact/multiselect';
+import { TabView,TabPanel } from 'primereact/tabview';
+
 let Count = 0;
 class AdminProduct extends React.Component {
   constructor(props) {
@@ -281,7 +283,8 @@ class AdminProduct extends React.Component {
       that.setState({
         loading: 0
       })
-      that.GetShopList();
+      that.getShopInformation();
+
 
 
 
@@ -312,6 +315,7 @@ class AdminProduct extends React.Component {
         loading: 0
       })
       that.GetCategory();
+
       that.setState({
         loading: 0
       })
@@ -325,6 +329,44 @@ class AdminProduct extends React.Component {
       //Alert.error('عملیات انجام نشد', 5000);
     }
     this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
+  }
+  getShopInformation() {
+    let that = this;
+    if(this.state.SellerId == this.state.MainShopId){
+      that.GetShopList();
+
+    }else{
+      debugger;
+      let param = {
+        token: localStorage.getItem("api_token"),
+        ShopId:this.state.SellerId
+      };
+      this.setState({
+        loading: 1
+      })
+      let that = this;
+      let SCallBack = function (response) {
+        debugger;
+        let cats = null;
+        if(response.data.result.length > 0 ){
+          cats = response.data.result[0].cats;
+        }
+        that.setState({
+          ShopCats:cats,
+          loading: 0
+        })
+        that.GetShopList();
+
+        
+      };
+      let ECallBack = function (error) {
+        that.setState({
+          loading: 0
+        })
+      }
+      this.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
+    }
+    
   }
   onClick(event) {
     this.setState({ visible: true });
@@ -1284,6 +1326,8 @@ class AdminProduct extends React.Component {
   }
   GetProductsOfCategory(catId){
     let that = this;
+    if(!catId)
+      return;
     let param = {
       token: localStorage.getItem("api_token"),
       id: catId
@@ -1292,9 +1336,17 @@ class AdminProduct extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
-      that.setState({
-        GridData: response.data.result
-      })
+      if(typeof catId == "object"){
+        debugger;
+        that.setState({
+          GridAllData: response.data.result
+        })
+      }
+      else{
+        that.setState({
+          GridData: response.data.result
+        })
+      }
       that.setState({
         loading: 0
       })
@@ -2029,8 +2081,23 @@ class AdminProduct extends React.Component {
               <Dropdown options={this.sortOptions} value={this.state.sortKey} optionLabel="label" placeholder="مرتب سازی" onChange={this.onSortChange} />
             </div>
           </div>
+          <div className="AdminProduct">
+          <TabView activeIndex={this.state.activeIndex} onTabChange={(e) => {this.setState({activeIndex: e.index});if(e.index == 1){this.GetProductsOfCategory(this.state.ShopCats)}}}>
+            <TabPanel header="محصولات شما">
+              <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} sortOrder={this.state.sortOrder} sortField={this.state.sortField} rows={10} itemTemplate={this.itemTemplate}></DataView>
+            </TabPanel>
+            <TabPanel header="فروشنده شوید">
 
-          <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} sortOrder={this.state.sortOrder} sortField={this.state.sortField} rows={10} itemTemplate={this.itemTemplate}></DataView>
+              <p style={{fontFamily: 'YekanBakhFaBold', textAlign: 'right'}}>با کلیک روی دکمه ویرایش و ثبت قیمت برای هر محصول فروشنده محصول خواهید شد</p>
+              <p style={{fontFamily: 'YekanBakhFaBold', textAlign: 'right'}}>ازاین پس در بخش <span style={{color:'red'}}>محصولات شما</span> میتوانید اطلاعات محصول را ویرایش کنید</p>
+              <p style={{fontFamily: 'YekanBakhFaBold', textAlign: 'right'}}>محصولات لیست زیر بر اساس دسته بندی های ثبت شده برای فروشگاه شما مرتب شده اند</p>
+              <hr/>
+              <DataView value={this.state.GridAllData} layout={this.state.layout} paginator={true} sortOrder={this.state.sortOrder} sortField={this.state.sortField} rows={10} itemTemplate={this.itemTemplate}></DataView>
+
+            </TabPanel>
+        </TabView>
+          </div>
+          
 
         </div>
         <Dialog header="اصلاح محصول" visible={this.state.visibleModalEditProduct} footer={footer} minY={70} onHide={this.onHide} maximizable={false} maximized={true}>

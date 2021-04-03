@@ -126,10 +126,13 @@ class CatList extends React.Component {
 				name: param.name,
 				id: param._id,
 				data: response.data.result
-			}
 
+			}
+			
 			that.setState({
-				ShopList: res
+				ShopList: res,
+				logo: (response.data.extra && response.data.extra.shop) ? response.data.extra.shop[0].logo : null
+
 			})
 		};
 		let ECallBack = function (error) {
@@ -145,7 +148,7 @@ class CatList extends React.Component {
 				<div className="row justify-content-center" style={{ marginRight: 15, marginLeft: 15 }} >
 					{this.state.ShopList.data && this.state.ShopList.data.length > 0 &&
 						<div className="col-lg-12 col-md-12 col-12" style={{ direction: 'rtl', backgroundColor: '#fff', borderRadius: 10 }}>
-							<div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray',color:'red' }} >‍‍‍‍‍‍‍ فروشگاه {this.props.name} </span> <Link to={`${process.env.PUBLIC_URL}/Shop?&name=${this.props.name}&id=` + this.props._id} className="title iranyekanwebmedium" style={{ fontSize: 13, float: 'left', color: '#000', textDecoration: 'none' }}>   مشاهده محصولات بیشتر  ...</Link></div>
+							<div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray',color:'red' }} > فروشگاه {this.props.name} </span> <Link to={`${process.env.PUBLIC_URL}/Shop?&name=${this.props.name}&id=` + this.props._id} className="title iranyekanwebmedium" style={{ fontSize: 13, float: 'left', color: '#000', textDecoration: 'none' }}>   مشاهده محصولات بیشتر  ...</Link></div>
 							<Swiper {...params}>
 								{this.state.ShopList.data.map((item, index) => {
 									var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];

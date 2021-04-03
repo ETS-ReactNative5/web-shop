@@ -6,7 +6,6 @@ ReactGA.initialize('G-TWHDY0YJDL');
 const withTracker = (WrappedComponent, options = {}) => {
   console.log(ReactGA);
   const trackPage = page => {
-    debugger;
     ReactGA.set({
       page,
       ...options,

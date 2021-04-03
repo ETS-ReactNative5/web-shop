@@ -473,10 +473,8 @@ class Sales extends React.Component {
         <div className="row justify-content-center">
 
           <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
-            <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی نقدی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
-            {this.state.CreditSupport &&
-              <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی اعتباری : {this.persianNumber(parseInt(this.state.LastCredit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
-            }
+            <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی  : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
+            
             <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها</span></div>
             <div style={{ textAlign: 'right', marginBottom: 10 }}>
               <SelectButton value={this.state.Filter} options={FilterItems} style={{ fontFamily: 'Yekan' }} className="yekan" onChange={(e) => { this.setState({ Filter: e.value }); this.GetFactors(e.value) }}></SelectButton>
@@ -500,7 +498,7 @@ class Sales extends React.Component {
 
                   
                 {this.state.CreditSupport && this.state.isMainShop == 1 &&
-                  <Column field="Credit" header="کسر از اعتبار"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                  <Column field="Credit" header="کسر از کیف پول"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
                 }
                 {this.state.isMainShop == 1 &&
                 <Column field="refId" header="رسید تراکنش"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
@@ -589,7 +587,7 @@ class Sales extends React.Component {
               
               <Column field="Commission" header="سود آنیاشاپ" className="yekan" style={{ textAlign: "center" }} />
               {this.state.CreditSupport &&
-                <Column field="credit" header="کسر از اعتبار" className="yekan" style={{ textAlign: "center" }} />
+                <Column field="credit" header="کسر از کیف پول" className="yekan" style={{ textAlign: "center" }} />
               }
               <Column field="detail" header="جزئیات" className="yekan" style={{ textAlign: "center" }} />
               {this.state.isMainShop == 1 &&

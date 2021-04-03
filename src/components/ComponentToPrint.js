@@ -66,7 +66,7 @@ export class  ComponentToPrint extends React.Component {
           "</tbody></table></div>";
           html+="<div style='border:1px solid;margin-top:10px'>"
           if(newProps.param.credit > 0)
-            html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>کسر از اعتبار اقساطی : "+newProps.param?.credit+" تومان</div></div>"
+            html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>کسر از کیف پول  : "+newProps.param?.credit+" تومان</div></div>"
           html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>مبلغ سفارش : "+newProps.param.Amount +" تومان</div></div>";
           if(newProps.param.paykAmount)
             html+= "<div style='display:flex;justify-content: flex-end;padding-right:2px;padding-left:2px'><div>هزینه پیک : "+newProps.param.paykAmount  +" تومان</div></div>";

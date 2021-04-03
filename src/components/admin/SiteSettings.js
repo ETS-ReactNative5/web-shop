@@ -458,7 +458,7 @@ class SiteSettings extends React.Component {
 
                   </div>
                 </TabPanel>
-                <TabPanel header="sms.ir" headerStyle={{ fontFamily: 'yekan' }}>
+                <TabPanel header="NikSms.ir" headerStyle={{ fontFamily: 'yekan' }}>
                   <div className="row">
 
                     <div className="col-lg-4 col-12" >

@@ -20,6 +20,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { Checkbox } from 'primereact/checkbox';
+import { MultiSelect } from 'primereact/multiselect';
 
 class ShopsList extends React.Component {
   constructor(props) {
@@ -35,6 +36,7 @@ class ShopsList extends React.Component {
       GridDataUsers: [],
       GridDataFactors: [],
       selectedCommission: null,
+      categories:null,
       selectedMainShop: null,
       AllowCredit: false,
       selectedName: null,
@@ -83,6 +85,28 @@ class ShopsList extends React.Component {
 
 
   }
+  CatTOptionTemplate(option) {
+    return (
+      <div className="country-item">
+        <div>{option.name}</div>
+      </div>
+    );
+  }
+  selectedCatTemplate(option, props) {
+    if (option) {
+      return (
+        <div className="country-item country-item-value">
+          <div>{option.name}</div>
+        </div>
+      );
+    }
+
+    return (
+      <span>
+        {props.placeholder}
+      </span>
+    );
+  }
   componentDidMount() {
     let param = {
       token: localStorage.getItem("api_token"),
@@ -119,6 +143,7 @@ class ShopsList extends React.Component {
       selectedMobile: null,
       selectedCommission: null,
       selectedMainShop: null,
+      categories:null,
       AllowCredit: false,
       CreditCommission: 0,
       visibleDialog: false,
@@ -181,6 +206,7 @@ class ShopsList extends React.Component {
       visibleDialog: true,
       selectedId: value._id,
       selectedCommission: value.commission,
+      categories: value.cats,
       selectedMainShop: value.main,
       AllowCredit: value.AllowCredit,
       CreditCommission: value.CreditCommission,
@@ -225,11 +251,13 @@ class ShopsList extends React.Component {
         GridDataFactors: response.data.result,
         loading: 0
       })
+      that.GetCategory();
     };
     let ECallBack = function (error) {
       that.setState({
         loading: 0
       })
+      that.GetCategory();
       console.log(error)
     }
     this.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
@@ -274,6 +302,7 @@ class ShopsList extends React.Component {
       PrepareTime: this.state.PrepareTime,
       Opened: this.state.Opened,
       OpenedTime: Time,
+      cats:this.state.categories,
       edit: "1",
       editByAdmin:"1"
     };
@@ -296,7 +325,38 @@ class ShopsList extends React.Component {
     }
     this.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
   }
+  GetCategory() {
+    let that = this;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      SellerId: this.state.SellerId
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+     
+      let CatList = [];
+      for (let i = 0; i < response.data.result.length; i++) {
+        CatList.push({ name: response.data.result[i].name, value: response.data.result[i]._id })
+      }
+      that.setState({
+        CategoryListForDropDown: CatList,
+        loading: 0
+      })
+ 
+    };
+    let ECallBack = function (error) {
+      Alert.error('عملیات انجام نشد', 5000);
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("AdminApi/GetCategory", param, SCallBack, ECallBack)
 
+
+
+  }
   render() {
 
     return (
@@ -360,6 +420,18 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
+              <div className="col-lg-12">
+              <label className="labelNoGroup">دسته بندی های مرتبط با فروشگاه</label>
+              <MultiSelect value={this.state.categories} optionLabel="name" style={{width:'100%'}} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => { 
+                          
+
+                          this.setState({ categories: event.value  }) 
+                          
+                        }} />
+
+              
+              
+              </div>
               
               {!this.state.ProductBase &&
                   <div className="col-7">
@@ -373,16 +445,16 @@ class ShopsList extends React.Component {
                   }
              
               
-              <div className="col-lg-12">
+              <div className="col-lg-12" >
                 <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
 
                   <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>به بخش فروش اقساطی متصل است</label>
+                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>امکان پرداخت از  کیف پول وجود دارد</label>
 
                 </div>
               </div>
               {this.state.AllowCredit &&
-                <div className="col-lg-3" style={{marginBottom:50}}>
+                <div className="col-lg-3" style={{marginBottom:50,display:'none'}}>
                   <div className="group">
 
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.CreditCommission} name="CreditCommission" onChange={(event) => this.setState({ CreditCommission: event.target.value })} required="true" />
@@ -708,7 +780,7 @@ class ShopsList extends React.Component {
                   }
 
               <div className="col-lg-12">
-                <Button style={{ marginLeft: 5, marginTop: 10 }} color="primary" className="yekan" onClick={this.EditShopSelected}>ثیت اطلاعات</Button>
+                <Button style={{ marginLeft: 5, marginTop: 10 }} color="primary" className="yekan" onClick={this.EditShopSelected}>ثبت اطلاعات</Button>
               </div>
 
             </div>

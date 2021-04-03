@@ -249,7 +249,7 @@ class User extends React.Component {
 
                 </div>
                 <div className="col-lg-4 col-12 YekanBakhFaMedium" style={{ textAlign: 'center', color: '#c7b800' }}>
-                  <span>کسر از اعتبار : </span><span>{car.Credit}</span>
+                  <span>کسر از  کیف پول : </span><span>{car.Credit}</span>
 
                 </div>
                 <div className="col-lg-4 col-12 YekanBakhFaMedium" style={{ textAlign: 'center', color: '#c7b800' }}>
@@ -332,7 +332,7 @@ class User extends React.Component {
 
                 </div>
                 <div className="col-lg-4 col-12 YekanBakhFaMedium" style={{ textAlign: 'center', color: '#c7b800' }}>
-                  <span>کسر از اعتبار : </span><span>{car.Credit}</span>
+                  <span> کسر از  کیف پول : </span><span>{car.Credit}</span>
 
                 </div>
                 <div className="col-lg-4 col-12 YekanBakhFaMedium" style={{ textAlign: 'center', color: '#c7b800' }}>
@@ -418,7 +418,7 @@ class User extends React.Component {
                 </div>
                 {car.Credit &&
                   <div className="col-lg-4 col-12 YekanBakhFaMedium" style={{ textAlign: 'right', marginBottom: 10 }}>
-                    <span style={{ color: '#b5b5b5' }}>کسر از اعتبار : </span><span style={{ fontSize: 17 }}>{car.Credit} تومان</span>
+                    <span style={{ color: '#b5b5b5' }}>کسر از  کیف پول : </span><span style={{ fontSize: 17 }}>{car.Credit} تومان</span>
 
                   </div>
                 }
@@ -750,7 +750,7 @@ class User extends React.Component {
 
         <Header1 />
         <Header2 />
-        <div className="row justify-content-center firstInPage" style={{ minHeight: 600 }}>
+        <div className="row justify-content-center firstInPage" style={{ minHeight: 600,marginTop:50 }}>
           <div className="col-md-1 col-12">
             <div>
 
@@ -763,7 +763,7 @@ class User extends React.Component {
 
                   <p className="YekanBakhFaBold" >{this.state.name}</p>
 
-                  <p className="YekanBakhFaBold" style={{ fontSize: 17 }}>موجودی اعتباری : {this.props.credit} تومان</p>
+                  <p className="YekanBakhFaBold" style={{ fontSize: 17 }}>موجودی کیف پول : {this.props.credit} تومان</p>
                 </li>
 
                 <li><hr /></li>

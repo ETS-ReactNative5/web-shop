@@ -522,6 +522,7 @@ class MainBox2 extends React.Component {
             productsBestOff: response.data.result,
             loading: false
           })
+          this.props.callback();
           this.getProducts(3, "random")
 
         }
@@ -633,7 +634,7 @@ class MainBox2 extends React.Component {
             <div className="col-lg-12 col-12" >
               <div className="row" style={{ marginTop: 10, marginBottom: 20 }}>
 
-                <div className={(this.state.ProductBase || !this.state.logo5) ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
+                <div className={this.state.logo5 ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
                   <Swiper {...params5} style={{ position: 'absolute' }}>
                     <div>
                       {this.state.link1 && this.state.link1.indexOf("http") > -1 ?
@@ -793,17 +794,14 @@ class MainBox2 extends React.Component {
                         }
                       </div>
                     <Swiper {...params2}>
-                      <div style={{ maxWidth: 100}} className="d-sm-none d-block">
-                        <p className="YekanBakhFaBold" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',display:'none' }}>محصولات شگفت انگیز</p>
-                        {this.state.SpecialImage &&
-                        <img src={this.state.SpecialImage} style={{marginTop:70}}   />
-                        }
-                      </div>
+                      
                       {this.state.products.map((item, index) => {
                         var img = this.state.absoluteUrl + (item.fileUploaded ? item.fileUploaded.split("public")[1] : "/nophoto.png");
                         return (
 
                           <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250 }}>
+                            <p className="YekanBakhFaBold d-sm-none d-block" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',position:'absolute',top:0,left:0,backgroundColor:'#72d006',padding:5,zIndex:2,borderRadius:5 }}>شگفت انگیز</p>
+
                             <div className="p-grid p-nogutter" >
                               <div className="p-col-12 c-product-box__img" align="center" >
                                 <img src={img} alt="" />
@@ -1016,8 +1014,9 @@ class MainBox2 extends React.Component {
             }
 
             
-
-            <Photos name="file6" className="InlineImages" borderRadius="30" padding="20" width="100%" height="180" />
+            <div style={{marginTop:10,marginBottom:10}} >
+              <Photos name="file6" className="InlineImages" borderRadius="30" padding="20" width="100%" height="180"  />
+            </div>
             {
               this.state.catsList[1] &&
               <CatList _id={this.state.catsList[1]._id} UId={this.state.UId}  title={this.state.catsList[1].name} name={this.state.catsList[1].name} />
@@ -1028,7 +1027,7 @@ class MainBox2 extends React.Component {
                  <ShopList _id={this.state.shopList[1]._id} name={this.state.shopList[1].name} style={{marginTop:30,marginBottom:30}} />
             }
             {this.state.ProductBase &&
-            <div className="row" >
+            <div className="row" style={{marginTop:10,marginBottom:10}} >
               <div className="col-md-6 col-12">
                 <Photos name="file8" className="InlineImagesHalf"  />
               </div>
@@ -1038,7 +1037,6 @@ class MainBox2 extends React.Component {
             </div>
             }
             
-            <Photos name="file7" className="InlineImages" borderRadius="30" padding="20" width="100%" height="180" />
             {
               this.state.catsList[2] &&
               <CatList _id={this.state.catsList[2]._id} UId={this.state.UId}  title={this.state.catsList[2].name} name={this.state.catsList[2].name} />
@@ -1048,6 +1046,10 @@ class MainBox2 extends React.Component {
               this.state.shopList[2] &&
                  <ShopList _id={this.state.shopList[2]._id} name={this.state.shopList[2].name} style={{marginTop:30,marginBottom:30}} />
             }
+            <div style={{marginTop:10,marginBottom:10}} >
+
+            <Photos name="file7" className="InlineImages" borderRadius="30" padding="20"  width="100%" height="180" />
+            </div>
             {
               this.state.catsList[3] &&
               <CatList _id={this.state.catsList[3]._id} UId={this.state.UId}  title={this.state.catsList[3].name} name={this.state.catsList[3].name} />
@@ -1310,7 +1312,7 @@ class MainBox2 extends React.Component {
         <div style={{ zIndex: 10000 }} >
           <p style={{ textAlign: 'center' }}>
             
-            <img src={this.state.loading_pic} style={{ width: 320 }} />
+            <img src={this.state.loading_pic}  />
           </p>
 
         </div>

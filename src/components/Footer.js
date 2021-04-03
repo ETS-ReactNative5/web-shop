@@ -164,7 +164,7 @@ class Footer extends React.Component {
 					
 					}
 					<div style={{textAlign:'center',paddingBottom:10}}>
-							<p style={{margin:0}} className="yekan">طراحی و پیاده سازی توسط <a href="http://sarvapps.ir" target="_blank" style={{color:'#a9a9a9'}}>گروه نرم افزاری سرو</a></p>
+							<p style={{margin:0}} className="yekan">طراحی و پیاده سازی توسط <a href="http://sarvapps.ir" target="_blank" style={{color:'#a9a9a9'}}>گروه نرم افزاری آنیا</a></p>
 					</div>
 				</div>
 			</footer>

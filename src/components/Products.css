@@ -103,6 +103,10 @@
 	border-top: 5px solid #19d849 !important;
 	border-right-width: 0px !important;
 }
+.AdminProduct .p-tabview-nav .p-tabview-selected a{
+	border-top : none !important;
+	border-bottom: 5px solid #19d849 !important;
+}
 .p-tabview-nav{
 	margin-bottom: 0px !important;
 	display: flex !important;

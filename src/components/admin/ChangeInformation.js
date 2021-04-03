@@ -165,13 +165,13 @@ class ChangeInformation extends React.Component {
                   </div>
                   <div className="col-lg-6">
                     <div className="group">
-                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.pass} name="pass" onChange={this.handleChangepass} required="true" />
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.pass} name="pass" onChange={this.handleChangePass} required="true" />
                       <label className="yekan">رمز عبور</label>
                     </div>
                   </div>
                   <div className="col-lg-6">
                     <div className="group">
-                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.pass2} name="pass2" onChange={this.handleChangepass2} required="true" />
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.pass2} name="pass2" onChange={this.handleChangePass2} required="true" />
                       <label className="yekan">تکرار رمز عبور</label>
                     </div>
                   </div>

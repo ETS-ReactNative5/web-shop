@@ -107,7 +107,9 @@ class MainBox4 extends React.Component {
 		   })
 		   .then(response => {
 			this.setState({
-			    isSeveralShop:response.data.result ? response.data.result.SeveralShop : false
+			    isSeveralShop:response.data.result ? response.data.result.SeveralShop : false,
+				ProductBase: response.data.result ? response.data.result.ProductBase : false
+
 			})
 		   })
 		   .catch(error => {

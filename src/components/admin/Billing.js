@@ -47,7 +47,7 @@ const data = [{
       ]
     },
     {
-      label: 'فروش اعتباری',
+      label: 'فروش اقساطی',
       className: 'department-second-child',
       expanded: true,
       children: [
@@ -287,17 +287,15 @@ class Billing extends React.Component {
         <div className="row justify-content-center">
 
           <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
-            <div className="row">
+            <div className="row" style={{display:'none'}}>
               <div className="col-md-6 col-12">
                 {(this.state.LastCredit != 0 || this.state.LastAmount != 0) ?
                   <div>
                     <div style={{ marginTop: 100 }} className="row">
-                      <Chip className="col-md-5 col-12 mt-0" style={{ fontFamily: 'Yekan' }} label={'موجودی نقدی : ' + this.persianNumber(this.state.LastAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + ' تومان'} />
-                      <div className="col-md-2 col-0" ></div>
-                      <Chip className="col-md-5 col-12 mt-md-0 mt-4" style={{ fontFamily: 'Yekan' }} label={'موجودی اعتباری : ' + this.persianNumber(this.state.LastCredit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + ' تومان'} />
-
+                      <Chip className="col-md-5 col-12 mt-0" style={{ fontFamily: 'Yekan' }} label={'موجودی  : ' + this.persianNumber(this.state.LastAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + ' تومان'} />
+                      
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4" style={{display:'none'}}>
 
                       <Charts data={[this.state.LastAmount, this.state.LastCredit]} labels={['نقدی','اعتباری']} />
                     </div>
