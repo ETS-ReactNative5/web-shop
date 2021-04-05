@@ -54,20 +54,27 @@ class Header1 extends React.Component {
 					name: response.data.authData.name,
 					isAdmin: response.data.authData.level
 				})
-				this.props.dispatch({
-					type: 'LoginTrueUser',
-					CartNumber: localStorage.getItem("CartNumber"),
-					off: localStorage.getItem("off") == "undefined" ? 0 : localStorage.getItem("off"),
-					credit: localStorage.getItem("credit") == "undefined" ? 0 : localStorage.getItem("credit")
-				})
-				axios.post(this.state.absoluteUrl + 'AdminApi/ShopInformation', { main: true }).then(response => {
-					this.setState({
-						logo: response.data.result[0].logo
+				
+				axios.post(this.state.absoluteUrl + 'MainApi/getuserInformation', { user_id: response.data.authData.userId }).then(response => {
+
+					this.props.dispatch({
+						type: 'LoginTrueUser',
+						CartNumber: localStorage.getItem("CartNumber"),
+						off: localStorage.getItem("off") == "undefined" ? 0 : localStorage.getItem("off"),
+						credit: response.data.result[0].credit ? response.data.result[0].credit : 0
 					})
-					this.getPics();
+					axios.post(this.state.absoluteUrl + 'AdminApi/ShopInformation', { main: true }).then(response => {
+						this.setState({
+							logo: response.data.result[0].logo
+						})
+						this.getPics();
+					}).catch(error => {
+						console.log(error)
+					})
 				}).catch(error => {
 					console.log(error)
 				})
+				
 
 			})
 			.catch(error => {

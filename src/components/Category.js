@@ -11,16 +11,21 @@ import Header2 from './Header2.js'
 import { SelectButton } from 'primereact/selectbutton';
 import { ToggleButton } from 'primereact/togglebutton';
 import {InputSwitch} from 'primereact/inputswitch';
+import { Dialog } from 'primereact/dialog';
 
 class Category extends React.Component {
     constructor(props) {
         super(props);
         this.itemTemplate = this.itemTemplate.bind(this);
+        this.onHide = this.onHide.bind(this);
+
+        
         this.Server = new Server();
         this.state = {
             id: this.props.location.search.split("id=")[1],
             getSubs: this.props.location.search.indexOf("getSubs=") > -1 ? true : false,
             GridData: [],
+            productsDetailArray:[],
             layout: 'list',
             Exist: false,   
             PId: null,
@@ -45,6 +50,24 @@ class Category extends React.Component {
                 this.getSettings();
             })
     }
+    onHide(event) {
+        this.setState({ VisibleDialog: null });
+    }
+    GoToShop(url,productsDetail,products){
+		if(productsDetail && productsDetail.length > 1){
+			this.setState({
+				productsDetailArray:productsDetail,
+				productsDetailArrayRef:products,
+				VisibleDialog:true
+			})
+			
+		}else{
+			this.setState({
+				ShopLink:url
+			})
+		}
+		
+	}
     getSettings() {
 		let that = this;
 		that.Server.send("AdminApi/getSettings", {}, function (response) {
@@ -179,13 +202,53 @@ class Category extends React.Component {
                             <div style={{ textAlign: 'right' }}><i className="fas fa-truck" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.Seller && car.Seller[0] && car.Seller[0].PrepareTime || "30")} دقیقه پس از پرداخت</span></div>
                         }
                         <div style={{ position: 'absolute', bottom: 15, width: '100%', left: 0 }}>
+                            {this.state.ProductBase ?
                             <Link className="p-button-info btn-warning " to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#" style={{ padding: 10, marginTop: 10, width: '85%', fontFamily: 'YekanBakhFaBold' }}>
                                 مشاهده جزئیات / خرید
 
-                    </Link>
+                            </Link>
+                            :
+                            <button className="p-button-info btn-warning " onClick={()=>{this.GoToShop('Shop?id='+((car.Seller && car.Seller.length > 0) ? car.Seller[0]._id : '')+''+'&cat='+car.category_id+'',car.product_detail,car)}} style={{ textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5, fontFamily: 'YekanBakhFaBold' }}>
+                               مشاهده جزئیات / خرید
+
+                            </button>
+                            }
 
                         </div>
                     </div>
+                    <Dialog visible={this.state.VisibleDialog} onHide={this.onHide} style={{ width: '60vw' }} maximizable={false} maximized={false}>
+				{this.state.productsDetailArrayRef &&	
+					<div  className="iranyekanweblight" style={{textAlign:'center',fontSize:25,marginBottom:35}}><span className="iranyekanweblight text-danger" > {this.state.productsDetailArrayRef.title} </span> را میتوانید از فروشگاههای زیر بخرید</div>
+				}
+				<div className="row">
+
+					{this.state.productsDetailArray.map((item, index) => {
+						let Seller =null;
+						for(let i=0; i < this.state.productsDetailArrayRef.Seller.length; i++){
+							if(this.state.productsDetailArrayRef.Seller[i]._id  ==  item.SellerId){
+								Seller = this.state.productsDetailArrayRef.Seller[i];
+							}
+						}
+						let price = 0;
+						if(item.number > 0)
+							price = this.persianNumber(this.roundPrice((item.price - (item.price * ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off)) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+						let img = (Seller.logo && Seller.logo.split("public")[1]) ? this.state.absoluteUrl + Seller.logo.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png'
+						return(
+								<div className="col-lg-3 col-md-4 col-12" style={{textAlign:'center'}} >
+									<button onClick={()=>{this.GoToShop('Shop?id='+Seller._id+''+'&cat='+this.state.productsDetailArrayRef.category_id)}} disabled={item.number == 0} style={{ background:'#fff',display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
+									<img src={img} />
+									<div  className="iranyekanweblight">{Seller.name}</div>
+									<div className="iranyekanweblight text-primary" style={{marginTop:20}}>قیمت در فروشگاه : {price} تومان</div>
+									</button>
+									
+								</div>
+							
+						)
+
+					})
+					}
+					</div>
+                </Dialog>
                 </div>
 
             );
@@ -206,6 +269,9 @@ class Category extends React.Component {
         if (this.state.PId) {
             return <Redirect to={"/products?name=" + this.state.title + "&id=" + this.state.PId} />;
         }
+        if (this.state.ShopLink) {
+			return <Redirect to={this.state.ShopLink} push={true} />;
+		}
         return (
 
             <div>

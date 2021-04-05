@@ -336,7 +336,6 @@ class AdminProduct extends React.Component {
       that.GetShopList();
 
     }else{
-      debugger;
       let param = {
         token: localStorage.getItem("api_token"),
         ShopId:this.state.SellerId
@@ -346,7 +345,6 @@ class AdminProduct extends React.Component {
       })
       let that = this;
       let SCallBack = function (response) {
-        debugger;
         let cats = null;
         if(response.data.result.length > 0 ){
           cats = response.data.result[0].cats;
@@ -1337,7 +1335,6 @@ class AdminProduct extends React.Component {
     })
     let SCallBack = function (response) {
       if(typeof catId == "object"){
-        debugger;
         that.setState({
           GridAllData: response.data.result
         })

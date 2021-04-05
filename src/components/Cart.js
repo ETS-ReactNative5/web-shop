@@ -137,10 +137,10 @@ class Cart extends React.Component {
                     Credit: this.state.finalCreditReducer,
                     userId: this.state.userId,
                     products_id: products_id,
-                    needPay: that.state.ActiveBank == "none" ? 0 : 1
+                    needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace") ? 0 : 1
                 })
                     .then(response => {
-                        if (that.state.ActiveBank != "none") {
+                        if (that.state.ActiveBank != "none" && that.state.ActiveBank != "inPlace") {
                             let res;
                             if (that.state.ActiveBank == "p") {
                                 res = response.data.result ? response.data.result.SalePaymentRequestResult : {};
@@ -247,13 +247,18 @@ class Cart extends React.Component {
                 LastPaykAmount = 0,
                 PrepareTime = [],
                 forceChangeItem = [];
-            debugger;
             response.data.result.map((res) => {
-
+                
                 if (res.price)
                     lastPrice += res.number * parseInt(that.roundPrice(res.price));
                 PrepareTime.push(that.state.ProductBase ? res.products[0].PrepareTime : (res.Seller[0].PreparTime || "30"));
                 CartNumber += parseInt(res.number);
+                if(res.Category && res.Category.length > 0){
+                    res.PeykInfo[1].SendToCity = res.Category[0].SendToCity;
+                    res.PeykInfo[1].SendToCountry = res.Category[0].SendToCountry;
+                    res.PeykInfo[1].SendToNearCity = res.Category[0].SendToNearCity;
+                    res.PeykInfo[1].SendToState = res.Category[0].SendToState;
+                }
                 switch (res.PeykInfo[2].userLocation) {
                     case 1: {
                         paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToCity || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
@@ -618,7 +623,7 @@ class Cart extends React.Component {
                                 <Steps.Item title="سبد خرید" />
                                 <Steps.Item title="تکمیل خرید" />
                                 <Steps.Item title="تایید آدرس" />
-                                <Steps.Item title={this.state.ActiveBank != "none" ? "انتقال به سایت بانک" : "ثبت نهایی"} status="wait" />
+                                <Steps.Item title={(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace" ) ? "انتقال به سایت بانک" : "ثبت نهایی"} status="wait" />
                             </Steps>
                         }
                     </div>
@@ -632,22 +637,30 @@ class Cart extends React.Component {
                         {this.state.GridData.length > 0 ?
                             <div>
                                 <div className="col-12" style={{ textAlign: 'right', marginBottom: 50 }}>
-                                    <div>
-                                        <p className="yekan" style={{ paddingTop: 20 }}>شیوه پرداخت</p>
-                                    </div>
+                                    {(this.state.ActiveBank != 'none') &&
+                                        <div>
+                                            <p className="yekan" style={{ paddingTop: 20 }}>شیوه پرداخت</p>
+                                        </div>
+                                    }
+                                    {(this.state.ActiveBank != 'none') ? 
                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <RadioButton inputId="TypeOfPayment1" name="TypeOfPayment" value="1" onChange={(e) => { this.setState({ ActiveBank: this.state.OriginalActiveBank }); this.setState({ TypeOfPayment: e.value }); }} checked={this.state.TypeOfPayment === '1'} />
                                             <label htmlFor="TypeOfPayment1" className="p-checkbox-label yekan" style={{ marginRight: 20, color: 'rgb(185 185 185)' }}>
                                                 پرداخت اینترنتی <br />
-                          آنلاین با تمامی کارت‌های بانکی
-                      </label>
+                                                آنلاین با تمامی کارت‌های بانکی
+                                        </label>
                                         </div>
                                         <div style={{ display: 'flex' }}>
-                                            <RadioButton inputId="TypeOfPayment2" name="TypeOfPayment" value="2" onChange={(e) => { this.setState({ ActiveBank: 'none' }); this.setState({ TypeOfPayment: e.value }); }} checked={this.state.TypeOfPayment === '2'} />
+                                            <RadioButton inputId="TypeOfPayment2" name="TypeOfPayment" value="2" onChange={(e) => { this.setState({ ActiveBank: 'inPlace' }); this.setState({ TypeOfPayment: e.value }); }} checked={this.state.TypeOfPayment === '2'} />
                                             <label htmlFor="TypeOfPayment2" className="p-checkbox-label yekan" style={{ marginRight: 20, color: 'rgb(185 185 185)' }}>پرداخت در محل</label>
                                         </div>
                                     </div>
+                                    :
+                                    <div>
+
+                                    </div>
+                                    }
                                     <hr />
                                 </div>
 
@@ -711,7 +724,7 @@ class Cart extends React.Component {
 
                                     </p>
                                 }
-                                {this.state.ActiveBank != "none" ?
+                                {(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace") ?
                                     <button className="btn btn-success YekanBakhFaMedium" style={{ marginTop: 40, marginBottom: 10 }} disabled={(this.state.AcceptAddress && this.state.Address == "")} onClick={this.Payment}>{this.state.AcceptAddress ? <span>پرداخت</span> : <span>ادامه فرایند خرید</span>}  </button>
 
                                     :
@@ -733,8 +746,8 @@ class Cart extends React.Component {
                 <Sidebar header="کسر از کیف پول " visible={this.state.displayReduse} style={{ fontFamily: 'YekanBakhFaBold' }} footer={renderDialogFooter()} onHide={() => onHide()}>
 
                     <div className="row">
-                        <div className="col-12 mt-5 mb-3">
-                            <h1 className="YekanBakhFaMedium">کسر از کیف پول</h1>
+                        <div className="col-12 mt-5 mb-3" style={{textAlign:'center'}}>
+                            <h2 className="YekanBakhFaMedium">کسر از کیف پول</h2>
                         </div>
                         <div className="col-12">
                             <p className="YekanBakhFaBold" style={{ textAlign: 'center' }}>موجودی کیف پول : <span style={{fontStyle:'bold'}}>{(parseInt(this.props.credit)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span> تومان</p>
@@ -742,8 +755,8 @@ class Cart extends React.Component {
                         </div>
                         <div className="col-md-12 col-12" >
                             <div className="group">
-                            <input className="form-control YekanBakhFaBold" placeholder="مبلغ را وارد کنید" autoComplete="off" type="text" value={this.state.ReducePrice} name="ReducePrice" onChange={(event) => { this.setState({ ReducePrice: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","), ShowAlarm: false }) }} required="true" />
-                            <label>مبلغ را وارد کنید</label>
+                                <input className="form-control YekanBakhFaBold" placeholder="مبلغ را وارد کنید" autoComplete="off" type="text" value={this.state.ReducePrice} name="ReducePrice" onChange={(event) => { this.setState({ ReducePrice: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","), ShowAlarm: false }) }} required="true" />
+                                <label>مبلغ را وارد کنید</label>
                             </div>
 
                         </div>

@@ -44,7 +44,6 @@ class MainBox1 extends React.Component {
         })
     }
     getResponse(){
-        debugger;
         this.setState({
             loading: false
         })

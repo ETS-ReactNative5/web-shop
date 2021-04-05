@@ -504,7 +504,7 @@ class Products extends React.Component {
 	
 	
 	  }
-    SendToCart(PDId, PId, Number, UId, Price,Allow) {
+    SendToCart(PDId, PId, Number, UId, Price,Allow,CatId) {
         let that = this;
         if(!this.state.SaleFromMultiShops && !Allow){
             this.getCartItems(PDId, PId, Number, UId, Price);
@@ -616,7 +616,7 @@ class Products extends React.Component {
 
 
     }
-    getCartItems(PDId, PId, Number, UId, Price){
+    getCartItems(PDId, PId, Number, UId, Price,Allow,CatId){
         let that=this;
         let param={
             UId : this.state.UId,
@@ -627,7 +627,7 @@ class Products extends React.Component {
                 let SellerId = that.state.SellerId;
                 let sellerName="";
                 for(let i=0; i<response.data.result.length ; i++ ){
-                    if(SellerId != response.data.result[i].Seller[0]._id){
+                    if(response.data.result[i].Seller && response.data.result[i].Seller.length > 0 && SellerId != response.data.result[i].Seller[0]._id){
                         SellerId =null;
                         sellerName = response.data.result[i].Seller[0].name;
                     }
@@ -638,7 +638,7 @@ class Products extends React.Component {
                     </div>, life: 8000});
 
                 }else{
-                    that.SendToCart(PDId, PId, Number, UId, Price,true);
+                    that.SendToCart(PDId, PId, Number, UId, Price,true,CatId);
 
                 }
                 
@@ -863,7 +863,7 @@ class Products extends React.Component {
                                                                     <div className="button_container col-md-12 col-12 borderBottom " style={{marginTop:15}}>
                                                                         
                                                                         <div >
-                                                                        <Button type="button" style={{ marginBottom: 10, paddingTop: 10, paddingBottom: 10, paddingRight: 10, paddingLeft: 10,width:'100%' }} color="success" className="iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, (this.roundPrice(this.state.price - ((this.state.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100)))) }}><span style={{float:'right'}} ><i style={{fontSize:25}} className="fal fa-shopping-cart" /></span>  انتقال به سبد خرید</Button>
+                                                                        <Button type="button" style={{ marginBottom: 10, paddingTop: 10, paddingBottom: 10, paddingRight: 10, paddingLeft: 10,width:'100%' }} color="success" className="iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, (this.roundPrice(this.state.price - ((this.state.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.off)) / 100))),null,this.state.CatId) }}><span style={{float:'right'}} ><i style={{fontSize:25}} className="fal fa-shopping-cart" /></span>  انتقال به سبد خرید</Button>
 
                                                                         </div>
                                                                     </div>
@@ -872,7 +872,7 @@ class Products extends React.Component {
                                                                 <div className="borderBottom">
 
                                                                     <div className="button_container">
-                                                                        <Button color="success" style={{ marginBottom: 40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, null) }}>انتقال به سبد خرید</Button>
+                                                                        <Button color="success" style={{ marginBottom: 40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, null,null,this.state.CatId) }}>انتقال به سبد خرید</Button>
                                                                         <div className="product_fav"><i className="fas fa-heart"></i></div>
                                                                     </div>
                                                                 </div>
@@ -1021,16 +1021,16 @@ class Products extends React.Component {
                                        
                                     </div>
                                 </div>
-                                 }
+                                }
                                 {(this.state.CatId && this.state.ProductBase) ? 
                                     <div style={{marginTop:20}}>
-                                        <CatList _id={this.state.CatId} name="محصولات مرتبط"  paddingLeft="0" paddingRight="0" />
+                                        <CatList _id={this.state.CatId} name="محصولات مرتبط" ProductBase={this.state.ProductBase}  paddingLeft="0" paddingRight="0" />
 
                                     </div>    
                                 :
                                 this.state.SellerId &&
                                     <div style={{marginTop:20}}>
-                                        <ShopList _id={this.state.SellerId} name={this.state.SellerName}  paddingLeft="0" paddingRight="0" />
+                                        <ShopList _id={this.state.SellerId} name={this.state.SellerName} ProductBase={this.state.ProductBase}  paddingLeft="0" paddingRight="0" />
                                     </div>
                                 
                                 }

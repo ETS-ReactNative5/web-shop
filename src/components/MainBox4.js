@@ -11,6 +11,7 @@ import Server  from './Server.js'
 import Carousel from "react-multi-carousel";
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
+import products from './Products'
 import { connect } from 'react-redux';
 
 const params = {
@@ -310,8 +311,6 @@ class MainBox4 extends React.Component {
     			
 			</div>
 			}
-			
-			
 			
 			
 			

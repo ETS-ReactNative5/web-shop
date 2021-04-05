@@ -1005,12 +1005,12 @@ class MainBox2 extends React.Component {
             
             {
               this.state.catsList[0] &&
-              <CatList _id={this.state.catsList[0]._id} UId={this.state.UId}  title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
+              <CatList _id={this.state.catsList[0]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[0].name} name={this.state.catsList[0].name} />
 
             }
             {
               this.state.shopList[0] &&
-                 <ShopList _id={this.state.shopList[0]._id} name={this.state.shopList[0].name} style={{marginTop:30,marginBottom:30}} />
+                 <ShopList _id={this.state.shopList[0]._id} name={this.state.shopList[0].name} ProductBase={this.state.ProductBase} style={{marginTop:30,marginBottom:30}} />
             }
 
             
@@ -1019,12 +1019,12 @@ class MainBox2 extends React.Component {
             </div>
             {
               this.state.catsList[1] &&
-              <CatList _id={this.state.catsList[1]._id} UId={this.state.UId}  title={this.state.catsList[1].name} name={this.state.catsList[1].name} />
+              <CatList _id={this.state.catsList[1]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[1].name} name={this.state.catsList[1].name} />
 
             }
             {
               this.state.shopList[1] &&
-                 <ShopList _id={this.state.shopList[1]._id} name={this.state.shopList[1].name} style={{marginTop:30,marginBottom:30}} />
+                 <ShopList _id={this.state.shopList[1]._id} name={this.state.shopList[1].name} ProductBase={this.state.ProductBase} style={{marginTop:30,marginBottom:30}} />
             }
             {this.state.ProductBase &&
             <div className="row" style={{marginTop:10,marginBottom:10}} >
@@ -1039,12 +1039,12 @@ class MainBox2 extends React.Component {
             
             {
               this.state.catsList[2] &&
-              <CatList _id={this.state.catsList[2]._id} UId={this.state.UId}  title={this.state.catsList[2].name} name={this.state.catsList[2].name} />
+              <CatList _id={this.state.catsList[2]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[2].name} name={this.state.catsList[2].name} />
 
             }
             {
               this.state.shopList[2] &&
-                 <ShopList _id={this.state.shopList[2]._id} name={this.state.shopList[2].name} style={{marginTop:30,marginBottom:30}} />
+                 <ShopList _id={this.state.shopList[2]._id} name={this.state.shopList[2].name} ProductBase={this.state.ProductBase} style={{marginTop:30,marginBottom:30}} />
             }
             <div style={{marginTop:10,marginBottom:10}} >
 
@@ -1052,12 +1052,12 @@ class MainBox2 extends React.Component {
             </div>
             {
               this.state.catsList[3] &&
-              <CatList _id={this.state.catsList[3]._id} UId={this.state.UId}  title={this.state.catsList[3].name} name={this.state.catsList[3].name} />
+              <CatList _id={this.state.catsList[3]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[3].name} name={this.state.catsList[3].name} />
 
             }
             {
               this.state.shopList[4] &&
-                 <ShopList _id={this.state.shopList[4]._id} name={this.state.shopList[4].name} style={{marginTop:30,marginBottom:30}} />
+                 <ShopList _id={this.state.shopList[4]._id} name={this.state.shopList[4].name} ProductBase={this.state.ProductBase} style={{marginTop:30,marginBottom:30}} />
             }
 
             <div className="col-lg-8 col-12" style={{ background: '#fff', display: 'none' }} >
@@ -1295,7 +1295,7 @@ class MainBox2 extends React.Component {
             </div>
             {
               this.state.shopList[3] &&
-                 <ShopList _id={this.state.shopList[3]._id} name={this.state.shopList[3].name}  />
+                 <ShopList _id={this.state.shopList[3]._id} ProductBase={this.state.ProductBase} name={this.state.shopList[3].name}  />
             }
 
             <div className="col-lg-12 col-12" style={{ backgroundColor: '#fff', marginTop: 20, display: 'none' }}   >
