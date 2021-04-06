@@ -421,7 +421,7 @@ class ShopsList extends React.Component {
                 </div>
               </div>
               <div className="col-lg-12">
-              <label className="labelNoGroup">دسته بندی های مرتبط با فروشگاه</label>
+              <label className="labelNoGroup yekan">دسته بندی های مرتبط با فروشگاه</label>
               <MultiSelect value={this.state.categories} optionLabel="name" style={{width:'100%'}} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => { 
                           
 

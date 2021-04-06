@@ -40,6 +40,7 @@ class Cart extends React.Component {
             CartItemsGet: 0,
             CartNumber: 0,
             userId: null,
+            loading:1,
             pleaseWait: false,
             AcceptAddress: false,
             StepNumber: 1,
@@ -217,7 +218,7 @@ class Cart extends React.Component {
                             ProductBase: response.data.result ? response.data.result.ProductBase : false
 
                         })
-                        that.getCartItems();
+                        that.getPics();
                     })
                     .catch(error => {
                         console.log(error)
@@ -226,6 +227,26 @@ class Cart extends React.Component {
             .catch(error => {
                 console.log(error)
             })
+    }
+    getPics(l, type) {
+        let that = this;
+        axios.post(this.state.url + 'getPics', {})
+          .then(response => {
+            response.data.result.map(function (item, index) {
+              
+              if (item.name == "file13"){
+                that.setState({
+                  loading_pic: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
+                })
+              }
+                  
+            })
+            this.getCartItems();
+        })
+          .catch(error => {
+            this.getCartItems();
+        })
+    
     }
     getCartItems() {
         let that = this;
@@ -308,6 +329,7 @@ class Cart extends React.Component {
                 GridData: response.data.result,
                 CartNumber: CartNumber,
                 CartItemsGet: 1,
+                loading:0,
                 CatId: (response.data.result[0] && response.data.result[0].products && response.data.result[0].products.length > 0) ? response.data.result[0].products[0].category_id : null
             })
             that.props.dispatch({
@@ -616,6 +638,8 @@ class Cart extends React.Component {
 
                 <Header1 />
                 <Header2 />
+                {!this.state.loading ?
+                <div>
                 <div className="row justify-content-center d-lg-flex d-md-flex" style={{ direction: 'ltr', marginBottom: 50, marginTop: 30 }}  >
                     <div className="col-9  yekan alert-light" style={{ padding: 20, display: 'none' }} >
                         {this.state.GridData.length > 0 &&
@@ -736,12 +760,24 @@ class Cart extends React.Component {
                         </div>
                     }
                 </div>
-                {this.state.CatId &&
+                </div>
+                :
+                <div style={{ zIndex: 10000 }} >
+                    <p style={{ textAlign: 'center' }}>
+                        
+                        <img src={this.state.loading_pic}  />
+                    </p>
+            
+                    </div>
+                }
+                {this.state.CatId && !this.state.loading &&
                     <div style={{ marginTop: 90 }}>
                         <CatList _id={this.state.CatId} UId={this.state.userId} name="پیشنهاد برای شما" paddingLeft="70" paddingRight="70" />
                     </div>
                 }
-                <Footer />
+                {!this.state.loading &&
+                    <Footer />
+                }
 
                 <Sidebar header="کسر از کیف پول " visible={this.state.displayReduse} style={{ fontFamily: 'YekanBakhFaBold' }} footer={renderDialogFooter()} onHide={() => onHide()}>
 

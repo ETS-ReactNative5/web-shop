@@ -28,6 +28,7 @@ class Category extends React.Component {
             productsDetailArray:[],
             layout: 'list',
             Exist: false,   
+            loading:1,
             PId: null,
             UId: null,
             EmptyCat: -1,
@@ -44,10 +45,10 @@ class Category extends React.Component {
                     UId: response.data.authData.userId,
                     levelOfUser: response.data.authData.levelOfUser
                 })
-                this.getSettings();
+                this.getPics();
             })
             .catch(error => {
-                this.getSettings();
+                this.getPics();
             })
     }
     onHide(event) {
@@ -84,6 +85,26 @@ class Category extends React.Component {
 	
 	
 	}
+    getPics(l, type) {
+        let that = this;
+        axios.post(this.state.url + 'getPics', {})
+          .then(response => {
+            response.data.result.map(function (item, index) {
+              
+              if (item.name == "file13"){
+                that.setState({
+                  loading_pic: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
+                })
+              }
+                  
+            })
+            this.getSettings();      
+        })
+          .catch(error => {
+            this.getSettings();      
+        })
+    
+    }
     getProducts(p) {
         let that = this;
         let param = {
@@ -98,6 +119,7 @@ class Category extends React.Component {
             let res = response.data.result;
             that.setState({
                 GridData: response.data.result,
+                loading:0,
                 EmptyCat: response.data.result.length == 0 ? 0 : 1
             })
         };
@@ -216,7 +238,91 @@ class Category extends React.Component {
 
                         </div>
                     </div>
-                    <Dialog visible={this.state.VisibleDialog} onHide={this.onHide} style={{ width: '60vw' }} maximizable={false} maximized={false}>
+                    
+                </div>
+
+            );
+        } else {
+            return (
+                <div></div>
+            )
+
+        }
+    }
+    GoToProduct(id, title) {
+        this.setState({
+            PId: id,
+            title: title
+        })
+    }
+    render() {
+        if (this.state.PId) {
+            return <Redirect to={"/products?name=" + this.state.title + "&id=" + this.state.PId} />;
+        }
+        if (this.state.ShopLink) {
+			return <Redirect to={this.state.ShopLink} push={true} />;
+		}
+        return (
+
+            <div>
+                <Header1 />
+                <Header2 />
+                {!this.state.loading ?
+                    <div className="row justify-content-center firstInPage  p-md-5 p-3" style={{ direction: 'rtl', minHeight: 600 }}>
+
+                        <div className="col-lg-10 DataViewNoBorder bs-row">
+
+                            <div>
+                                <div style={{ backgroundColor: '#fff', alignItems: 'center', justifyContent: 'space-between', borderRadius: 5, marginBottom: 5, padding: 20 }} className="row iranyekanwebmedium">
+                                    <div className="col-lg-2 col-sm-4 col-12  mt-md-0 mt-3" style={{ textAlign: 'center' }}>مرتب سازی براساس : </div>
+                                    <div className="col-lg-7 col-md-6 col-12 mt-md-0 mt-5" className="mt-md-0 mt-5">
+                                        <SelectButton optionLabel="name" optionValue="value" style={{ textAlign: 'right', direction: 'ltr',display:'flex',justifyContent:'space-around',flexWrap:'wrap' }} value={this.state.Sort} options={this.state.SortOptions} onChange={(e) => {
+                                            this.setState({ Sort: e.value });
+                                            this.getProducts({ Exist: this.state.Exist, Sort: e.value })
+
+                                        }}
+                                        ></SelectButton>
+                                    </div>
+                                    <div className="col-lg-3 col-sm-12 col-12  mt-md-0 mt-5" style={{border:'1px solid #eee',borderRadius:5}}>
+                                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-evenly',borderRadius:5,padding:5}} >
+
+                                        <InputSwitch  checked={this.state.Exist} onChange={(e) => {
+                                            this.setState({
+                                                Exist: e.value
+                                            });
+                                            this.getProducts({ Exist: e.value });
+                                        }
+                                        } />
+                                    <label className="yekan" style={{marginBottom:0}}>
+                                            فقط کالاهای موجود
+                                    </label>
+                                    </div>    
+
+                                    </div>
+
+                                </div>
+                                {this.state.GridData.length > 0 && this.state.EmptyCat != 0 ?
+                                    <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} rows={12} itemTemplate={this.itemTemplate}></DataView>
+                                    :
+                                    <div>
+                                        {this.state.EmptyCat == 0 ?
+                                            <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i className="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
+                                            :
+                                            <div style={{ zIndex: 10000 }} >
+                                                <p style={{ textAlign: 'center' }}>
+                                                    <img src={require('../public/loading.gif')} style={{ width: 320, display: 'none' }} />
+                                                </p>
+
+                                            </div>
+
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+
+                        </div>
+                        <Dialog visible={this.state.VisibleDialog} onHide={this.onHide} style={{ width: '60vw' }} maximizable={false} maximized={false}>
 				{this.state.productsDetailArrayRef &&	
 					<div  className="iranyekanweblight" style={{textAlign:'center',fontSize:25,marginBottom:35}}><span className="iranyekanweblight text-danger" > {this.state.productsDetailArrayRef.title} </span> را میتوانید از فروشگاههای زیر بخرید</div>
 				}
@@ -249,91 +355,19 @@ class Category extends React.Component {
 					}
 					</div>
                 </Dialog>
-                </div>
-
-            );
-        } else {
-            return (
-                <div></div>
-            )
-
-        }
-    }
-    GoToProduct(id, title) {
-        this.setState({
-            PId: id,
-            title: title
-        })
-    }
-    render() {
-        if (this.state.PId) {
-            return <Redirect to={"/products?name=" + this.state.title + "&id=" + this.state.PId} />;
-        }
-        if (this.state.ShopLink) {
-			return <Redirect to={this.state.ShopLink} push={true} />;
-		}
-        return (
-
-            <div>
-                <Header1 />
-                <Header2 />
-                <div className="row justify-content-center firstInPage  p-md-5 p-3" style={{ direction: 'rtl', minHeight: 600 }}>
-
-                    <div className="col-lg-10 DataViewNoBorder bs-row">
-
-                        <div>
-                            <div style={{ backgroundColor: '#fff', alignItems: 'center', justifyContent: 'space-between', borderRadius: 5, marginBottom: 5, padding: 20 }} className="row iranyekanwebmedium">
-                                <div className="col-lg-2 col-sm-4 col-12  mt-md-0 mt-3" style={{ textAlign: 'center' }}>مرتب سازی براساس : </div>
-                                <div className="col-lg-7 col-md-6 col-12 mt-md-0 mt-5" className="mt-md-0 mt-5">
-                                    <SelectButton optionLabel="name" optionValue="value" style={{ textAlign: 'right', direction: 'ltr',display:'flex',justifyContent:'space-around',flexWrap:'wrap' }} value={this.state.Sort} options={this.state.SortOptions} onChange={(e) => {
-                                        this.setState({ Sort: e.value });
-                                        this.getProducts({ Exist: this.state.Exist, Sort: e.value })
-
-                                    }}
-                                    ></SelectButton>
-                                </div>
-                                <div className="col-lg-3 col-sm-12 col-12  mt-md-0 mt-5" style={{border:'1px solid #eee',borderRadius:5}}>
-                                <div style={{display:'flex',alignItems:'center',justifyContent:'space-evenly',borderRadius:5,padding:5}} >
-
-                                    <InputSwitch  checked={this.state.Exist} onChange={(e) => {
-                                        this.setState({
-                                            Exist: e.value
-                                        });
-                                        this.getProducts({ Exist: e.value });
-                                    }
-                                    } />
-                                <label className="yekan" style={{marginBottom:0}}>
-                                        فقط کالاهای موجود
-                                </label>
-                                </div>    
-
-                                </div>
-
-                            </div>
-                            {this.state.GridData.length > 0 && this.state.EmptyCat != 0 ?
-                                <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} rows={12} itemTemplate={this.itemTemplate}></DataView>
-                                :
-                                <div>
-                                    {this.state.EmptyCat == 0 ?
-                                        <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i className="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
-                                        :
-                                        <div style={{ zIndex: 10000 }} >
-                                            <p style={{ textAlign: 'center' }}>
-                                                <img src={require('../public/loading.gif')} style={{ width: 320, display: 'none' }} />
-                                            </p>
-
-                                        </div>
-
-                                    }
-                                </div>
-                            }
-                        </div>
-
-
                     </div>
-
-                </div>
-                <Footer />
+                :
+                    <div style={{ zIndex: 10000 }} >
+                    <p style={{ textAlign: 'center' }}>
+                        
+                        <img src={this.state.loading_pic}  />
+                    </p>
+            
+                    </div>
+                }
+                {!this.state.loading &&
+                    <Footer />
+                }
             </div>
 
         )

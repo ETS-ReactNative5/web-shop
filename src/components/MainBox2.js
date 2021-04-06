@@ -634,7 +634,7 @@ class MainBox2 extends React.Component {
             <div className="col-lg-12 col-12" >
               <div className="row" style={{ marginTop: 10, marginBottom: 20 }}>
 
-                <div className={this.state.logo5 ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
+                <div className={(this.state.logo5 && this.state.ProductBase) ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
                   <Swiper {...params5} style={{ position: 'absolute' }}>
                     <div>
                       {this.state.link1 && this.state.link1.indexOf("http") > -1 ?

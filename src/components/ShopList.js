@@ -152,7 +152,7 @@ class CatList extends React.Component {
 							<Swiper {...params}>
 								{this.state.ShopList.data.map((item, index) => {
 									var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-									var url = this.props.ProductBase ? 'Products?id='+((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)+'' : 'Shop?id='+this.props._id+'';
+									var url = this.props.ProductBase ? 'Products?id='+((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)+'' : 'Shop?id='+this.props._id+'&cat='+item.category_id+'';
 									
 									return (
 										<Link className="car-details " to={`${process.env.PUBLIC_URL}/${url}`} style={{ display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>

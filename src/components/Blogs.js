@@ -26,6 +26,7 @@ class Products extends React.Component {
         this.state={
             id:this.props.location.search.split("id=")[1],
             UId:null,
+            loading:1,
             levelOfUser:null,
             Blog:[],
             Newproducts:[],
@@ -41,16 +42,34 @@ class Products extends React.Component {
                     UId : response.data.authData.userId,
                     levelOfUser:response.data.authData.levelOfUser
                 })
-                this.getBlogs(); 
+                this.getPics();
           })
           .catch(error => {
-            this.getBlogs();
+            this.getPics();
+
         })
                
             
        
         
        
+    }
+    getSettings() {
+        let that = this;
+        that.Server.send("AdminApi/getSettings", {}, function (response) {
+
+            if (response.data.result) {
+                that.setState({
+                    ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
+                    SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+                })
+            }
+            that.getBlogs(); 
+
+        }, function (error) {
+        })
+
+
     }
     componentWillReceiveProps(nextProps) {
         if((nextProps.location.search && nextProps.location.search.split("id=")[1] != this.state.id) || (!nextProps.location.search && this.state.id) ){
@@ -100,7 +119,8 @@ class Products extends React.Component {
         let SCallBack = function(response){
             
             that.setState({
-                Blog:response.data.result
+                Blog:response.data.result,
+                loading:0
             })
             that.getProducts();
             that.myRef.current.scrollTo(0,0)
@@ -149,6 +169,26 @@ class Products extends React.Component {
         })
 
     }
+    getPics(l, type) {
+        let that = this;
+        axios.post(this.state.url + 'getPics', {})
+          .then(response => {
+            response.data.result.map(function (item, index) {
+              
+              if (item.name == "file13"){
+                that.setState({
+                  loading_pic: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
+                })
+              }
+                  
+            })
+            this.getSettings();      
+        })
+          .catch(error => {
+            this.getSettings();      
+        })
+    
+    }
     render(){
     if (this.state.GotoLogin) {
         return <Redirect to={"/login"}/>;
@@ -157,10 +197,12 @@ class Products extends React.Component {
       <div ref={this.myRef}>  
         <Header1 /> 
         <Header2 /> 
+        {!this.state.loading ? 
         <div className="single_product firstInPage blogs" style={{direction:'rtl'}} >
         
 		<div className="container">
             <div className="row" >
+                {this.state.ProductBase &&
                 <div className="col-md-3 col-12 order-md-1 order-2" style={{marginTop:50,opacity:'0.8'}} >
                 {this.state.Newproducts.map((item,index) => {
                     var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
@@ -200,7 +242,8 @@ class Products extends React.Component {
                 })
                 }
                 </div>
-                <div className="col-md-9 col-12 order-md-2 order-1" style={{marginTop:50}} >
+                }
+                <div className={this.state.ProductBase ? "col-md-9 col-12 order-md-2 order-1" : "col-md-12 col-12 order-md-2 order-1"} style={{marginTop:50}} >
                     {this.state.id && this.state.Blog[0] ? 
                     <div>
                         <div className="iranyekanwebblack" style={{textAlign:'center',fontSize:22}}>{this.state.Blog[0].title}</div>
@@ -238,7 +281,18 @@ class Products extends React.Component {
         </div>
                    
 	    </div>
-        <Footer />
+        :
+            <div style={{ zIndex: 10000 }} >
+                  <p style={{ textAlign: 'center' }}>
+                    
+                    <img src={this.state.loading_pic}  />
+                  </p>
+        
+                </div>
+        }
+        {!this.state.loading &&
+          <Footer />
+        }
       </div>
     )
     }

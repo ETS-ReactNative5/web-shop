@@ -510,11 +510,11 @@ class Products extends React.Component {
             this.getCartItems(PDId, PId, Number, UId, Price);
             return;
         }
-        if(!this.state.ProductBase && !this.state.ShopIsOpen){
+        if(!this.state.ShopIsOpen){
             that.toast.current.show({severity: 'error', summary: 'فروشگاه بسته است', detail: <div>امکان خرید از این فروشگاه وجود ندارد</div>, life: 8000});
             return;
         }
-        if(!this.state.ProductBase && !this.state.InTime){
+        if(!this.state.InTime){
             if((this.state.Time1=="00:00" && this.state.Time2=="00:00") && (this.state.Time3=="00:00" && this.state.Time4=="00:00")){
                 that.toast.current.show({severity: 'warn', summary: 'فروشگاه بسته است', life: 8000});
             }

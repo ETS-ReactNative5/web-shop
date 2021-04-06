@@ -20,6 +20,9 @@ import { ListBox } from 'primereact/listbox';
 
 
 import Header2 from './Header2.js'
+const justifyTemplate = (option) => {
+    return <i className={option.icon}></i>;
+}
 class Shop extends React.Component {
     constructor(props) {
         super(props);
@@ -27,17 +30,22 @@ class Shop extends React.Component {
         this.getProducts = this.getProducts.bind(this);
         this.toast = React.createRef();
         this.onHide = this.onHide.bind(this);
-        debugger;
         this.state = {
             id: this.props.location.search.split("&cat=")[1] ? this.props.location.search.split("id=")[1].split("&cat")[0] : this.props.location.search.split("id=")[1],
             cat: this.props.location.search.split("&cat=")[1] ? this.props.location.search.split("&cat=")[1] : 'All',
             GridData: [],
             layout: 'list',
             PId: null,
-            Exist: true,
+            Exist: false,
+            goToLogin:false,
             CartItems: [],
             AllowSale: true,
+            loading:1,
             SortOptions: [{ name: 'جدیدترین', value: 1 }, { name: 'ارزانترین', value: 2 }, { name: 'گرانترین', value: 3 }, { name: 'سریعترین ارسال', value: 4 }],
+            layoutList : [
+                            {icon: 'fas fa-th', value: 'grid'},
+                            {icon: 'fas fa-th-list', value: 'list'}
+                        ],
             absoluteUrl: this.Server.getAbsoluteUrl(),
             url: this.Server.getUrl()
         }
@@ -45,9 +53,31 @@ class Shop extends React.Component {
 
     }
     componentDidMount() {
-        
-        this.getSettings();
+        this.setState({
+            loading:true
+        })
+        this.getPics();
 
+    }
+    getPics(l, type) {
+        let that = this;
+        axios.post(this.state.url + 'getPics', {})
+          .then(response => {
+            response.data.result.map(function (item, index) {
+              
+              if (item.name == "file13"){
+                that.setState({
+                  loading_pic: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
+                })
+              }
+                  
+            })
+            this.getSettings();      
+        })
+          .catch(error => {
+            this.getSettings();      
+        })
+    
     }
     getSettings() {
         let that = this;
@@ -66,9 +96,9 @@ class Shop extends React.Component {
                 that.setState({
                     UId: response.data.authData.userId
                 })
-                that.getProducts({ Exist: false });
+                that.getProducts({ Exist: false ,first:true});
             }).catch(error => {
-                that.getProducts({ Exist: false });
+                that.getProducts({ Exist: false ,first:true});
             })
         }, function (error) {
         })
@@ -139,10 +169,10 @@ class Shop extends React.Component {
                 })
             }
 
-            if (!that.state.ShopIsOpen) {
+            if (!that.state.ShopIsOpen && p.first) {
                 that.toast.current.show({ severity: 'error', summary: 'فروشگاه بسته است', detail: <div>امکان خرید از این فروشگاه وجود ندارد</div>, life: 8000 });
             }
-            if (!that.state.InTime) {
+            if (!that.state.InTime && p.first) {
                 if ((that.state.Time1 == "00:00" && that.state.Time2 == "00:00") && (that.state.Time3 == "00:00" && that.state.Time4 == "00:00")) {
                     that.toast.current.show({ severity: 'warn', summary: 'فروشگاه بسته است', life: 8000 });
                 }
@@ -170,6 +200,7 @@ class Shop extends React.Component {
                 }
 
             }
+            
             that.getCats(category_ids)
         };
         let ECallBack = function (error) {
@@ -194,7 +225,8 @@ class Shop extends React.Component {
                 })
             }
             that.setState({
-                cats: cats
+                cats: cats,
+                loading:0
             })
             if(that.state.cat){
                 that.changeCatList({value:that.state.cat});
@@ -208,6 +240,11 @@ class Shop extends React.Component {
     }
     getCartItems(product) {
         let that = this;
+        if(!this.state.UId){
+            this.setState({
+                goToLogin:true
+            })
+        }
         let param = {
             UId: this.state.UId,
             levelOfUser: this.state.levelOfUser
@@ -398,8 +435,8 @@ class Shop extends React.Component {
 
     }
     itemTemplate(car, layout) {
-        if (layout === 'list' && car) {
-            let pic = car.fileUploaded.split("public")[1] ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
+        if (layout === 'grid' && car) {
+            let pic = (car.fileUploaded && car.fileUploaded.split("public")[1]) ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
             return (
                 <div className="col-12 col-lg-4 col-md-4 col-sm-6" style={{ textAlign: 'center', paddingRight: 0, paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}>
                     <div className="product-grid-item card" style={{ padding: 10, minHeight: 400 }} onClick={() => {
@@ -460,7 +497,79 @@ class Shop extends React.Component {
                 </div>
 
             );
-        } else {
+        } else if (car) {
+            let pic = (car.fileUploaded && car.fileUploaded.split("public")[1]) ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
+            return (
+                <div className="col-12 col-lg-12 col-md-12 col-sm-12" style={{ textAlign: 'center', paddingRight: 0, paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}>
+                    <div className="product-grid-item card" style={{ padding: 10 }} onClick={() => {
+                        if (!this.state.ProductBase) {
+                            this.setState({
+                                selectedProduct: true,
+                                curentProduct: car
+                            })
+                        }
+                    }} >
+                        <div className="row">
+                        {!this.state.ProductBase && car.number > 0 && this.state.ShopIsOpen && this.state.InTime &&
+                            <span className="fa fa-plus-circle text-success" onClick={(e) => { this.openSideBar(car); e.stopPropagation(); }} style={{ fontSize: 30, position: 'absolute', top: 5, right: 5, cursor: 'pointer', zIndex: 5 }}></span>
+                        }
+                        <div className="col-lg-6 col-12 product-grid-item-content YekanBakhFaMedium">
+                            <img src={pic} alt={car.title} style={{ height: 150, borderRadius: 15 }} />
+                            {(this.state.UId || !car.ShowPriceAftLogin) &&
+                                <div>
+                                    {car.number > 0 ?
+                                        <div style={{ textAlign: 'center' }}>
+
+                                            {
+                                                car.number > 0 && (parseInt(this.props.off) + car.off) > "0" ?
+                                                    <div>
+                                                        <div className="car-subtitle  iranyekanwebmedium" style={{ paddingTop: 5,textDecoration:'line-through', marginTop: 25, marginLeft: 45, fontSize: 11, color: '#a09696' }} >{this.persianNumber(this.roundPrice(car.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div><br />
+                                                        <div className="car-title iranyekanwebmedium off" style={{ position: 'absolute', top: 0, right: 'auto', left: 0 }} >{this.persianNumber(((!car.NoOff ? parseInt(this.props.off) : 0) + car.off))} %</div>
+                                                    </div>
+                                                    :
+                                                    <div style={{ height: 66 }}>
+                                                    </div>
+
+                                            }
+                                            <div className="product-price YekanBakhFaBold" style={{ fontSize: 20 }} >{this.persianNumber(this.roundPrice((car.price - (car.price * ((!car.NoOff ? parseInt(this.props.off) : 0) + car.off)) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
+
+                                        </div>
+                                        :
+                                        <div style={{ textAlign: 'center' }}><div style={{ height: 70 }}>
+                                        </div><span className="iranyekanwebmedium" style={{ fontSize: 16, marginTop: 10, color: 'red' }}>ناموجود</span></div>
+
+                                    }
+
+
+                                </div>
+                            }
+                        </div>
+                        <div className="col-lg-6 col-12 product-grid-item-bottom" style={{ marginTop: 10, marginBottom: 10, textAlign: 'left' }}>
+                        <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'center', marginTop: 30}}>{car.title}</div>
+                        {car.subTitle != '' && car.subTitle !='-' &&
+                            <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'center', marginTop: 30}}>{car.subTitle}</div>
+                        }
+                        {car.desc != '' && car.desc !='-' &&
+                            <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'center', marginTop: 30}}>{car.desc}</div>
+                        }
+                        <div style={{ width: '100%', textAlign:'center',marginTop:20 }}>
+                            {this.state.ProductBase &&
+                                <Link className="p-button-info btn-warning " to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#" style={{ padding: 10, marginTop: 10, width: '85%', fontFamily: 'YekanBakhFaBold' }}>
+                                    مشاهده جزئیات / خرید
+                            </Link>
+
+                            }
+                        </div>
+                        </div>
+                        
+                        </div>
+                        
+                    </div>
+                </div>
+
+            );
+            
+        }else {
             return (
                 <div></div>
             )
@@ -488,6 +597,7 @@ class Shop extends React.Component {
     changeCatList(e) {
         this.setState({ cat: e.value });
         let GridData = this.state.GridDataOriginal;
+        e.value = e.value ? e.value : 'All';
         if (e.value != 'All') {
             GridData = GridData.filter(function (value, index, array) {
                 return (value.category_id == e.value);
@@ -497,11 +607,14 @@ class Shop extends React.Component {
         this.setState({
             GridData: GridData
         })
-        debugger;
+        window.scrollTo(0, 0);
     }
     render() {
         if (this.state.PId) {
             return <Redirect to={"/products?id=" + this.state.PId} />;
+        }
+        if (this.state.goToLogin) {
+            return <Redirect to={"/login"} />;
         }
         return (
 
@@ -510,7 +623,7 @@ class Shop extends React.Component {
                 <Header2 />
                 <Toast ref={this.toast} position="top-right" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
 
-                {this.state.shop &&
+                {( this.state.shop && !this.state.loading ) ?
                     <div className="row justify-content-center firstInPage" style={{ direction: 'rtl', minHeight: 600 }}>
                         {this.state.shop &&
                             <div style={{ position: 'relative', marginBottom: 30 }}>
@@ -551,6 +664,10 @@ class Shop extends React.Component {
                                                     <p dangerouslySetInnerHTML={{ __html: this.state.shop.about }} style={{ display: 'none' }}>
 
                                                     </p>
+                                                    <div style={{textAlign:'right',maginTop:10,marginBottom:10}}>
+
+                                                    <SelectButton  value={this.state.layout} itemTemplate={justifyTemplate} options={this.state.layoutList} onChange={(e) => this.setState({layout:e.value})} />
+                                                    </div>
                                                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-evenly', border: '1px solid #eee', borderRadius: 5, padding: 5 }} >
                                                         <InputSwitch checked={this.state.Exist} onChange={(e) => {
                                                             this.setState({
@@ -563,6 +680,7 @@ class Shop extends React.Component {
                                                             فقط کالاهای موجود
                                                     </label>
                                                     </div>
+
                                                     <div style={{ marginTop: 10, border: '1px solid #eee', borderRadius: 5, padding: 5, textAlign: 'right' }} >
                                                         <p className="yekan">مرتب سازی بر اساس : </p>
                                                         <SelectButton optionLabel="name" optionValue="value" style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} value={this.state.Sort} options={this.state.SortOptions} onChange={(e) => {
@@ -572,6 +690,8 @@ class Shop extends React.Component {
                                                         }}
                                                         ></SelectButton>
                                                     </div>
+
+
                                                     <ListBox value={this.state.cat} style={{ borderColor: '#ececec', textAlign: 'right', fontFamily: 'YekanBakhFaBold', marginTop: 50 }} options={this.state.cats} onChange={(e) => { this.changeCatList(e) }} />
 
 
@@ -585,7 +705,7 @@ class Shop extends React.Component {
                                 </div>
                                 <div className="col-lg-9 col-12 bs-row">
                                     {this.state.GridData.length > 0 ?
-                                        <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} rows={12} itemTemplate={this.itemTemplate}></DataView>
+                                        <DataView value={this.state.GridData} layout={this.state.layout}  rows={10000} itemTemplate={this.itemTemplate}></DataView>
                                         :
                                         <div>
                                             <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i className="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
@@ -599,6 +719,14 @@ class Shop extends React.Component {
 
                         </div>
 
+                    </div>
+                    :
+                    <div style={{ zIndex: 10000 }} >
+                    <p style={{ textAlign: 'center' }}>
+                        
+                        <img src={this.state.loading_pic}  />
+                    </p>
+            
                     </div>
                 }
                 <Dialog visible={this.state.selectedProduct} onHide={this.onHide} style={{ width: '60vw' }} maximizable={false} maximized={false}>
@@ -657,7 +785,9 @@ class Shop extends React.Component {
                         </div>
                     }
                 </Sidebar>
+                {!this.state.loading &&
                 <Footer />
+                }
             </div>
 
         )

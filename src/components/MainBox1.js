@@ -55,7 +55,11 @@ class MainBox1 extends React.Component {
                 <Header2 /> 
                 <div className="A-container" >
                     <MainBox2 callback={this.getResponse.bind(this)} /> 
+                    {!this.state.loading ?
                     <MainBox4 /> 
+                    :
+                    <div style={{ textAlign: 'center' }}></div>
+                    }
                 </div>
                 {!this.state.loading ?
                     <Footer />

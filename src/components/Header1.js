@@ -290,8 +290,10 @@ class Header1 extends React.Component {
 					</div>
 
 				</OverlayPanel>
-				{this.state.top_image &&
+				{this.state.top_image ?
 				<div style={{ height: 35, padding: 5, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: '50%', backgroundImage: `url(${this.state.top_image})` }} ></div>
+				:
+				<div style={{ height: 35, padding: 5, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: '50%' }} ></div>
 				}
 				<div >
 					<div className="row" style={{ direction: 'ltr', marginTop: 15, alignItems: 'center', marginLeft: 0, marginRight: 0 }}>
