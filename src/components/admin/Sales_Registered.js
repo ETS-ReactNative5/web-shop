@@ -520,7 +520,7 @@ class Sales_Registered extends React.Component {
               </div>
             }
             </div>
-            <div className="datatable-responsive-demo" style={{marginTop:this.state.isMainShop == 1 ? 180 : 100}}>
+            <div className="datatable-responsive-demo" style={{marginTop:this.state.isMainShop == 1 ? 250 : 100}}>
 
             <DataTable onRowSelect={this.onRowSelect} className="p-datatable-responsive-demo" responsive selection={this.state.selectedProduct1} onSelectionChange={e => {
               for (let i = 0; i < this.state.selectedFactor.length; i++) {

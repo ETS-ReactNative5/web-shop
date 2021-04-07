@@ -438,7 +438,7 @@ class Shop extends React.Component {
         if (layout === 'grid' && car) {
             let pic = (car.fileUploaded && car.fileUploaded.split("public")[1]) ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
             return (
-                <div className="col-12 col-lg-4 col-md-4 col-sm-6" style={{ textAlign: 'center', paddingRight: 0, paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}>
+                <div className="col-12 col-lg-3 col-md-4 col-sm-6" style={{ textAlign: 'center', paddingRight: 0, paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}>
                     <div className="product-grid-item card" style={{ padding: 10, minHeight: 400 }} onClick={() => {
                         if (!this.state.ProductBase) {
                             this.setState({
@@ -607,7 +607,7 @@ class Shop extends React.Component {
         this.setState({
             GridData: GridData
         })
-        window.scrollTo(0, 0);
+        //window.scrollTo(0, 0);
     }
     render() {
         if (this.state.PId) {
@@ -658,8 +658,7 @@ class Shop extends React.Component {
                                                 this.state.shop &&
                                                 <div>
                                                     <p style={{ fontSize: 26, textAlign: 'center', marginTop: 30, color: '#fff', backgroundColor: '#00bfd6', minHeight: 100, padding: 24 }} className="yekan">
-
-                                                        فروشگاه آنلاین {this.state.shop.name}
+                                                       {this.state.shop.name}
                                                     </p>
                                                     <p dangerouslySetInnerHTML={{ __html: this.state.shop.about }} style={{ display: 'none' }}>
 
@@ -692,7 +691,7 @@ class Shop extends React.Component {
                                                     </div>
 
 
-                                                    <ListBox value={this.state.cat} style={{ borderColor: '#ececec', textAlign: 'right', fontFamily: 'YekanBakhFaBold', marginTop: 50 }} options={this.state.cats} onChange={(e) => { this.changeCatList(e) }} />
+                                                    <ListBox value={this.state.cat} style={{ borderColor: '#ececec', textAlign: 'right', fontFamily: 'YekanBakhFaBold', marginTop: 50,maxHeight:400,overflow:'auto' }} options={this.state.cats} onChange={(e) => { this.changeCatList(e) }} />
 
 
 
@@ -705,7 +704,7 @@ class Shop extends React.Component {
                                 </div>
                                 <div className="col-lg-9 col-12 bs-row">
                                     {this.state.GridData.length > 0 ?
-                                        <DataView value={this.state.GridData} layout={this.state.layout}  rows={10000} itemTemplate={this.itemTemplate}></DataView>
+                                        <DataView value={this.state.GridData} className="row" layout={this.state.layout}  rows={10000} itemTemplate={this.itemTemplate}></DataView>
                                         :
                                         <div>
                                             <p className="iranyekanwebmedium" style={{ textAlign: 'center', fontSize: 35, padding: 100, backgroundColor: '#fff' }}>کالایی جهت نمایش وجود ندارد. <i className="fal fa-frown" style={{ marginRight: 20, fontSize: 36 }}></i></p>
@@ -729,7 +728,7 @@ class Shop extends React.Component {
             
                     </div>
                 }
-                <Dialog visible={this.state.selectedProduct} onHide={this.onHide} style={{ width: '60vw' }} maximizable={false} maximized={false}>
+                <Dialog visible={this.state.selectedProduct} onHide={this.onHide}  maximizable={false} maximized={false}>
                     <ShowProduct data={this.state.curentProduct} />
                 </Dialog>
                 <Dialog header="عدم امکان خرید" visible={this.state.notAllow} position='top' modal style={{ width: '50vw' }} onHide={() => this.setState({ notAllow: false })}

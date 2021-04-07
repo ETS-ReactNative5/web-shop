@@ -149,7 +149,7 @@ class CatList extends React.Component {
 							((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.product.off) > "0" &&
 							<div className="product_price YekanBakhFaBold oldPrice_product" style={{ textAlign: 'center',maxWidth:150 }}>{this.persianNumber(this.roundPrice(parseInt(this.state.product.price).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
 						}
-						{this.state.product.price > 0 &&
+						{this.state.product.number > 0 && this.state.product.price > 0 &&
 							<div className="product_price YekanBakhFaBold" style={{ marginTop: 50,color:'red', textAlign: 'right', fontSize: 25 }}>{this.persianNumber(this.roundPrice(parseInt(this.state.product.price - ((this.state.product.price * ((!this.state.NoOff ? parseInt(this.props.off) : 0) + this.state.product.off)) / 100)).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} تومان</div>
 
 						}

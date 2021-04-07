@@ -51,6 +51,7 @@ import 'primeicons/primeicons.css';
 import { InputText } from 'primereact/inputtext';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
+import Sales_Payk from './Sales_Payk.js';
 
 class Management extends React.Component {
   constructor(props) {
@@ -244,6 +245,9 @@ class Management extends React.Component {
             }
             {this.state.CId == "158" && !this.state.IsReport &&
               <Create_Off />
+            }
+            {this.state.CId == "159" && !this.state.IsReport &&
+              <Sales_Payk />
             }
 
 

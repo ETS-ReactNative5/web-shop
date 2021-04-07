@@ -16,6 +16,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { SelectButton } from 'primereact/selectbutton';
 import { ComponentToPrint } from './../ComponentToPrint.js';
+import { Toast } from 'primereact/toast';
 
 import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
@@ -31,6 +32,8 @@ class Sales_Registered extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
+    this.toast = React.createRef();
+
     this.state = {
       layout: 'list',
       dashList: (this.props && this.props.location && this.props.location.state && this.props.location.state.list) ? this.props.location.state.list : [],
@@ -56,6 +59,7 @@ class Sales_Registered extends React.Component {
     }
     this.selectedFactorChange = this.selectedFactorChange.bind(this);
     this.onHide = this.onHide.bind(this);
+    this.onHide2 = this.onHide2.bind(this);
     this.handleChangeStatus = this.handleChangeStatus.bind(this);
     this.handleProductStatusChange = this.handleProductStatusChange.bind(this);
     this.onStatusChange = this.onStatusChange.bind(this);
@@ -190,9 +194,11 @@ class Sales_Registered extends React.Component {
 
   }
   onHide(event) {
-    this.setState({ selectedFactor: null, showProductStatus: 0 });
-    //window.location.reload();
+    this.setState({ selectedFactor: null, showProductStatus: 0,SelectPayk:false });
     this.GetFactors(this.state.Filter);
+  }
+  onHide2(event) {
+    this.setState({ SelectPayk:false });
   }
   selectedFactorChange(value) {
 
@@ -324,7 +330,7 @@ class Sales_Registered extends React.Component {
           v.company = v.userData[0].company;
         }
         v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
-        
+        v.share_address = <i className="fa fa-share" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.shareAddress(v)}></i>
 
       })
       that.setState({
@@ -341,6 +347,70 @@ class Sales_Registered extends React.Component {
       console.log(error)
     }
     this.Server.send("AdminApi/getFactors", param, SCallBack, ECallBack)
+  }
+  shareAddress(p){
+    let that = this;
+    let address = p.userData[0].city + "،" + p.userData[0].subCity+"،"+p.userData[0].address;
+    this.Server.send("AdminApi/getuserInformation", {map:'payk'}, function (response) {
+      
+      debugger;
+      if(response.data.result.length > 1 ){
+        that.setState({
+          SelectPayk:true,
+          paykList:{data:response.data.result,address:address,name:p.userData[0].username,username:response.data.result[0].username}
+        })
+      }else{
+        if(response.data.result.length == 1)
+          that.sendSms(address,p.userData[0].name,p.userData[0].username,response.data.result[0].username);
+        else
+          that.toast.current.show({ severity: 'warn', summary: 'عدم معرفی پیک', detail: <div> برای ارسال مشخصات خریدار به پیک از طریق فرم لیست کاربران حداقل یک کاربر با دسترسی پیک (payk) ثبت کنید </div>, life: 8000 });
+
+      }
+
+
+
+
+    }, function (error) {
+      that.setState({
+        loading: 0
+      })
+
+    })
+  }
+  sendSms(address,name,username,paykMob){
+    let googleAddress = "https://www.google.com/maps/search/"+address;
+    if(this.state.ActiveSms=="smart"){
+      axios.post(this.state.url+'sendsms_smartSms', {
+        text: "نام خریدار : " +name+"\n"+"شماره تلفن : "+ username+ "\n"+"آدرس : " + address + "\n" + googleAddress ,
+        mobileNo : paykMob.trim()
+      })
+      .then(response => {
+        this.toast.current.show({ severity: 'success', summary: 'اطلاعات با موفقیت ارسال شد', detail: <div></div>, life: 8000 });
+        this.onHide();
+
+      
+      })
+      .catch(error => {
+        alert(error)
+
+      })
+    }else if(this.state.ActiveSms=="smsir"){
+     
+            axios.post(this.state.url+'sendsms_SmsIr', {
+              text: "نام خریدار : " +name+"\n"+"شماره تلفن : "+ username+ "\n"+"آدرس : " + address + "\n" ,
+              mobileNo : paykMob.trim()  
+            })
+            .then(response => {
+                this.toast.current.show({ severity: 'success', summary: 'اطلاعات با موفقیت ارسال شد', detail: <div></div>, life: 8000 });
+                this.onHide();
+            
+            })
+            .catch(error => {
+             
+             alert(error)
+            })
+        
+    }
   }
   inputTextEditor(field, props) {
 
@@ -387,7 +457,6 @@ class Sales_Registered extends React.Component {
   onEditorValueChange(props, value, field) {
     let updatedProducts = [...props.value];
     updatedProducts[props.rowIndex][props.field] = value;
-
     /*if((props.field=="relativeLevel" ||  props.field=="off") && value=="-")
       return;
     if((props.field=="relativeLevel" ||  props.field=="off") && isNaN(value) && value != "")
@@ -449,6 +518,7 @@ class Sales_Registered extends React.Component {
         <div className="row justify-content-center">
 
           <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
+            <Toast ref={this.toast} position="bottom-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
             <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
             
             <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها (آماده ارسال)</span></div>
@@ -479,12 +549,36 @@ class Sales_Registered extends React.Component {
                 {this.state.isMainShop == 1 &&
                   <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "right" }} />
                 }
+                <Column field="share_address" filter={false} header="اشتراک آدرس"  className="yekan" style={{ textAlign: "right" }} />
+
               </DataTable>
             </div>
           </div>
 
         </div>
+        <Dialog header="انتخاب پیک" visible={this.state.SelectPayk}  onHide={this.onHide2} maximizable={false} maximized={false}>
+          <div className="row">
+            <div className="col-12">
+              <select style={{width:'100%'}} className="yekan" onChange={(event)=>this.setState({
+              paykMob : event.target.value
+              })} value={this.state.paykMob}>
+                <option value=""></option>
 
+                {this.state.paykList && this.state.paykList.data.map(function(item,index){
+                    return(
+                      <option value={item.username} className="yekan" >{item.name}</option>
+                    )
+                })
+                }
+              </select>
+            </div>
+            <div className="col-12">
+              {this.state.paykList &&
+            <button className="btn btn-success YekanBakhFaMedium" disabled={!this.state.paykMob} style={{marginTop:40,marginBottom:10,width:'100%'}} onClick={()=>this.sendSms(this.state.paykList.address,this.state.paykList.name,this.state.paykList.username,this.state.paykMob)}>اشتراک گذاری اطلاعات کاربر</button>
+              }
+            </div>
+          </div>
+        </Dialog>
         <Dialog header="جزئیات فاکتور" visible={this.state.selectedFactor} style={{ width: '80vw' }} minY={70} onHide={this.onHide} maximizable={false} maximized={true}>
           <div style={{ overflowY: 'auto', overflowX: 'hidden', minHeight: 400 }}>
             <div style={{position:'fixed',backgroundColor:'#fff',zIndex:2,width:'100%'}} >
@@ -530,7 +624,7 @@ class Sales_Registered extends React.Component {
               </div>
             }
             </div>
-            <div className="datatable-responsive-demo" style={{marginTop:this.state.isMainShop == 1 ? 180 : 100}}>
+            <div className="datatable-responsive-demo" style={{marginTop:this.state.isMainShop == 1 ? 250 : 100}}>
 
             <DataTable onRowSelect={this.onRowSelect} className="p-datatable-responsive-demo" responsive selection={this.state.selectedProduct1} onSelectionChange={e => {
               for (let i = 0; i < this.state.selectedFactor.length; i++) {

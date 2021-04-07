@@ -182,7 +182,13 @@ class Category extends React.Component {
                     <div className="product-grid-item card" style={{ padding: 10, minHeight: 500 }} >
                         <div className="product-grid-item-content YekanBakhFaMedium">
                             <img src={pic} alt={car.title} style={{ height: 150, borderRadius: 15 }} />
-                            <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'right', marginTop: 30, height: 50 }}>{car.title}</div>
+                            <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'center',fontSize:'x-large', marginTop: 30, height: 50,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{car.title}</div>
+                            <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'right', marginTop: 30, height: 50,whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' }}>
+                            {car.subTitle && car.subTitle != "-" &&
+                                car.subTitle
+                            }
+                            </div>
+
                         </div>
                         <div className="product-grid-item-bottom" style={{ marginTop: 10, marginBottom: 10, textAlign: 'left' }}>
                             {(this.state.UId || !car.ShowPriceAftLogin) &&
@@ -223,7 +229,7 @@ class Category extends React.Component {
                         :
                             <div style={{ textAlign: 'right' }}><i className="fas fa-truck" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.Seller && car.Seller[0] && car.Seller[0].PrepareTime || "30")} دقیقه پس از پرداخت</span></div>
                         }
-                        <div style={{ position: 'absolute', bottom: 15, width: '100%', left: 0 }}>
+                        <div className="mt-3 mb-3">
                             {this.state.ProductBase ?
                             <Link className="p-button-info btn-warning " to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#" style={{ padding: 10, marginTop: 10, width: '85%', fontFamily: 'YekanBakhFaBold' }}>
                                 مشاهده جزئیات / خرید
@@ -322,7 +328,7 @@ class Category extends React.Component {
 
 
                         </div>
-                        <Dialog visible={this.state.VisibleDialog} onHide={this.onHide} style={{ width: '60vw' }} maximizable={false} maximized={false}>
+            <Dialog visible={this.state.VisibleDialog} onHide={this.onHide}  maximizable={false} maximized={false}>
 				{this.state.productsDetailArrayRef &&	
 					<div  className="iranyekanweblight" style={{textAlign:'center',fontSize:25,marginBottom:35}}><span className="iranyekanweblight text-danger" > {this.state.productsDetailArrayRef.title} </span> را میتوانید از فروشگاههای زیر بخرید</div>
 				}

@@ -810,7 +810,7 @@ class Products extends React.Component {
                                                     ?
                                                     <form action="#">
 
-                                                        {this.state.SellerName &&
+                                                        {this.state.SellerName && this.state.IsSeveralShop &&
                                                             <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}> فروشنده : <Link to={`${process.env.PUBLIC_URL}/Shop?&name=${this.state.SellerName}&id=` + this.state.SellerId} className="title iranyekanwebmedium" ><span style={{ color: '#333', fontSize: 20 }}>{this.state.SellerName} </span></Link> </p></div>
                                                         }
                                                         {this.state.MainShopInfo.length >0  &&

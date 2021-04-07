@@ -27,10 +27,12 @@ import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
 
 
-class Sales_Posted extends React.Component {
+class Sales_Payk extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
+    this.itemTemplate = this.itemTemplate.bind(this);
+
     this.state = {
       layout: 'list',
       dashList: (this.props && this.props.location && this.props.location.state && this.props.location.state.list) ? this.props.location.state.list : [],
@@ -103,6 +105,41 @@ class Sales_Posted extends React.Component {
     }
     this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
   }
+  itemTemplate(car, layout) {
+    let link = "https://www.google.com/maps/search/"+car.city + "،" + car.subCity+"،"+car.address;
+
+
+    if (car) {
+      return (
+          <div>
+            <div className="row">
+              <div className="col-12 yekan" style={{textAlign:'right',marginTop:20}}>
+                شماره سفارش : {car.OrderId}
+              </div>
+              <div className="col-lg-6 col-12 yekan text-primary" style={{textAlign:'right',fontSize:20,marginTop:20}}>
+                {car.name}
+              </div>
+              <div className="col-lg-6 col-12 yekan text-danger mt-lg-0 mt-3" style={{textAlign:'right',fontSize:25,marginTop:20}}>
+                {car.username}
+              </div>
+              <div className="col-lg-6 col-12 yekan" style={{textAlign:'right',marginTop:20}}>
+                استان : {car.city}
+              </div>
+              <div className="col-lg-6 col-12 yekan" style={{textAlign:'right',marginTop:20}}>
+                شهر : {car.subCity}
+              </div>
+              <div className="col-12 yekan" style={{textAlign:'right',marginTop:20,fontSize:20}}>
+                آدرس : {car.address}
+              </div>
+              <div className="col-12 yekan" style={{textAlign:'right',marginTop:20,marginBottom:20}}>
+                <a href={link} className="yekan" target="_blank" ><i className="fa fa-link " /> لینک نقشه</a>
+              </div>
+            </div>
+
+            </div>
+        );
+    } 
+}
   onRowSelect(event) {
     //Math.floor((Date.now() - response.data.result.result[0].products[0].LastChangeDate_num) / 3600000) > 20
     this.setState({
@@ -282,60 +319,22 @@ class Sales_Posted extends React.Component {
       })
       let NewFactors = 0;
       response.data.result.result.map(function (v, i) {
-        v.Amount = !v.Amount ? "0" : v.Amount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        v.Credit = !v.Credit ? "0" : v.Credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        v.paykAmount = !v.paykAmount ? "0" : v.paykAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        if (v.status == "1")
-          NewFactors++;
-        if (v.status == "-2")
-          v.statusDesc = "لغو محصول توسط فروشنده"
-        if (v.status == "-2")
-          v.statusDesc = "درخواست لغو توسط خریدار"
-        if (v.status == "-1")
-          v.statusDesc = "لغو شده"
-        if (v.status == "0")
-          v.statusDesc = "ناموفق"
-        if (v.status == "1")
-          v.statusDesc = "ثبت شده"
-        if (v.status == "2")
-          v.statusDesc = "آماده ارسال"
-        if (v.status == "3")
-          v.statusDesc = "ارسال شده"
-        if (v.status == "4")
-          v.statusDesc = "تحویل شده"
-        if (v.status == "5")
-          v.statusDesc = "تسویه شده"
-        if (v.InPlace)
-          v.InPlace = <span className="text-warning">در محل</span>
-        else
-          v.InPlace = <span className="text-success">نقدی</span>
-        if (v.userData && v.userData[0]) {
-          v.name = v.userData[0].name;
-          v.company = v.userData[0].company;
-        }
-        v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
-        v.print =
-          <ReactToPrint
-            content={() => that.componentRef}
-          >
-            <PrintContextConsumer>
-              {({ handlePrint }) => (
-                <i className="far fa-print" onClick={()=>{
-                  that.setState({
-                    printParam: v
-                  })
-                  setTimeout(function(){
-                    handlePrint();
+        v.city = v.userData[0].city;
+        v.subCity = v.userData[0].subCity;
+        v.address = v.userData[0].address;
+        let link = "https://www.google.com/maps/search/"+v.userData[0].city + "،" + v.userData[0].subCity+"،"+v.userData[0].address;
+        v.link = <a href={link} target="_blank" ><i className="fa fa-link" /></a>
+        v.name = v.userData[0].name;
+        v.username = v.username;
+        v.refId = v.refId;
+        v.OrderId = v.OrderId;
 
-                  },0)
-                }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
-              )}
-            </PrintContextConsumer>
-          </ReactToPrint>
+        
+
+
 
       })
-      that.setState({
+        that.setState({
         GridDataFactors: response.data.result.result,
         LastAmount: response.data.result.finalPrice,
         LastCredit: response.data.result.finalCredit,
@@ -459,39 +458,9 @@ class Sales_Posted extends React.Component {
           <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
             <div className="section-title " style={{ display: 'none', textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >موجودی : {this.persianNumber(parseInt(this.state.LastAmount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  تومان</span></div>
             
-            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها (ارسال شده)</span></div>
-            
-            <div className="datatable-responsive-demo">
-              <DataTable  resizableColumns={true} paginator={true} className="p-datatable-responsive-demo" rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedFactor} onSelectionChange={e => { if (e.originalEvent.target.tagName != "I") this.selectedFactorChange(e.value) }} >
-                <Column field="name" header="نام خریدار"  body={BodyTemplate}   className="yekan" style={{ textAlign: "right" }} />
-                {this.state.isMainShop == 1 &&
-                <Column field="username" header="نام کاربری" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                {this.state.isMainShop == 1 &&
-                <Column field="company" header="شرکت" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                <Column field="finalAmount" header="مبلغ فاکتور"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                {this.state.isMainShop == 1 &&
-                  <Column field="paykAmount" header="هزینه پیک"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                {this.state.CreditSupport && this.state.isMainShop == 1 &&
-                  <Column field="Credit" header="کسر از کیف پول"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                {this.state.isMainShop == 1 &&
-                <Column field="refId" header="رسید تراکنش"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                }
-                <Column field="Date" header="تاریخ"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-                <Column field="InPlace" header=" پرداخت"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست فاکتورها (تحویل پیک شده)</span></div>
+            <DataView value={this.state.GridDataFactors} layout={this.state.layout} rows={100} itemTemplate={this.itemTemplate}></DataView>
 
-                <Column field="statusDesc" filter={false} header="وضعیت"  body={BodyTemplate} filterElement={StatusFilter} className="yekan" style={{ textAlign: "right" }} />
-                {this.state.isMainShop == 1 &&
-                  <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "right" }} />
-                }
-                {this.state.isMainShop == 1 &&
-                  <Column field="print" filter={false} header="چاپ"  className="yekan" style={{ textAlign: "right" }} />
-                }
-              </DataTable>
-            </div>
           </div>
 
         </div>
@@ -591,5 +560,5 @@ const mapStateToProps = (state) => {
   }
 }
 export default withRouter(
-  connect(mapStateToProps)(Sales_Posted)
+  connect(mapStateToProps)(Sales_Payk)
 );
