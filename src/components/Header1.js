@@ -214,7 +214,8 @@ class Header1 extends React.Component {
 	
 		  if (response.data.result) {
 			that.setState({
-			  RegisterByMob: response.data.result[0] ? response.data.result[0].RegisterByMob : false
+			  RegisterByMob: response.data.result[0] ? response.data.result[0].RegisterByMob : false,
+			  ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
 			})
 			window.CRISP_WEBSITE_ID = response.data.result[0] ? response.data.result[0].ChatId : '';
 	

@@ -151,7 +151,7 @@ class Sales extends React.Component {
     let msg = "";
     if (event.target.value == "2" || event.target.value == "3" || event.target.value == "4") {
       msg = event.target.value == "2" ? "سفارش شما توسط فروشنده تامین و آماده ارسال گردید" + "\n" + that.state.STitle :
-        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش تا ساعتی دیگر به دستتان خواهد رسید" + "\n" + that.state.STitle :
+        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش به زودی به دستتان خواهد رسید" + "\n" + that.state.STitle :
           "سفارش شما تحویل شد ." + "\n" + "از خریدتان ممنونیم" + "\n" + that.state.STitle)
     }
     let param = {
@@ -203,6 +203,7 @@ class Sales extends React.Component {
 
     let that = this;
     var p = [];
+    debugger;
     for (let i = 0; i < value.products.length; i++) {
       value.products[i].credit = value.products[i].credit ? value.products[i].credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].CustomerPrice = value.products[i].price ? (value.products[i].price - value.products[i].Commission).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
@@ -298,7 +299,7 @@ class Sales extends React.Component {
         loading: 0
       })
       let NewFactors = 0;
-
+      debugger;
       response.data.result.result.map(function (v, i) {
         let Commission=0;  
         for(let pp of v.products)

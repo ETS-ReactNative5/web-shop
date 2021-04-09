@@ -39,10 +39,12 @@ class ShopsList extends React.Component {
       categories:null,
       selectedMainShop: null,
       AllowCredit: false,
+      showInSite: false,
       selectedName: null,
       selectedAddress: null,
       selectedCall: null,
       selectedMobile: null,
+      selectedSheba: null,
       selectedId: null,
       visibleDialog: false,
       statusDesc: null,
@@ -141,10 +143,12 @@ class ShopsList extends React.Component {
       selectedAddress: null,
       selectedCall: null,
       selectedMobile: null,
+      selectedSheba:null,
       selectedCommission: null,
       selectedMainShop: null,
       categories:null,
       AllowCredit: false,
+      showInSite:false,
       CreditCommission: 0,
       visibleDialog: false,
       PrepareTime: '',
@@ -209,11 +213,13 @@ class ShopsList extends React.Component {
       categories: value.cats,
       selectedMainShop: value.main,
       AllowCredit: value.AllowCredit,
+      showInSite: value.showInSite,
       CreditCommission: value.CreditCommission,
       selectedName: value.name,
       selectedAddress: value.address,
       selectedCall: value.call || "",
       selectedMobile: value.mobile || "",
+      selectedSheba: value.Sheba || "",
       PrepareTime: value.PrepareTime,
       Opened: value.Opened,
       ...Time
@@ -291,8 +297,10 @@ class ShopsList extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       address: this.state.selectedAddress,
+      showInSite:this.state.showInSite,
       call: this.state.selectedCall,
       mobile: this.state.selectedMobile,
+      Sheba: this.state.selectedSheba,
       ShopId: this.state.selectedId,
       name: this.state.selectedName,
       commission: this.state.selectedCommission,
@@ -421,6 +429,14 @@ class ShopsList extends React.Component {
                 </div>
               </div>
               <div className="col-lg-12">
+                <div className="group">
+
+                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.selectedSheba} name="selectedSheba" onChange={(event) => this.setState({ selectedSheba: event.target.value })} required="true" />
+                  <label className="yekan">شماره شبا</label>
+
+                </div>
+              </div>
+              <div className="col-lg-12">
               <label className="labelNoGroup yekan">دسته بندی های مرتبط با فروشگاه</label>
               <MultiSelect value={this.state.categories} optionLabel="name" style={{width:'100%'}} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => { 
                           
@@ -442,8 +458,15 @@ class ShopsList extends React.Component {
 
                     </div>
                   </div>
-                  }
-             
+                  }  
+             <div className="col-lg-12" >
+                <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
+
+                  <Checkbox inputId="laon" value={this.state.showInSite} checked={this.state.showInSite} onChange={e => this.setState({ showInSite: e.checked })}></Checkbox>
+                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>نمایش در صفحه اول سایت</label>
+
+                </div>
+              </div>
               
               <div className="col-lg-12" >
                 <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
@@ -454,7 +477,7 @@ class ShopsList extends React.Component {
                 </div>
               </div>
               {this.state.AllowCredit &&
-                <div className="col-lg-3" style={{marginBottom:50,display:'none'}}>
+                <div className="col-lg-3" style={{marginBottom:50}}>
                   <div className="group">
 
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.CreditCommission} name="CreditCommission" onChange={(event) => this.setState({ CreditCommission: event.target.value })} required="true" />

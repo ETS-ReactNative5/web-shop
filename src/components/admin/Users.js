@@ -271,7 +271,7 @@ class Users extends React.Component {
       address: this.state.address,
       credit: this.state.credit ? this.state.credit.replace(/,/g, "") : 0,
       map: this.state.map,
-      levelOfUser: this.state.levelOfUser,
+      levelOfUser: this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0 ? this.state.levelOfUser : null,
       ShopId: this.state.ShopId,
     };
     let SCallBack = function (response) {

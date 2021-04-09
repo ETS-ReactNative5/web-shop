@@ -326,7 +326,7 @@ class MainBox2 extends React.Component {
 
   }
   getShops(){
-      let condition = {};
+      let condition = {condition:{showInSite:true}};
       axios.post(this.state.url + 'getShops', condition)
         .then(response => {
             this.getProducts(3, "new")
@@ -1262,7 +1262,7 @@ class MainBox2 extends React.Component {
                           </div>
                           <div className="p-col-12 car-data" style={{ marginTop: 10 }}>
                             <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>{item.title}</div>
-
+                            
                             <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
                             {(this.state.UId || !item.ShowPriceAftLogin) &&
                               <div>

@@ -752,7 +752,9 @@ class Shop extends React.Component {
                                     <div className="row" style={{ border: '1px solid #eee', marginBottom: 10 }}>
                                         <div className="col-12" style={{ textAlign: 'right' }}>
                                             <label className="iranyekanwebmedium" style={{ fontSize: 14 }}>{item.products[0]?.title}</label>
-                                            <label className="iranyekanwebmedium" style={{ fontSize: 11 }}>{item.products[0]?.subTitle}</label>
+                                            {item.products[0].subTitle != '' && item.products[0].subTitle !='-' &&
+                                                <label className="iranyekanwebmedium" style={{ fontSize: 11 }}>{item.products[0]?.subTitle}</label>
+                                            }
                                         </div>
 
                                         <div className="col-12" style={{ textAlign: 'right', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#eee' }}>

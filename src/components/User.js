@@ -102,7 +102,14 @@ class User extends React.Component {
       token: localStorage.getItem("api_token")
     })
       .then(response => {
-
+        let that = this;
+        navigator.geolocation.getCurrentPosition(function(position) {
+          debugger;
+          that.setState({
+            lat : '32.777403',
+            lon : '51.649219'
+          })
+        });
 
       })
       .catch(error => {
@@ -150,6 +157,12 @@ class User extends React.Component {
     this.Server.send("AdminApi/ManageUsers", param, SCallBack, ECallBack)
   }
   reverseFunction(map, e) {
+    debugger;
+    let that = this;
+
+
+
+
     var url = `https://map.ir/reverse/no?lat=${e.lngLat.lat}&lon=${e.lngLat.lng}`
     fetch(url,
       {
@@ -163,9 +176,14 @@ class User extends React.Component {
 
 
         this.setState({
-          address: data.address
+          address: data.address,
+          latitude:e.lngLat.lat,
+          longitude: e.lngLat.lng
         })
-        Alert.warning('برای ثبت نهایی آدرس دکمه ویرایش اطلاعات را کلیک کنید', 5000);
+        setTimeout(function(){
+          that.Edituser();
+        },0)
+        //Alert.warning('برای ثبت نهایی آدرس دکمه ویرایش اطلاعات را کلیک کنید', 5000);
 
         console.log(data)
 
@@ -619,6 +637,8 @@ class User extends React.Component {
         username: response.data.result[0].username,
         name: response.data.result[0].name,
         address: response.data.result[0].address,
+        latitude:response.data.result[0].latitude,
+        longitude: response.data.result[0].longitude,
         SelectedCity: response.data.result[0].city,
         SelectedSubCity: response.data.result[0].subCity,
         mail: response.data.result[0].mail,
@@ -666,12 +686,15 @@ class User extends React.Component {
         return;
       }
     }
+    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       username: this.state.username,
       nopass: 1,
       name: this.state.name,
       address: this.state.address,
+      latitude:this.state.latitude,
+      longitude: this.state.longitude,
       city: this.state.SelectedCity,
       subCity: this.state.SelectedSubCity,
       company: this.state.company,
@@ -908,8 +931,11 @@ class User extends React.Component {
 
                   <div className="group" style={{ marginTop: 50 }}>
                     <textarea className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.address} name="address" onChange={this.handleChangeAddress} style={{ textAlign: 'right' }} required="true" />
-                    <label>آدرس  پستی</label>
+                    <label>آدرس  پستی : </label>
 
+                  </div>
+                  <div style={{margin:50,display:'none'}}>
+                    آدرس : {this.state.address}
                   </div>
                 </div>
                 <div className="col-lg-12" style={{ textAlign: 'right', display: 'none' }}>
@@ -925,8 +951,9 @@ class User extends React.Component {
                   }
                 </div>
                 <div className="col-12" style={{ marginTop: 30, overflow: 'hidden' }}>
+                  
                   <Mapir
-                    center={[this.state.lon, this.state.lat]}
+                    center={[this.state.longitude || this.state.lon,  this.state.latitude  || this.state.lat]}
                     onClick={this.reverseFunction}
                     Map={Maps}
                     userLocation

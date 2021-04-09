@@ -137,7 +137,7 @@ class Sales_Posted extends React.Component {
     let msg = "";
     if (event.target.value == "2" || event.target.value == "3" || event.target.value == "4") {
       msg = event.target.value == "2" ? "سفارش شما توسط فروشنده تامین و آماده ارسال گردید" + "\n" + that.state.STitle :
-        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش تا ساعتی دیگر به دستتان خواهد رسید" + "\n" + that.state.STitle :
+        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش به زودی به دستتان خواهد رسید" + "\n" + that.state.STitle :
           "سفارش شما تحویل شد ." + "\n" + "از خریدتان ممنونیم" + "\n" + that.state.STitle)
     }
     let param = {

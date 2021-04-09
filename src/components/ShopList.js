@@ -162,8 +162,9 @@ class CatList extends React.Component {
 												</div>
 												<div className="p-col-12 car-data" style={{ marginTop: 10 }}>
 													<div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>{item.title}</div>
-
-													<div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
+													{item.subTitle && item.subTitle != "-" &&
+														<div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
+													}
 													{
 														item.number > 0
 															?

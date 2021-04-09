@@ -344,9 +344,9 @@ class Category extends React.Component {
 						let price = 0;
 						if(item.number > 0)
 							price = this.persianNumber(this.roundPrice((item.price - (item.price * ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off)) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-						let img = (Seller.logo && Seller.logo.split("public")[1]) ? this.state.absoluteUrl + Seller.logo.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png'
+						let img = (Seller.logo && Seller.logo.split("public")[1]) ? this.state.absoluteUrl + Seller.logo.split("public")[1] : this.state.absoluteUrl + 'nophoto.png'
 						return(
-								<div className="col-lg-3 col-md-4 col-12" style={{textAlign:'center'}} >
+								<div className="col-lg-6 col-md-4 col-12" style={{textAlign:'center'}} >
 									<button onClick={()=>{this.GoToShop('Shop?id='+Seller._id+''+'&cat='+this.state.productsDetailArrayRef.category_id)}} disabled={item.number == 0} style={{ background:'#fff',display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
 									<img src={img} />
 									<div  className="iranyekanweblight">{Seller.name}</div>

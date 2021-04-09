@@ -150,7 +150,7 @@ class Sales_Registered extends React.Component {
     let msg = "";
     if (event.target.value == "2" || event.target.value == "3" || event.target.value == "4") {
       msg = event.target.value == "2" ? "سفارش شما توسط فروشنده تامین و آماده ارسال گردید" + "\n" + that.state.STitle :
-        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش تا ساعتی دیگر به دستتان خواهد رسید" + "\n" + that.state.STitle :
+        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش به زودی به دستتان خواهد رسید" + "\n" + that.state.STitle :
           "سفارش شما تحویل شد ." + "\n" + "از خریدتان ممنونیم" + "\n" + that.state.STitle)
     }
     let param = {
@@ -354,14 +354,24 @@ class Sales_Registered extends React.Component {
     this.Server.send("AdminApi/getuserInformation", {map:'payk'}, function (response) {
       
       debugger;
+      let sellername = "";
+      if(!that.state.SaleFromMultiShops){
+        sellername += p.products[0].SellerName;
+      }else{
+        for(let i=0;i<p.products.length;i++){
+          sellername += p.products[i].SellerName + ",";
+
+        }
+      }
+      
       if(response.data.result.length > 1 ){
         that.setState({
           SelectPayk:true,
-          paykList:{data:response.data.result,address:address,name:p.userData[0].username,username:response.data.result[0].username}
+          paykList:{data:response.data.result,address:address,name:p.userData[0].username,username:response.data.result[0].username,sellername:sellername}
         })
       }else{
         if(response.data.result.length == 1)
-          that.sendSms(address,p.userData[0].name,p.userData[0].username,response.data.result[0].username);
+          that.sendSms(address,p.userData[0].name,p.userData[0].username,response.data.result[0].username,sellername);
         else
           that.toast.current.show({ severity: 'warn', summary: 'عدم معرفی پیک', detail: <div> برای ارسال مشخصات خریدار به پیک از طریق فرم لیست کاربران حداقل یک کاربر با دسترسی پیک (payk) ثبت کنید </div>, life: 8000 });
 
@@ -377,11 +387,11 @@ class Sales_Registered extends React.Component {
 
     })
   }
-  sendSms(address,name,username,paykMob){
+  sendSms(address,name,username,paykMob,sellername){
     let googleAddress = "https://www.google.com/maps/search/"+address;
     if(this.state.ActiveSms=="smart"){
       axios.post(this.state.url+'sendsms_smartSms', {
-        text: "نام خریدار : " +name+"\n"+"شماره تلفن : "+ username+ "\n"+"آدرس : " + address + "\n" + googleAddress ,
+        text: "سفارش جدید سایت"+"\n"+"فروشنده : " +sellername + "\n"+ "نام خریدار : " +name+"\n"+"شماره تلفن : "+ username+ "\n"+"آدرس : " + address + "\n"  ,
         mobileNo : paykMob.trim()
       })
       .then(response => {
@@ -397,7 +407,7 @@ class Sales_Registered extends React.Component {
     }else if(this.state.ActiveSms=="smsir"){
      
             axios.post(this.state.url+'sendsms_SmsIr', {
-              text: "نام خریدار : " +name+"\n"+"شماره تلفن : "+ username+ "\n"+"آدرس : " + address + "\n" ,
+              text: "سفارش جدید سایت"+"\n"+"فروشنده : " +sellername + "\n"+ "نام خریدار : " +name+"\n"+"شماره تلفن : "+ username+ "\n"+"آدرس : " + address + "\n"  ,
               mobileNo : paykMob.trim()  
             })
             .then(response => {
@@ -436,7 +446,8 @@ class Sales_Registered extends React.Component {
           ActiveSms: response.data.result ? resp.ActiveSms : "none",
           STitle: response.data.result ? resp.STitle : "",
           AccessAfterReg: response.data.result ? resp.AccessAfterReg : 0,
-          RegSmsText: response.data.result ? resp.RegSmsText : ''
+          RegSmsText: response.data.result ? resp.RegSmsText : '',
+          SaleFromMultiShops:response.data.result ? resp.SaleFromMultiShops : false
         })
       }
 
@@ -574,7 +585,7 @@ class Sales_Registered extends React.Component {
             </div>
             <div className="col-12">
               {this.state.paykList &&
-            <button className="btn btn-success YekanBakhFaMedium" disabled={!this.state.paykMob} style={{marginTop:40,marginBottom:10,width:'100%'}} onClick={()=>this.sendSms(this.state.paykList.address,this.state.paykList.name,this.state.paykList.username,this.state.paykMob)}>اشتراک گذاری اطلاعات کاربر</button>
+            <button className="btn btn-success YekanBakhFaMedium" disabled={!this.state.paykMob} style={{marginTop:40,marginBottom:10,width:'100%'}} onClick={()=>this.sendSms(this.state.paykList.address,this.state.paykList.name,this.state.paykList.username,this.state.paykMob,this.state.paykList.sellername)}>اشتراک گذاری اطلاعات کاربر</button>
               }
             </div>
           </div>

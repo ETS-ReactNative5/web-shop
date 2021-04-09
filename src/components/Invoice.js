@@ -143,14 +143,13 @@ class Invoice extends React.Component {
                       })
                       .catch(error => {
                         // alert(error);
-                        alert(error);
+                        //alert(error);
                       });
 
 
                   })
                   .catch(error => {
-                    alert(error);
-                    console.log(error);
+                    // alert(error);
                   });
               }
             })
@@ -166,7 +165,7 @@ class Invoice extends React.Component {
           let SCallBack = function(response){
             };
           let ECallBack = function(error){
-                alert(error)
+               // alert(error)
           }
           this.Server.send("MainApi/SetFactor",param,SCallBack,ECallBack)*/
 
@@ -301,13 +300,12 @@ class Invoice extends React.Component {
                   })
                   .catch(error => {
                     // alert(error);
-                    alert(error)
+                   // alert(error)
                   })
 
               })
               .catch(error => {
-                alert(error);
-                console.log(error)
+               // alert(error);
               })
           }
         }, 0)
@@ -398,7 +396,7 @@ class Invoice extends React.Component {
                   </div>
                 }
                 {this.state.InMobileApp == "0" &&
-                  <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert">
+                  <div style={{ textAlign: "center", opacity: 1,display:'none' }} className="YekanBakhFaBold alert">
                     <a href="http://aniashop.ir">بازگشت به صفحه اصلی سایت</a>
                   </div>
                 }

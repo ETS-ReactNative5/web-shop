@@ -22,6 +22,23 @@ import { Alert } from 'rsuite';
 import Cities from './../Cities.js'
 import { Fieldset } from 'primereact/fieldset';
 import { MultiSelect } from 'primereact/multiselect';
+import Mapir from "mapir-react-component";
+let markerArray = new Array(), lat, lon;
+
+const Api_Code = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjlmN2UwM2I4M2QxNTczNTE1ZjUyNDc0OGMxNTFlMzliYWViZDBjOGMzMjg3YjAwNTZlYWEyZmQ2NGJlZGVhODQ1MGM4MTlkYTAxOTJkMzgyIn0.eyJhdWQiOiIxMTY2NCIsImp0aSI6IjlmN2UwM2I4M2QxNTczNTE1ZjUyNDc0OGMxNTFlMzliYWViZDBjOGMzMjg3YjAwNTZlYWEyZmQ2NGJlZGVhODQ1MGM4MTlkYTAxOTJkMzgyIiwiaWF0IjoxNjA2NjQyOTU4LCJuYmYiOjE2MDY2NDI5NTgsImV4cCI6MTYwOTE0ODU1OCwic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.VSdlmcGeLgctdaKhNHycuQjk3AZoPovTnREv40kb5bQDBxRXSoXHhxNbQCLEAO6lLWE61Db2RMpT7KBK1gzsP0EWy4u6-19Ya9OJO39sGABrvEYmkIJ9k0MSdBvZCI8Uz9kLdmoU8Osfk31dMJY6Bo__KjK72kdzB7fuhMWskVvB_X7V_EgXu4ex_1rj79GtZc54qjw08trxHZ4MnCUu3-FUVhxHmeC9Qw85i1q-cvF8oFcU7WHD3AhrcnDt59DO-Qk9DXdxEENHIREdtw5KtzCkDlst8eK8tA-sNQ6d9VR06lIJH5IbXvYcDPb02oO8clAFiIDROBgUSUmrSso4cA";
+
+const Maps = Mapir.setToken({
+  transformRequest: (url) => {
+    return {
+      url: url,
+      headers: {
+        'x-api-key': Api_Code, //Mapir api key
+        'Mapir-SDK': 'reactjs'
+      },
+    }
+  }
+});
+
 
 class ShopInformation extends React.Component {
   constructor(props) {
@@ -36,12 +53,15 @@ class ShopInformation extends React.Component {
       address: null,
       call: null,
       mobile:null,
+      Sheba:null,
       about: null,
       user_id: null,
       ShopId: null,
       boxAcc: null,
       bankAcc: null,
       laon: true,
+      lat: '32.777403',
+      lon : '51.649219',
       cash: true,
       Message: null,
       pic1: '',
@@ -83,11 +103,44 @@ class ShopInformation extends React.Component {
     this.getSettings();
 
     this.FileUpload = this.FileUpload.bind(this);
+    this.reverseFunction = this.reverseFunction.bind(this);
 
     this.EditShopInformation = this.EditShopInformation.bind(this);
 
   }
+  reverseFunction(map, e) {
+    debugger;
+    let that = this;
+    var url = `https://map.ir/reverse/no?lat=${e.lngLat.lat}&lon=${e.lngLat.lng}`
+    fetch(url,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': Api_Code
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          address: data.address,
+          latitude:e.lngLat.lat,
+          longitude: e.lngLat.lng
+        })
 
+
+
+
+      })
+    const array = [];
+    array.push(<Mapir.Marker
+      coordinates={[e.lngLat.lng, e.lngLat.lat]}
+      anchor="bottom">
+    </Mapir.Marker>);
+    markerArray = array;
+    lat = e.lngLat.lat;
+    lon = e.lngLat.lng;
+
+  }
   FileUpload(e) {
     e.preventDefault();
     const formData = new FormData();
@@ -187,6 +240,8 @@ class ShopInformation extends React.Component {
         that.setState({
           ShopId: that.state.ShopId,
           address: response.data.result[0].address,
+          latitude:response.data.result[0].latitude,
+          longitude: response.data.result[0].longitude,
           SelectedCity: response.data.result[0].city,
           SelectedSubCity: response.data.result[0].subCity,
           SendToCity: response.data.result[0].SendToCity,
@@ -197,6 +252,7 @@ class ShopInformation extends React.Component {
           SelectedSubCities: response.data.result[0].SelectedSubCities,
           call: response.data.result[0].call,
           mobile: response.data.result[0].mobile,
+          Sheba: response.data.result[0].Sheba,
           about: response.data.result[0].about,
           user_id: response.data.result[0].UserId,
           name: response.data.result[0].name,
@@ -282,6 +338,8 @@ class ShopInformation extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       address: this.state.address,
+      latitude:this.state.latitude,
+      longitude: this.state.longitude,
       city: this.state.SelectedCity,
       subCity: this.state.SelectedSubCity,
       SendToCity: this.state.SendToCity,
@@ -292,6 +350,7 @@ class ShopInformation extends React.Component {
       SelectedSubCities: this.state.SelectedSubCities,
       call: this.state.call,
       mobile: this.state.mobile,
+      Sheba: this.state.Sheba,
       about: this.state.about,
       ShopId: this.state.ShopId,
       name: this.state.name,
@@ -348,23 +407,8 @@ class ShopInformation extends React.Component {
                       <label className="yekan">نام فروشگاه</label>
                     </div>
                   </div>
-                  <div className="col-lg-7">
-                    <div className="group">
+                  
 
-                      <Cities callback={this.getResponse.bind(this)} callback={this.getResponse.bind(this)} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
-
-
-                    </div>
-                  </div>
-
-                  <div className="col-lg-7">
-                    <div className="group">
-
-                      <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.address} name="address" onChange={(event) => this.setState({ address: event.target.value })} required="true" />
-                      <label className="yekan">آدرس فروشگاه</label>
-
-                    </div>
-                  </div>
                   <div className="col-lg-7">
                     <div className="group">
 
@@ -378,6 +422,14 @@ class ShopInformation extends React.Component {
 
                       <input className="form-control yekan" autoComplete="off" type="text" value={this.state.mobile} name="mobile" onChange={(event) => this.setState({ mobile: event.target.value })} required="true" />
                       <label className="yekan">شماره تلفن همراه - جهت دریافت پیامک های مربوط به سفارشات</label>
+
+                    </div>
+                  </div>
+                  <div className="col-lg-7">
+                    <div className="group">
+
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Sheba} name="Sheba" onChange={(event) => this.setState({ Sheba: event.target.value })} required="true" />
+                      <label className="yekan">شماره شبا</label>
 
                     </div>
                   </div>
@@ -721,7 +773,7 @@ class ShopInformation extends React.Component {
                     </div>
                   </div>
                   {this.state.AllowCredit &&
-                    <div className="col-lg-6" style={{display:'none'}}>
+                    <div className="col-lg-6" >
                       <div className="row">
                         <div className="col-12">
                           <div className="group">
@@ -844,6 +896,34 @@ class ShopInformation extends React.Component {
                           <Checkbox onChange={e => this.setState({ FreeInExpensive: e.checked })} checked={this.state.FreeInExpensive}></Checkbox>
                           <label style={{ paddingRight: 5, marginTop: 5 }}>برای خریدهای با مبلغ زیاد هزینه پیک رایگان شود</label>
                         </div>
+                        <div className="col-lg-7">
+                    <div className="group">
+
+                      <Cities callback={this.getResponse.bind(this)} callback={this.getResponse.bind(this)} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
+
+
+                    </div>
+                  </div>
+                  <div className="col-lg-12">
+                    <div style={{ marginTop: 30, overflow: 'hidden' }}>
+                      <label className="yekan" style={{margin:20}}>آدرس فروشگاه : {this.state.address}</label>
+                      <Mapir
+                      center={[this.state.longitude || this.state.lon,  this.state.latitude  || this.state.lat]}
+                      onClick={this.reverseFunction}
+                      Map={Maps}
+                      userLocation
+
+                    >
+                      {this.state.markerArray}
+                    </Mapir>
+                    </div>
+                    <div className="group" style={{display:'none'}}>
+
+                      <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.address} name="address" onChange={(event) => this.setState({ address: event.target.value })} required="true" />
+                      <label className="yekan">آدرس فروشگاه</label>
+
+                    </div>
+                  </div>
 
                       </div>
                     </Fieldset>

@@ -25,7 +25,24 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import GoogleMapReact from 'google-map-react';
 import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
+import { Sidebar } from 'primereact/sidebar';
+ 
+import Mapir from "mapir-react-component";
+let markerArray = new Array(), lat, lon;
 
+const Api_Code = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjlmN2UwM2I4M2QxNTczNTE1ZjUyNDc0OGMxNTFlMzliYWViZDBjOGMzMjg3YjAwNTZlYWEyZmQ2NGJlZGVhODQ1MGM4MTlkYTAxOTJkMzgyIn0.eyJhdWQiOiIxMTY2NCIsImp0aSI6IjlmN2UwM2I4M2QxNTczNTE1ZjUyNDc0OGMxNTFlMzliYWViZDBjOGMzMjg3YjAwNTZlYWEyZmQ2NGJlZGVhODQ1MGM4MTlkYTAxOTJkMzgyIiwiaWF0IjoxNjA2NjQyOTU4LCJuYmYiOjE2MDY2NDI5NTgsImV4cCI6MTYwOTE0ODU1OCwic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.VSdlmcGeLgctdaKhNHycuQjk3AZoPovTnREv40kb5bQDBxRXSoXHhxNbQCLEAO6lLWE61Db2RMpT7KBK1gzsP0EWy4u6-19Ya9OJO39sGABrvEYmkIJ9k0MSdBvZCI8Uz9kLdmoU8Osfk31dMJY6Bo__KjK72kdzB7fuhMWskVvB_X7V_EgXu4ex_1rj79GtZc54qjw08trxHZ4MnCUu3-FUVhxHmeC9Qw85i1q-cvF8oFcU7WHD3AhrcnDt59DO-Qk9DXdxEENHIREdtw5KtzCkDlst8eK8tA-sNQ6d9VR06lIJH5IbXvYcDPb02oO8clAFiIDROBgUSUmrSso4cA";
+
+const Maps = Mapir.setToken({
+  transformRequest: (url) => {
+    return {
+      url: url,
+      headers: {
+        'x-api-key': Api_Code, //Mapir api key
+        'Mapir-SDK': 'reactjs'
+      },
+    }
+  }
+});
 
 class Sales_Payk extends React.Component {
   constructor(props) {
@@ -33,6 +50,7 @@ class Sales_Payk extends React.Component {
     this.Server = new Server();
     this.itemTemplate = this.itemTemplate.bind(this);
 
+    
     this.state = {
       layout: 'list',
       dashList: (this.props && this.props.location && this.props.location.state && this.props.location.state.list) ? this.props.location.state.list : [],
@@ -57,6 +75,8 @@ class Sales_Payk extends React.Component {
     }
     this.selectedFactorChange = this.selectedFactorChange.bind(this);
     this.onHide = this.onHide.bind(this);
+    this.onHide2 = this.onHide2.bind(this);
+
     this.handleChangeStatus = this.handleChangeStatus.bind(this);
     this.handleProductStatusChange = this.handleProductStatusChange.bind(this);
     this.onStatusChange = this.onStatusChange.bind(this);
@@ -87,6 +107,7 @@ class Sales_Payk extends React.Component {
       }, 0)
 
       that.Server.send("AdminApi/ShopInformation", { ShopId: that.state.SellerId }, function (response) {
+        debugger;
         that.setState({
           isMainShop: response.data.result[0].main
         })
@@ -105,22 +126,80 @@ class Sales_Payk extends React.Component {
     }
     this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
   }
-  itemTemplate(car, layout) {
-    let link = "https://www.google.com/maps/search/"+car.city + "،" + car.subCity+"،"+car.address;
+  getRout(origin,destination){
+    debugger;
 
+      var url = 'https://map.ir/routes/route/v1/driving/'+origin+';'+destination+'?alternatives=true&steps=true'
+      fetch(url,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': Api_Code
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        let routs=[];
+        debugger;
+
+        for(let i=0; i < data.routes[0].legs[0].steps.length ; i++){
+          routs.push({title:data.routes[0].legs[0].steps[i].name})
+        }
+        this.setState({
+          ShowRout:true,
+          Routs:routs
+        })
+        debugger;
+
+        console.log(data)
+
+
+
+      })
+    
+  }
+  getMapStatic(origin,destination){
+
+    var url = 'https://map.ir/shiveh/shiveh?service=WMS&version=1.1.1&request=GetMap&layers=Shiveh:Shiveh&width:500&height:500&format:image/png&bbox='+origin;
+    fetch(url,
+    {
+      headers: {
+        'x-api-key': Api_Code
+      }
+    })
+    .then(response => {
+      response.blob()
+    } )
+    .then(images => {
+      debugger
+
+        // Then create a local URL for that image and print it 
+        let outside = URL.createObjectURL(images)
+      this.setState({
+        imageStatic:outside
+      })
+      })
+  
+}
+  itemTemplate(car, layout) {
+    let linkUser = "https://www.google.com/maps/search/"+car.address;
 
     if (car) {
       return (
           <div>
             <div className="row">
+              <div className="col-12 yekan" style={{textAlign:'right',marginTop:20,fontSize:20,background:'#eee'}}>
+                فروشنده : {car.products[0].SellerName}
+              </div>
               <div className="col-12 yekan" style={{textAlign:'right',marginTop:20}}>
                 شماره سفارش : {car.OrderId}
               </div>
+              
               <div className="col-lg-6 col-12 yekan text-primary" style={{textAlign:'right',fontSize:20,marginTop:20}}>
                 {car.name}
               </div>
               <div className="col-lg-6 col-12 yekan text-danger mt-lg-0 mt-3" style={{textAlign:'right',fontSize:25,marginTop:20}}>
-                {car.username}
+                  <a style={{color:'red'}} href={"tel:+98"+car.username}>{car.username}</a>
               </div>
               <div className="col-lg-6 col-12 yekan" style={{textAlign:'right',marginTop:20}}>
                 استان : {car.city}
@@ -131,9 +210,40 @@ class Sales_Payk extends React.Component {
               <div className="col-12 yekan" style={{textAlign:'right',marginTop:20,fontSize:20}}>
                 آدرس : {car.address}
               </div>
-              <div className="col-12 yekan" style={{textAlign:'right',marginTop:20,marginBottom:20}}>
-                <a href={link} className="yekan" target="_blank" ><i className="fa fa-link " /> لینک نقشه</a>
+              <div className="col-12 yekan" style={{textAlign:'right',marginTop:20,marginBottom:10}}>
+                <a href={linkUser} className="yekan" target="_blank" ><i className="fa fa-link " />لینک نقشه آدرس خریدار</a>
+
+
+                <button onClick={()=>this.getMapStatic(car.products[0].SellerLat+","+car.products[0].SellerLon,car.userData[0]?.longitude+","+car.userData[0]?.latitude)} style={{display:'none'}} className="yekan" target="_blank" ><i className="fa fa-link " /> مسیر ازفروشگاه تا خریدار</button>
+
               </div>
+
+              {
+                !this.state.SaleFromMultiShops ?
+                    <div className="col-12 yekan" style={{textAlign:'right',marginBottom:20}}>
+                    <a href={"https://www.google.com/maps/search/"+car.products[0].SellerAddress} className="yekan" target="_blank" ><i className="fa fa-link " /> لینک نقشه آدرس فروشنده</a>
+                    </div>
+
+                :
+                <div>
+                  </div>
+
+              }
+              {
+                !this.state.SaleFromMultiShops ?
+                    <div className="col-12 yekan" style={{textAlign:'right',marginBottom:20}}>
+                    <button onClick={()=>this.getRout(car.products[0].SellerLon+","+car.products[0].SellerLat,car.userData[0]?.longitude+","+car.userData[0]?.latitude)} className="yekan" target="_blank" ><i className="fa fa-link " /> مسیر ازفروشگاه تا خریدار</button>
+                    </div>
+
+                :
+                <div>
+                  </div>
+
+              }
+              <div className="col-12" >
+                <img src = {this.state.imageStatic} />
+              </div>
+              
             </div>
 
             </div>
@@ -174,7 +284,7 @@ class Sales_Payk extends React.Component {
     let msg = "";
     if (event.target.value == "2" || event.target.value == "3" || event.target.value == "4") {
       msg = event.target.value == "2" ? "سفارش شما توسط فروشنده تامین و آماده ارسال گردید" + "\n" + that.state.STitle :
-        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش تا ساعتی دیگر به دستتان خواهد رسید" + "\n" + that.state.STitle :
+        (event.target.value == "3" ? "سفارشتان به مامور ارسال تحویل گردید.این سفارش به زودی به دستتان خواهد رسید" + "\n" + that.state.STitle :
           "سفارش شما تحویل شد ." + "\n" + "از خریدتان ممنونیم" + "\n" + that.state.STitle)
     }
     let param = {
@@ -373,7 +483,8 @@ class Sales_Payk extends React.Component {
           ActiveSms: response.data.result ? resp.ActiveSms : "none",
           STitle: response.data.result ? resp.STitle : "",
           AccessAfterReg: response.data.result ? resp.AccessAfterReg : 0,
-          RegSmsText: response.data.result ? resp.RegSmsText : ''
+          RegSmsText: response.data.result ? resp.RegSmsText : '',
+          SaleFromMultiShops:resp.SaleFromMultiShops
         })
       }
 
@@ -407,7 +518,10 @@ class Sales_Payk extends React.Component {
     this.EditFactor(this.state.selectedId, updatedProducts[props.rowIndex]._id, updatedProducts[props.rowIndex].title, "edit", updatedProducts[props.rowIndex])
 
   }
-  
+  onHide2(event) {
+
+    this.setState({ ShowRout:false,Routs:[] });
+  }
   render() {
     const BodyTemplate = (rowData,props) => {
       return (
@@ -464,92 +578,17 @@ class Sales_Payk extends React.Component {
           </div>
 
         </div>
-
-        <Dialog header="جزئیات فاکتور" visible={this.state.selectedFactor} style={{ width: '80vw' }} minY={70} onHide={this.onHide} maximizable={false} maximized={true}>
-          <div style={{ overflowY: 'auto', overflowX: 'hidden', minHeight: 400 }}>
-            <div style={{position:'fixed',backgroundColor:'#fff',zIndex:2,width:'100%'}} >
-            {this.state.isMainShop == 1 &&
-              <div>
-                <p className="yekan" style={{ float: "right" }}>تغییر وضعیت سفارش</p>
-                <select className="custom-select yekan" value={this.state.newStatus} name="status" onChange={this.handleChangeStatus} >
-                  <option value="-3" style={{display:'none'}}>لغو محصول توسط فروشنده</option>
-                  <option value="-2" style={{display:'none'}}>درخواست لغو توسط خریدار</option>
-                  <option value="-1" style={{display:'none'}}>لغو شده</option>
-                  <option value="0">ناموفق</option>
-                  <option value="1">ثبت شده</option>
-                  <option value="2">آماده ارسال</option>
-                  <option value="3">ارسال شده</option>
-                  <option value="4">تحویل شده</option>
-                  <option value="5">تسویه شده</option>
-
-                </select>
-                <br /><br />
-                <hr />
-              </div>
-
-            }
-            {this.state.showProductStatus == 1 ?
-              <div>
-                <p className="yekan" style={{ float: "right", color: 'red' }}>تغییر وضعیت {this.state.ProductSelectedTitle || "محصول"}</p>
-                <select className="custom-select yekan" value={this.state.ProductStatus} name="status" onChange={this.handleProductStatusChange} >
-
-                  <option value="0" disabled={this.state.isMainShop ? false : true}>منتظر تایید</option>
-                  <option value="1" disabled={this.state.isMainShop ? false : true}>در حال پردازش</option>
-                  <option value="2" disabled={this.state.isMainShop ? false : true}>آماده ارسال</option>
-                  <option value="3">تحویل شده</option>
-                  <option value="-1" disabled={this.state.isMainShop ? false : true}>لغو</option>
-                  
-
-
-                </select>
-                <br /><br />
-              </div>
-              :
-              <div>
-                <p className="yekan" style={{ float: "right" }}>برای تغییر وضعیت هر محصول روی سطر آن کلیک کنید</p><br /><br />
-              </div>
-            }
+        <Sidebar header="مسیر دسترسی" visible={this.state.ShowRout} style={{ fontFamily: 'YekanBakhFaBold' }} onHide={() => this.onHide2()}>
+        {this.state.Routs && this.state.Routs.map((v,i) => {
+          debugger;
+          return(
+            <div className="col-12" style={{textAlign:'right'}}>
+              <i className="far fa-arrow-from-top" /><label style={{ fontFamily: 'YekanBakhFaBold' }} >{v.title}</label>
             </div>
-            <div className="datatable-responsive-demo" style={{marginTop:this.state.isMainShop == 1 ? 250 : 100}}>
+          )
+        })}
 
-            <DataTable onRowSelect={this.onRowSelect} className="p-datatable-responsive-demo" responsive selection={this.state.selectedProduct1} onSelectionChange={e => {
-              for (let i = 0; i < this.state.selectedFactor.length; i++) {
-                if (this.state.selectedFactor[i]._id == e.value._id) {
-                  this.setState({
-                    ProductSelectedIndex: i,
-                    selectedProductId: e.value._id
-                  })
-                }
-              }
-            }} selectionMode="single" dataKey="id" body={ProductBodyTemplate} resizableColumns={true} paginator={true} rows={10} value={this.state.selectedFactor}  >
-              <Column field="title" header="عنوان" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              <Column field="subTitle" header="عنوان دوم" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              {this.state.isMainShop == 1 &&
-              <Column field="SellerName" header="فروشنده" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              }
-              {this.state.isMainShop == 1 &&
-              <Column field="desc" header="شرح" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }} />
-              }
-              {this.state.isMainShop == 1 ?
-              <Column field="number" body={ProductBodyTemplate} editor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
-                :
-                <Column field="number" body={ProductBodyTemplate} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
-            }
-              <Column field="status" header="وضعیت" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              <Column field="price" header="مبلغ پرداختی" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-
-              {this.state.CreditSupport && 
-                <Column field="credit" header="کسر از کیف پول" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              }
-              <Column field="detail" header="جزئیات" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              {this.state.isMainShop == 1 &&
-                <Column field="edit" header="حذف" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
-              }
-
-            </DataTable>
-            </div>
-          </div>
-        </Dialog>
+        </Sidebar>
       </div>
     )
   }

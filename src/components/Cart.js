@@ -109,6 +109,7 @@ class Cart extends React.Component {
                 user_id: this.state.userId
             })
                 .then(response => {
+                    debugger;
                     that.setState({
                         Address: response.data.result[0].address,
                         AcceptAddress: true,
@@ -119,77 +120,83 @@ class Cart extends React.Component {
                 })
             return;
         } else {
-            if (this.state.lastPrice != 0) {
-                let user_id = this.state.GridData[0].user_id;
-                let products_id = [];
-                for (let i = 0; i < this.state.GridData.length; i++) {
-                    if (this.state.GridData[i].products[0])
-                        products_id.push({ _id: this.state.GridData[i].product_id, SellerId: ((this.state.GridData[i].product_detail && this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId), SellerName: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : ""), SellerMobile: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].mobile : ""), number: this.state.GridData[i].number, CatId: this.state.GridData[i].products[0].category_id, title: this.state.GridData[i].products[0].title, subTitle: this.state.GridData[i].products[0].subTitle, desc: this.state.GridData[i].products[0].desc, price: (this.roundPrice(this.state.GridData[i].number * this.state.GridData[i].price)), UnitPrice: this.state.GridData[i].price, credit: this.state.GridData[i].getFromCredit, SellerId: this.state.GridData[i].products[0].SellerId, fileUploaded: this.state.GridData[i].products[0].fileUploaded, status: "0", color: this.state.GridData[i].Color, size: this.state.GridData[i].Size });
-                }
-                that.setState({
-                    StepNumber: 3
-                })
-
-                let url = that.state.ActiveBank == "z" ? this.state.url + 'payment' : this.state.url + 'payment2';
-                axios.post(url, {
-                    paykAmount: this.state.paykAmount,
-                    Amount: parseInt(this.state.lastPrice),
-                    finalAmount: parseInt(this.state.lastPrice) + parseInt(this.state.paykAmount),
-                    Credit: this.state.finalCreditReducer,
-                    userId: this.state.userId,
-                    products_id: products_id,
-                    needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace") ? 0 : 1
-                })
-                    .then(response => {
-                        if (that.state.ActiveBank != "none" && that.state.ActiveBank != "inPlace") {
-                            let res;
-                            if (that.state.ActiveBank == "p") {
-                                res = response.data.result ? response.data.result.SalePaymentRequestResult : {};
-                                if (res.Token > 0 && res.Status == "0") {
-                                    window.location = "https://pec.shaparak.ir/NewIPG/?token=" + res.Token;
-                                } else {
-                                    this.toast.current.show({ severity: 'error', summary: <div> {res.Message} <br />برای اتمام خرید می توانید در زمان دیگری مراجعه کنید یا از امکان پرداخت در محل استفاده کنید</div>, life: 8000 });
-                                }
-                            } else if (that.state.ActiveBank == "z") {
-                                res = response.data.result;
-                                window.location = res;
-                            }
-                        } else {
-                            that.props.dispatch({
-                                type: 'LoginTrueUser',
-                                CartNumber: 0,
-                                off: that.props.off
-                            })
-                            that.setState({
-                                GridData: [],
-                                refId: response.data.refId,
-                                EndMessage: <div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId)} <br /><br /><p className="YekanBakhFaMedium" style={{ fontSize: 25 }}>سفارش شما ثبت شد <br /> </p> </div>
-
-                            })
-                            if (this.state.ActiveSms != "none") {
-                                let SmsUrl = this.state.ActiveSms == "smsir" ? this.state.url + 'sendsms_SmsIr' : this.state.url + 'sendsms_smartSms';
-                                axios.post(SmsUrl, {
-                                    text: 'سفارش شما ثبت شد . کد رهگیری سفارش : ' + that.persianNumber(response.data.refId) + '' + '\n' + that.state.STitle,
-                                    mobileNo: response.data.result
-                                })
-                                    .then(response => {
-
-
-                                    })
-                                    .catch(error => {
-
-                                    })
-                            }
-
-
-                        }
-
-                    }).catch(error => {
-                        console.log(error)
+                if (this.state.lastPrice != 0) {
+                    let user_id = this.state.GridData[0].user_id;
+                    let products_id = [];
+                    for (let i = 0; i < this.state.GridData.length; i++) {
+                        if (this.state.GridData[i].products[0])
+                            products_id.push({ _id: this.state.GridData[i].product_id, SellerId: ((this.state.GridData[i].product_detail && this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].SellerId : this.state.GridData[i].products[0].SellerId), SellerName: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].name : "")
+                            , SellerAddress: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].address : ""), SellerLat: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].latitude : ""), SellerLon: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].longitude : "")
+                            , SellerMobile: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].mobile : ""), number: this.state.GridData[i].number, CatId: this.state.GridData[i].products[0].category_id, title: this.state.GridData[i].products[0].title, subTitle: this.state.GridData[i].products[0].subTitle, desc: this.state.GridData[i].products[0].desc, price: (this.roundPrice(this.state.GridData[i].number * this.state.GridData[i].price)), UnitPrice: this.state.GridData[i].price, credit: this.state.GridData[i].getFromCredit, SellerId: this.state.GridData[i].products[0].SellerId, fileUploaded: this.state.GridData[i].products[0].fileUploaded, status: "0", color: this.state.GridData[i].Color, size: this.state.GridData[i].Size });
+                    }
+                    that.setState({
+                        StepNumber: 3
                     })
-            } else {
+    
+                    let url = that.state.ActiveBank == "z" ? this.state.url + 'payment' : this.state.url + 'payment2';
+                    axios.post(url, {
+                        paykAmount: this.state.paykAmount,
+                        Amount: parseInt(this.state.lastPrice),
+                        finalAmount: parseInt(this.state.lastPrice) + parseInt(this.state.paykAmount),
+                        Credit: this.state.finalCreditReducer,
+                        userId: this.state.userId,
+                        products_id: products_id,
+                        SaleFromMultiShops:this.state.SaleFromMultiShops,
+                        needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace") ? 0 : 1
+                    })
+                        .then(response => {
+                            if (that.state.ActiveBank != "none" && that.state.ActiveBank != "inPlace") {
+                                let res;
+                                if (that.state.ActiveBank == "p") {
+                                    res = response.data.result ? response.data.result.SalePaymentRequestResult : {};
+                                    if (res.Token > 0 && res.Status == "0") {
+                                        window.location = "https://pec.shaparak.ir/NewIPG/?token=" + res.Token;
+                                    } else {
+                                        this.toast.current.show({ severity: 'error', summary: <div> {res.Message} <br />برای اتمام خرید می توانید در زمان دیگری مراجعه کنید یا از امکان پرداخت در محل استفاده کنید</div>, life: 8000 });
+                                    }
+                                } else if (that.state.ActiveBank == "z") {
+                                    res = response.data.result;
+                                    window.location = res;
+                                }
+                            } else {
+                                that.props.dispatch({
+                                    type: 'LoginTrueUser',
+                                    CartNumber: 0,
+                                    off: that.props.off,
+                                    credit: response.data.credit
 
-            }
+                                })
+                                that.setState({
+                                    GridData: [],
+                                    refId: response.data.refId,
+                                    EndMessage: <div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId)} <br /><br /><p className="YekanBakhFaMedium" style={{ fontSize: 25 }}>سفارش شما ثبت شد <br /> </p> </div>
+    
+                                })
+                                if (this.state.ActiveSms != "none") {
+                                    let SmsUrl = this.state.ActiveSms == "smsir" ? this.state.url + 'sendsms_SmsIr' : this.state.url + 'sendsms_smartSms';
+                                    axios.post(SmsUrl, {
+                                        text: 'سفارش شما ثبت شد . کد رهگیری سفارش : ' + that.persianNumber(response.data.refId) + '' + '\n' + that.state.STitle,
+                                        mobileNo: response.data.result
+                                    })
+                                        .then(response => {
+    
+    
+                                        })
+                                        .catch(error => {
+    
+                                        })
+                                }
+    
+    
+                            }
+    
+                        }).catch(error => {
+                            console.log(error)
+                        })
+                } else {
+    
+                }
+            
 
 
         }
@@ -215,7 +222,8 @@ class Cart extends React.Component {
                             OriginalActiveBank: response.data.result ? response.data.result.OriginalActiveBank : "none",
                             ActiveSms: response.data.result ? response.data.result.ActiveSms : "none",
                             STitle: response.data.result ? response.data.result.STitle : "",
-                            ProductBase: response.data.result ? response.data.result.ProductBase : false
+                            ProductBase: response.data.result ? response.data.result.ProductBase : false,
+                            SaleFromMultiShops: response.data.result ? response.data.result.SaleFromMultiShops : false,
 
                         })
                         that.getPics();
@@ -559,8 +567,8 @@ class Cart extends React.Component {
             return;
         }
         let price = item.OrgPrice ? (item.number * item.OrgPrice) : (item.number * item.price);//item.number*(parseInt((item.products[0].price - (item.products[0].price * ((!item.products[0].NoOff ? parseInt(this.props.off) : 0)+item.products[0].off))/100)))
-        //let Comm = item.Seller[0].CreditCommission ? (((parseInt(item.Seller[0].CreditCommission))*parseInt(redusePrice))/100) : 0;
-        let Comm = 0;
+        let Comm = item.Seller[0].CreditCommission ? (((parseInt(item.Seller[0].CreditCommission))*parseInt(redusePrice))/100) : 0;
+        //let Comm = 0;
         let lastPrice = price - parseInt(redusePrice) + Comm;
         if (lastPrice >= 0)
             this.setState({
@@ -599,7 +607,7 @@ class Cart extends React.Component {
                 let GridData = this.state.GridData;
                 let Comm = 0;
                 for (let i = 0; i < GridData.length; i++) {
-                    //Comm = GridData[i].Seller[0].CreditCommission ? (((parseInt(GridData[i].Seller[0].CreditCommission)) * parseInt(ReducePrice)) / 100) : 0;
+                    Comm = GridData[i].Seller[0].CreditCommission ? (((parseInt(GridData[i].Seller[0].CreditCommission)) * parseInt(ReducePrice)) / 100) : 0;
 
                     if (GridData[i]._id == this.state.displayReduse._id) {
 
@@ -740,8 +748,8 @@ class Cart extends React.Component {
                                     <p className="YekanBakhFaMedium" style={{ textAlign: 'center' }} >
 
                                         <span style={{ fontSize: 13 }}>سفارش شما به آدرس زیر ارسال می شود : </span> <br /><br />
-                                        <span style={{ fontSize: 15, color: '#000' }}>  {this.state.Address} </span>  <br /><br />
-                                        <Link to={`${process.env.PUBLIC_URL}/user?Active=5`} style={{ textDecoration: 'none', fontSize: 13 }} className="YekanBakhFaMedium">برای ویرایش آدرس اینجا کلیک کنید</Link>
+                                        <span style={{ fontSize: 20, color: 'rgb(2 125 0)' }}>  {this.state.Address} </span>  <br /><br />
+                                        <Link to={`${process.env.PUBLIC_URL}/user?Active=5`} style={{ textDecoration: 'none', fontSize: 18,fontStyle:'italic' }} className="YekanBakhFaMedium">برای ویرایش آدرس اینجا کلیک کنید</Link>
                                     </p>
                                     :
                                     <p>
@@ -749,7 +757,7 @@ class Cart extends React.Component {
                                     </p>
                                 }
                                 {(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace") ?
-                                    <button className="btn btn-success YekanBakhFaMedium" style={{ marginTop: 40, marginBottom: 10 }} disabled={(this.state.AcceptAddress && this.state.Address == "")} onClick={this.Payment}>{this.state.AcceptAddress ? <span>پرداخت</span> : <span>ادامه فرایند خرید</span>}  </button>
+                                    <button className="btn btn-success YekanBakhFaMedium" style={{ marginTop: 40, marginBottom: 10 }} disabled={(this.state.AcceptAddress && (!this.state.Address || this.state.Address == ""))} onClick={this.Payment}>{this.state.AcceptAddress ? <span>پرداخت</span> : <span>ادامه فرایند خرید</span>}  </button>
 
                                     :
                                     <button className="btn btn-success YekanBakhFaMedium" style={{ marginTop: 40, marginBottom: 10 }} onClick={this.Payment}>{this.state.AcceptAddress ? <span>ثبت نهایی</span> : <span>ادامه فرایند خرید</span>}  </button>
