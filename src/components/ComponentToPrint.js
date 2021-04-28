@@ -45,7 +45,7 @@ export class  ComponentToPrint extends React.Component {
 
   }
   componentWillReceiveProps(newProps){
-    if(newProps.param){
+    if(newProps.param && newProps.printType != "QrCode"){
       let address = newProps.param.address ? newProps.param.address : '';
       let name = newProps.param.name ? newProps.param.name : '';
       let trs=""
@@ -83,6 +83,16 @@ export class  ComponentToPrint extends React.Component {
             })
           }
           
+    }
+    else if(newProps.printType == "QrCode"){
+      this.setState({
+        html:"<p style='text-align:center;width:100%;margin-top:100px'><img src="+newProps.param+" style='width:90%' /></p>"
+      })
+    }
+    if(newProps.htmlParam){
+      this.setState({
+        html:newProps.htmlParam
+      })
     }
   }
   render() {

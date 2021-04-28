@@ -214,19 +214,26 @@ class CatList extends React.Component {
 		</div>
 		)
 	}
-	GoToShop(url,productsDetail,products){
-		if(!this.props.ProductBase && productsDetail && productsDetail.length > 1){
+	GoToProduct(item){
+		if(!this.props.ProductBase && item.product_detail && item.product_detail.length > 1){
 			this.setState({
-				productsDetailArray:productsDetail,
-				productsDetailArrayRef:products,
+				productsDetailArray:item.product_detail,
+				productsDetailArrayRef:item,
 				VisibleDialog:true
 			})
 			
 		}else{
+			let url = this.props.ProductBase ? 'Products?id='+((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)+'' : 'Shop?id='+((item.Seller && item.Seller.length > 0) ? item.Seller[0]._id : '')+'&cat='+item.category_id+'';
+
+			this.GoToShop(url)
+		}
+		
+	}
+	GoToShop(url){
+		
 			this.setState({
 				ShopLink:url
 			})
-		}
 		
 	}
 	render() {
@@ -247,12 +254,11 @@ class CatList extends React.Component {
 							<Swiper {...params}>
 								{this.state.CatData.data.map((item, index) => {
 									var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-                                    url = this.props.ProductBase ? 'Products?id='+((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)+'' : 'Shop?id='+((item.Seller && item.Seller.length > 0) ? item.Seller[0]._id : '')+'&cat='+item.category_id+'';
 									//  url = 'Products?id='+((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)+'';
 										
 									return (
 										
-											<button className="car-details" onClick={()=>{this.GoToShop(url,item.product_detail,item)}} style={{ background:'#fff',display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
+											<button className="car-details" onClick={()=>{this.GoToProduct(item)}} style={{ background:'#fff',display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
 												<div className="p-grid p-nogutter" >
 													<div className="p-col-12 c-product-box__img" align="center" >
 														<img src={img} alt="" />

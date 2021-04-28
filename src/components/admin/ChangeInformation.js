@@ -43,10 +43,40 @@ class ChangeInformation extends React.Component {
     this.handleChangePass = this.handleChangePass.bind(this);
     this.handleChangePass2 = this.handleChangePass2.bind(this);
     this.handleChangeAddress = this.handleChangeAddress.bind(this);
+    this.handleChangeRaymandAcc = this.handleChangeRaymandAcc.bind(this);
+    this.handleChangeRaymandUser = this.handleChangeRaymandUser.bind(this);
     this.Edituser = this.Edituser.bind(this);
+    this.getSettings();
 
   }
+  getSettings() {
+    let that = this;
+    that.setState({
+      loading: 1
+    })
+    that.Server.send("AdminApi/getSettings", {}, function (response) {
+      that.setState({
+        loading: 0
+      })
+      if (response.data.result) {
+        that.setState({
+          CreditSupport: response.data.result[0].CreditSupport,
+          Raymand: response.data.result[0].Raymand,
+        })
+      }
 
+
+
+
+    }, function (error) {
+      that.setState({
+        loading: 0
+      })
+
+    })
+
+
+  }
   getUser() {
     let that = this;
     let param = {
@@ -73,7 +103,10 @@ class ChangeInformation extends React.Component {
           username: response.data.result[0].username,
           pass: response.data.result[0].password,
           pass2: response.data.result[0].password,
-          name: response.data.result[0].name
+          name: response.data.result[0].name,
+          RaymandAcc:response.data.result[0].name,
+          RaymandUser:response.data.result[0].RaymandUser,
+
         })
       }, function (error) {
         that.setState({
@@ -98,6 +131,8 @@ class ChangeInformation extends React.Component {
       username: this.state.username,
       pass: this.state.pass,
       name: this.state.name,
+      RaymandUser: this.state.RaymandUser,
+      RaymandAcc: this.state.RaymandAcc,
       MyAccount: "1",
       level: "1"
     };
@@ -134,6 +169,14 @@ class ChangeInformation extends React.Component {
     this.setState({ address: event.target.value });
   }
 
+  handleChangeRaymandAcc(event){
+    this.setState({ RaymandAcc: event.target.value });
+
+  }
+  handleChangeRaymandUser(event){
+    this.setState({ RaymandUser: event.target.value });
+
+  }
 
   render() {
 
@@ -175,6 +218,22 @@ class ChangeInformation extends React.Component {
                       <label className="yekan">تکرار رمز عبور</label>
                     </div>
                   </div>
+                  {this.state.Raymand &&
+                    <div className="col-lg-6">
+                      <div className="group">
+                        <input className="form-control irsans" autoComplete="off" type="text" value={this.state.RaymandAcc} name="RaymandAcc" onChange={this.handleChangeRaymandAcc} required="true" />
+                        <label>شماره حساب صندوق قرض الحسنه</label>
+                      </div>
+                    </div>
+                  }
+                  {this.state.Raymand &&
+                    <div className="col-lg-6">
+                      <div className="group">
+                        <input className="form-control irsans" autoComplete="off" type="text" value={this.state.RaymandUser} name="RaymandUser" onChange={this.handleChangeRaymandUser} required="true" />
+                        <label>شماره مشتری صندوق قرض الحسنه</label>
+                      </div>
+                    </div>
+                  }
 
                   <div className="col-lg-12">
                     <Button style={{ marginLeft: 5, marginTop: 10 }} color="primary" className="yekan" onClick={this.Edituser}>ویرایش اطلاعات</Button>

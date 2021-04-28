@@ -25,14 +25,12 @@ import Sales_ReadyToSend from './components/admin/Sales_ReadyToSend.js'
 import Sales_Posted from './components/admin/Sales_Posted.js'
 import Sales_Ended from './components/admin/Sales_Ended.js'
 import Sales_Cleared from './components/admin/Sales_Cleared.js'
-
+import Create_Tags from './components/admin/Create_Tags.js'
 import Codes_Files from './components/admin/Codes_Files.js'
 import Cancel_Products from './components/admin/Cancel_Products.js'
 import Canceled_Products from './components/admin/Canceled_Products.js'
 import Server from './components/Server.js'
 import withTracker from './components/withTracker';
-
-
 import Users from './components/admin/Users.js'
 import Maps from './components/admin/Maps.js'
 import Forms from './components/admin/Forms.js'
@@ -80,14 +78,7 @@ class App extends Component {
     ReactGA.initialize('G-TWHDY0YJDL');
 
     this.getSettings();
-    (function() {
-      var d = document;
-      var s = d.createElement("script");
-
-      s.src = "https://client.crisp.chat/l.js";
-      s.async = 1;
-      d.getElementsByTagName("head")[0].appendChild(s);
-    })();
+    
    };
    getSettings() {
     let that = this;
@@ -101,6 +92,14 @@ class App extends Component {
           ChatId: response.data.result[0] ? response.data.result[0].ChatId : ''
         })
         window.CRISP_WEBSITE_ID = response.data.result[0] ? response.data.result[0].ChatId : '';
+        (function() {
+          var d = document;
+          var s = d.createElement("script");
+    
+          s.src = "https://client.crisp.chat/l.js";
+          s.async = 1;
+          d.getElementsByTagName("head")[0].appendChild(s);
+        })();
 
       }
     }, function (error) {
@@ -141,9 +140,7 @@ class App extends Component {
                   <Route path="/admin/Sales_Cleared" component={Sales_Cleared} />
                   <Route path="/admin/Cancel_Products" component={Cancel_Products} />
                   <Route path="/admin/Canceled_Products" component={Canceled_Products} />
-
-                  
-                  
+                  <Route path="/admin/Create_Tags" component={Create_Tags} />
                   <Route path="/admin/Users" component={Users} />
                   <Route path="/admin/Forms" component={Forms} />
                   <Route path="/admin/Maps" component={Maps} />
@@ -176,9 +173,6 @@ class App extends Component {
                   <Route path="/admin/ShopsList" component={ShopsList} />
                   <Route path="/admin/SiteSettings" component={SiteSettings} />
                   <Route path="/admin/Codes_Files" component={Codes_Files} />
-
-                  
-                  
                 </Switch>
               </ScrollToTop>
             </div>

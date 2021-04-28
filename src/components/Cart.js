@@ -109,7 +109,6 @@ class Cart extends React.Component {
                 user_id: this.state.userId
             })
                 .then(response => {
-                    debugger;
                     that.setState({
                         Address: response.data.result[0].address,
                         AcceptAddress: true,
@@ -142,6 +141,7 @@ class Cart extends React.Component {
                         userId: this.state.userId,
                         products_id: products_id,
                         SaleFromMultiShops:this.state.SaleFromMultiShops,
+                        SeveralShop:this.state.SeveralShop,
                         needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace") ? 0 : 1
                     })
                         .then(response => {
@@ -224,6 +224,7 @@ class Cart extends React.Component {
                             STitle: response.data.result ? response.data.result.STitle : "",
                             ProductBase: response.data.result ? response.data.result.ProductBase : false,
                             SaleFromMultiShops: response.data.result ? response.data.result.SaleFromMultiShops : false,
+                            SeveralShop: response.data.result ? response.data.result.SeveralShop : false,
 
                         })
                         that.getPics();
@@ -308,12 +309,14 @@ class Cart extends React.Component {
                 }
                 if (parseInt(res.products[0].price) - (((parseInt(res.products[0].price) * (( parseInt(res.products[0].off||0)))))/100) != res.price) {
                     res.price = parseInt(res.products[0].price) - (((parseInt(res.products[0].price) * (( parseInt(res.products[0].off||0)))))/100);
-                    that.toast.current.show({ severity: 'warn', summary: 'اصلاح سبد خرید', detail: <div> قیمت {res.products[0].title} تغییر کرده است <br /> سبد خرید شما با قیمت جدید به روز شد </div>, life: 8000 });
+                    if(that.toast.current)
+                        that.toast.current.show({ severity: 'warn', summary: 'اصلاح سبد خرید', detail: <div> قیمت {res.products[0].title} تغییر کرده است <br /> سبد خرید شما با قیمت جدید به روز شد </div>, life: 8000 });
                     forceChangeItem.push(res);
                 }
                 if (res.products[0].number == 0) {
                     res.number = '0';
-                    that.toast.current.show({ severity: 'warn', summary: 'اصلاح سبد خرید', detail: <div> محصول {res.products[0].title} ناموجود شده است <br /> از سبد خرید شما حذف شد </div>, life: 8000 });
+                    if(that.toast.current)
+                        that.toast.current.show({ severity: 'warn', summary: 'اصلاح سبد خرید', detail: <div> محصول {res.products[0].title} ناموجود شده است <br /> از سبد خرید شما حذف شد </div>, life: 8000 });
                     forceChangeItem.push(res);
                 }
 

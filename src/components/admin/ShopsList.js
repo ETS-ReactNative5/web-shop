@@ -32,7 +32,7 @@ class ShopsList extends React.Component {
       dashData: (this.props && this.props.location && this.props.location.state && this.props.location.state.data) ? this.props.location.state.data : [],
       NewFactors: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewFactors) ? this.props.location.state.NewFactors : null,
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
-
+      CategoryListForDropDown:[],
       GridDataUsers: [],
       GridDataFactors: [],
       selectedCommission: null,
@@ -45,6 +45,7 @@ class ShopsList extends React.Component {
       selectedCall: null,
       selectedMobile: null,
       selectedSheba: null,
+      selectedRaymandAcc:null,
       selectedId: null,
       visibleDialog: false,
       statusDesc: null,
@@ -144,6 +145,7 @@ class ShopsList extends React.Component {
       selectedCall: null,
       selectedMobile: null,
       selectedSheba:null,
+      selectedRaymandAcc:null,
       selectedCommission: null,
       selectedMainShop: null,
       categories:null,
@@ -220,6 +222,7 @@ class ShopsList extends React.Component {
       selectedCall: value.call || "",
       selectedMobile: value.mobile || "",
       selectedSheba: value.Sheba || "",
+      selectedRaymandAcc: value.RaymandAcc || "",
       PrepareTime: value.PrepareTime,
       Opened: value.Opened,
       ...Time
@@ -301,6 +304,7 @@ class ShopsList extends React.Component {
       call: this.state.selectedCall,
       mobile: this.state.selectedMobile,
       Sheba: this.state.selectedSheba,
+      RaymandAcc:this.state.selectedRaymandAcc,
       ShopId: this.state.selectedId,
       name: this.state.selectedName,
       commission: this.state.selectedCommission,
@@ -348,6 +352,7 @@ class ShopsList extends React.Component {
       for (let i = 0; i < response.data.result.length; i++) {
         CatList.push({ name: response.data.result[i].name, value: response.data.result[i]._id })
       }
+      debugger;
       that.setState({
         CategoryListForDropDown: CatList,
         loading: 0
@@ -436,6 +441,16 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
+              <div className="col-lg-12">
+                <div className="group">
+
+                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.selectedRaymandAcc} name="selectedRaymandAcc" onChange={(event) => this.setState({ selectedRaymandAcc: event.target.value })} required="true" />
+                  <label className="yekan">شماره حساب صندوق قرض الحسنه</label>
+
+                </div>
+              </div>
+
+              
               <div className="col-lg-12">
               <label className="labelNoGroup yekan">دسته بندی های مرتبط با فروشگاه</label>
               <MultiSelect value={this.state.categories} optionLabel="name" style={{width:'100%'}} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => { 

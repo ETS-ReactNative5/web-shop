@@ -23,8 +23,7 @@ import Sales_Ended from './Sales_Ended.js'
 import Sales_Cleared from './Sales_Cleared.js'
 import Sales from './Sales.js'
 import Create_Off from './Create_Off.js'
-
-
+import Create_Tags from './Create_Tags.js'
 import Create_Filter from './Create_Filter.js'
 import Create_Reports from './Create_Reports.js'
 import Show_Reports from './Show_Reports.js'
@@ -249,6 +248,11 @@ class Management extends React.Component {
             {this.state.CId == "159" && !this.state.IsReport &&
               <Sales_Payk />
             }
+            {this.state.CId == "160" && !this.state.IsReport &&
+              <Create_Tags />
+            }
+
+
 
 
 

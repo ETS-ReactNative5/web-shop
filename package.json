@@ -68,7 +68,7 @@
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
     "rsuite": "^4.7.5",
-    "swiper": "^5.4.2"
+    "swiper": "^5.4.5"
   },
   "scripts": {
     "start": "react-scripts start",

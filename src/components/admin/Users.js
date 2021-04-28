@@ -82,6 +82,10 @@ class Users extends React.Component {
     this.handleChangePass2 = this.handleChangePass2.bind(this);
     this.handleChangeAddress = this.handleChangeAddress.bind(this);
     this.handleChangeCredit = this.handleChangeCredit.bind(this);
+    this.handleChangeRaymandAcc = this.handleChangeRaymandAcc.bind(this);
+    this.handleChangeRaymandUser = this.handleChangeRaymandUser.bind(this);
+
+    
     this.SetOrEditUser = this.SetOrEditUser.bind(this);
     this.handleChangeStatus = this.handleChangeStatus.bind(this);
     this.handleChangeMap = this.handleChangeMap.bind(this);
@@ -170,7 +174,8 @@ class Users extends React.Component {
       })
       if (response.data.result) {
         that.setState({
-          CreditSupport: response.data.result[0].CreditSupport
+          CreditSupport: response.data.result[0].CreditSupport,
+          Raymand: response.data.result[0].Raymand,
         })
       }
 
@@ -255,6 +260,7 @@ class Users extends React.Component {
     this.setState({
       HasError: null
     })
+    
     if (this.state.level == "1" && !this.state.ShopId) {
       Alert.warning('فروشگاه مربوط به مدیر را انتخاب کنید', 5000);
       return;
@@ -269,6 +275,8 @@ class Users extends React.Component {
       status: this.state.status,
       pass: this.state.pass,
       address: this.state.address,
+      RaymandAcc:this.state.RaymandAcc,
+      RaymandUser:this.state.RaymandUser,
       credit: this.state.credit ? this.state.credit.replace(/,/g, "") : 0,
       map: this.state.map,
       levelOfUser: this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0 ? this.state.levelOfUser : null,
@@ -322,6 +330,14 @@ class Users extends React.Component {
 
 
   }
+  handleChangeRaymandAcc(event){
+    this.setState({ RaymandAcc: event.target.value });
+
+  }
+  handleChangeRaymandUser(event){
+    this.setState({ RaymandUser: event.target.value });
+
+  }
   handleChangeStatus(event) {
     this.setState({ status: event.target.value });
 
@@ -344,6 +360,8 @@ class Users extends React.Component {
       pass2: "",
       address: "",
       credit: 0,
+      RaymandAcc:'',
+      RaymandUser:'',
       HasError: null,
       ShopId: null,
       map:null,
@@ -377,6 +395,8 @@ class Users extends React.Component {
       pass2: value.password,
       address: value.address,
       credit: value.credit ? value.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value.credit,
+      RaymandAcc:value.RaymandAcc,
+      RaymandUser:value.RaymandUser,
       ShopId: value.shopId,
       selectedUser: value.products,
       status: value.status == "فعال" ? "1" : "0",
@@ -532,7 +552,7 @@ class Users extends React.Component {
       value={this.state.levelFilter} options={level} className="irsans" onChange={this.onLevelChange} />
     const footer = (
       <div>
-        <button className="btn btn-primary irsans" onClick={this.SetOrEditUser} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> اعمال </button>
+        <button className="btn btn-primary irsans" onClick={()=>this.SetOrEditUser()} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> اعمال </button>
 
       </div>
     );
@@ -557,14 +577,16 @@ class Users extends React.Component {
               <div className="col-6" style={{ textAlign: 'center' }}>
                 <button className="btn btn-info irsans" onClick={this.CreateUser} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> ساخت کاربر جدید </button>
               </div>
-              <div className="col-6" style={{ textAlign: 'center' }}>
-                <button className="btn btn-warning irsans" onClick={() => {
-                  this.setState({
-                    visibleOffDialog: true
-                  })
-                  this.GetOffs();
-                }} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> تخفیف کلی </button>
-              </div>
+              {(this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0) &&
+                <div className="col-6" style={{ textAlign: 'center' }}>
+                  <button className="btn btn-warning irsans" onClick={() => {
+                    this.setState({
+                      visibleOffDialog: true
+                    })
+                    this.GetOffs();
+                  }} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> تخفیف کلی </button>
+                </div>
+              }
             </div>
 
             <div className="section-title " style={{ textAlign: 'right',display:'flex',justifyContent:'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >‍‍‍‍‍‍‍لیست اعضا</span>
@@ -712,6 +734,22 @@ class Users extends React.Component {
                   <div className="group">
                     <input className="form-control irsans" autoComplete="off" type="text" value={this.state.credit} name="credit" onChange={this.handleChangeCredit} required="true" />
                     <label>موجودی کیف پول</label>
+                  </div>
+                </div>
+              }
+              {this.state.Raymand &&
+                <div className="col-lg-6">
+                  <div className="group">
+                    <input className="form-control irsans" autoComplete="off" type="text" value={this.state.RaymandAcc} name="RaymandAcc" onChange={this.handleChangeRaymandAcc} required="true" />
+                    <label>شماره حساب صندوق قرض الحسنه</label>
+                  </div>
+                </div>
+              }
+              {this.state.Raymand &&
+                <div className="col-lg-6">
+                  <div className="group">
+                    <input className="form-control irsans" autoComplete="off" type="text" value={this.state.RaymandUser} name="RaymandUser" onChange={this.handleChangeRaymandUser} required="true" />
+                    <label>شماره مشتری صندوق قرض الحسنه</label>
                   </div>
                 </div>
               }

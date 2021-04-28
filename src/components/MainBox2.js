@@ -799,7 +799,7 @@ class MainBox2 extends React.Component {
                         var img = this.state.absoluteUrl + (item.fileUploaded ? item.fileUploaded.split("public")[1] : "/nophoto.png");
                         return (
 
-                          <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250 }}>
+                          <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250,minWidth:250 }}>
                             <p className="YekanBakhFaBold d-sm-none d-block" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',position:'absolute',top:0,left:0,backgroundColor:'#72d006',padding:5,zIndex:2,borderRadius:5 }}>شگفت انگیز</p>
 
                             <div className="p-grid p-nogutter" >
@@ -1172,127 +1172,7 @@ class MainBox2 extends React.Component {
               </Swiper>
 
             </div>
-                
-            <div className="col-lg-12 col-12" style={{ backgroundColor: '#fff', marginTop: 20, display: 'none' }}   >
-              {this.state.productsBestOff.length > 0 &&
-                <div><div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ محصولات پر تخفیف</span></div>
-                  <Swiper {...params1} >
-                    {this.state.productsBestOff.map((item, index) => {
-                      var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-                      return (
-                        <div>
-                          <Link className="car-details hvr-underline-reveal" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 5, display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
-                            <div className="p-grid p-nogutter" >
-                              <div className="p-col-12 c-product-box__img" align="center" >
-                                <img src={img} alt="" />
-                              </div>
-                              <div className="p-col-12 car-data" style={{ marginTop: 10 }}>
-                                <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>{item.title}</div>
-
-                                <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
-
-
-                                {
-                                  item.number > 0
-                                    ?
-                                    <div>
-                                      {(this.state.UId || !item.ShowPriceAftLogin) &&
-                                        <div>
-                                          {
-                                            ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" ?
-                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#a09696' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
-                                              :
-                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#a09696', height: 16 }} ></div>
-
-                                          }
-                                          <div className="car-subtitle yekan" style={{ textAlign: 'center' }} ><span className="yekan" style={{ float: 'left', fontSize: 11, marginTop: 10 }}>تومان</span> <span className="yekan" style={{ fontSize: 20 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100)).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> </div>
-                                        </div>
-                                      }
-                                    </div>
-                                    : (this.state.UId || !item.ShowPriceAftLogin) &&
-                                    <div>
-                                      <div className="car-subtitle yekan" style={{ height: 22 }} > </div>
-
-                                      <div className="car-subtitle yekan" style={{ textAlign: 'center' }} ><span className="yekan" style={{ fontSize: 14, marginTop: 10, color: 'red' }}>ناموجود</span> </div>
-                                    </div>
-                                }
-
-                              </div>
-                              {
-                                ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" &&
-                                <div className="car-title yekan off" style={{ position: 'absolute', top: 0 }} >{this.persianNumber((item.off + (!item.NoOff ? parseInt(this.props.off) : 0)))} %</div>
-
-                              }
-
-                            </div>
-                          </Link>
-                        </div>
-
-                      )
-                    })
-                    }
-                  </Swiper></div>
-              }
-              <div style={{ display: 'none' }} >
-                <Carousel
-                  swipeable={true}
-                  draggable={false}
-                  showDots={false}
-                  responsive={responsive}
-                  ssr={true} // means to render carousel on server-side.
-                  infinite={true}
-                  autoPlay={false}
-                  autoPlaySpeed={1000}
-                  keyBoardControl={true}
-                  customTransition="all .5"
-                  transitionDuration={500}
-                  containerClass="carousel-container"
-                  removeArrowOnDeviceType={["tablet", "mobile"]}
-                  deviceType={this.props.deviceType}
-                  dotListClass="custom-dot-list-style"
-                  itemClass="carousel-item-padding-40-px"
-                >
-                  {this.state.productsBestOff.map((item, index) => {
-                    var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-                    return (
-                      <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} >
-                        <div className="p-grid p-nogutter" >
-                          <div className="p-col-12" align="center" >
-                            <img src={img} style={{ height: 80 }} alt="" />
-                          </div>
-                          <div className="p-col-12 car-data" style={{ marginTop: 10 }}>
-                            <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>{item.title}</div>
-                            
-                            <div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
-                            {(this.state.UId || !item.ShowPriceAftLogin) &&
-                              <div>
-                                {
-                                  ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" &&
-                                  <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#a09696' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
-                                }
-                                <div className="car-subtitle yekan" style={{ textAlign: 'center' }} ><span className="yekan" style={{ float: 'left', fontSize: 11, marginTop: 10 }}>تومان</span> <span className="yekan" style={{ fontSize: 20 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100)).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> </div>
-                              </div>
-                            }
-
-                          </div>
-                          {
-                            ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" &&
-                            <div className="car-title yekan off" style={{ position: 'absolute', top: 0 }} >{this.persianNumber(((!item.NoOff ? parseInt(this.props.off) : 0) + item.off))} %</div>
-
-                          }
-
-                        </div>
-                      </Link>
-
-                    )
-                  })
-                  }
-                </Carousel>
-              </div>
-
-
-
-            </div>
+             
             {
               this.state.shopList[3] &&
                  <ShopList _id={this.state.shopList[3]._id} ProductBase={this.state.ProductBase} name={this.state.shopList[3].name}  />

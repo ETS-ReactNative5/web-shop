@@ -60,6 +60,7 @@ class Set extends React.Component {
       AccessAfterReg: false,
       ShowProductsInTable: false,
       RegisterByMob:false,
+      Raymand:false,
       SeveralShop: false,
       SaleFromMultiShops:false,
       ProductBase:false,
@@ -192,6 +193,7 @@ class Set extends React.Component {
           AccessAfterReg: response.data.result[0].AccessAfterReg,
           ShowProductsInTable: response.data.result[0].ShowProductsInTable,
           RegisterByMob: response.data.result[0].RegisterByMob,
+          Raymand: response.data.result[0].Raymand,
           SeveralShop: response.data.result[0].SeveralShop,
           SaleFromMultiShops:response.data.result[0].SaleFromMultiShops,
           ProductBase:response.data.result[0].ProductBase,
@@ -218,6 +220,7 @@ class Set extends React.Component {
   setSettings(type) {
     let that = this;
     let param = {};
+    debugger;
     if (type == "bank") {
       param = {
         updateQuery: {
@@ -245,6 +248,7 @@ class Set extends React.Component {
           AccessAfterReg: this.state.AccessAfterReg,
           ShowProductsInTable: this.state.ShowProductsInTable,
           RegisterByMob: this.state.RegisterByMob,
+          Raymand: this.state.Raymand,
           SeveralShop: this.state.SeveralShop,
           SaleFromMultiShops:this.state.SaleFromMultiShops,
           ProductBase:this.state.ProductBase,
@@ -350,6 +354,11 @@ class Set extends React.Component {
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ RegisterByMob: e.checked })} checked={this.state.RegisterByMob}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>ثبت نام تنها از طریق ثبت شماره موبایل انجام شود</label>
+
+                </div>
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ Raymand: e.checked })} checked={this.state.Raymand}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>به سیستم رایمند متصل است</label>
 
                 </div>
                 <div className="col-12" >

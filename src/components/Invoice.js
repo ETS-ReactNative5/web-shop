@@ -360,7 +360,12 @@ class Invoice extends React.Component {
                       </div>
 
                       : <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert alert-danger ">
-                        پرداخت انجام نشد
+                        <p className="YekanBakhFaBold">
+                          پرداخت انجام نشد  
+                        </p>
+                        <p className="YekanBakhFaBold">
+                          در صورت کسر وجه از حساب شما حداکثر تا 72 ساعت آینده مبلغ به حساب شما برخواهد گشت . در غیر اینصورت موضوع را به پشتیبانی سایت اطلاع دهید
+                        </p>
                       </div>
                   }
                 </div>

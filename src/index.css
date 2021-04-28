@@ -1273,7 +1273,7 @@ input[type=number] {
     max-height: 200px;
     overflow: hidden;
 }
-.p-paginator-page , .p-tabview-title{
+.p-paginator-page , .p-tabview-title,.p-chip-text{
     font-family: 'YekanBakhFaBold' !important;
  
 }

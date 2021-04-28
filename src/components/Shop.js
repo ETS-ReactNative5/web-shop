@@ -489,8 +489,7 @@ class Shop extends React.Component {
                             {this.state.ProductBase &&
                                 <Link className="p-button-info btn-warning " to={`${process.env.PUBLIC_URL}/products?id=${(car.product_detail && car.product_detail[0]) ? car.product_detail[0]._id : car._id}`} href="#" style={{ padding: 10, marginTop: 10, width: '85%', fontFamily: 'YekanBakhFaBold' }}>
                                     مشاهده جزئیات / خرید
-                            </Link>
-
+                                </Link>
                             }
                         </div>
                     </div>

@@ -4,6 +4,8 @@ import {BrowserRouter , Route,withRouter,Redirect} from 'react-router-dom'
 import { Button,Alert } from 'reactstrap';
 import { connect } from 'react-redux';
 import Server  from './Server.js'
+import { Toast } from 'primereact/toast';
+
 import './Login.css';
 
 import Header1  from './Header1.js'
@@ -32,6 +34,8 @@ class Login extends React.Component {
       Step:0,
       url:this.Server.getUrl()
     }
+    this.toast = React.createRef();
+
     this.handleChangeinputEmail = this.handleChangeinputEmail.bind(this);
     this.get = this.get.bind(this);
     this.getPassword = this.getPassword.bind(this);
@@ -88,6 +92,10 @@ class Login extends React.Component {
   }
 
   getNewPass(){
+    if(!this.state.inputEmail || this.state.inputEmail == ""){
+      this.toast.current.show({ severity: 'error', summary: <div> شماره تلفن همراه نمی تواند خالی باشد</div>, life: 8000 });
+      return;
+    }
     axios.post(this.state.url+'GetNewPass' , {
       username: this.state.inputEmail
     }) 
@@ -167,7 +175,13 @@ class Login extends React.Component {
       })
   }
   Register(final){
-    
+    if(!this.state.inputEmail || this.state.inputEmail == ""){
+      this.toast.current.show({ severity: 'error', summary: <div> شماره تلفن همراه نمی تواند خالی باشد</div>, life: 8000 });
+      this.setState({
+        Step:0
+      })
+      return;
+    }
     if(this.state.Step==2){
 
       if(!this.state.RegisterByMob){
@@ -191,7 +205,7 @@ class Login extends React.Component {
               if(this.state.ActiveSms=="smart"){
                 axios.post(this.state.url+'sendsms_smartSms', {
                   token: response.data.result.TokenKey,
-                  text: this.state.AccessAfterReg ? "کد ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                  text: this.state.AccessAfterReg ? "کد ثبت نام : " +SecCode+"\n"+"این کد به عنوان رمز عبور شما در سیستم تعریف می شود"+"\n"+this.state.STitle : this.state.RegSmsText +"\n"+"این کد به عنوان رمز عبور شما در سیستم تعریف می شود"+"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
                   mobileNo : this.state.inputEmail.trim()
                 })
                 .then(response => {
@@ -210,7 +224,7 @@ class Login extends React.Component {
                       })
                       axios.post(this.state.url+'sendsms_SmsIr', {
                         token: response.data.result.TokenKey,
-                        text: this.state.AccessAfterReg ? "کد  ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
+                        text: this.state.AccessAfterReg ? "کد  ثبت نام : " +SecCode+"\n"+"این کد به عنوان رمز عبور شما در سیستم تعریف می شود"+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+"این کد به عنوان رمز عبور شما در سیستم تعریف می شود"+"\n"+this.state.STitle,
                         mobileNo : this.state.inputEmail.trim()  
                       })
                       .then(response => {
@@ -462,6 +476,8 @@ class Login extends React.Component {
           <div className="container p-md-5 p-3" style={{direction:'rtl',minHeight:600}}>
             <div className="row">
               <div className="col-sm-10 col-12 col-md-9 col-lg-7 mt-md-0 mt-5 mx-auto" style={{position:'relative'}}>
+              <Toast ref={this.toast} position="bottom-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
+
                 <div className="card card-signin" style={{paddingTop:20,paddingBottom:40}} >
                   <div className="card-body">
                     <div style={{display:'flex',justifyContent:'spaceBetween'}}>

@@ -350,7 +350,9 @@ class Category extends React.Component {
 									<button onClick={()=>{this.GoToShop('Shop?id='+Seller._id+''+'&cat='+this.state.productsDetailArrayRef.category_id)}} disabled={item.number == 0} style={{ background:'#fff',display: 'block', textDecorationStyle: 'none', color: '#333', border: "1px solid rgb(239 239 239)", margin: 5, padding: 5, borderRadius: 5 }}>
 									<img src={img} />
 									<div  className="iranyekanweblight">{Seller.name}</div>
-									<div className="iranyekanweblight text-primary" style={{marginTop:20}}>قیمت در فروشگاه : {price} تومان</div>
+                                    {item.number > 0 &&
+									    <div className="iranyekanweblight text-primary" style={{marginTop:20}}>قیمت در فروشگاه : {price} تومان</div>
+                                    }
 									</button>
 									
 								</div>

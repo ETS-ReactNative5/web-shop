@@ -10,7 +10,9 @@ import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import ReactToPrint,{PrintContextConsumer } from 'react-to-print';
+import { ComponentToPrint } from './../ComponentToPrint.js';
+
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'reactstrap';
@@ -23,6 +25,7 @@ import Cities from './../Cities.js'
 import { Fieldset } from 'primereact/fieldset';
 import { MultiSelect } from 'primereact/multiselect';
 import Mapir from "mapir-react-component";
+import { data } from 'jquery';
 let markerArray = new Array(), lat, lon;
 
 const Api_Code = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjlmN2UwM2I4M2QxNTczNTE1ZjUyNDc0OGMxNTFlMzliYWViZDBjOGMzMjg3YjAwNTZlYWEyZmQ2NGJlZGVhODQ1MGM4MTlkYTAxOTJkMzgyIn0.eyJhdWQiOiIxMTY2NCIsImp0aSI6IjlmN2UwM2I4M2QxNTczNTE1ZjUyNDc0OGMxNTFlMzliYWViZDBjOGMzMjg3YjAwNTZlYWEyZmQ2NGJlZGVhODQ1MGM4MTlkYTAxOTJkMzgyIiwiaWF0IjoxNjA2NjQyOTU4LCJuYmYiOjE2MDY2NDI5NTgsImV4cCI6MTYwOTE0ODU1OCwic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.VSdlmcGeLgctdaKhNHycuQjk3AZoPovTnREv40kb5bQDBxRXSoXHhxNbQCLEAO6lLWE61Db2RMpT7KBK1gzsP0EWy4u6-19Ya9OJO39sGABrvEYmkIJ9k0MSdBvZCI8Uz9kLdmoU8Osfk31dMJY6Bo__KjK72kdzB7fuhMWskVvB_X7V_EgXu4ex_1rj79GtZc54qjw08trxHZ4MnCUu3-FUVhxHmeC9Qw85i1q-cvF8oFcU7WHD3AhrcnDt59DO-Qk9DXdxEENHIREdtw5KtzCkDlst8eK8tA-sNQ6d9VR06lIJH5IbXvYcDPb02oO8clAFiIDROBgUSUmrSso4cA";
@@ -54,6 +57,7 @@ class ShopInformation extends React.Component {
       call: null,
       mobile:null,
       Sheba:null,
+      RaymandAcc:null,
       about: null,
       user_id: null,
       ShopId: null,
@@ -109,7 +113,6 @@ class ShopInformation extends React.Component {
 
   }
   reverseFunction(map, e) {
-    debugger;
     let that = this;
     var url = `https://map.ir/reverse/no?lat=${e.lngLat.lat}&lon=${e.lngLat.lng}`
     fetch(url,
@@ -215,9 +218,10 @@ class ShopInformation extends React.Component {
       that.setState({
         loading: 1
       })
-      that.Server.send("AdminApi/ShopInformation", { ShopId: that.state.ShopId }, function (response) {
+      that.Server.send("AdminApi/ShopInformation", { ShopId: that.state.ShopId,getQrCode:1 }, function (response) {
         that.setState({
-          loading: 0
+          loading: 0,
+          barCode:response.data.svg
         })
         let Time = {};
         if (response.data.result[0].OpenedTime) {
@@ -236,7 +240,7 @@ class ShopInformation extends React.Component {
             
           }
         }
-
+    
         that.setState({
           ShopId: that.state.ShopId,
           address: response.data.result[0].address,
@@ -253,6 +257,7 @@ class ShopInformation extends React.Component {
           call: response.data.result[0].call,
           mobile: response.data.result[0].mobile,
           Sheba: response.data.result[0].Sheba,
+          RaymandAcc: response.data.result[0].RaymandAcc,
           about: response.data.result[0].about,
           user_id: response.data.result[0].UserId,
           name: response.data.result[0].name,
@@ -351,6 +356,7 @@ class ShopInformation extends React.Component {
       call: this.state.call,
       mobile: this.state.mobile,
       Sheba: this.state.Sheba,
+      RaymandAcc: this.state.RaymandAcc,
       about: this.state.about,
       ShopId: this.state.ShopId,
       name: this.state.name,
@@ -397,6 +403,9 @@ class ShopInformation extends React.Component {
         <div className="row justify-content-center">
 
           <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div style={{ display: "none" }}>
+          <ComponentToPrint param={this.state.printParam} printType={this.state.printType} ref={el => (this.componentRef = el)} />
+          </div>
             <Panel header="ویرایش اطلاعات شخصی" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <form  >
                 <div className="row">
@@ -428,6 +437,14 @@ class ShopInformation extends React.Component {
                   <div className="col-lg-7">
                     <div className="group">
 
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.RaymandAcc} name="RaymandAcc" onChange={(event) => this.setState({ RaymandAcc: event.target.value })} required="true" />
+                      <label className="yekan">شماره حساب صندوق قرض الحسنه</label>
+
+                    </div>
+                  </div>
+                  <div className="col-lg-7">
+                    <div className="group">
+
                       <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Sheba} name="Sheba" onChange={(event) => this.setState({ Sheba: event.target.value })} required="true" />
                       <label className="yekan">شماره شبا</label>
 
@@ -440,6 +457,30 @@ class ShopInformation extends React.Component {
                       <label className="yekan">درباره فروشگاه</label>
 
                     </div>
+                  </div>
+                  <div className="col-12">
+                    <div style={{textAlign:'left'}} >
+                      <img src={this.state.barCode} style={{width:300,marginBottom:30}} />
+                      <ReactToPrint
+                          content={() => this.componentRef}
+                        >
+                          <PrintContextConsumer>
+                            {({ handlePrint }) => (
+                              <i className="far fa-print d-md-block d-none"   onClick={()=>{
+                                this.setState({
+                                  printParam: this.state.barCode,
+                                  printType:'QrCode'
+                                })
+                                setTimeout(function(){
+                                  handlePrint();
+
+                                },0)
+                              }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
+                            )}
+                          </PrintContextConsumer>
+                        </ReactToPrint>
+                    </div>
+
                   </div>
                   <div className="col-12" style={{ marginTop: 50 }}>
                     <hr />

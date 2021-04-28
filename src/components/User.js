@@ -52,7 +52,7 @@ class User extends React.Component {
     this.itemTemplatePayment = this.itemTemplatePayment.bind(this);
     this.reverseFunction = this.reverseFunction.bind(this);
     this.EditMap = this.EditMap.bind(this);
-
+    debugger;
     this.onHide = this.onHide.bind(this);
     this.state = {
       id: null,
@@ -128,6 +128,8 @@ class User extends React.Component {
     this.handleChangeMail = this.handleChangeMail.bind(this);
     this.handleChangeSheba = this.handleChangeSheba.bind(this);
     this.handleChangeCompany = this.handleChangeCompany.bind(this);
+    this.handleChangeRaymandUser= this.handleChangeRaymandUser.bind(this);
+    this.handleChangeRaymandAcc = this.handleChangeRaymandAcc.bind(this);
     this.Edituser = this.Edituser.bind(this);
     this.changePass = this.changePass.bind(this);
 
@@ -462,6 +464,8 @@ class User extends React.Component {
   }
   componentDidMount() {
     let that = this;
+    debugger;
+
     axios.post(this.state.url + 'checktoken', {
       token: localStorage.getItem("api_token")
     })
@@ -470,11 +474,13 @@ class User extends React.Component {
           id: response.data.authData.userId
         })
 
-
         axios.post(this.state.url + 'getSettings', {
           token: localStorage.getItem("api_token")
         })
           .then(response => {
+            this.setState({
+              Raymand: response.data.result.Raymand,
+            })
             this.getUser();
           })
           .catch(error => {
@@ -508,6 +514,14 @@ class User extends React.Component {
   }
   handleChangeCompany(event) {
     this.setState({ company: event.target.value });
+  }
+  handleChangeRaymandAcc(event){
+    this.setState({ RaymandAcc: event.target.value });
+
+  }
+  handleChangeRaymandUser(event){
+    this.setState({ RaymandUser: event.target.value });
+
   }
   handleChangeMail(event) {
     this.setState({ mail: event.target.value });
@@ -643,6 +657,8 @@ class User extends React.Component {
         SelectedSubCity: response.data.result[0].subCity,
         mail: response.data.result[0].mail,
         company: response.data.result[0].company,
+        RaymandAcc:response.data.result[0].RaymandAcc,
+        RaymandUser:response.data.result[0].RaymandUser,
         sheba:response.data.result[0].sheba||'',
         loading: 0,
         levelName: (response.data.result[0].offs && response.data.result[0].offs.length > 0) ? response.data.result[0].offs[0].levelName : "تعیین نشده"
@@ -698,6 +714,8 @@ class User extends React.Component {
       city: this.state.SelectedCity,
       subCity: this.state.SelectedSubCity,
       company: this.state.company,
+      RaymandUser: this.state.RaymandUser,
+      RaymandAcc: this.state.RaymandAcc,
       mail: this.state.mail,
       sheba: this.state.sheba,
       MyAccount: "1",
@@ -870,6 +888,22 @@ class User extends React.Component {
                     <label>شماره شبا حساب بانکی</label>
                   </div>
                 </div>
+                {this.state.Raymand &&
+                        <div className="col-lg-6">
+                          <div className="group">
+                            <input className="form-control irsans" autoComplete="off" type="text" value={this.state.RaymandAcc} name="RaymandAcc" onChange={this.handleChangeRaymandAcc} required="true" />
+                            <label>شماره حساب صندوق قرض الحسنه</label>
+                          </div>
+                        </div>
+                      }
+                      {this.state.Raymand &&
+                        <div className="col-lg-6">
+                          <div className="group">
+                            <input className="form-control irsans" autoComplete="off" type="text" value={this.state.RaymandUser} name="RaymandUser" onChange={this.handleChangeRaymandUser} required="true" />
+                            <label>شماره مشتری صندوق قرض الحسنه</label>
+                          </div>
+                        </div>
+                      }
                 <div className="col-lg-6">
                   <div className="group">
                     <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.company} name="company" onChange={this.handleChangeCompany} style={{ textAlign: 'right' }} required="true" />
@@ -972,33 +1006,8 @@ class User extends React.Component {
                   <DataView value={this.state.GridDataFactors} layout={this.state.layout} rows={100} itemTemplate={this.itemTemplateForCancel}></DataView>
 
               </div>
-
-
-
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-              <Dialog header="درخواست مرجوعی" visible={this.state.selectedCancel} style={{ minWidth: '30vw' }} minY={70} onHide={this.onHide} maximizable={false}>
+              }
+             <Dialog header="درخواست مرجوعی" visible={this.state.selectedCancel} style={{ minWidth: '30vw' }} minY={70} onHide={this.onHide} maximizable={false}>
                 <div>
                   <p style={{fontFamily: 'YekanBakhFaBold',color:'red',textAlign:'right'}} >در صورت تایید درخواست شما توسط کارشناس ، پس از اطلاع رسانی پیک فروشگاه برای دریافت محصول به آدرس شما مراجعه خواهد کرد</p>
                   <p style={{fontFamily: 'YekanBakhFaBold',color:'#000',textAlign:'right'}} >برای تغییر کد شبا به منوی ویرایش مشخصات مراجعه کنید </p><br/>
@@ -1080,6 +1089,7 @@ class User extends React.Component {
                           <label>نام شرکت</label>
                         </div>
                       </div>
+                      
                       <div className="col-lg-12">
                         <div className="group">
                           <textarea className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.address} name="address" onChange={this.handleChangeAddress} style={{ textAlign: 'right' }} required="true" />

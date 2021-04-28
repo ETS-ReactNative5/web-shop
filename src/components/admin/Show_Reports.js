@@ -13,7 +13,7 @@ import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
-import { Button } from 'reactstrap';
+import { Button } from 'primereact/button';
 
 import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
@@ -22,6 +22,8 @@ import { Alert } from 'rsuite';
 import { Checkbox } from 'primereact/checkbox';
 import { Fieldset } from 'primereact/fieldset';
 import DatePicker from 'react-datepicker2';
+import { ComponentToPrint } from '../ComponentToPrint.js';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 
 class Show_Reports extends React.Component {
   constructor(props) {
@@ -56,15 +58,23 @@ class Show_Reports extends React.Component {
         FilterIds.push(item.id);
       }
       that.Server.send("AdminApi/GetFilters", {_id:FilterIds}, function (response) {
+        debugger;  
         let ShowParam=[];
+        let ComboParam = [];
         for(let item of response.data.result){
           ShowParam.push({name:item.latinName,type:item.type});
+          if(item.type=="3"){
+            ComboParam.push({DBTableFieldLabel:item.DBTableFieldLabel,DBTableFieldValue:item.DBTableFieldValue,DbTableName:item.DbTableName,FId:item.FId})
+          }
         }
         that.setState({
           loading: 0,
           Filters:response.data.result,
-          ShowParam:ShowParam
+          ShowParam:ShowParam,
+          ComboParam:ComboParam
         })
+        if(ComboParam.length > 0)
+          that.getCombo();
       }, function (error) {
         Alert.error('عملیات انجام نشد', 5000);
         that.setState({
@@ -83,8 +93,51 @@ class Show_Reports extends React.Component {
     }
     this.Server.send("AdminApi/GetFilters", param, SCallBack, ECallBack)
   }
+  getCombo(){
+    let that = this;
+    let ComboParam = this.state.ComboParam.pop();
+    let param = {
+      token: localStorage.getItem("api_token"),
+      DBTableFieldLabel:ComboParam.DBTableFieldLabel,
+      DBTableFieldValue:ComboParam.DBTableFieldValue,
+      DbTableName:ComboParam.DbTableName
+    };
+
+
+    this.setState({
+      loading: 1
+    })
+
+    let SCallBack = function (response) {
+      let x=[];
+      for(let i=0;i<response.data.result.length;i++){
+        x.push({DBTableFieldLabel:response.data.result[i][ComboParam.DBTableFieldLabel],DBTableFieldValue:response.data.result[i][ComboParam.DBTableFieldValue]});
+      }
+      for(let item of that.state.Filters){
+        if(item.FId == ComboParam.FId){
+          item.Combo = x
+        }
+      }
+      that.setState({
+        Filters:that.state.Filters,
+        loading: 0
+      })
+      
+
+    };
+    let ECallBack = function (error) {
+      Alert.error('عملیات انجام نشد', 5000);
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("ReportApi/GetCombo", param, SCallBack, ECallBack)
+  }
   showReports() {
     let that = this;
+    this.setState({
+      output:''
+    })
     let param = {
       token: localStorage.getItem("api_token"),
       number:this.state.number
@@ -144,7 +197,24 @@ class Show_Reports extends React.Component {
     }
     this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
   }
- 
+  getMainShopInfo(){
+    let that = this;
+    let param = {
+        main: true
+    };
+    
+    let SCallBack = function (response) {
+        that.setState({
+            MainShopInfo:response.data.result
+        })
+
+    };
+
+    let ECallBack = function (error) {
+
+    }
+    that.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
+}
 
   render() {
 
@@ -156,7 +226,11 @@ class Show_Reports extends React.Component {
           </div>
         }
         <div className="row justify-content-center">
-         
+              <div className="row">
+                    <div className="col-12" style={{ display: "none" }}>
+                      <ComponentToPrint htmlParam={this.state.output} forUser="1" ref={el => (this.componentRef = el)} />
+                    </div>
+                  </div>
           <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
 
           <Fieldset legend={this.state.legend} toggleable collapsed={this.state.panelCollapsed} onToggle={(e) => this.setState({panelCollapsed: e.value})}>
@@ -184,13 +258,22 @@ class Show_Reports extends React.Component {
                 }
                 if(item.type=="3"){
                   return(
-                    <div className="col-12 col-lg-4">
-                      <div className="group" >
-                          <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}}   required  />
-                          <label className="YekanBakhFaBold">{item.name}</label>
-                      </div>
+                    <div className="col-12 col-lg-12" style={{textAlign:'right',marginBottom:20,marginTop:20}}>
+                      <label className="YekanBakhFaBold">{item.name}</label>
+                      <select style={{width:'100%'}} className="YekanBakhFaBold" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}} >
+                      return(
+                        <option value="" ></option>
+                      )
+                      {item.Combo && item.Combo.map(function(item,index){
+                          return(
+                            <option className="YekanBakhFaBold" value={item.DBTableFieldValue} >{item.DBTableFieldLabel}</option>
+                          )
+                      })
+                      }
+                      </select>
+                     
                     </div>
-                  )
+                  )   
                 }
                 if(item.type=="4"){
                   return(
@@ -221,6 +304,27 @@ class Show_Reports extends React.Component {
               <div className="col-lg-12">
                 <button className="btn btn-primary irsans" onClick={this.showReports} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> مشاهده گزارش </button>
               </div>
+              {this.state.output != '' &&
+              <div className="col-12">
+              <ReactToPrint
+                        content={() => this.componentRef}
+                      >
+                        <PrintContextConsumer>
+                          {({ handlePrint }) => (
+                            
+
+                            <Button label="چاپ گزارش"  onClick={() => {
+
+                              setTimeout(function () {
+                                handlePrint();
+
+                              }, 0)
+                            }} style={{ cursor: 'pointer' }} aria-hidden="true"></Button>
+                          )}
+                        </PrintContextConsumer>
+                      </ReactToPrint>
+              </div>
+              }
             </div>
             </Fieldset>
             
