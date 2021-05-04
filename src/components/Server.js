@@ -14,7 +14,7 @@ class Server extends React.Component {
      ]
      this.state={
         isLoading:false,
-        serverUrl: serverUrl[2]
+        serverUrl: serverUrl[0]
      };
    }
    getUrl(admin){

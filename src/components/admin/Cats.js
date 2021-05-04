@@ -335,7 +335,7 @@ class AdminProduct extends React.Component {
     })
     let SCallBack = function (response) {
 
-      this.GetCategory();
+      that.GetCategory();
       Alert.success('عملیات با موفقیت انجام شد', 5000);
       that.setState({
         loading: 0
@@ -371,8 +371,8 @@ class AdminProduct extends React.Component {
       Commission: this.state.Commission,
       showInSite: this.state.showInSite,
       pic: this.state.CatPic,
-      Spec: this.state.Spec,
-      CodeFile:this.state.CodeFile
+      Spec: this.state.CategoryId ? this.state.Spec : [],
+      CodeFile: this.state.CategoryId ? this.state.CodeFile : []
     };
     for(let code of this.state.CodeFile)
     {

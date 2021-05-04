@@ -399,11 +399,30 @@ class AdminProduct extends React.Component {
   }
   onHide(event) {
     this.setState({ visibleModalPic: false, visibleModalEditProduct: false, visibleModalOff: false, TableLayoutModal: false });
-    if(this.state.selectedCatId || (!this.state.selectedId && !this.state.selectedCatId))
-      this.GetCategory(this.state.selectedCatId);
-    if(this.state.selectedId || (!this.state.selectedId && !this.state.selectedCatId))
+    if(this.state.selectedCatId ){
+      this.setState({
+        selectedTagId:null,
+        selectedId:null
+      })
+      this.GetProductsOfCategory(this.state.selectedCatId);
+
+    }
+    else if(this.state.selectedTagId ){
+      this.setState({
+        selectedCatId:null,
+        selectedId:null
+      })
+      this.GetProductsOfTag(this.state.selectedTagId);  
+
+    }
+    else{
+      this.setState({
+        selectedCatId:null,
+        selectedTagId:null
+      })
       this.GetProduct(this.state.selectedId);
-    
+
+    }
 
   }
   handleClose() {
@@ -515,17 +534,13 @@ class AdminProduct extends React.Component {
 
   }
   handleCategoryInProduct(event) {
-
     this.setState({ CategoryInProduct: event.value });
     let CatSelected = "";
-
     for (const property of this.state.CategoryList) {
       if (property["_id"] == event.value)
         CatSelected = property
     }
     this.getCodes(CatSelected,0);
-
-
   }
   
   getCodes(CatSelected,edit) {
@@ -577,6 +592,10 @@ class AdminProduct extends React.Component {
             CatSpecs: Spec
           })
         this.GetSpecifications(Spec, edit);
+      }else{
+        that.setState({
+          CatSpecs: []
+        })
       }
     }
     
@@ -1387,6 +1406,42 @@ class AdminProduct extends React.Component {
     }
     this.Server.send("MainApi/GetProductsPerCat", param, SCallBack, ECallBack)
   }
+  GetProductsOfTag(_tagId){
+    let that = this;
+    if(!_tagId)
+      return;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      tag: _tagId
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      if(typeof catId == "object"){
+        that.setState({
+          GridAllData: response.data.result
+        })
+      }
+      else{
+        that.setState({
+          GridData: response.data.result
+        })
+      }
+      that.setState({
+        loading: 0
+      })
+
+    };
+    let ECallBack = function (error) {
+      Alert.error('عملیات انجام نشد', 5000);
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("MainApi/GetProductsPerTag", param, SCallBack, ECallBack)
+  }
+
   GetProduct(id) {
     if(!id){
       this.setState({
@@ -1624,7 +1679,10 @@ class AdminProduct extends React.Component {
   }
   onSelect(event) {
     var _id = event.originalEvent.target.getAttribute("_id");
-    var _catId = event.originalEvent.target.getAttribute("_catId")
+    var _catId = event.originalEvent.target.getAttribute("_catId");
+    var _tagId = event.originalEvent.target.getAttribute("_tagId");
+		debugger;
+
     this.setState({
       brand: event.value.title
     })
@@ -1632,6 +1690,7 @@ class AdminProduct extends React.Component {
       try {
         _id = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_id");
         _catId = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_catId");
+        _tagId = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_tagId");
 
       } catch (e) {
 
@@ -1643,11 +1702,16 @@ class AdminProduct extends React.Component {
       })
       this.GetProduct(_id)
 
-    }else{
+    }else if(_catId){
       this.setState({
         selectedCatId:_catId
       })
       this.GetProductsOfCategory(_catId)
+    }else{
+      this.setState({
+        selectedTagId:_tagId
+      })
+      this.GetProductsOfTag(_tagId)
     }
   }
   suggestBrands(event) {
@@ -1685,24 +1749,42 @@ class AdminProduct extends React.Component {
   }
   itemTemplateSearch(brand) {
     if(!brand.catId){
-    return (
-      <div className="p-clearfix" style={{ direction: 'rtl' }} >
-        <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
-
-          <div className="col-lg-6" _id={brand._id} style={{ textAlign: 'right' }}>{brand.desc &&
-            <span className="iranyekanwebregular" style={{ textAlign: 'right' }} _id={brand._id} >
-              <span _id={brand._id} style={{whiteSpace:'pre-wrap'}}>{brand.title}</span><br />
-              <span _id={brand._id} style={{whiteSpace:'pre-wrap'}}>{brand.subTitle}</span>
-            </span>
-          }
+    if(typeof brand.subTitle != "undefined"){
+      return (
+        <div className="p-clearfix" style={{ direction: 'rtl' }} >
+          <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
+  
+            <div className="col-lg-6" _id={brand._id} style={{ textAlign: 'right' }}>{brand.desc &&
+              <span className="iranyekanwebregular" style={{ textAlign: 'right' }} _id={brand._id} >
+                <span _id={brand._id} style={{whiteSpace:'pre-wrap'}}>{brand.title}</span><br />
+                <span _id={brand._id} style={{whiteSpace:'pre-wrap'}}>{brand.subTitle}</span>
+              </span>
+            }
+            </div>
+            <div _id={brand._id} className="col-lg-6" style={{ textAlign: 'center' }}>{brand.img &&
+              <img src={this.state.absoluteUrl + brand.img.split("public")[1]} style={{ width: 100, height: 100, minWidth: 100 }} _id={brand._id} />
+            } </div>
           </div>
-          <div _id={brand._id} className="col-lg-6" style={{ textAlign: 'center' }}>{brand.img &&
-            <img src={this.state.absoluteUrl + brand.img.split("public")[1]} style={{ width: 100, height: 100, minWidth: 100 }} _id={brand._id} />
-          } </div>
         </div>
-      </div>
-    );
-        }else{
+      );
+    }else{
+      return (
+        <div className="p-clearfix" style={{ direction: 'rtl' }} >
+          <div style={{ margin: '10px 10px 0 0' }} className="row" _catId={brand.catId} >
+  
+            <div className="col-lg-6" _id={brand._id} style={{ textAlign: 'right' }}>
+              <span className="iranyekanwebregular" style={{ textAlign: 'right' }} _tagId={brand._id} >
+                <span _tagId={brand._id} style={{color:'#ccc'}}>مشاهده محصولات با برچسب : </span><span style={{whiteSpace:'pre-wrap'}} _tagId={brand._id}>{brand.title}</span><br />
+              </span>
+            </div>
+           
+          </div>
+        </div>
+      );
+    }
+    
+    
+  }else{
           return (
             <div className="p-clearfix" style={{ direction: 'rtl' }} >
               <div style={{ margin: '10px 10px 0 0' }} className="row" _catId={brand.catId} >
@@ -1841,7 +1923,7 @@ class AdminProduct extends React.Component {
   }
 
   onSelectTag(event) {
-		let Tags = this.state.tags;
+    let Tags = this.state.tags.filter(e => e.remove != "1");
     Tags.push({
       title:event.value.title,
       _id:event.value._id
@@ -1862,7 +1944,7 @@ class AdminProduct extends React.Component {
     return self.indexOf(value) === index;
   }
   onSelectTagEdit(event) {
-		let Tags = this.state.tags_edit;
+    let Tags = this.state.tags_edit.filter(e => e.remove != "1");
     Tags.push({
       title:event.value.title,
       _id:event.value._id
@@ -2313,6 +2395,31 @@ class AdminProduct extends React.Component {
                   <label>تعداد</label>
                 </div>
               </div>
+              <div className="col-12">
+                    <div >
+                    <div style={{marginTop:20}}>
+                    <AutoComplete placeholder="تگ های محصول را انتخاب کنید ... " disabled={this.state.SellerId != this.state.MainShopId} inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, padding: 7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ tag_edit: e.value })} itemTemplate={this.itemTemplateTag.bind(this)} value={this.state.tag_edit} onSelect={(e) => this.onSelectTagEdit(e)}  suggestions={this.state.TagSuggestions} completeMethod={this.suggestTags.bind(this)} />
+                      <div style={{marginTop:10,textAlign:'right',marginBottom:10}}>
+                      {this.state.tags_edit.map((v, i) => {
+                        if(!v.remove){
+                          return (<Chip label={v.title} _id={v._id} style={{marginLeft:5}} removable={this.state.SellerId == this.state.MainShopId} onRemove={(event)=>{
+                            let title = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
+                            let Tags = this.state.tags_edit;
+                            for(let i=0;i<Tags.length;i++){
+                              if(Tags[i].title == title){
+                                Tags[i].remove = 1;
+                              }
+                            }
+                            
+                          }} />)
+                        }
+                          
+                      })
+                      }
+                      </div>
+                     </div>
+                    </div>
+                  </div>
               <div className="col-md-12 col-12" style={{ textAlign: 'right', marginTop: 5, height: 45, display: 'flex', alignItems: 'baseline' }} >
                 <Checkbox inputId="harajCheckBox" value={this.state.harajCheckBoxEdit} disabled={this.state.SellerId != this.state.MainShopId} checked={this.state.harajCheckBoxEdit} onChange={(e) => { this.setState({ SetHaraj_edit: !this.state.SetHaraj_edit, harajCheckBoxEdit: e.checked }) }} name="harajCheckBoxEdit" ></Checkbox>
                 <label htmlFor="harajCheckBox" className="p-checkbox-label yekan" style={{ paddingRight: 10 }}>حراج روز</label>
@@ -2379,12 +2486,13 @@ class AdminProduct extends React.Component {
 
                 </div>
               }
+              
               <div className="col-lg-12">
-              <div className="row" >
+              <div style={{display:'flex'}} >
                   {this.state.CategoryInProduct_edit && this.state.CodeFile.map((v, i) => {
                     
                     return(
-                      <div className="col-lg-12" style={{ marginBottom: 20 }}>
+                      <div  style={{ marginBottom: 20,width:'100%' }}>
                         <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</p>
                         <MultiSelect value={this.state[v.Etitle+"_edit"+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
                           let vv=[]
@@ -2423,31 +2531,7 @@ class AdminProduct extends React.Component {
                 })}  
                   </div>    
               </div>
-              <div className="col-12">
-                    <div >
-                    <div style={{marginTop:20}}>
-                    <AutoComplete placeholder="تگ های محصول را انتخاب کنید ... " inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, padding: 7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ tag_edit: e.value })} itemTemplate={this.itemTemplateTag.bind(this)} value={this.state.tag_edit} onSelect={(e) => this.onSelectTagEdit(e)}  suggestions={this.state.TagSuggestions} completeMethod={this.suggestTags.bind(this)} />
-                      <div style={{marginTop:10,textAlign:'right',marginBottom:10}}>
-                      {this.state.tags_edit.map((v, i) => {
-                        if(!v.remove){
-                          return (<Chip label={v.title} _id={v._id} style={{marginLeft:5}} removable onRemove={(event)=>{
-                            let title = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
-                            let Tags = this.state.tags_edit;
-                            for(let i=0;i<Tags.length;i++){
-                              if(Tags[i].title == title){
-                                Tags[i].remove = 1;
-                              }
-                            }
-                            
-                          }} />)
-                        }
-                          
-                      })
-                      }
-                      </div>
-                     </div>
-                    </div>
-                  </div>
+              
                       
               {
                this.state.CatSpecs_Edit && this.state.CatSpecs_Edit.map((v, i) => {

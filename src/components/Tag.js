@@ -13,7 +13,7 @@ import { ToggleButton } from 'primereact/togglebutton';
 import {InputSwitch} from 'primereact/inputswitch';
 import { Dialog } from 'primereact/dialog';
 
-class Category extends React.Component {
+class Tag extends React.Component {
     constructor(props) {
         super(props);
         this.itemTemplate = this.itemTemplate.bind(this);
@@ -22,17 +22,11 @@ class Category extends React.Component {
         
         this.Server = new Server();
         this.state = {
-            id: this.props.location.search.split("id=")[1],
-            getSubs: this.props.location.search.indexOf("getSubs=") > -1 ? true : false,
+            myTag: this.props.location.search.split("tag=")[1],
             GridData: [],
             productsDetailArray:[],
             layout: 'list',
-            Exist: false,   
             loading:1,
-            PId: null,
-            UId: null,
-            EmptyCat: -1,
-            SortOptions: [{ name: 'جدیدترین', value: 1 }, { name: 'ارزانترین', value: 2 }, { name: 'گرانترین', value: 3 }, { name: 'سریعترین ارسال', value: 4 }],
             absoluteUrl: this.Server.getAbsoluteUrl(),
             url: this.Server.getUrl()
         }
@@ -79,7 +73,7 @@ class Category extends React.Component {
               SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
 			})
 		  }
-          that.getProducts({ Exist: false });
+          that.getProducts();
 		}, function (error) {
 		})
 	
@@ -108,25 +102,21 @@ class Category extends React.Component {
     getProducts(p) {
         let that = this;
         let param = {
-            id: this.state.id,
-            getSubs: this.state.getSubs,
-            levelOfUser: this.state.levelOfUser,
-            Exist: p.Exist,
-            Sort: p.Sort,
+            tag: this.state.myTag,
+            Exist:p,
             token: localStorage.getItem("api_token")
         };
         let SCallBack = function (response) {
             let res = response.data.result;
             that.setState({
                 GridData: response.data.result,
-                loading:0,
-                EmptyCat: response.data.result.length == 0 ? 0 : 1
+                loading:0
             })
         };
         let ECallBack = function (error) {
             console.log(error)
         }
-        this.Server.send("MainApi/GetProductsPerCat", param, SCallBack, ECallBack)
+        this.Server.send("MainApi/GetProductsPerTag", param, SCallBack, ECallBack)
     }
     roundPrice(price) {
         return price.toString();;
@@ -183,7 +173,7 @@ class Category extends React.Component {
                         <div className="product-grid-item-content YekanBakhFaMedium">
                             <img src={pic} alt={car.title} style={{ height: 150, borderRadius: 15 }} />
                             <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'center',fontSize:'x-large', marginTop: 10, height: 50,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{car.title}</div>
-                            <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'right', marginTop: 0, height: 50,whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' }}>
+                            <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'right', height: 50,whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' }}>
                             {car.subTitle && car.subTitle != "-" &&
                                 car.subTitle
                             }
@@ -280,11 +270,11 @@ class Category extends React.Component {
 
                             <div>
                                 <div style={{ backgroundColor: '#fff', alignItems: 'center', justifyContent: 'space-between', borderRadius: 5, marginBottom: 5, padding: 20 }} className="row iranyekanwebmedium">
-                                    <div className="col-lg-2 col-sm-4 col-12  mt-md-0 mt-3" style={{ textAlign: 'center' }}>مرتب سازی براساس : </div>
+                                    <div className="col-lg-2 col-sm-4 col-12  mt-md-0 mt-3" style={{ textAlign: 'center' }}></div>
                                     <div className="col-lg-7 col-md-6 col-12 mt-md-0 mt-5" className="mt-md-0 mt-5">
                                         <SelectButton optionLabel="name" optionValue="value" style={{ textAlign: 'right', direction: 'ltr',display:'flex',justifyContent:'space-around',flexWrap:'wrap' }} value={this.state.Sort} options={this.state.SortOptions} onChange={(e) => {
                                             this.setState({ Sort: e.value });
-                                            this.getProducts({ Exist: this.state.Exist, Sort: e.value })
+                                            this.getProducts(this.state.Exist)
 
                                         }}
                                         ></SelectButton>
@@ -296,7 +286,7 @@ class Category extends React.Component {
                                             this.setState({
                                                 Exist: e.value
                                             });
-                                            this.getProducts({ Exist: e.value });
+                                            this.getProducts(e.value);
                                         }
                                         } />
                                     <label className="yekan" style={{marginBottom:0}}>
@@ -388,5 +378,5 @@ const mapStateToProps = (state) => {
     }
 }
 export default withRouter(
-    connect(mapStateToProps)(Category)
+    connect(mapStateToProps)(Tag)
 );

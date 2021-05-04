@@ -35,6 +35,8 @@ import Company_Actions from './Company_Actions.js';
 import Company_Request from './Company_Request.js';
 import Board from './Board.js';
 import SalesProduct from './SalesProduct.js'
+import Ansar_Pic from './Ansar_Pic.js'
+
 import Set from './Set.js'
 import ShopInformation from './ShopInformation.js'
 import ShopsList from './ShopsList.js'
@@ -51,6 +53,8 @@ import { InputText } from 'primereact/inputtext';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import Sales_Payk from './Sales_Payk.js';
+
+
 
 class Management extends React.Component {
   constructor(props) {
@@ -120,7 +124,6 @@ class Management extends React.Component {
     this.Server.send("AdminApi/GetMaps", param, SCallBack, ECallBack)
   }
   getResponse(value) {
-
     this.setState({
       CId: value.CId,
       IsReport:value.IsReport
@@ -250,6 +253,9 @@ class Management extends React.Component {
             }
             {this.state.CId == "160" && !this.state.IsReport &&
               <Create_Tags />
+            }
+            {this.state.CId == "161" && !this.state.IsReport &&
+              <Ansar_Pic />
             }
 
 

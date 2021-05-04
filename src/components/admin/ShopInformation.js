@@ -188,7 +188,9 @@ class ShopInformation extends React.Component {
       if (response.data.result) {
         that.setState({
           ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
-          SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+          SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false,
+          Raymand: response.data.result[0] ? response.data.result[0].Raymand : false
+
 
         })
       }
@@ -434,14 +436,16 @@ class ShopInformation extends React.Component {
 
                     </div>
                   </div>
-                  <div className="col-lg-7">
-                    <div className="group">
+                  {this.state.Raymand &&
+                    <div className="col-lg-7">
+                      <div className="group">
 
-                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.RaymandAcc} name="RaymandAcc" onChange={(event) => this.setState({ RaymandAcc: event.target.value })} required="true" />
-                      <label className="yekan">شماره حساب صندوق قرض الحسنه</label>
+                        <input className="form-control yekan" autoComplete="off" type="text" value={this.state.RaymandAcc} name="RaymandAcc" onChange={(event) => this.setState({ RaymandAcc: event.target.value })} required="true" />
+                        <label className="yekan">شماره حساب صندوق قرض الحسنه</label>
 
+                      </div>
                     </div>
-                  </div>
+                  }
                   <div className="col-lg-7">
                     <div className="group">
 
@@ -810,7 +814,7 @@ class ShopInformation extends React.Component {
                   <div className="col-lg-7" style={{ marginTop: 10 }}>
                     <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }} >
                       <Checkbox inputId="AllowCredit" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                      <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>امکان پرداخت از  کیف پول وجود دارد</label>
+                      <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>امکان پرداخت از  کیف پول {this.state.Raymand ? '/ مهرکارت' : ''} وجود دارد</label>
                     </div>
                   </div>
                   {this.state.AllowCredit &&

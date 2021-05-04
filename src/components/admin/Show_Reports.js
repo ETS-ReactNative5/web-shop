@@ -14,6 +14,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { AutoComplete } from 'primereact/autocomplete';
 
 import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
@@ -41,6 +42,7 @@ class Show_Reports extends React.Component {
   }
   GetFilters() {
     let that = this;
+
     let param = {
       token: localStorage.getItem("api_token"),
       number:this.props.number
@@ -58,20 +60,27 @@ class Show_Reports extends React.Component {
         FilterIds.push(item.id);
       }
       that.Server.send("AdminApi/GetFilters", {_id:FilterIds}, function (response) {
-        debugger;  
         let ShowParam=[];
         let ComboParam = [];
+        let AutoCompleteParam = [];
+        let count=0;
         for(let item of response.data.result){
           ShowParam.push({name:item.latinName,type:item.type});
           if(item.type=="3"){
             ComboParam.push({DBTableFieldLabel:item.DBTableFieldLabel,DBTableFieldValue:item.DBTableFieldValue,DbTableName:item.DbTableName,FId:item.FId})
+          }  
+          if(item.type=="4"){
+            item.index = count;
+            AutoCompleteParam.push({index:count,latinName:item.latinName,DBTableFieldLabel:item.DBTableFieldLabel,DBTableFieldValue:item.DBTableFieldValue,DbTableName:item.DbTableName,FId:item.FId})
+            count++;
           }
         }
         that.setState({
           loading: 0,
           Filters:response.data.result,
           ShowParam:ShowParam,
-          ComboParam:ComboParam
+          ComboParam:ComboParam,
+          AutoCompleteParam:AutoCompleteParam
         })
         if(ComboParam.length > 0)
           that.getCombo();
@@ -143,9 +152,11 @@ class Show_Reports extends React.Component {
       number:this.state.number
     };
     for(let item of this.state.ShowParam){
-      if(item.type == "5"){
+      if(item.type == "5" && this.state[item.name]){
         param[item.name]=this.state[item.name].local("fa").format("jYYYY/jM/jD");
 
+      }else if(item.type == "4"){
+        param[item.name.split("_")[0]]=this.state[item.name+"_val"];
       }else{
         param[item.name]=this.state[item.name];
       }
@@ -174,11 +185,15 @@ class Show_Reports extends React.Component {
     this.Server.send("ReportApi/"+this.state.method, param, SCallBack, ECallBack)
   }
   componentDidMount() {
+    this.init();
+  }
+  init(){
     let that = this;
     let param = {
       token: localStorage.getItem("api_token"),
     };
     this.setState({
+      output:'',
       loading: 1
     })
     let SCallBack = function (response) {
@@ -215,7 +230,53 @@ class Show_Reports extends React.Component {
     }
     that.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
 }
+onSelect(event) {
+  let latinName = this.state.AutoCompleteParam[this.state.AutoCompleteIndex].latinName;
+  this.setState({[latinName]:event.value.name,[latinName+"_val"]:event.value._id})
+}
 
+
+suggestBrands(event) {
+    let f = this.state.AutoCompleteParam[this.state.AutoCompleteIndex];
+    let that = this;
+    this.setState({ brand: event.query, Count: 0 });
+    let param = {
+      title: event.query,
+      table:f.DbTableName,
+      name:f.latinName.split("_")[1]
+    };
+    let SCallBack = function (response) {
+      let brandSuggestions = [];
+      response.data.result.reverse().map(function (v, i) {
+        brandSuggestions.push({ _id: v[f.DBTableFieldValue],name:v[f.DBTableFieldLabel]})
+      })
+      that.setState({ brandSuggestions: brandSuggestions });
+    };
+
+    let ECallBack = function (error) {
+
+    }
+    that.Server.send("ReportApi/searchItems", param, SCallBack, ECallBack)
+
+
+}
+itemTemplate(brand) {
+    return (
+      <div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
+        <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
+          <div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>
+            <span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
+              <span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.name}</span><br />
+            </span>
+          </div>
+          
+        </div>
+      </div>
+    );
+  }
+  componentWillReceiveProps(nextProps) {
+        this.init();
+  }
   render() {
 
     return (
@@ -238,7 +299,7 @@ class Show_Reports extends React.Component {
               {this.state.Filters && this.state.Filters.map((item, index)=>{
                 if(item.type=="1"){
                   return(
-                    <div className="col-12 col-lg-4">
+                    <div className="col-12 col-lg-3">
                       <div className="group" >
                           <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}}   required  />
                           <label className="YekanBakhFaBold">{item.name}</label>
@@ -248,21 +309,21 @@ class Show_Reports extends React.Component {
                 }
                 if(item.type=="2"){
                   return(
-                    <div className="col-12 col-lg-4">
-                      <div className="group" >
-                          <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}}   required  />
-                          <label className="YekanBakhFaBold">{item.name}</label>
+                    <div className="col-12 col-lg-3">
+                      <div style={{display:'flex'}} >
+                      <Checkbox inputId={item.latinName} value={item.latinName} checked={this.state[item.latinName]} onChange={(event)=>{this.setState({[item.latinName]:event.checked})}} ></Checkbox>
+
+                      <label htmlFor={item.latinName} className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>{item.name}</label>
                       </div>
                     </div>
                   )
                 }
                 if(item.type=="3"){
                   return(
-                    <div className="col-12 col-lg-12" style={{textAlign:'right',marginBottom:20,marginTop:20}}>
-                      <label className="YekanBakhFaBold">{item.name}</label>
-                      <select style={{width:'100%'}} className="YekanBakhFaBold" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}} >
+                    <div className="col-12 col-lg-3" style={{textAlign:'right',marginBottom:20,marginTop:20}}>
+                      <select style={{width:'100%'}} placeholder={item.name} className="form-control YekanBakhFaBold" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}} >
                       return(
-                        <option value="" ></option>
+                        <option value="" >{item.name}</option>
                       )
                       {item.Combo && item.Combo.map(function(item,index){
                           return(
@@ -277,23 +338,24 @@ class Show_Reports extends React.Component {
                 }
                 if(item.type=="4"){
                   return(
-                    <div className="col-12 col-lg-4">
+                    <div className="col-12 col-lg-3">
                       <div className="group" >
-                      <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}}   required  />
-                          <label className="YekanBakhFaBold">{item.name}</label>
+                      <AutoComplete placeholder={item.name}  style={{ width: '100%' }} onChange={(event)=>{this.setState({[item.latinName]:event.value,AutoCompleteIndex:item.index,[item.latinName+"_val"]:''})}} itemTemplate={this.itemTemplate.bind(this)} value={this.state[item.latinName]} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+
                       </div>
                     </div>
                   )
                 }
                 if(item.type=="5"){
                   return(
-                    <div className="col-12 col-lg-4">
+                    <div className="col-12 col-lg-3">
                       <DatePicker
                         onChange={value => this.setState({[item.latinName]:value})}
                         value={this.state[item.latinName]}
                         isGregorian={false}
                         timePicker={false}
                         placeholder={item.name}
+                        persianDigits={false}
 
                       />
                     </div>
@@ -301,11 +363,14 @@ class Show_Reports extends React.Component {
                 }
                 
               })}
-              <div className="col-lg-12">
+              
+            </div>
+            <div className="row" style={{marginTop:50}}>
+            <div className="col-lg-3 col-12" style={{textAlign:'right'}}>
                 <button className="btn btn-primary irsans" onClick={this.showReports} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> مشاهده گزارش </button>
               </div>
               {this.state.output != '' &&
-              <div className="col-12">
+              <div className="col-lg-3 col-12" style={{textAlign:'right'}}>
               <ReactToPrint
                         content={() => this.componentRef}
                       >

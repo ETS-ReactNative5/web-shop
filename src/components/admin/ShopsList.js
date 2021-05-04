@@ -123,8 +123,7 @@ class ShopsList extends React.Component {
         SellerId: response.data.authData.userId,
         loading: 0
       })
-
-      that.GetShopList();
+      that.getSettings();
 
     };
     let ECallBack = function (error) {
@@ -232,15 +231,15 @@ class ShopsList extends React.Component {
   getSettings() {
     let that = this;
     that.Server.send("AdminApi/getSettings", {}, function (response) {
-
       if (response.data.result) {
         that.setState({
           ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
-          SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+          SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false,
+          Raymand: response.data.result[0] ? response.data.result[0].Raymand : false
 
         })
       }
-      that.getShopInformation();
+      that.GetShopList();
 
     }, function (error) {
     })
@@ -352,7 +351,6 @@ class ShopsList extends React.Component {
       for (let i = 0; i < response.data.result.length; i++) {
         CatList.push({ name: response.data.result[i].name, value: response.data.result[i]._id })
       }
-      debugger;
       that.setState({
         CategoryListForDropDown: CatList,
         loading: 0
@@ -441,6 +439,7 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
+              {this.state.Raymand &&
               <div className="col-lg-12">
                 <div className="group">
 
@@ -449,6 +448,7 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
+            }
 
               
               <div className="col-lg-12">
@@ -487,7 +487,7 @@ class ShopsList extends React.Component {
                 <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
 
                   <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>امکان پرداخت از  کیف پول وجود دارد</label>
+                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>امکان پرداخت از  کیف پول {this.state.Raymand ? '/ مهرکارت' : ''} وجود دارد</label>
 
                 </div>
               </div>

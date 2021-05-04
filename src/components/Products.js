@@ -15,6 +15,7 @@ import './Products.css'
 import CatList from './CatList.js'
 import ShopList from './ShopList.js'
 
+import { Tag } from 'primereact/tag';
 
 import Footer from './Footer.js'
 import Header2 from './Header2.js'
@@ -275,6 +276,7 @@ class Products extends React.Component {
                     CatId:v.category_id,
                     SellerName: response.data.extra.Seller[0] ? response.data.extra.Seller[0].name : "",
                     SellerId: response.data.extra.Seller[0] ? response.data.extra.Seller[0]._id : "",
+                    Tags: v.Tags,
                     PrepareTime:that.state.ProductBase ? v.PrepareTime : response.data.extra.Seller[0].PrepareTime ,
                     Time1:Time1,
                     Time2:Time2,
@@ -1033,6 +1035,23 @@ class Products extends React.Component {
                                         <ShopList _id={this.state.SellerId} name={this.state.SellerName} ProductBase={this.state.ProductBase}  paddingLeft="0" paddingRight="0" />
                                     </div>
                                 
+                                }
+
+                                {this.state.Tags && this.state.Tags.length > 0 &&
+                                <div style={{padding:50,backgroundColor:'#fff',textAlign:'right',borderRadius:5}}>
+                                    <p className="iranyekanwebmedium" style={{borderBottom:'1px solid #eee'}}>برچسب های محصول</p>
+                                    {this.state.Tags.map((v,i)=>{
+                                        return(
+                                            <Tag style={{marginLeft:10}} severity="info" >
+                                            <Link to={`${process.env.PUBLIC_URL}/Tag?tag=${v._id}`} style={{ textDecoration: 'none', color: '#333' }}>
+
+                                            <span className="iranyekanwebmedium" style={{color:'#fff',fontSize:15}}  >{v.title}</span>
+
+                                            </Link>
+                                            </Tag>
+                                        )
+                                    })}
+                                </div>
                                 }
                                 <div style={{marginTop:30}} >
                                     <TabView renderActiveOnly={false} style={{ textAlign: 'right', direction: 'rtl' }} activeIndex={0}  >

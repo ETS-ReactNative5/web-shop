@@ -233,6 +233,7 @@ class Dashboard extends React.Component {
     })
   }
   GoToForm(CId,IsReport) {
+
     this.setState({
       SideVisible:false
     })

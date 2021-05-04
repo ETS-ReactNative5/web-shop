@@ -283,30 +283,33 @@ class Cart extends React.Component {
                     lastPrice += res.number * parseInt(that.roundPrice(res.price));
                 PrepareTime.push(that.state.ProductBase ? res.products[0].PrepareTime : (res.Seller[0].PreparTime || "30"));
                 CartNumber += parseInt(res.number);
-                if(res.Category && res.Category.length > 0){
-                    res.PeykInfo[1].SendToCity = res.Category[0].SendToCity;
-                    res.PeykInfo[1].SendToCountry = res.Category[0].SendToCountry;
-                    res.PeykInfo[1].SendToNearCity = res.Category[0].SendToNearCity;
-                    res.PeykInfo[1].SendToState = res.Category[0].SendToState;
+                if(res.PeykInfo && res.PeykInfo.length > 0 ){
+                    if(res.Category && res.Category.length > 0){
+                        res.PeykInfo[1].SendToCity = res.Category[0].SendToCity;
+                        res.PeykInfo[1].SendToCountry = res.Category[0].SendToCountry;
+                        res.PeykInfo[1].SendToNearCity = res.Category[0].SendToNearCity;
+                        res.PeykInfo[1].SendToState = res.Category[0].SendToState;
+                    }
+                    switch (res.PeykInfo[2].userLocation) {
+                        case 1: {
+                            paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToCity || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
+                            break;
+                        }
+                        case 2: {
+                            paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToNearCity || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
+                            break;
+                        }
+                        case 3: {
+                            paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToState || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
+                            break;
+                        }
+                        case 4: {
+                            paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToCountry || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
+                            break;
+                        }
+                    }
                 }
-                switch (res.PeykInfo[2].userLocation) {
-                    case 1: {
-                        paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToCity || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
-                        break;
-                    }
-                    case 2: {
-                        paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToNearCity || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
-                        break;
-                    }
-                    case 3: {
-                        paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToState || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
-                        break;
-                    }
-                    case 4: {
-                        paykAmount.push({ Amount: parseInt(res.PeykInfo[1].SendToCountry || "0") * (res.PeykInfo[1].CumputeByNumberInPeyk ? parseInt(res.number) : 1), Marge: res.PeykInfo[1].MergeableInPeyk ? 1 : 0 })
-                        break;
-                    }
-                }
+                
                 if (parseInt(res.products[0].price) - (((parseInt(res.products[0].price) * (( parseInt(res.products[0].off||0)))))/100) != res.price) {
                     res.price = parseInt(res.products[0].price) - (((parseInt(res.products[0].price) * (( parseInt(res.products[0].off||0)))))/100);
                     if(that.toast.current)

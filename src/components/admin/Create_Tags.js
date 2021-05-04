@@ -86,8 +86,6 @@ class Create_Tags extends React.Component {
       HasErrorForMaps: null
     })
     let SCallBack = function (response) {
-      that.onHideFormsDialog();
-      that.GetTags();
       that.setState({
         loading: 0
       })
@@ -115,6 +113,8 @@ class Create_Tags extends React.Component {
       visibleManageTag: false,
       selectedId: null
     });
+    this.GetTags();
+
 
   }
   onHideMapsDialog(event) {
@@ -254,7 +254,7 @@ class Create_Tags extends React.Component {
     );
 
     const delTemplate = (rowData, props) => {
-      return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delTags(rowData)}></i>;
+      return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" ></i>;
     }
     return (
       <div style={{ direction: 'rtl' }}>
@@ -281,8 +281,8 @@ class Create_Tags extends React.Component {
           </div>
 
         </div>
-        <Dialog header={this.state.selectedId ? "اصلاح "+this.state.brandTemp+" " : "ساخت"} visible={this.state.visibleManageTag} footer={footer} onHide={this.onHideFormsDialog} maximizable={false} maximized={true}>
-          <form>
+        <Dialog header={this.state.selectedId ? "اصلاح "+this.state.brandTemp+" " : "ساخت"} visible={this.state.visibleManageTag} footer={footer} onHide={this.onHideFormsDialog} maximizable={true} style={{width: '50vw'}} >
+          <form style={{minHeight:300}}>
             <div className="row" style={{alignItems:'baseline'}}>
               <div className="col-md-8 col-12">
                   <AutoComplete placeholder="جستجو کنید ... " inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, padding: 7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplate.bind(this)} value={this.state.brand} onSelect={(e) => this.onSelect(e)}  suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />

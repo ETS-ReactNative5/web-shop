@@ -92,6 +92,7 @@ class Header1 extends React.Component {
 	onSelect(event) {
 		var _id = event.originalEvent.target.getAttribute("_id");
 		var _catId = event.originalEvent.target.getAttribute("_catId")
+		var _tagId = event.originalEvent.target.getAttribute("_tagId")
 		ReactGA.event({
 			category: 'Search',
 			action: 'Search',
@@ -100,10 +101,11 @@ class Header1 extends React.Component {
 		this.setState({
 			brand: event.value.title
 		})
-		if (!_id && !_catId) {
+		if (!_id && !_catId && !_tagId) {
 			try {
 				_id = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_id");
 				_catId = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_catId");
+				_tagId = event.originalEvent.target.nextElementSibling.nextElementSibling.children[0].getElementsByClassName("p-highlight")[0].getElementsByClassName("row")[0].getAttribute("_tagId");
 
 			} catch (e) {
 
@@ -112,9 +114,12 @@ class Header1 extends React.Component {
 		if(_id){
 			this.setState({ brand: event.value, selectedproductId: _id })
 
-		}else{
+		}else if(_catId){
 			this.setState({ brand: event.value, selectedCatId: _catId })
 
+		}
+		else if(_tagId){
+			this.setState({ brand: event.value, selectedTagId: _tagId })
 		}
 		setTimeout(function () {
 			window.location.reload();
@@ -134,7 +139,7 @@ class Header1 extends React.Component {
 				let brandSuggestions = []
 				response.data.result.reverse().map(function (v, i) {
 
-					brandSuggestions.push({ _id: ((v.product_detail && v.product_detail.length > 0) ? v.product_detail[0]._id : v._id),name:v.name,catId:v.name ? v._id : null, title: v.title, subTitle: v.subTitle, desc: v.desc, img: v.fileUploaded })
+					brandSuggestions.push({ _id: ((v.product_detail && v.product_detail.length > 0) ? v.product_detail[0]._id : v._id),name:v.name,catId:v.name ? v._id : null,tagId:(!v.name && typeof v.subTitle == "undefined") ? v._id : null, title: v.title, subTitle: v.subTitle, desc: v.desc, img: v.fileUploaded })
 				})
 
 				that.setState({ brandSuggestions: brandSuggestions });
@@ -149,6 +154,7 @@ class Header1 extends React.Component {
 	itemTemplate(brand) {
 		Cound = 0;
 		if(!brand.catId){
+			if(!brand.tagId){
 			return (
 				<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
 					<div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
@@ -166,6 +172,24 @@ class Header1 extends React.Component {
 					</div>
 				</div>
 			);
+		  }else{
+
+			return (
+				<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
+					<div style={{ margin: '10px 10px 0 0' }} className="row" _tagId={brand.tagId} >
+	
+						<div className="col-12" _id={brand.tagId} style={{ textAlign: 'right' }}>
+							<span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _tagId={brand.tagId} >
+								
+								<span _tagId={brand.tagId} style={{color:'#ccc'}}>مشاهده محصولات با برچسب  : </span><span style={{whiteSpace:'pre-wrap'}} _tagId={brand.tagId}>{brand.title}</span><br />
+							</span>
+						</div>
+						
+					</div>
+				</div>
+			);
+
+		  }
 		}else{
 			return (
 				<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
@@ -267,7 +291,9 @@ class Header1 extends React.Component {
 			return <Redirect to={"/products?id=" + this.state.selectedproductId} push={true} />;
 		if (this.state.selectedCatId)
 			return <Redirect to={"/category?id=" + this.state.selectedCatId} push={true} />;
-			
+		if (this.state.selectedTagId)
+			return <Redirect to={"/Tag?tag=" + this.state.selectedTagId} push={true} />;	
+				
 		if (this.state.GotoLogin)
 			return <Redirect to='/login' />;
 		if (this.state.GotoRegister)

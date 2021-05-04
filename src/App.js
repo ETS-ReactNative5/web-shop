@@ -7,6 +7,7 @@ import MainBox1 from './components/MainBox1.js'
 import Map from './components/Map.js'
 import Photos from './components/Photos.js'
 import Charts from './components/Charts.js'
+import Tag from './components/Tag.js'
 import Blogs from './components/Blogs.js'
 import Blog from './components/admin/Blog.js'
 import Cats from './components/admin/Cats.js'
@@ -36,6 +37,7 @@ import Maps from './components/admin/Maps.js'
 import Forms from './components/admin/Forms.js'
 import Management from './components/admin/Management.js'
 import Guarantee from './components/admin/Guarantee.js'
+import Ansar_Pic from './components/admin/Ansar_Pic.js'
 import Brands from './components/admin/Brands.js'
 import Pics from './components/admin/Pics.js'
 import Products from './components/Products.js'
@@ -129,6 +131,7 @@ class App extends Component {
                   <Route path="/" component={withTracker(MainBox1)} exact />
                   <Route path="/admin/Cats" component={Cats} />
                   <Route path="/Charts" component={Charts} />
+                  <Route path="/Tag" component={Tag} />
                   <Route path="/admin/Billing" component={Billing} />
                   <Route path="/admin/Accounts" component={Accounts} />                  
                   <Route path="/admin/Admin" component={Admin} />
@@ -173,6 +176,8 @@ class App extends Component {
                   <Route path="/admin/ShopsList" component={ShopsList} />
                   <Route path="/admin/SiteSettings" component={SiteSettings} />
                   <Route path="/admin/Codes_Files" component={Codes_Files} />
+                  <Route path="/admin/Ansar_Pic" component={Ansar_Pic} />
+                  
                 </Switch>
               </ScrollToTop>
             </div>
