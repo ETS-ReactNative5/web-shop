@@ -151,6 +151,9 @@ class ShopsList extends React.Component {
       AllowCredit: false,
       showInSite:false,
       CreditCommission: 0,
+      paymentType:'',
+      credit:0,
+      MehrCommission:0,
       visibleDialog: false,
       PrepareTime: '',
       Opened: false,
@@ -216,6 +219,9 @@ class ShopsList extends React.Component {
       AllowCredit: value.AllowCredit,
       showInSite: value.showInSite,
       CreditCommission: value.CreditCommission,
+      paymentType: value.paymentType,
+      credit: value.credit,
+      MehrCommission: value.MehrCommission,
       selectedName: value.name,
       selectedAddress: value.address,
       selectedCall: value.call || "",
@@ -310,6 +316,9 @@ class ShopsList extends React.Component {
       main: this.state.selectedMainShop,
       AllowCredit: this.state.AllowCredit,
       CreditCommission: this.state.CreditCommission,
+      paymentType: this.state.paymentType,
+      credit: this.state.credit,
+      MehrCommission: parseInt(this.state.MehrCommission),
       PrepareTime: this.state.PrepareTime,
       Opened: this.state.Opened,
       OpenedTime: Time,
@@ -451,18 +460,7 @@ class ShopsList extends React.Component {
             }
 
               
-              <div className="col-lg-12">
-              <label className="labelNoGroup yekan">دسته بندی های مرتبط با فروشگاه</label>
-              <MultiSelect value={this.state.categories} optionLabel="name" style={{width:'100%'}} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => { 
-                          
-
-                          this.setState({ categories: event.value  }) 
-                          
-                        }} />
-
               
-              
-              </div>
               
               {!this.state.ProductBase &&
                   <div className="col-7">
@@ -474,7 +472,58 @@ class ShopsList extends React.Component {
                     </div>
                   </div>
                   }  
-             <div className="col-lg-12" >
+             
+              
+              <div className="col-lg-12" >
+                <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
+
+                  <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
+                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>متصل به کیف پول {this.state.Raymand ? '/ مهرکارت' : ''} </label>
+
+                </div>
+              </div>
+              
+              {this.state.AllowCredit &&
+                <div className="col-lg-3">
+                  <div className="group">
+
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.MehrCommission} name="MehrCommission" onChange={(event) => this.setState({ MehrCommission: event.target.value })} required="true" />
+                    <label className="yekan">کارمزد مهرکارت</label>
+
+                  </div>
+                </div>
+              }
+              {this.state.AllowCredit &&
+                <div className="col-lg-3" >
+                  <div className="group">
+
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.CreditCommission} name="CreditCommission" onChange={(event) => this.setState({ CreditCommission: event.target.value })} required="true" />
+                    <label className="yekan">کارمزد {this.state.selectedName}</label>
+
+                  </div>
+                </div>
+              }
+              {this.state.AllowCredit &&
+                <div className="col-lg-3" >
+                  <div className="group">
+
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.credit} name="credit" onChange={(event) => this.setState({ credit: event.target.value })} required="true" />
+                    <label className="yekan">موجودی مهر کارت  {this.state.selectedName}(تومان)</label>
+
+                  </div>
+                </div>
+              }
+              {this.state.AllowCredit &&
+                <div className="col-lg-12" >
+                  <div className="group">
+
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.paymentType} name="paymentType" onChange={(event) => this.setState({ paymentType: event.target.value })} required="true" />
+                    <label className="yekan">نحوه تسویه</label>
+
+                  </div>
+                </div>
+              }
+              <div className="col-lg-12" >
                 <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
 
                   <Checkbox inputId="laon" value={this.state.showInSite} checked={this.state.showInSite} onChange={e => this.setState({ showInSite: e.checked })}></Checkbox>
@@ -482,25 +531,6 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
-              
-              <div className="col-lg-12" >
-                <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
-
-                  <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>امکان پرداخت از  کیف پول {this.state.Raymand ? '/ مهرکارت' : ''} وجود دارد</label>
-
-                </div>
-              </div>
-              {this.state.AllowCredit &&
-                <div className="col-lg-3" style={{marginBottom:50}}>
-                  <div className="group">
-
-                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.CreditCommission} name="CreditCommission" onChange={(event) => this.setState({ CreditCommission: event.target.value })} required="true" />
-                    <label className="yekan">کارمزد فروش اقساطی</label>
-
-                  </div>
-                </div>
-              }
               <div className="col-lg-12">
                 <div style={{ paddingRight: 8, textAlign: 'right',display:'flex' }}>
 
@@ -508,6 +538,18 @@ class ShopsList extends React.Component {
                   <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>فروشگاه اصلی</label>
 
                 </div>
+              </div>
+              <div className="col-lg-12">
+              <label className="labelNoGroup yekan">دسته بندی های مرتبط با فروشگاه</label>
+              <MultiSelect value={this.state.categories} optionLabel="name" style={{width:'100%'}} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => { 
+                          
+
+                          this.setState({ categories: event.value  }) 
+                          
+                        }} />
+
+              
+              
               </div>
               {!this.state.ProductBase &&
                   <div className="col-lg-12 col-12">

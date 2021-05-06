@@ -36,6 +36,8 @@ import Company_Request from './Company_Request.js';
 import Board from './Board.js';
 import SalesProduct from './SalesProduct.js'
 import Ansar_Pic from './Ansar_Pic.js'
+import Edit_User_Credit from './Edit_User_Credit.js'
+
 
 import Set from './Set.js'
 import ShopInformation from './ShopInformation.js'
@@ -256,6 +258,9 @@ class Management extends React.Component {
             }
             {this.state.CId == "161" && !this.state.IsReport &&
               <Ansar_Pic />
+            }
+            {this.state.CId == "162" && !this.state.IsReport &&
+              <Edit_User_Credit />
             }
 
 

@@ -40,6 +40,7 @@ import Guarantee from './components/admin/Guarantee.js'
 import Ansar_Pic from './components/admin/Ansar_Pic.js'
 import Brands from './components/admin/Brands.js'
 import Pics from './components/admin/Pics.js'
+import Edit_User_Credit from './components/admin/Edit_User_Credit.js'
 import Products from './components/Products.js'
 import Cart from './components/Cart.js'
 import Category from './components/Category.js'
@@ -154,6 +155,10 @@ class App extends Component {
                   <Route path="/admin/Comments" component={Comments} />
                   <Route path="/admin/Guarantee" component={Guarantee} />
                   <Route path="/admin/Brands" component={Brands} />
+                  <Route path="/admin/Edit_User_Credit" component={Edit_User_Credit} />
+
+
+                  
                   <Route path="/admin/Pics" component={Pics} />
                   <Route path="/admin/Set" component={Set} />
                   <Route path="/admin/Dashboard" component={Dashboard} />

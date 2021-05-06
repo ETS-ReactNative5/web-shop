@@ -588,7 +588,7 @@ class Set extends React.Component {
                     <Alert color={this.state.Message.type} style={{ textAlign: "center", fontSize: 18 }} className="yekan">
                       {this.state.Message.text}
                     </Alert>
-                  }
+                  }  
 
                 </div>
 
@@ -599,6 +599,7 @@ class Set extends React.Component {
                 <Column field="order" header="ترتیب نمایش" className="yekan" style={{ textAlign: "center" }} />
               </DataTable>
             </Panel>
+
           </div>
         </div>
       </div>
