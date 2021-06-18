@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
+
 import Dashboard from './Dashboard.js'
 import AdminProduct from './AdminProduct.js'
 import Users from './Users.js'
@@ -25,6 +26,12 @@ import Sales from './Sales.js'
 import Create_Off from './Create_Off.js'
 import Create_Tags from './Create_Tags.js'
 import Create_Filter from './Create_Filter.js'
+import Create_Form from './Create_Form.js'
+import Create_Fields from './Create_Fields.js'
+import Create_Reserve from './Create_Reserve.js'
+import Chat from './Chat.js'
+
+
 import Create_Reports from './Create_Reports.js'
 import Show_Reports from './Show_Reports.js'
 import SalePose from './SalePose.js'
@@ -37,6 +44,9 @@ import Board from './Board.js';
 import SalesProduct from './SalesProduct.js'
 import Ansar_Pic from './Ansar_Pic.js'
 import Edit_User_Credit from './Edit_User_Credit.js'
+import ShowReq from './ShowReq.js'
+import Forms_Details from './Forms_Details.js'
+import ReserveReqs from './ReserveReqs.js'
 
 
 import Set from './Set.js'
@@ -114,7 +124,8 @@ class Management extends React.Component {
     let SCallBack = function (response) {
       that.setState({
         loading: 0,
-        CId:(response.data.result.length > 0 && response.data.result[0].firstForm) ? response.data.result[0].firstForm : '100'
+        CId:(response.data.result.length > 0 && response.data.result[0].firstForm) ? response.data.result[0].firstForm : '100',
+        permitions:response.data.result[0].permitions||[]
       });
     };
     let ECallBack = function (error) {
@@ -128,7 +139,8 @@ class Management extends React.Component {
   getResponse(value) {
     this.setState({
       CId: value.CId,
-      IsReport:value.IsReport
+      IsReport:value.IsReport,
+      help:value.help
     })
   }
 
@@ -139,128 +151,153 @@ class Management extends React.Component {
       <div style={{ direction: 'rtl' }} >
 
         <div className="row justify-content-center">
-          <div className="col-12 col-md-4 col-lg-3 ">
+          <div className="col-12 col-md-3 col-lg-3 ">
 
             <Dashboard callback={this.getResponse.bind(this)} list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
           </div>
-          <div className="col-lg-9 col-md-8 col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-lg-9 col-md-9 col-12" style={{ marginTop: 20, background: '#fff' }}>
+            {this.state.help &&
+              <p style={{position:'absolute',top:5,right:20,color:'darkred',fontSize:18,cursor:'pointer',zIndex:2,alignItems:'center'}}  onClick={()=>{this.setState({VisibleDialog:true})}}>
+                <i class="fas fa-question-circle" ></i>
+                <span className="iranyekanwebmedium">راهنما</span>
+              </p> 
+            }
             {this.state.CId == "100" && !this.state.IsReport &&
-              <AdminProduct />
+              <AdminProduct permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "101" && !this.state.IsReport &&
-              <Users />
+              <Users permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "102" && !this.state.IsReport &&
-              <Cats />
+              <Cats permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "103" && !this.state.IsReport &&
-              <Set />
+              <Set permition={this.state.permitions[this.state.CId]} />  
             }
             {this.state.CId == "118" && !this.state.IsReport &&
-              <Billing />
+              <Billing permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "119" && !this.state.IsReport &&
-              <Accounts />
+              <Accounts permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "116" && !this.state.IsReport &&
-              <Blog />
+              <Blog permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "114" && !this.state.IsReport &&
-              <Brands />
+              <Brands permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "109" && !this.state.IsReport &&
-              <ChangeInformation />
+              <ChangeInformation permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "112" && !this.state.IsReport &&
-              <Comments />
+              <Comments permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "108" && !this.state.IsReport &&
-              <Forms />
+              <Forms permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "202" && !this.state.IsReport &&
-              <Guarantee />
+              <Guarantee permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "201" && !this.state.IsReport &&
-              <Maps />
+              <Maps permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "115" && !this.state.IsReport &&
-              <Pics />
+              <Pics permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "106" && !this.state.IsReport &&
-              <Sales />
+              <Sales permition={this.state.permitions[this.state.CId]} />
             }
             
-            {
-            this.state.CId == "200" && !this.state.IsReport &&
-                <SalesProduct />
+            {this.state.CId == "200" && !this.state.IsReport &&
+                <SalesProduct permition={this.state.permitions[this.state.CId]} />
             }
             
             {this.state.CId == "110" && !this.state.IsReport &&
-              <ShopInformation />
+              <ShopInformation permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "111" && !this.state.IsReport &&
-              <ShopsList />
+              <ShopsList permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "120" && !this.state.IsReport &&
-              <SiteSettings />
+              <SiteSettings permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "121" && !this.state.IsReport &&
-              <Sales_Registered />
+              <Sales_Registered permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "122" && !this.state.IsReport &&
-              <Sales_ReadyToSend />
+              <Sales_ReadyToSend permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "123" && !this.state.IsReport &&
-              <Sales_Posted />
+              <Sales_Posted permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "124" && !this.state.IsReport &&
-              <Sales_Ended />
+              <Sales_Ended permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "125" && !this.state.IsReport &&
-              <Sales_Cleared />
+              <Sales_Cleared permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "126" && !this.state.IsReport &&
-              <Create_Filter />
+              <Create_Filter permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "127" && !this.state.IsReport &&
-              <Create_Reports />
+              <Create_Reports permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "130" && !this.state.IsReport &&
-              <SalePose />
+              <SalePose permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "151" && !this.state.IsReport && 
-              <Codes_Files />
+              <Codes_Files permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "152" && !this.state.IsReport &&
-              <Cancel_Products />
+              <Cancel_Products permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "153" && !this.state.IsReport &&
-              <Canceled_Products />
+              <Canceled_Products permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "154" && !this.state.IsReport &&
-              <Company_Actions />
+              <Company_Actions permition={this.state.permitions[this.state.CId]} />
             }
-
             {this.state.CId == "155" && !this.state.IsReport &&
-              <Company_Request />
+              <Company_Request permition={this.state.permitions[this.state.CId]} />
             }
-            {this.state.CId == "157" && !this.state.IsReport &&
-              <Board />
+            {this.state.CId == "167" && !this.state.IsReport &&
+              <Board permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "158" && !this.state.IsReport &&
-              <Create_Off />
+              <Create_Off permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "159" && !this.state.IsReport &&
-              <Sales_Payk />
+              <Sales_Payk permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "160" && !this.state.IsReport &&
-              <Create_Tags />
+              <Create_Tags permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "161" && !this.state.IsReport &&
-              <Ansar_Pic />
+              <Ansar_Pic permition={this.state.permitions[this.state.CId]} />
             }
             {this.state.CId == "162" && !this.state.IsReport &&
-              <Edit_User_Credit />
+              <Edit_User_Credit permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "165" && !this.state.IsReport &&
+              <Create_Fields permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "164" && !this.state.IsReport &&
+              <Create_Form permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "166" && !this.state.IsReport &&
+              <Create_Reserve permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "169" && !this.state.IsReport &&
+              <Chat permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "168" && !this.state.IsReport &&
+              <ShowReq permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "170" && !this.state.IsReport &&
+              <Forms_Details permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "171" && !this.state.IsReport &&
+              <ReserveReqs permition={this.state.permitions[this.state.CId]} />
             }
 
 
@@ -276,8 +313,9 @@ class Management extends React.Component {
 
         </div>
         <div >
-
-
+        <Dialog visible={this.state.VisibleDialog} style={{ width: '50vw' }} onHide={() => this.setState({ VisibleDialog: false })}  maximizable={false} maximized={false}>
+          <div dangerouslySetInnerHTML={{ __html: this.state.help}} className="blog" style={{textAlign:'right'}} />
+        </Dialog>
 
         </div>
 

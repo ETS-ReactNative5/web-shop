@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios'
-import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
+import { BrowserRouter, Link, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
@@ -15,6 +15,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Checkbox } from 'primereact/checkbox';
 import { confirmAlert } from 'react-confirm-alert';
+import { Toast } from 'primereact/toast';
 
 import { connect } from 'react-redux';
 import { Loader } from 'rsuite';
@@ -25,6 +26,7 @@ class Company_Request extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
+    this.toast = React.createRef();
 
     this.CreateForm = this.CreateForm.bind(this);
     this.onHideFormsDialog = this.onHideFormsDialog.bind(this);
@@ -62,7 +64,7 @@ class Company_Request extends React.Component {
         username: response.data.authData.username,
         loading: 0
       })
-      that.getCodes(['4','5']);
+      that.getCodes(['9','4','5']);
     };
     let ECallBack = function (error) {
       that.setState({
@@ -74,13 +76,28 @@ class Company_Request extends React.Component {
   }
   SetReq() {
     let that = this;
+    if(!this.state.RequestReciever){
+      this.toast.current.show({ severity: 'warn', summary: <div>گیرنده درخواست را مشخص کنید</div>, life: 8000 });
+      return;
+    }
+    if(this.state.RequestReciever == this.state.username ){
+      this.toast.current.show({ severity: 'warn', summary: <div>نمیتوانید درخواست را به خودتان ارجاع دهید !</div>, life: 8000 });
+      return;
+    }
+    if(!this.state.desc){
+      this.toast.current.show({ severity: 'warn', summary: <div>توضیحی برای درخواست ثبت کنید</div>, life: 8000 });
+      return;
+    }
     let param = {
       _id: this.state.selectedId,
       desc: this.state.desc,
+      attach: this.state.attach,
       title: this.state.title,
       Priority: this.state.RequestPriority,
       Reciever: this.state.RequestReciever,
-      Sender:this.state.username
+      Sender:this.state.username,
+      Copy:this.state.RequestRecieverMulti,
+      status:1,
     };
     this.setState({
       loading: 1
@@ -116,6 +133,7 @@ class Company_Request extends React.Component {
     this.setState({
       visibleManageAction: true,
       desc: '',
+      attach: '',
       title: '',
       RequestPriority: '',
       RequestReciever: '',
@@ -144,6 +162,7 @@ class Company_Request extends React.Component {
       RequestPriority: value.Priority,
       RequestReciever: value.Reciever,
       desc: value.desc,
+      attach: value.attach,
       selectedId: value._id
     })
   }
@@ -161,6 +180,7 @@ class Company_Request extends React.Component {
     })
     let SCallBack = function (response) {
       for(let i=0;i<response.data.result.length;i++){
+        response.data.result[i].OrgSenderName = response.data.result[i].OriginalSender[0]?.name;
         response.data.result[i].SenderName = response.data.result[i].sender[0]?.name;
       }
       that.setState({
@@ -177,6 +197,46 @@ class Company_Request extends React.Component {
       })
     }
     this.Server.send("CompanyApi/getRequest", param, SCallBack, ECallBack)
+  }
+  EndReq(_id){
+    this.setState({
+      visibleManageAction: false
+    })
+    confirmAlert({
+      title: <span className="yekan">تغییر وضعیت</span>,
+      message: <span className="yekan">  درخواست بایگانی شود ؟   </span>,
+      buttons: [
+        {
+          label: <span className="yekan">بله </span>,
+          onClick: () => {
+            let that = this;
+            let param = {
+              token: localStorage.getItem("api_token"),
+              _id: _id,
+              End: 1
+            };
+            let SCallBack = function (response) {
+              that.setState({
+                loading: 0
+              })
+              that.GetReq();
+              Alert.success('عملیات با موفقیت انجام شد', 5000);
+            };
+            let ECallBack = function (error) {
+              that.setState({
+                loading: 0
+              })
+              Alert.error('عملیات انجام نشد', 5000);
+            }
+            this.Server.send("CompanyApi/setRequest", param, SCallBack, ECallBack)
+
+          }
+        },
+        {
+          label: <span className="yekan">خیر </span>
+        }
+      ]
+    });
   }
   DelReq(_id) {
     this.setState({
@@ -251,24 +311,40 @@ class Company_Request extends React.Component {
         <div className="row">
           <div className="col-lg-12 " >
             <div className="row" style={{ margin: 20 }}>
-              <div className="col-lg-3 col-12 yekan" style={{ textAlign: "center" }}>
-                <div>شماره درخواست : {car.number}</div>
-                <p className="yekan" >فرستنده : {car.SenderName}</p>
-                <p className="yekan" >اولویت : {car.Priority}</p>
-                <p className="yekan" >{car.Time} : {car.Date}</p>
-
+              
+              <div className="col-lg-7 col-12 yekan" style={{ textAlign: "right",backgroundColor:'#f5f5f54a',padding:10,borderRadius:10 }}>
+                <p className="yekan" style={{fontSize:15,color:'blue'}}>{car.title}</p>
+                <p className="yekan" style={{fontSize:18,whiteSpace:'pre-wrap'}} >{car.desc}</p>
+                
 
               </div>
-              <div className="col-lg-7 col-12 yekan" style={{ textAlign: "center" }}>
-                <p className="yekan">{car.title}</p>
-                <p className="yekan" >{car.desc}</p>
+              <div className="col-lg-3 col-12 yekan" style={{ textAlign: "right" }}>
+                <div>شماره درخواست : {car.number}</div>
+                <p className="yekan" >فرستنده : {car.OrgSenderName}</p>
+                <p className="yekan" >آخرین ارجاع دهنده : {car.SenderName}</p>
+                <p className="yekan" >اولویت : {car.Priority}</p>
+                <p className="yekan" >{car.Time} : {car.Date}</p>
+                {car.status != 1 &&
 
+                  <p className="yekan" style={{color:'red'}} >وضعیت : بایگانی</p>
+
+                }
+                {car.attach &&
+
+                <a href={car.attach} className="yekan" target="_blank"  >
+                  <i className="fa fa-paperclip" style={{paddingLeft:5}} />
+                  دانلود فایل ضمیمه
+                </a>
+
+                }
               </div>
               <div className="col-lg-2 col-12 yekan" style={{ textAlign: "center" }}>
                 {car.Sender  == this.state.username &&
                   <div style={{display:'flex',flexDirection:'column'}}>
                     <button className="btn btn-secondary yekan" onClick={() => {this.selectedComponentChange(car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>ویرایش درخواست</button>
-                    <button className="btn btn-info yekan" onClick={() => this.DelReq(car._id)} style={{  marginTop: "5px", marginBottom: "5px" }}  >حذف درخواست</button>
+                    <button className="btn btn-danger yekan" onClick={() => this.DelReq(car._id)} style={{  marginTop: "5px", marginBottom: "5px" }}  >حذف درخواست</button>
+                    <button className="btn btn-info yekan" onClick={() => this.EndReq(car._id)} style={{  marginTop: "5px", marginBottom: "5px" }}  >پایان</button>
+
                   </div>
                 }
 
@@ -304,6 +380,8 @@ class Company_Request extends React.Component {
     return (
 
       <div style={{ direction: 'rtl' }}>
+        <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
+
         {this.state.loading == 1 &&
           <div style={{ position: 'fixed', zIndex: 2000, top: 10, left: 15, backgroundColor: '#e89f31', padding: '2px 20px' }}>
             <Loader content="لطفا صبر کنید ..." className="yekan" />
@@ -313,15 +391,15 @@ class Company_Request extends React.Component {
 
           <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
             <div className="row" style={{ alignItems: 'baseline' }} >
-              <div className="col-3">
+              <div className="col-lg-3 col-12">
               <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.reqNumber} name="reqNumber" onChange={(event) => this.setState({ reqNumber: event.target.value })} required="true" />
                   <label>شماره درخواست</label>
                 </div></div>
-              <div className="col-3" style={{ textAlign: 'center' }}>
-                <button className="btn btn-primary irsans" onClick={()=>this.GetReq(this.state.reqNumber)} disabled={!this.state.reqNumber} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>جستجو</button>
+              <div className="col-lg-3 col-12" style={{ textAlign: 'center' }}>
+                <button className="btn btn-primary irsans" onClick={()=>this.GetReq(this.state.reqNumber)}  style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>جستجو</button>
               </div>
-              <div className="col-6" style={{ textAlign: 'center' }}>
+              <div className="col-lg-6 col-12" style={{ textAlign: 'center' }}>
                 <button className="btn btn-info irsans" onClick={this.CreateForm}  style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>ثبت درخواست جدید</button>
               </div>
 
@@ -334,10 +412,10 @@ class Company_Request extends React.Component {
         </div>
 
 
-        <Dialog header={this.state.selectedId ? "اصلاح" : "ثبت درخواست"} visible={this.state.visibleManageAction} footer={footer} minY={70} onHide={this.onHideFormsDialog} maximizable={true} maximized={false}>
+        <Dialog style={{ width: '60vw' }} header={this.state.selectedId ? "اصلاح" : "ثبت درخواست"} visible={this.state.visibleManageAction} footer={footer}  onHide={this.onHideFormsDialog} maximizable={true} maximized={true}>
           <form>
 
-            <div className="row">
+            <div className="row" style={{alignItems:"center"}}>
             {this.state.CodeFile.map((v, i) => {
                     //this.setState({ [v.Etitle]: v.values[0].value });
                     return(
@@ -345,7 +423,7 @@ class Company_Request extends React.Component {
                         {v.MultiSelect ? 
                         <div>
 
-                        <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</p>
+                        <p className="yekan" style={{ textAlign: "right", paddingRight: 10 }}>{v.title}</p>
                         <MultiSelect value={this.state[v.Etitle]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { this.setState({ [v.Etitle]: event.value }) }} />
                         </div>
                         :
@@ -375,10 +453,18 @@ class Company_Request extends React.Component {
               </div>
               <div className="col-lg-12">
                 <div className="group">
-                  <textarea className="form-control irsans" autoComplete="off" type="text" value={this.state.desc} name="desc" onChange={(event) => this.setState({ desc: event.target.value })} required="true" ></textarea>
+                  <textarea className="form-control irsans" style={{height:200}} autoComplete="off" type="text" value={this.state.desc} name="desc" onChange={(event) => this.setState({ desc: event.target.value })} required="true" ></textarea>
                   <label>توضیح</label>
                 </div>
               </div>
+              <div className="col-lg-12" >
+                    <div className="group" >
+                      <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.attach} name="attach" onChange={(event) => this.setState({ attach: event.target.value })} required="true" />
+                      <label className="yekan">لینک فایل ضمیمه</label>
+                    </div>
+                    <Link to={`${process.env.PUBLIC_URL}/admin/pics?uploadExtraImage=1`} className="yekan" target="_blank" >بارگزاری تصویر و فایل</Link>
+
+                </div>
               
               
 

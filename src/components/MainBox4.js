@@ -98,7 +98,6 @@ class MainBox4 extends React.Component {
 	 this.GetBrands = this.GetBrands.bind(this);
 
 	 
-	 //this.GetBestShop();
 	 axios.post(this.state.url+'checktoken', {
           token: localStorage.getItem("api_token")
       })
@@ -176,7 +175,6 @@ class MainBox4 extends React.Component {
 
    }
    GetBrands(){
-
 	axios.post(this.state.url+'GetBrands', {
 		showInSite: true
 	})
@@ -267,7 +265,7 @@ class MainBox4 extends React.Component {
 		{this.state.Brands.length > 0 && 
 			<div className="col-12" style={{direction:'rtl',backgroundColor:'#fff',marginTop:20,borderRadius:20}}>
 			
-				<div className="section-title " style={{textAlign:'right'}}><span className="title iranyekanweblight" style={{fontSize:16,color:'gray',marginTop:10}} >‍‍‍‍‍‍‍{this.state.isSeveralShop ? "فروشندگان منتخب" : "برندها"}  </span></div>
+				<div className="section-title " style={{textAlign:'right'}}><span className="title iranyekanweblight" style={{fontSize:16,color:'gray',marginTop:10}} >{this.props.BrandTitle}</span></div>
 
 				
 				<Swiper {...params1}>
@@ -276,9 +274,10 @@ class MainBox4 extends React.Component {
 				
 				return (
 
-					<Link  to={data.address} >
+					<Link  to={data.address} style={{textAlign:'center'}} >
 
-						<div style={{textAlign:'center'}}><img style={{maxwidth:300,borderRadius:15,marginBottom:15}} alt={data.name} src={img} /></div>
+						<div style={{textAlign:'center'}}><img style={{maxwidth:300,borderRadius:15,marginBottom:15,height:100}} alt={data.name} src={img} /></div>
+						<span style={{textAlign:'center'}} className="iranyekanweblight">{data.name}</span>
 					</Link>  
 					
 				)

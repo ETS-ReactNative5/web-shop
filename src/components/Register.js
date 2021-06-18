@@ -47,6 +47,19 @@ class Register extends React.Component {
     this.handleChangePassword2 = this.handleChangePassword2.bind(this);
 
   }
+  convertNum(str){
+    var persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g],
+       arabicNumbers  = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+     
+        if(typeof str === 'string')
+        {
+          for(var i=0; i<10; i++)
+          {
+            str = str.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
+          }
+        }
+        return str;
+  }
   componentDidMount(){
     let that = this;
     
@@ -67,7 +80,8 @@ class Register extends React.Component {
     
   }
   Register(){
-   
+    let mobile = this.convertNum(this.state.Mobile.trim());
+
     if(!this.state.AfterFirstStep){
 
       if(this.state.Password != this.state.Password2){
@@ -76,9 +90,8 @@ class Register extends React.Component {
         })
         return;
       }
-  
       axios.post(this.state.url+'Register' , {
-        username: this.state.Mobile.trim(),
+        username: mobile,
         password: this.state.Password.trim(),
         name:this.state.name,
         company:this.state.company,
@@ -105,7 +118,7 @@ class Register extends React.Component {
                 axios.post(this.state.url+'sendsms_smartSms', {
                   token: response.data.result.TokenKey,
                   text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد  ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
-                  mobileNo : this.state.Mobile
+                  mobileNo : mobile
                 })
                 .then(response => {
                     console.log(response);
@@ -124,7 +137,7 @@ class Register extends React.Component {
                       axios.post(this.state.url+'sendsms_SmsIr', {
                         token: response.data.result.TokenKey,
                         text: this.state.AccessAfterReg ? this.state.RegSmsText +"\n"+"کد  ثبت نام : " +SecCode+"\n"+this.state.STitle : this.state.RegSmsText +"\n" + "کد پیگیری ثبت نام : "+SecCode+"\n"+this.state.STitle,
-                        mobileNo : this.state.Mobile
+                        mobileNo : mobile
                       })
                       .then(response => {
                           console.log(response);
@@ -163,7 +176,7 @@ class Register extends React.Component {
       }
       
       axios.post(this.state.url+'Register',{
-        username: this.state.Mobile,
+        username: mobile,
         password: this.state.Password,
         SecurityCode: this.state.SecurityCode,
         Step: "2"
@@ -176,7 +189,7 @@ class Register extends React.Component {
               return;
             }
             axios.post(this.state.url+'Register', {
-            username: this.state.Mobile,
+            username: mobile,
             password: this.state.Password,
             Step: "3"
           })
@@ -228,7 +241,7 @@ class Register extends React.Component {
   }
   render(){
     if (this.state.AfterFinalStep == true) {
-      return <Redirect to='/MainBox1'  />;
+      return <Redirect to='/MainShop'  />;
 
     }
         return (

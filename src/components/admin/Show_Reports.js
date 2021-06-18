@@ -38,7 +38,11 @@ class Show_Reports extends React.Component {
 
     }
     
+    this.generateExcel = this.generateExcel.bind(this);
     this.showReports = this.showReports.bind(this);
+    this.Clear = this.Clear.bind(this);
+
+    
   }
   GetFilters() {
     let that = this;
@@ -142,6 +146,12 @@ class Show_Reports extends React.Component {
     }
     this.Server.send("ReportApi/GetCombo", param, SCallBack, ECallBack)
   }
+  Clear(){
+    this.setState({
+      Filters:[]
+    })
+    this.GetFilters();
+  }
   showReports() {
     let that = this;
     this.setState({
@@ -149,7 +159,8 @@ class Show_Reports extends React.Component {
     })
     let param = {
       token: localStorage.getItem("api_token"),
-      number:this.state.number
+      number:this.state.number,
+      SeveralShop:this.state.SeveralShop
     };
     for(let item of this.state.ShowParam){
       if(item.type == "5" && this.state[item.name]){
@@ -170,6 +181,7 @@ class Show_Reports extends React.Component {
     let SCallBack = function (response) {
       that.setState({
         output:response.data.result,
+        ExcelRep:response.data.ExcelRep,
         loading: 0
       })
 
@@ -184,8 +196,68 @@ class Show_Reports extends React.Component {
     }
     this.Server.send("ReportApi/"+this.state.method, param, SCallBack, ECallBack)
   }
+  getSettings() {
+    let that = this;
+    that.setState({
+      loading: 1
+    })
+    that.Server.send("AdminApi/getSettings", {}, function (response) {
+      that.setState({
+        loading: 0
+      })
+      if (response.data.result) {
+        that.setState({
+          SeveralShop: response.data.result[0].SeveralShop
+        })
+      }
+      that.init();
+
+    }, function (error) {
+
+      that.init();
+      that.setState({
+        loading: 0
+      })
+
+    })
+
+
+  }
   componentDidMount() {
-    this.init();
+    this.getSettings();
+  }
+  generateExcel(){
+    if(!this.state.ExcelRep)
+      return;
+    let that = this;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      ExcelRep:this.state.ExcelRep
+    };
+
+
+    this.setState({
+      loading: 1
+    })
+
+    let SCallBack = function (response) {
+      that.setState({
+        loading: 0
+
+      })
+      window.open(response.data.result)
+
+      
+
+    };
+    let ECallBack = function (error) {
+      Alert.error('عملیات انجام نشد', 5000);
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("ReportApi/generateExcel", param, SCallBack, ECallBack)
+
   }
   init(){
     let that = this;
@@ -350,7 +422,7 @@ itemTemplate(brand) {
                   return(
                     <div className="col-12 col-lg-3">
                       <DatePicker
-                        onChange={value => this.setState({[item.latinName]:value})}
+                        onChange={value =>{this.setState({[item.latinName]:value})}}
                         value={this.state[item.latinName]}
                         isGregorian={false}
                         timePicker={false}
@@ -366,11 +438,15 @@ itemTemplate(brand) {
               
             </div>
             <div className="row" style={{marginTop:50}}>
-            <div className="col-lg-3 col-12" style={{textAlign:'right'}}>
-                <button className="btn btn-primary irsans" onClick={this.showReports} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> مشاهده گزارش </button>
-              </div>
+                <button className="btn btn-primary irsans" onClick={this.showReports} style={{ width: "200px", marginTop: "5px", marginBottom: "5px",marginLeft:10 }}> مشاهده گزارش </button>
+             
+
+              
+              <button className="btn btn-secondary irsans" onClick={this.Clear} style={{ width: "200px", marginTop: "5px", marginBottom: "5px",marginLeft:10 }}>شروع مجدد </button>
+              {this.state.output != '' && this.state.ExcelRep &&
+                <button className="btn btn-success irsans" onClick={this.generateExcel} style={{ width: "200px", marginTop: "5px", marginBottom: "5px",marginLeft:10,marginRight:10 }}> ساخت خروجی اکسل </button>
+              }
               {this.state.output != '' &&
-              <div className="col-lg-3 col-12" style={{textAlign:'right'}}>
               <ReactToPrint
                         content={() => this.componentRef}
                       >
@@ -384,11 +460,10 @@ itemTemplate(brand) {
                                 handlePrint();
 
                               }, 0)
-                            }} style={{ cursor: 'pointer' }} aria-hidden="true"></Button>
+                            }} style={{ cursor: 'pointer',marginTop: "5px", marginBottom: "5px" }} aria-hidden="true"></Button>
                           )}
                         </PrintContextConsumer>
                       </ReactToPrint>
-              </div>
               }
             </div>
             </Fieldset>

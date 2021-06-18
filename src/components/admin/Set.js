@@ -46,6 +46,7 @@ class Set extends React.Component {
       HOrders: null,
       SelectedHOrder: null,
       ActiveBank: null,
+      SaleByCheque:false,
       ActiveSms: null,
       Template: 1,
       ParsianTerminal: '',
@@ -60,8 +61,10 @@ class Set extends React.Component {
       AccessAfterReg: false,
       ShowProductsInTable: false,
       RegisterByMob:false,
+      AlarmIfExistProduct:false,
       Raymand:false,
       SeveralShop: false,
+      System:"",
       SaleFromMultiShops:false,
       ProductBase:false,
       CreditSupport: false,
@@ -183,6 +186,9 @@ class Set extends React.Component {
           ParsianPin: response.data.result[0].ParsianPin,
           ParsianTerminal: response.data.result[0].ParsianTerminal,
           ActiveBank: response.data.result[0].ActiveBank,
+          SaleByCheque: response.data.result[0].SaleByCheque,
+          ChequeCommission : response.data.result[0].ChequeInfo?.ChequeCommission,
+          MaxCheque : response.data.result[0].ChequeInfo?.MaxCheque,
           SmsIrNumber: response.data.result[0].SmsIrNumber,
           SmsIrUser: response.data.result[0].SmsIrUser,
           SmsIrPass: response.data.result[0].SmsIrPass,
@@ -193,8 +199,10 @@ class Set extends React.Component {
           AccessAfterReg: response.data.result[0].AccessAfterReg,
           ShowProductsInTable: response.data.result[0].ShowProductsInTable,
           RegisterByMob: response.data.result[0].RegisterByMob,
+          AlarmIfExistProduct: response.data.result[0].AlarmIfExistProduct,
           Raymand: response.data.result[0].Raymand,
           SeveralShop: response.data.result[0].SeveralShop,
+          System:response.data.result[0].System,
           SaleFromMultiShops:response.data.result[0].SaleFromMultiShops,
           ProductBase:response.data.result[0].ProductBase,
           CreditSupport: response.data.result[0].CreditSupport,
@@ -220,14 +228,20 @@ class Set extends React.Component {
   setSettings(type) {
     let that = this;
     let param = {};
-    debugger;
+    if(this.state.loading)
+      return;
     if (type == "bank") {
       param = {
         updateQuery: {
           ZarinPalCode: this.state.ZarinPalCode,
           ParsianPin: this.state.ParsianPin,
           ParsianTerminal: this.state.ParsianTerminal,
-          ActiveBank: this.state.ActiveBank
+          ActiveBank: this.state.ActiveBank,
+          SaleByCheque: this.state.SaleByCheque,
+          ChequeInfo: {
+            ChequeCommission:this.state.ChequeCommission,
+            MaxCheque:this.state.MaxCheque
+          }
         }
       };
     } else if (type == "sms") {
@@ -248,8 +262,10 @@ class Set extends React.Component {
           AccessAfterReg: this.state.AccessAfterReg,
           ShowProductsInTable: this.state.ShowProductsInTable,
           RegisterByMob: this.state.RegisterByMob,
+          AlarmIfExistProduct: this.state.AlarmIfExistProduct,
           Raymand: this.state.Raymand,
           SeveralShop: this.state.SeveralShop,
+          System: this.state.System,
           SaleFromMultiShops:this.state.SaleFromMultiShops,
           ProductBase:this.state.ProductBase,
           CreditSupport: this.state.CreditSupport,
@@ -321,20 +337,36 @@ class Set extends React.Component {
 
                 </div>
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <Checkbox onChange={e => this.setState({ SeveralShop: e.checked })} checked={this.state.SeveralShop}></Checkbox>
-                  <label style={{ paddingRight: 5, marginTop: 5 }}>استفاده از امکانات چند فروشگاهی - برای تغییر این فیلد لازم است با طراحان سیستم هماهنگی شود</label>
+                  <div>
+                  <p className="yekan" style={{ float: "right" }}>نوع سیستم</p>
+                  <select className="custom-select yekan" value={this.state.System} name="System" onChange={(event)=>{this.setState({System:event.target.value})}} >
+                    <option value=""></option>
+                    <option value="shop">فروشگاهی</option>
+                    <option value="company">شرکتی</option>
 
+                  </select>
+                  <hr />
+                  </div>
                 </div>
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <Checkbox onChange={e => this.setState({ ProductBase: e.checked })} checked={this.state.ProductBase}></Checkbox>
-                  <label style={{ paddingRight: 5, marginTop: 5 }}>خرید بر پایه محصول</label>
+                    <Checkbox onChange={e => this.setState({ SeveralShop: e.checked })} checked={this.state.SeveralShop}></Checkbox>
+                    <label style={{ paddingRight: 5, marginTop: 5 }}>استفاده از امکانات چند {this.state.System == "shop" ? "فروشگاهی" : "سیستمی"} - برای تغییر این فیلد لازم است با طراحان سیستم هماهنگی شود</label>
 
                 </div>
-                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <Checkbox onChange={e => this.setState({ SaleFromMultiShops: e.checked })} checked={this.state.SaleFromMultiShops}></Checkbox>
-                  <label style={{ paddingRight: 5, marginTop: 5 }}>امکان خرید همزمان از چند فروشگاه وجود دارد</label>
+                {this.state.System == "shop" &&
+                  <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                    <Checkbox onChange={e => this.setState({ ProductBase: e.checked })} checked={this.state.ProductBase}></Checkbox>
+                    <label style={{ paddingRight: 5, marginTop: 5 }}>خرید بر پایه محصول</label>
 
-                </div>
+                  </div>
+                }
+                {this.state.System == "shop" &&
+                  <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                    <Checkbox onChange={e => this.setState({ SaleFromMultiShops: e.checked })} checked={this.state.SaleFromMultiShops}></Checkbox>
+                    <label style={{ paddingRight: 5, marginTop: 5 }}>امکان خرید همزمان از چند فروشگاه وجود دارد</label>
+
+                  </div>
+                }
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ CreditSupport: e.checked })} checked={this.state.CreditSupport}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>امکانات مربوط به کیف پول فعال باشد</label>
@@ -346,16 +378,25 @@ class Set extends React.Component {
                   <label style={{ paddingRight: 5, marginTop: 5 }}>پس از ثبت نام امکان دسترسی بلافاصله به سیستم وجود داشته باشد</label>
 
                 </div>
+                {this.state.System == "shop" &&
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ ShowProductsInTable: e.checked })} checked={this.state.ShowProductsInTable}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>نمایش جدولی محصولات در فرم ثبت محصول</label>
 
                 </div>
+                }
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ RegisterByMob: e.checked })} checked={this.state.RegisterByMob}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>ثبت نام تنها از طریق ثبت شماره موبایل انجام شود</label>
 
                 </div>
+                {this.state.System == "shop" &&
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ AlarmIfExistProduct: e.checked })} checked={this.state.AlarmIfExistProduct}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>موجود شدن محصولات به کاربران درخواست کننده اطلاعات داده شود</label>
+
+                </div>
+                }
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ Raymand: e.checked })} checked={this.state.Raymand}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>به سیستم رایمند متصل است</label>
@@ -364,7 +405,7 @@ class Set extends React.Component {
                 <div className="col-12" >
                   <div className="group">
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.STitle} name="STitle" onChange={(event) => this.setState({ STitle: event.target.value })} required="true" />
-                    <label className="yekan">عنوان فروشگاه (در عنوان سایت و پیامک ها و آلارم ها استفاده می شود)</label>
+                    <label className="yekan">عنوان سایت (در عنوان سایت و پیامک ها و آلارم ها استفاده می شود)</label>
                   </div>
                 </div>
                 <div className="col-12" >
@@ -385,12 +426,14 @@ class Set extends React.Component {
                     <label className="yekan">متن پیامک پس از تغییر وضعیت حساب کاربر</label>
                   </div>
                 </div>
-                <div className="col-12" style={{ display: 'none' }}>
-                  <div className="group">
-                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.FactorChangeSmsText} name="FactorChangeSmsText" onChange={(event) => this.setState({ FactorChangeSmsText: event.target.value })} required="true" />
-                    <label className="yekan">متن پیامک پس از تغییر وضعیت سفارش</label>
+                {this.state.System == "shop" &&
+                  <div className="col-12" style={{ display: 'none' }}>
+                    <div className="group">
+                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.FactorChangeSmsText} name="FactorChangeSmsText" onChange={(event) => this.setState({ FactorChangeSmsText: event.target.value })} required="true" />
+                      <label className="yekan">متن پیامک پس از تغییر وضعیت سفارش</label>
+                    </div>
                   </div>
-                </div>
+                }
                 <div className="col-12" >
                   <div className="group">
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.ChatId} name="ChatId" onChange={(event) => this.setState({ ChatId: event.target.value })} required="true" />
@@ -423,6 +466,34 @@ class Set extends React.Component {
                         <label style={{ textAlign: "center", fontSize: 18 }} className="yekan">زرین پال</label>
                       </div>
                     </div>
+                    <div className="row">
+                      <div className="col-lg-4 col-12" style={{ display: 'flex', alignItems: 'end' }}>
+                        <Checkbox onChange={e => this.setState({ SaleByCheque: e.checked })} checked={this.state.SaleByCheque}></Checkbox>
+                        <label style={{ paddingRight: 5 }}>خرید با چک</label>
+
+                      </div>
+                      
+                   </div>
+                   
+                     {this.state.SaleByCheque &&
+                     <div className="row">
+                        <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'end' }}>
+                          <div className="group">
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.MaxCheque} name="MaxCheque" onChange={(event) => this.setState({ MaxCheque: event.target.value })} required="true" />
+                            <label className="yekan">حداکثر تعداد چک</label>
+                          </div>
+
+                        </div>
+                        <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'end',display:'none' }}>
+                          <div className="group">
+                            <input className="form-control yekan" autoComplete="off" type="text" value={this.state.ChequeCommission} name="ChequeCommission" onChange={(event) => this.setState({ ChequeCommission: event.target.value })} required="true" />
+                            <label className="yekan">سود چک</label>
+                          </div>
+
+                        </div>
+                     </div>
+                    }
+                   
                   </Fieldset>
 
 

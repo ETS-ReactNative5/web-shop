@@ -7,6 +7,7 @@ import { Alert } from 'rsuite';
 import { Badge, Button } from 'rsuite';
 import { Sidebar } from 'primereact/sidebar';
 import { ScrollPanel } from 'primereact/scrollpanel';
+import { PanelMenu } from 'primereact/panelmenu';
 
 import './Dashboard.css'
 const styles = {
@@ -144,17 +145,34 @@ class Dashboard extends React.Component {
       token: localStorage.getItem("api_token")
     };
     let SCallBack = function (response) {
+      let res = [];
       let result = response.data.result;
+      //onClick={() => this.GoToForm(u.CId,u.IsReport)}
       for (let i = 0; i < result.length; i++) {
-        result[i].children = [];
+        result[i].items = [];
         for (let j = 0; j < result.length; j++) {
+          result[j].icon = result[j].Icon;
+          result[j].label = result[j].FName;
+          
           if (result[i].CId == result[j].Parent && result[i].IsTitle) {
-            result[i].children.push(result[j])
+            result[i].items.push(result[j]);
+            result[j].remove = 1;
+          }
+          result[j].command = (event) => {
+            let u = event.item;
+            if(u.items && u.items.length > 0);
+            else
+              that.GoToForm(u.CId,u.IsReport,u.help)
           }
         }
       }
+      for (let i = 0; i < result.length; i++) {
+        if(!result[i].remove)
+          res.push(result[i])
+      }
+
       that.setState({
-        list: result,
+        list: res,
         username: response.data.user
       })
       that.GetUsers();
@@ -232,16 +250,17 @@ class Dashboard extends React.Component {
       isOpen: !this.state.isOpen
     })
   }
-  GoToForm(CId,IsReport) {
+  GoToForm(CId,IsReport,help) {
 
     this.setState({
       SideVisible:false
     })
-    this.props.callback({ CId: CId , IsReport: IsReport });
+    this.props.callback({ CId: CId , IsReport: IsReport,help:help });
+    window.scrollTo(0, 0);
   }
   render() {
     if (this.state.logout) {
-      return <Redirect to={"/login"} push={true} />;
+      return <Redirect to={"/"} push={true} />;
     }
     if (this.state.list.length > 0)
       return (
@@ -269,73 +288,23 @@ class Dashboard extends React.Component {
                 <Sidenav.Header>
                   <a href="/" style={{ textDecoration: 'none' }}>
                     <img src={this.state.logo} style={{ marginTop: 20,maxWidth:150 }}  />
-                    <p className="yekan" style={{ marginTop: 20, background: '#3ee6a8', color: '#fff', padding: 4 }}>{this.state.name}</p>
+                    <p className="yekan" style={{ marginTop: 20, background: '#3ee6a8', color: '#fff', padding: 4,display:'flex',justifyContent:'space-around',fontSize:25,alignItems:'center' }}>
+                      <span>{this.state.name}</span>
+                    </p>
+                    
+
+
+                    
+                    
                   </a>
 
                 </Sidenav.Header>
                 <Sidenav.Body style={{ overflow: 'auto', direction: 'ltr' }}>
-                  <Nav>
+                <PanelMenu model={this.state.list} style={{direction:'rtl'}}  className="iranyekanweblight"/>
+                <p className="yekan" onClick={this.logout} style={{ marginTop: 20, background: '#eee', color: '#fff',cursor:'pointer', padding: 4,display:'flex',justifyContent:'space-around',fontSize:20,alignItems:'center' }}>
+                    <i className="fas fa-sign-out-alt" style={{color:'red'}}  /><span style={{color:'red'}}>خروج</span>
 
-                    {this.state.list.map((v, i) => {
-                      const icon = "fa " + v.icon;
-                      var LiClass = "Dassbord-Items yekan";
-                      if (!v.Parent) {
-                        if (v.children.length > 0) {
-                          return (<Dropdown
-                            placement="rightStart"
-                            eventKey={i}
-                            title={v.FName}
-                            icon={v.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""}
-                            className={LiClass}
-                          >
-                            {v.children.map((u, j) => {
-                              return (
-                                <Dropdown.Item eventKey={i + "_" + j} icon={u.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(u.CId,u.IsReport)} className={LiClass} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((u.FName == "لیست کاربران" && this.state.NewUsers) || (u.FName == "سفارشات" && this.state.NewFactors)) ?
-                                  (
-                                    v.FName == "لیست کاربران" ?
-                                      <Badge content={this.state.NewUsers}>
-                                        <div>{u.FName}</div>
-                                      </Badge>
-                                      :
-                                      <Badge content={this.state.NewFactors}>
-                                        <div>{u.FName}</div>
-                                      </Badge>
-                                  )
-                                  :
-                                  u.FName}
-                                </Dropdown.Item>
-                              )
-                            })
-                            }
-
-                          </Dropdown>
-                          )
-                        } else {
-                          return (
-
-                            <Nav.Item eventKey="1" icon={v.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(v.CId)} className={LiClass} style={{ textDecoration: 'none', padding: 5, textAlign: 'right' }} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((v.FName == "لیست کاربران" && this.state.NewUsers) || (v.FName == "سفارشات" && this.state.NewFactors)) ?
-                              (
-                                v.FName == "لیست کاربران" ?
-                                  <Badge content={this.state.NewUsers}>
-                                    <div>{v.FName}</div>
-                                  </Badge>
-                                  :
-                                  <Badge content={this.state.NewFactors}>
-                                    <div>{v.FName}</div>
-                                  </Badge>
-                              )
-                              :
-                              v.FName}</Nav.Item>
-                          )
-                        }
-
-                      }
-
-                    })
-                    }
-                    <Nav.Item style={{ padding: 5, textAlign: 'right' }}><p onClick={this.logout} className="yekan" style={{ color: 'red' }}><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
-
-                  </Nav>
+                    </p>
                 </Sidenav.Body>
               </Sidenav>
               </div>
@@ -351,68 +320,8 @@ class Dashboard extends React.Component {
 
                 </Sidenav.Header>
                 <Sidenav.Body style={{ overflow: 'auto', direction: 'ltr' }}>
-                  <Nav>
+                <PanelMenu model={this.state.list} style={{direction:'rtl'}}  className="yekan"/>
 
-                    {this.state.list.map((v, i) => {
-                      const icon = "fa " + v.icon;
-                      var LiClass = "Dassbord-Items yekan";
-                      if (!v.Parent) {
-                        if (v.children.length > 0) {
-                          return (<Dropdown
-                            placement="rightStart"
-                            eventKey={i}
-                            title={v.FName}
-                            icon={v.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""}
-                            className={LiClass}
-                          >
-                            {v.children.map((u, j) => {
-                              return (
-                                <Dropdown.Item eventKey={i + "_" + j} icon={u.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(u.CId,u.IsReport)} className={LiClass} className={v.class} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((u.FName == "لیست کاربران" && this.state.NewUsers) || (u.FName == "سفارشات" && this.state.NewFactors)) ?
-                                  (
-                                    v.FName == "لیست کاربران" ?
-                                      <Badge content={this.state.NewUsers}>
-                                        <div>{u.FName}</div>
-                                      </Badge>
-                                      :
-                                      <Badge content={this.state.NewFactors}>
-                                        <div>{u.FName}</div>
-                                      </Badge>
-                                  )
-                                  :
-                                  u.FName}
-                                </Dropdown.Item>
-                              )
-                            })
-                            }
-
-                          </Dropdown>
-                          )
-                        } else {
-                          return (
-
-                            <Nav.Item eventKey="1" icon={v.Icon ? <Icon icon="gear-circle" style={{ fontSize:15,paddingLeft:15 }} /> : ""} onClick={() => this.GoToForm(v.CId)} className={LiClass} style={{ textDecoration: 'none', padding: 5, textAlign: 'right' }} params={{ testvalue: "hello" }} dashList={this.state.list} dashData={this.state.data}>{((v.FName == "لیست کاربران" && this.state.NewUsers) || (v.FName == "سفارشات" && this.state.NewFactors)) ?
-                              (
-                                v.FName == "لیست کاربران" ?
-                                  <Badge content={this.state.NewUsers}>
-                                    <div>{v.FName}</div>
-                                  </Badge>
-                                  :
-                                  <Badge content={this.state.NewFactors}>
-                                    <div>{v.FName}</div>
-                                  </Badge>
-                              )
-                              :
-                              v.FName}</Nav.Item>
-                          )
-                        }
-
-                      }
-
-                    })
-                    }
-                    <Nav.Item style={{ padding: 5, textAlign: 'right' }}><p onClick={this.logout} className="yekan" style={{ color: 'red' }}><em className="fa fa-power-off">&nbsp;</em> خروج</p></Nav.Item>
-
-                  </Nav>
                 </Sidenav.Body>
               </Sidenav>
               </Sidebar>

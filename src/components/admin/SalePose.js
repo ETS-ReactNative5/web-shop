@@ -37,6 +37,7 @@ class SalePose extends React.Component {
       name: "",
       type: "1",
       FId: "",
+      permition:this.props.permition||[],
       DbTableName: "",
       DBTableField: "",
       latinName: "",
@@ -48,12 +49,15 @@ class SalePose extends React.Component {
       Device_UnitAmount_Price_S910:"2850000",
       Device_UnitAmount_Price_S58:"1450000",
       Device_UnitAmount_Price_Verifone:"2650000",
-      edit:false
+      edit:false,
+      status:"0",
+      company:"1"
 
     }
 
   }
   componentDidMount() {
+    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
     };
@@ -85,6 +89,7 @@ class SalePose extends React.Component {
     let param = {
       _id: this.state.selectedId,
       customerName: this.state.customerName,
+      status: this.state.status,
       mobile: this.state.mobile,
       customerFamily: this.state.customerFamily,
       user: this.state.user,
@@ -95,6 +100,7 @@ class SalePose extends React.Component {
       getRegisterAmount: this.state.getRegisterAmount,
       model: this.state.model,
       finalDate: this.state.finalDate,
+      GetDate: this.state.GetDate,
       Introduced: this.state.Introduced,
       IntroducedPrice: this.state.IntroducedPrice,
       creditAmount: this.state.creditAmount,
@@ -164,6 +170,7 @@ class SalePose extends React.Component {
       cacheAmount: '',
       getRegisterAmount: false,
       finalDate:'',
+      GetDate:'',
       selectedId: null,
       Introduced: '',
       IntroducedPrice: '',
@@ -217,6 +224,8 @@ class SalePose extends React.Component {
       cacheAmount: value.cacheAmount ? value.cacheAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
       getRegisterAmount: value.getRegisterAmount,
       finalDate:value.finalDate,
+      GetDate:value.GetDate,
+      status:value.status,
       selectedId: value._id,
       visibleManageSale: true,
       Introduced: value.Introduced,
@@ -272,6 +281,7 @@ class SalePose extends React.Component {
             let param = {
               token: localStorage.getItem("api_token"),
               _id: rowData._id,
+              edit:1,
               del: 1
             };
             let SCallBack = function (response) {
@@ -302,13 +312,14 @@ class SalePose extends React.Component {
   render() {
     const footer = (
       <div>
+        {this.state.permition.indexOf(1) > -1 &&
         <button className="btn btn-primary irsans" onClick={this.SetSale} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> اعمال </button>
-
+        }
       </div>
     );
 
     const delTemplate = (rowData, props) => {
-      return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delFilter(rowData)}></i>;
+      return <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.delSale(rowData)}></i>;
     }
     return (
 
@@ -338,7 +349,9 @@ class SalePose extends React.Component {
 
               
               <Column field="cacheAmount" header="مبلغ نقدی (تومان)" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="del" body={delTemplate} header="حذف" className="irsans" style={{ textAlign: "center" }} />
+              {this.state.permition.indexOf(4) > -1 &&
+                <Column field="del" body={delTemplate} header="حذف" className="irsans" style={{ textAlign: "center" }} />
+              }
             </DataTable>
           </div>
 
@@ -349,6 +362,31 @@ class SalePose extends React.Component {
           <form>
 
             <div className="row">
+            <div className="col-lg-3">
+                        <label className="labelNoGroup irsans">شرکت</label>
+                        <select className="custom-select irsans" id="company" name="company" value={this.state.company} onChange={(event) => {
+                          this.setState({company: event.target.value }) 
+                          }} style={{ marginBottom: 20 }} >
+                          <option value="1">بهداد نوین اصفهان</option>
+                          <option value="2">ره پویان یاوران نسیم</option>
+
+                        </select>
+              </div>
+              <div className="col-lg-3">
+                        <label className="labelNoGroup irsans">وضعیت</label>
+                        <select className="custom-select irsans" id="status" name="status" value={this.state.status} onChange={(event) => {
+                          this.setState({status: event.target.value }) 
+                          }} style={{ marginBottom: 20 }} >
+                          <option value="0">ثبت شده</option>
+                          <option value="1">دریافت از شرکت</option>
+                          <option value="2">تحویل به مشتری</option>
+                          <option value="3">تسویه</option>
+                          <option value="4">مرجوع شده</option>
+                          <option value="5">بایگانی</option>   
+
+                        </select>
+              </div>
+              <div className="col-lg-6"></div>
               <div className="col-lg-3">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.customerName} name="customerName" onChange={(event) => this.setState({ customerName: event.target.value })} required="true" />
@@ -369,10 +407,23 @@ class SalePose extends React.Component {
               </div>
               <div className="col-lg-3">
 
+              </div>
+              <div className="col-lg-3">
+
                 <div className="group">
                   <input className="form-control irsans" style={{ direction: 'ltr' }} placeholder="1300/01/01" autoComplete="off" type="text" value={this.state.finalDate} name="finalDate" onChange={(event) => this.setState({ finalDate: event.target.value })} required="true" />
-                  <label >تاریخ تحویل</label>
+                  <label >تاریخ تحویل به مشتری</label>
                 </div>
+              </div>
+              <div className="col-lg-3">
+
+                <div className="group">
+                  <input className="form-control irsans" style={{ direction: 'ltr' }} placeholder="1300/01/01" autoComplete="off" type="text" value={this.state.GetDate} name="GetDate" onChange={(event) => this.setState({ GetDate: event.target.value })} required="true" />
+                  <label >تاریخ دریافت از شرکت</label>
+                </div>
+              </div>
+              <div className="col-lg-6">
+
               </div>
               <div className="col-lg-3">
                 <label className="labelNoGroup irsans">نوع</label>
@@ -404,6 +455,15 @@ class SalePose extends React.Component {
 
                 </select>
               </div>
+              
+
+              <div className="col-lg-3">
+
+                <div className="group">
+                  <input className="form-control irsans"  autoComplete="off" type="text" value={this.state.IntroducedPrice} name="IntroducedPrice" onChange={(event) => this.setState({ IntroducedPrice: event.target.value })} required="true" />
+                  <label >سود معرف (تومان)</label>
+                </div>
+              </div>
               <div className="col-lg-3">
                 {this.state.IntroducedCombo && this.state.IntroducedCombo == "5" &&
 
@@ -414,35 +474,41 @@ class SalePose extends React.Component {
                 }
               </div>
 
-              <div className="col-lg-3">
 
-                <div className="group">
-                  <input className="form-control irsans" disabled autoComplete="off" type="text" value={this.state.IntroducedPrice} name="IntroducedPrice" onChange={(event) => this.setState({ IntroducedPrice: event.target.value })} required="true" />
-                  <label >سود معرف (تومان)</label>
-                </div>
+
+              <div className="col-lg-2">
+                
+                        <label className="labelNoGroup irsans">تعداد دستگاه</label>
+                        <select className="custom-select irsans" id="Device_Number" name="Device_Number" value={this.state.Device_Number}  onChange={(event) => {
+                            let that = this;
+                            let val = parseInt(event.target.value);
+                            for(let i=0;i<val;i++){
+                              this.setState({ ["Device_UnitAmount_" + i]: this.state["Device_UnitAmount_Price_S90"] });
+                            }
+                            this.setState({ Device_Number: val })
+                            if (isNaN(parseInt(val)))
+                              that.setState({ DeviceBox: [] })
+                            else {
+                              let Arr = Array.from(Array(parseInt(val)).keys());
+                              setTimeout(function () { that.setState({ DeviceBox: Arr }) }, 0);
+                            }
+
+                          }} style={{ marginBottom: 20 }} >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+
+                        </select>
               </div>
 
-
-
-              <div className="col-lg-12">
-                <div className="group">
-                  <input min={0} max={9} className="form-control irsans" style={{ width: 150 }} autoComplete="off" type="text" value={this.state.Device_Number} name="Device_Number" onChange={(event) => {
-                    let that = this;
-                    for(let i=0;i<event.target.value;i++){
-                      this.setState({ ["Device_UnitAmount_" + i]: this.state["Device_UnitAmount_Price_S90"] });
-                    }
-                    this.setState({ Device_Number: event.target.value })
-                    if (isNaN(parseInt(event.target.value)))
-                      that.setState({ DeviceBox: [] })
-                    else {
-                      let Arr = Array.from(Array(parseInt(event.target.value)).keys());
-                      setTimeout(function () { that.setState({ DeviceBox: Arr }) }, 0);
-                    }
-
-                  }} required="true" />
-                  <label>تعداد دستگاه </label>
-                </div>
-              </div>
               {this.state.DeviceBox && this.state.DeviceBox.map((item, index) => {
 
 
@@ -450,7 +516,7 @@ class SalePose extends React.Component {
                 return (
                   <div className="col-12">
                     <div className="row">
-                      <div className="col-lg-3">
+                      <div className="col-lg-2">
                         <label className="labelNoGroup irsans">مدل دستگاه</label>
                         <select className="custom-select irsans" id={"Device_Model_" + index} name={"Device_Model_" + index} value={this.state["Device_Model_" + index]} onChange={(event) => {
                           this.setState({ ["Device_Model_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),["Device_UnitAmount_" + index]: this.state["Device_UnitAmount_Price_"+event.target.value],["Device_TotalAmount_" + index]: (this.state["Device_UnitAmount_Price_"+event.target.value] ? parseInt(this.state["Device_UnitAmount_Price_"+event.target.value].toString().replace(/,/g, "")) : 0) + (this.state["Device_RegisterAmount_" + index] ? parseInt(this.state["Device_RegisterAmount_" + index].toString().replace(/,/g, "")) : 0) }) 
@@ -463,7 +529,7 @@ class SalePose extends React.Component {
                         </select>
                       </div>
 
-                      <div className="col-lg-3">
+                      <div className="col-lg-2">
                         <div className="group">
                           <input className="form-control irsans" autoComplete="off"  type="text" id={"Device_RegisterAmount_" + index} name={"Device_RegisterAmount_" + index} value={this.state["Device_RegisterAmount_" + index]} onChange={(event) => {
                              let computedPrice =(parseInt(event.target.value.toString().replace(/,/g, "") || 0) + parseInt(this.state["Device_UnitAmount_" + index] ? this.state["Device_UnitAmount_" + index].toString().replace(/,/g, "") : 0))
@@ -482,7 +548,7 @@ class SalePose extends React.Component {
                           <label>هزینه ثبت نام (تومان)</label>
                         </div>
                       </div>
-                      <div className="col-lg-3">
+                      <div className="col-lg-2">
                         <div className="group">
                           <input className="form-control irsans" autoComplete="off" disabled type="text" id={"Device_UnitAmount_" + index} name={"Device_UnitAmount_" + index} value={this.state["Device_UnitAmount_" + index]} onChange={(event) => {
                             let computedPrice = (parseInt(event.target.value.toString().replace(/,/g, "") || 0) + parseInt(this.state["Device_RegisterAmount_" + index] ? this.state["Device_RegisterAmount_" + index].toString().replace(/,/g, "") : 0));
@@ -503,11 +569,25 @@ class SalePose extends React.Component {
                           <label> قیمت واحد دستگاه (تومان)</label>
                         </div>
                       </div>
-                      <div className="col-lg-3">
+                      <div className="col-lg-2">
                         <div className="group">
                           <input className="form-control irsans" disabled autoComplete="off" type="text" id={"Device_TotalAmount_" + index} name={"Device_TotalAmount_" + index} value={this.state["Device_TotalAmount_" + index]} onChange={(event) => { 
                             this.setState({ ["Device_TotalAmount_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
                           <label>مبلغ کل (تومان)</label>
+                        </div>
+                      </div>
+                      <div className="col-lg-2">
+                        <div className="group">
+                          <input className="form-control irsans"  autoComplete="off" type="text" id={"Device_PayAmount_" + index} name={"Device_PayAmount_" + index} value={this.state["Device_PayAmount_" + index]} onChange={(event) => { 
+                            this.setState({ ["Device_PayAmount_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
+                          <label>مبلغ پرداختی به شرکت (تومان)</label>
+                        </div>
+                      </div>
+                      <div className="col-lg-2">
+                        <div className="group">
+                          <input className="form-control irsans"  autoComplete="off" type="text" id={"Device_AmountPayToPSP_" + index} name={"Device_AmountPayToPSP_" + index} value={this.state["Device_AmountPayToPSP_" + index]} onChange={(event) => { 
+                            this.setState({ ["Device_AmountPayToPSP_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
+                          <label>مبلغ پرداختی به ایرانکیش (تومان)</label>
                         </div>
                       </div>
                     </div>
@@ -515,18 +595,90 @@ class SalePose extends React.Component {
                 )
               })
               }
-              <div className="col-12">
-                <div className="row">
-                  <div className="col-lg-3">
-                    {(this.state.type == "1" || this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
-                      <div className="group">
-                        <input className="form-control irsans" autoComplete="off" type="text" value={this.state.cacheAmount} name="cacheAmount" onChange={(event) => this.setState({ creditAmount:(parseInt(this.state.totalAmount.toString().replace(/,/g, "")) - parseInt(this.state.offAmount.toString().replace(/,/g, "")) - parseInt(event.target.value.toString().replace(/,/g, ""))).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),cacheAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
-                        <label >مبلغ نقدی (تومان)</label>
+              {this.state.type && this.state.type == "4" &&
+                <div className="col-12" >
+                  <div className="row">
 
-                      </div>
+                    <div className="col-lg-2 col-md-6 col-12">
+                      
+
+                
+                        <label className="labelNoGroup irsans">تعداد چک</label>
+                        <select className="custom-select irsans" id="chequeNumber" name="chequeNumber" value={this.state.chequeNumber}  onChange={(event) => {
+                          let that = this;
+                          let val = parseInt(event.target.value);
+                          this.setState({ chequeNumber: val })
+                          if (isNaN(val))
+                            that.setState({ chequeBox: [] })
+                          else {
+                            let Arr = Array.from(Array(val).keys());
+                            setTimeout(function () { that.setState({ chequeBox: Arr }) }, 0);
+                          }
+
+                        }} style={{ marginBottom: 20 }} >
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+
+                        </select>
+                    </div>
+                    {this.state.chequeBox && this.state.chequeBox.map((item, index) => {
+                      return (
+                        <div className="col-12">
+                          <div className="row">
+                            <div className="col-lg-2">
+                              <div className="group">
+                                <input className="form-control irsans" autoComplete="off" type="text" id={"chequeNumber_" + index} name={"chequeNumber_" + index} value={this.state["chequeNumber_" + index]} onChange={(event) => { this.setState({ ["chequeNumber_" + index]: event.target.value }) }} required="true" />
+                                <label>شماره چک</label>
+                              </div>
+                            </div>
+                            <div className="col-lg-2">
+                              <div className="group">
+
+                                <input className="form-control irsans" style={{ direction: 'ltr' }} placeholder="1300/01/01" autoComplete="off" type="text" id={"chequeDate_" + index} name={"chequeDate_" + index} value={this.state["chequeDate_" + index]} onChange={(event) => { this.setState({ ["chequeDate_" + index]: event.target.value }) }} required="true" />
+                                <label>تاریخ چک</label>
+                              </div>
+                            </div>
+                            <div className="col-lg-2">
+                              <div className="group">
+                                <input className="form-control irsans" autoComplete="off" type="text" id={"chequeAmount_" + index} name={"chequeAmount_" + index} value={this.state["chequeAmount_" + index]} onChange={(event) => { this.setState({ ["chequeAmount_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
+                                <label>مبلغ چک (تومان)</label>
+                              </div>
+                            </div>
+                            <div className="col-lg-2">
+                              <div className="group">
+                                <input className="form-control irsans" autoComplete="off" type="text" id={"chequeName_" + index} name={"chequeName_" + index} value={this.state["chequeName_" + index]} onChange={(event) => { this.setState({ ["chequeName_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
+                                <label>صاحب حساب</label>
+                              </div>
+                            </div>
+                            <div className="col-lg-2">
+                              <div className="group">
+                                <input className="form-control irsans" autoComplete="off" type="text" id={"chequeCommission_" + index} name={"chequeCommission_" + index} value={this.state["chequeCommission_" + index]} onChange={(event) => { this.setState({ ["chequeCommission_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
+                                <label>سود چک</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
                     }
+
+
                   </div>
-                  <div className="col-lg-3">
+                </div>
+              }
+              <div className="col-12" style={{backgroundColor:'#f1f0f09c',borderRadius:15,marginTop:50,padding:20}}>
+                <div className="row">
+                <div className="col-lg-3">
                     {this.state.totalAmount &&
                       <div className="group">
                         <input className="form-control irsans" autoComplete="off" type="text" value={this.state.offAmount} name="offAmount" onChange={(event) => {
@@ -551,14 +703,16 @@ class SalePose extends React.Component {
                     }
                   </div>
                   <div className="col-lg-3">
-                    {(this.state.type == "3" ) && this.state.totalAmount &&
+                    {(this.state.type == "1" || this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
                       <div className="group">
-                        <input className="form-control irsans" autoComplete="off" disabled type="text" value={this.state.creditAmount} name="creditAmount" onChange={(event) => this.setState({ creditAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
-                        <label >مبلغ اقساطی (تومان)</label>
+                        <input className="form-control irsans" autoComplete="off" type="text" value={this.state.cacheAmount} name="cacheAmount" onChange={(event) => this.setState({ creditAmount:(parseInt(this.state.totalAmount.toString().replace(/,/g, "")) - parseInt(this.state.offAmount.toString().replace(/,/g, "")) - parseInt(event.target.value.toString().replace(/,/g, ""))).toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),cacheAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
+                        <label >مبلغ نقدی (تومان)</label>
 
                       </div>
                     }
                   </div>
+                  
+                  
                   <div className="col-lg-3">
                     {(this.state.type == "3" || this.state.type == "4") && this.state.totalAmount &&
                       <div className="group">
@@ -580,6 +734,15 @@ class SalePose extends React.Component {
                     }
                   </div>
                   <div className="col-lg-3">
+                    {(this.state.type == "3" ) && this.state.totalAmount &&
+                      <div className="group">
+                        <input className="form-control irsans" autoComplete="off" disabled type="text" value={this.state.creditAmount} name="creditAmount" onChange={(event) => this.setState({ creditAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
+                        <label >مبلغ اقساطی (تومان)</label>
+
+                      </div>
+                    }
+                  </div>
+                  <div className="col-lg-3">
                     {this.state.Device_Number &&
                       <div className="group">
                         <input className="form-control irsans" disabled autoComplete="off" type="text" value={this.state.totalAmount} name="totalAmount" onChange={(event) => this.setState({ totalAmount: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
@@ -590,59 +753,7 @@ class SalePose extends React.Component {
                 </div>
               </div>
 
-              {this.state.type && this.state.type == "4" &&
-                <div className="col-12" >
-                  <div className="row">
-
-                    <div className="col-lg-2 col-md-6 col-12">
-                      <div className="group">
-                        <input min={0} max={9} className="form-control irsans" autoComplete="off" type="text" value={this.state.chequeNumber} name="chequeNumber" onChange={(event) => {
-                          let that = this;
-                          this.setState({ chequeNumber: event.target.value })
-                          if (isNaN(parseInt(event.target.value)))
-                            that.setState({ chequeBox: [] })
-                          else {
-                            let Arr = Array.from(Array(parseInt(event.target.value)).keys());
-                            setTimeout(function () { that.setState({ chequeBox: Arr }) }, 0);
-                          }
-
-                        }} required="true" />
-                        <label>تعداد چک</label>
-                      </div>
-                    </div>
-                    {this.state.chequeBox && this.state.chequeBox.map((item, index) => {
-                      return (
-                        <div className="col-12">
-                          <div className="row">
-                            <div className="col-lg-4">
-                              <div className="group">
-                                <input className="form-control irsans" autoComplete="off" type="text" id={"chequeNumber_" + index} name={"chequeNumber_" + index} value={this.state["chequeNumber_" + index]} onChange={(event) => { this.setState({ ["chequeNumber_" + index]: event.target.value }) }} required="true" />
-                                <label>شماره چک</label>
-                              </div>
-                            </div>
-                            <div className="col-lg-4">
-                              <div className="group">
-
-                                <input className="form-control irsans" style={{ direction: 'ltr' }} placeholder="1300/01/01" autoComplete="off" type="text" id={"chequeDate_" + index} name={"chequeDate_" + index} value={this.state["chequeDate_" + index]} onChange={(event) => { this.setState({ ["chequeDate_" + index]: event.target.value }) }} required="true" />
-                                <label>تاریخ چک</label>
-                              </div>
-                            </div>
-                            <div className="col-lg-4">
-                              <div className="group">
-                                <input className="form-control irsans" autoComplete="off" type="text" id={"chequeAmount_" + index} name={"chequeAmount_" + index} value={this.state["chequeAmount_" + index]} onChange={(event) => { this.setState({ ["chequeAmount_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
-                                <label>مبلغ چک (تومان)</label>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })
-                    }
-
-
-                  </div>
-                </div>
-              }
+              
 
             </div>
           </form>

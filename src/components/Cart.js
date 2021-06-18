@@ -18,6 +18,7 @@ import { Button } from 'primereact/button';
 import './Cart.css'
 import CatList from './CatList.js'
 import { InputNumber } from 'primereact/inputnumber';
+import DatePicker from 'react-datepicker2';
 
 import { RadioButton } from 'primereact/radiobutton';
 import { Toast } from 'primereact/toast';
@@ -32,6 +33,7 @@ class Cart extends React.Component {
         this.computeReduce = this.computeReduce.bind(this);
         this.Server = new Server();
         this.toast = React.createRef();
+        this.FileUpload = this.FileUpload.bind(this);
 
         this.state = {
             GridData: [],
@@ -74,6 +76,44 @@ class Cart extends React.Component {
             if (callNow) func.apply(context, args);
         };
     }
+    FileUpload(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        let name = e.target.name;
+        debugger;
+        formData.append('myImage', e.target.files[0]);
+        formData.append('ExtraFile', 1);
+        
+        const config = {
+          headers: {
+            'content-type': 'multipart/form-data'
+          },
+          onUploadProgress: (progressEvent) => {
+            const { loaded, total } = progressEvent;
+            let percent = parseInt((loaded * 100) / total)
+            this.setState({
+              showLoadedCount: 1,
+              loadedCount: `${loaded} byte of ${total}byte | ${percent}%`
+            })
+            if (percent == "100") {
+              this.setState({
+                showLoadedCount: 0
+              })
+            }
+    
+          }
+        };
+        axios.post(this.state.url + 'uploadFile', formData, config)
+          .then((response) => {
+            this.setState({
+                ["InChequeImg_" + name.split("_")[1]]: this.state.absoluteUrl + response.data.split("public")[1]
+
+              })
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     roundPrice(price) {
         return price.toString();
         if (price == 0)
@@ -104,6 +144,9 @@ class Cart extends React.Component {
     }
     Payment() {
         let that = this;
+        this.setState({
+          loading:1
+        })
         if (!this.state.AcceptAddress) {
             axios.post(this.state.url + 'getuserInformation', {
                 user_id: this.state.userId
@@ -112,7 +155,8 @@ class Cart extends React.Component {
                     that.setState({
                         Address: response.data.result[0].address,
                         AcceptAddress: true,
-                        StepNumber: 2
+                        StepNumber: 2,
+                        loading:0
                     })
                 }).catch(error => {
                     console.log(error)
@@ -133,7 +177,7 @@ class Cart extends React.Component {
                     })
     
                     let url = that.state.ActiveBank == "z" ? this.state.url + 'payment' : this.state.url + 'payment2';
-                    axios.post(url, {
+                    let param = {
                         paykAmount: this.state.paykAmount,
                         Amount: parseInt(this.state.lastPrice),
                         finalAmount: parseInt(this.state.lastPrice) + parseInt(this.state.paykAmount),
@@ -142,10 +186,30 @@ class Cart extends React.Component {
                         products_id: products_id,
                         SaleFromMultiShops:this.state.SaleFromMultiShops,
                         SeveralShop:this.state.SeveralShop,
-                        needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace") ? 0 : 1
-                    })
+                        needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace" || that.state.ActiveBank == "Cheque") ? 0 : 1
+                    }
+
+                    if(this.state.ActiveBank == "Cheque"){
+                        param["ChequeList"]=[]
+                        for(let m=0;m<parseInt(this.state.ChequeInfo.MaxCheque);m++){
+                            param["ChequeList"].push({})
+                        }
+                        for (let state in this.state) {
+                            if (state.indexOf("InCheque") > -1 ) {
+                                if(state.indexOf("InChequeDate_") > -1)
+                                    param["ChequeList"][parseInt(state.split("_")[1])][state.split("_")[0]] = this.state[state]?.local("fa").format("jYYYY/jM/jD")
+                                else
+                                    param["ChequeList"][parseInt(state.split("_")[1])][state.split("_")[0]] = this.state[state]?.toString().replace(/,/g, "");
+                            }
+                        }
+                    }
+                    
+                    axios.post(url, param)
                         .then(response => {
-                            if (that.state.ActiveBank != "none" && that.state.ActiveBank != "inPlace") {
+                            that.setState({
+                                loading:0
+                            })
+                            if (that.state.ActiveBank != "none" && that.state.ActiveBank != "inPlace" && that.state.ActiveBank != "Cheque") {
                                 let res;
                                 if (that.state.ActiveBank == "p") {
                                     res = response.data.result ? response.data.result.SalePaymentRequestResult : {};
@@ -163,7 +227,7 @@ class Cart extends React.Component {
                                     type: 'LoginTrueUser',
                                     CartNumber: 0,
                                     off: that.props.off,
-                                    credit: response.data.credit
+                                    credit: parseInt(response.data.credit)
 
                                 })
                                 that.setState({
@@ -194,8 +258,12 @@ class Cart extends React.Component {
                             console.log(error)
                         })
                 } else {
+                    that.setState({
+                        loading:0
+                    })
     
                 }
+                
             
 
 
@@ -210,7 +278,8 @@ class Cart extends React.Component {
             .then(response => {
                 this.setState({
                     userId: response.data.authData.userId,
-                    levelOfUser: response.data.authData.levelOfUser
+                    levelOfUser: response.data.authData.levelOfUser,
+                    credit:parseInt(response.data.authData.credit)
                 })
 
                 axios.post(this.state.url + 'getSettings', {
@@ -220,11 +289,16 @@ class Cart extends React.Component {
                         that.setState({
                             ActiveBank: response.data.result ? response.data.result.ActiveBank : "none",
                             OriginalActiveBank: response.data.result ? response.data.result.OriginalActiveBank : "none",
+                            SaleByCheque: response.data.result ? response.data.result.SaleByCheque : false,
+                            ChequeInfo: response.data.result ? response.data.result.ChequeInfo : {},
                             ActiveSms: response.data.result ? response.data.result.ActiveSms : "none",
                             STitle: response.data.result ? response.data.result.STitle : "",
                             ProductBase: response.data.result ? response.data.result.ProductBase : false,
                             SaleFromMultiShops: response.data.result ? response.data.result.SaleFromMultiShops : false,
                             SeveralShop: response.data.result ? response.data.result.SeveralShop : false,
+                            InRaymand:response.data.result ? response.data.result.Raymand : false,
+                            credit:(response.data.result.Raymand && that.state.credit) ? parseInt(that.state.credit.toString().substr(0,that.state.credit.toString().length-1)) : parseInt(that.state.credit)
+
 
                         })
                         that.getPics();
@@ -350,7 +424,7 @@ class Cart extends React.Component {
                 type: 'LoginTrueUser',
                 CartNumber: that.state.CartNumber,
                 off: that.props.off,
-                credit: that.props.credit != "undefined" ? that.props.credit : 0
+                credit: that.state.credit != "undefined" ? parseInt(that.state.credit) : 0
             })
             /*Notification.open({
              title: '',
@@ -568,7 +642,7 @@ class Cart extends React.Component {
             Alert.warning('مقدار وارد شده از مبلغ محصول بیشتر است', 5000);
             return;
         }
-        if (parseInt(redusePrice) > (parseInt(this.props.credit) - getFromCredit)) {
+        if (parseInt(redusePrice) > (parseInt(this.state.credit) - getFromCredit)) {
             Alert.warning('مقدار وارد شده بیش از مبلغ کیف پول شماست', 5000);
             return;
         }
@@ -661,7 +735,7 @@ class Cart extends React.Component {
                                 <Steps.Item title="سبد خرید" />
                                 <Steps.Item title="تکمیل خرید" />
                                 <Steps.Item title="تایید آدرس" />
-                                <Steps.Item title={(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace" ) ? "انتقال به سایت بانک" : "ثبت نهایی"} status="wait" />
+                                <Steps.Item title={(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace" && this.state.ActiveBank !='Cheque' ) ? "انتقال به سایت بانک" : "ثبت نهایی"} status="wait" />
                             </Steps>
                         }
                     </div>
@@ -693,12 +767,80 @@ class Cart extends React.Component {
                                             <RadioButton inputId="TypeOfPayment2" name="TypeOfPayment" value="2" onChange={(e) => { this.setState({ ActiveBank: 'inPlace' }); this.setState({ TypeOfPayment: e.value }); }} checked={this.state.TypeOfPayment === '2'} />
                                             <label htmlFor="TypeOfPayment2" className="p-checkbox-label yekan" style={{ marginRight: 20, color: 'rgb(185 185 185)' }}>پرداخت در محل</label>
                                         </div>
+                                        {this.state.SaleByCheque &&
+                                            <div style={{ display: 'flex' }}>
+                                                <RadioButton inputId="TypeOfPayment3" name="TypeOfPayment" value="4" onChange={(e) => { this.setState({ ActiveBank: 'Cheque' }); this.setState({ TypeOfPayment: e.value }); }} checked={this.state.TypeOfPayment === '4'} />
+                                                <label htmlFor="TypeOfPayment3" className="p-checkbox-label yekan" style={{ marginRight: 20, color: 'rgb(185 185 185)' }}>پرداخت با چک</label>
+                                            </div>
+                                        }
                                     </div>
                                     :
-                                    <div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        {this.state.SaleByCheque &&
+                                            <div style={{ display: 'flex' }}>
+                                                <RadioButton inputId="TypeOfPayment3" name="TypeOfPayment" value="4" onChange={(e) => { this.setState({ ActiveBank: 'Cheque' }); this.setState({ TypeOfPayment: e.value }); }} checked={this.state.TypeOfPayment === '4'} />
+                                                <label htmlFor="TypeOfPayment3" className="p-checkbox-label yekan" style={{ marginRight: 20, color: 'rgb(185 185 185)' }}>پرداخت با چک</label>
+                                            </div>
+                                        }
 
                                     </div>
                                     }
+
+                                    {this.state.TypeOfPayment == 4 &&
+                                        <div>
+                                            {Array.from(Array(parseInt(this.state.ChequeInfo.MaxCheque)).keys()).map((item,index)=>{
+                                                return(
+                                                    <div className="row" style={{alignItems:'baseline'}}>
+                                                        <div className="col-lg-2">
+                                                        <div className="group">
+                                                            <input className="form-control irsans" autoComplete="off" type="text" id={"InChequeNumber_" + index} name={"InChequeNumber_" + index} value={this.state["chequeNumber_" + index]} onChange={(event) => { this.setState({ ["InChequeNumber_" + index]: event.target.value }) }} required="true" />
+                                                            <label>شماره چک</label>
+                                                        </div>
+                                                        </div>
+                                                        <div className="col-lg-2">
+                                                        <DatePicker
+                                                                onChange={value => this.setState({["InChequeDate_" + index]: value})}
+                                                                value={this.state["InChequeDate_" + index]}
+                                                                isGregorian={false}
+                                                                timePicker={false}
+                                                                placeholder="تاریخ چک"
+                                                                persianDigits={false}
+
+                                                            />
+                                                      
+                                                        </div>
+                                                        <div className="col-lg-2">
+                                                        <div className="group">
+                                                            <input className="form-control irsans" autoComplete="off" type="text" id={"InChequeAmount_" + index} name={"InChequeAmount_" + index} value={this.state["InChequeAmount_" + index]} onChange={(event) => { this.setState({ ["InChequeAmount_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
+                                                            <label>مبلغ چک (تومان)</label>
+                                                        </div>
+                                                        </div>
+                                                        <div className="col-lg-2">
+                                                        <div className="group">
+                                                            <input className="form-control irsans" autoComplete="off" type="text" id={"InChequeName_" + index} name={"InChequeName_" + index} value={this.state["chequeName_" + index]} onChange={(event) => { this.setState({ ["InChequeName_" + index]: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") }) }} required="true" />
+                                                            <label>صاحب حساب</label>
+                                                        </div>
+                                                        </div>
+                                                        <div className="col-lg-2">
+                                                            <div className="group">
+                                                                <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" id={"InChequeFile_" + index} name={"InChequeFile_" + index} />
+                                                                <label>آپلود تصویر چک</label>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-lg-2">
+                                                            <img src={this.state["InChequeImg_" + index]} id={"InChequeImg_" + index} name={"InChequeImg_" + index} />
+                                                        </div>
+                                                        
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>    
+
+                                    }
+
+
+
+
                                     <hr />
                                 </div>
 
@@ -732,7 +874,7 @@ class Cart extends React.Component {
                             <div className="card mt-md-0 mt-5" style={{ padding: 10, borderRadius: 20 }}>
 
                                 <div style={{ textAlign: 'left', marginRight: 10, borderBottom: '1px solid #eee' }} >
-                                    <p className="YekanBakhFaBold">موجودی کیف پول : {this.props.credit?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
+                                    <p className="YekanBakhFaBold">موجودی کیف پول : {this.state.credit?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
 
                                 </div>
                                 {
@@ -762,7 +904,7 @@ class Cart extends React.Component {
 
                                     </p>
                                 }
-                                {(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace") ?
+                                {(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace" && this.state.ActiveBank != "Cheque"  ) ?
                                     <button className="btn btn-success YekanBakhFaMedium" style={{ marginTop: 40, marginBottom: 10 }} disabled={(this.state.AcceptAddress && (!this.state.Address || this.state.Address == ""))} onClick={this.Payment}>{this.state.AcceptAddress ? <span>پرداخت</span> : <span>ادامه فرایند خرید</span>}  </button>
 
                                     :
@@ -800,8 +942,8 @@ class Cart extends React.Component {
                             <h2 className="YekanBakhFaMedium">کسر از کیف پول</h2>
                         </div>
                         <div className="col-12">
-                            <p className="YekanBakhFaBold" style={{ textAlign: 'center' }}>موجودی کیف پول : <span style={{fontStyle:'bold'}}>{(parseInt(this.props.credit)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span> تومان</p>
-                            <p className="YekanBakhFaBold" style={{ textAlign: 'center' }}>موجودی قابل برداشت : {(parseInt(this.props.credit) - parseInt(this.state.finalCreditReducer)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
+                            <p className="YekanBakhFaBold" style={{ textAlign: 'center' }}>موجودی کیف پول : <span style={{fontStyle:'bold'}}>{(parseInt(this.state.credit)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span> تومان</p>
+                            <p className="YekanBakhFaBold" style={{ textAlign: 'center' }}>موجودی قابل برداشت : {(parseInt(this.state.credit) - parseInt(this.state.finalCreditReducer)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
                         </div>
                         <div className="col-md-12 col-12" >
                             <div className="group">

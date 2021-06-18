@@ -9,6 +9,7 @@ import 'swiper/css/swiper.css';
 import CatList from './CatList.js'
 import Photos from './Photos.js'
 import { Skeleton } from 'primereact/skeleton';
+import SlideBox  from './SlideBox.js'
 
 import ShopList from './ShopList.js'
 
@@ -215,19 +216,13 @@ class MainBox2 extends React.Component {
       hours: 0,
       minutes: 0,
       seconds: 0,
-      logo1: null,
-      logo2: null,
-      logo3: null,
+     
       logo4: null,
       logo5: null,
-      link1: null,
-      link2: null,
-      link3: null,
+      
       link4: null,
       link5: null,
-      text1: null,
-      text2: null,
-      text3: null,
+      
       text4: null,
       text5: null,
       SpecialImage:null,
@@ -290,7 +285,7 @@ class MainBox2 extends React.Component {
     return string.join('');
   }
   getCategory(p) {
-    let condition = p ? { condition: { $or: [{Parent: ''},{Parent: null}], pic: { $ne: null } } } : { condition: { showInSite: true } };
+    let condition = p ? { condition: {pic: { $ne: null },Deactive:{$ne:true },Special:true } } : { condition: { showInSite: true,Deactive:{$ne:true }} };
     axios.post(this.state.url + 'GetCategory', condition)
       .then(response => {
         let resp = [];
@@ -313,8 +308,6 @@ class MainBox2 extends React.Component {
             this.getShops();
           }
         }
-
-
       })
       .catch(error => {
         if (p)
@@ -349,26 +342,7 @@ class MainBox2 extends React.Component {
     axios.post(this.state.url + 'getPics', {})
       .then(response => {
         response.data.result.map(function (item, index) {
-          if (item.name == "file1"){
-            that.setState({
-              logo1: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
-              link1: item.link,
-              text1: item.text
-            })
-          }
-           
-          if (item.name == "file2")
-            that.setState({
-              logo2: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
-              link2: item.link,
-              text2: item.text
-            })
-          if (item.name == "file3")
-            that.setState({
-              logo3: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
-              link3: item.link,
-              text3: item.text
-            })
+          
           if (item.name == "file4")
             that.setState({
               logo4: item.fileUploaded ? that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1] : null,
@@ -635,63 +609,7 @@ class MainBox2 extends React.Component {
               <div className="row" style={{ marginTop: 10, marginBottom: 20 }}>
 
                 <div className={(this.state.logo5 && this.state.ProductBase) ? "col-lg-9 col-12 TopSlider" : "col-lg-12 col-12 TopSlider"}  >   
-                  <Swiper {...params5} style={{ position: 'absolute' }}>
-                    <div>
-                      {this.state.link1 && this.state.link1.indexOf("http") > -1 ?
-                        <Link to={this.state.link1} className="" target="_blank" style={{ textDecoration: 'none' }}>
-                          {this.state.text1 &&
-                            <p className="iranyekanweblight  p-md-3 d-md-block d-none animate__animated animate__fadeInLeftBig " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text1}</p>
-                          }
-                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text1} />
-                        </Link>
-                        :
-                        <Link to={`${process.env.PUBLIC_URL}/` + this.state.link1} className="" target="_blank" href="#" style={{ textDecoration: 'none' }}>
-                          {this.state.text1 &&
-                            <p className="iranyekanweblight  p-md-3 d-md-block d-none animate__animated animate__fadeInLeftBig " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text1}</p>
-                          }
-                          <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text1} />
-                        </Link>
-                      }
-                    </div>
-
-                    <div>
-                      {this.state.link2 && this.state.link2.indexOf("http") > -1 ?
-                        <Link to={this.state.link2} className="" target="_blank" style={{ textDecoration: 'none' }}>
-                          {this.state.text2 &&
-                            <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text2}</p>
-                          }
-                          <img src={this.state.logo2} style={{borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text2} />
-
-                        </Link>
-                        :
-                        <Link to={`${process.env.PUBLIC_URL}/` + this.state.link2} className="" target="_blank" href="#" style={{ textDecoration: 'none' }}>
-                          {this.state.text2 &&
-                            <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text2}</p>
-                          }
-                          <img src={this.state.logo2} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text2} />
-
-                        </Link>
-                      }
-                    </div>
-
-                    <div>
-                      {this.state.link3 && this.state.link3.indexOf("http") > -1 ?
-                        <Link to={this.state.link3} className="" target="_blank" style={{ textDecoration: 'none' }}>
-                          {this.state.text3 &&
-                            <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text3}</p>
-                          }
-                          <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text3} />
-                        </Link>
-                        :
-                        <Link to={`${process.env.PUBLIC_URL}/` + this.state.link3} className="" target="_blank" href="#" style={{ textDecoration: 'none' }}>
-                          {this.state.text3 &&
-                            <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ overflow: 'hidden', height: 300, maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text3}</p>
-                          }
-                          <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text3} />
-                        </Link>
-                      }
-                    </div>
-                  </Swiper>
+                  <SlideBox/> 
                 </div>
 
                 {this.state.ProductBase &&
@@ -954,7 +872,7 @@ class MainBox2 extends React.Component {
                                         {this.state.days != "0" &&
                                           <div id="deals_timer1_day" className="deals_timer_day yekan" style={{ marginLeft:10,fontSize: 25 }}>{this.state.days != "0" ? this.persianNumber(this.state.days) : ""}</div>
                                         }
-                                        {this.state.hours != "0" &&
+                                        {this.state.days != "0" &&
                                             <div>:</div>
                                         }
                                           <div className="deals_timer_unit">

@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import { Loader } from 'rsuite';
 import { Alert, Message } from 'rsuite';
+import { testModeAPI } from 'react-ga';
 
 
 class Comments extends React.Component {
@@ -41,6 +42,8 @@ class Comments extends React.Component {
 
 
   }
+
+ 
   selectedListChange(value) {
     let that = this;
     let param = {

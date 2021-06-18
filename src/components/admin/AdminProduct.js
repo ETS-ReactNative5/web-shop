@@ -59,6 +59,7 @@ class AdminProduct extends React.Component {
       fileUploaded3: '',
       fileUploaded4: '',
       UploadBoxToggle: false,
+      ShopArraySelected:[],
       formul: '',
       formul_level: '',
       formul_off: '',
@@ -248,14 +249,36 @@ class AdminProduct extends React.Component {
     this.Size = [{ name: 'S', id: 1 }, { name: 'M', id: 2 }, { name: 'L', id: 3 }, { name: 'XL', id: 4 }, { name: 'XXL', id: 5 }, { name: 'XXXL', id: 6 }];
 
   }
-  CatTOptionTemplate(option) {
+  CatTOptionTemplate = (option) => {
     return (
       <div className="country-item">
         <div>{option.name}</div>
       </div>
     );
   }
-  selectedCatTemplate(option, props) {
+  selectedCatTemplate= (option,props) => {
+    if (option) {
+      return (
+        <div className="country-item country-item-value">
+          <div>{option.name}</div>
+        </div>
+      );
+    }
+
+    return (
+      <span>
+        {props.placeholder}
+      </span>
+    );
+  }
+  ShopOptionTemplate = (option) => {
+    return (
+      <div className="country-item">
+        <div>{option.name} {this.state.ShopArraySelected.indexOf(option.value) > -1 ? "*" : ""}</div>
+      </div>
+    );
+  }
+  selectedShopTemplate= (option,props) => {
     if (option) {
       return (
         <div className="country-item country-item-value">
@@ -687,7 +710,7 @@ class AdminProduct extends React.Component {
       );
 
     if (layout === 'list') {
-      let pic = car.fileUploaded.split("public")[1] ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + '/nophoto.png';
+      let pic = (car.fileUploaded && car.fileUploaded.split("public")[1]) ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + '/nophoto.png';
       return (
         <div className="row">
           <div className="col-lg-12 " >
@@ -715,7 +738,7 @@ class AdminProduct extends React.Component {
               <div className="col-lg-2 col-12 yekan" style={{ textAlign: "center" }}>
                 <button className="btn btn-primary yekan" onClick={() => { this.setState({ visibleModalEditProduct: true }); this.PreparEditProduct(car); }} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}>ویرایش</button>
                 {(!this.state.SeveralShop || (this.state.SellerId == this.state.MainShopId)) &&
-                  <div>
+                  <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
                     <button className="btn btn-primary yekan" onClick={() => { this.picToggle(car) }} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}>تصاویر</button>
                     {!this.state.SeveralShop &&
                       <button className="btn btn-primary yekan" onClick={() => { this.offToggle(car) }} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}>محاسبه قیمت / تخفیف</button>
@@ -758,14 +781,17 @@ class AdminProduct extends React.Component {
         CatSelectedName = property["name"]
     }
     let ShopArraySelected = [];
+    let ShopArrayOption = [];
+    this.state.ShopArrayOption.forEach((v, i) => {
+      ShopArrayOption.push(v);
+    });
     if(row.product_detail){
       for(let i=0;i<row.product_detail.length;i++){
-        ShopArraySelected[this.state.ShopArray.indexOf(row.product_detail[i].SellerId)]=1;
-
+        ShopArraySelected.push(row.product_detail[i].SellerId);
       }
     }else{
       for(let i=0;i<row.SellerId.length;i++){
-        ShopArraySelected[this.state.ShopArray.indexOf(row.SellerId[i])]=1;
+        ShopArraySelected.push(row.SellerId[i]);
       }
     }
     
@@ -794,6 +820,7 @@ class AdminProduct extends React.Component {
       SelectedColors_edit: null,
       SelectedSize_edit: null,
       ShopArraySelected:ShopArraySelected,
+      ShopArrayOption_edit:ShopArrayOption,
       tags_edit:row.Tags||[]
     })
     if (row.Spec) {
@@ -1171,10 +1198,15 @@ class AdminProduct extends React.Component {
     {
       param[code.Etitle] = this.state[code.Etitle];
     }
-
     let SCallBack = function (response) {
       if (response.data.result.insertedCount)
         that.GetProduct()
+      let st={};  
+      for(let i=0;i<that.state.CatSpecs?.length;i++){
+        st["Spec_"+that.state.CatSpecs[i].id] = ""
+      }
+      debugger;
+
       that.setState({
         price: "",
         off: "",
@@ -1194,7 +1226,15 @@ class AdminProduct extends React.Component {
         fileUploaded2: '',
         fileUploaded3: '',
         fileUploaded4: '',
-        tags:[]
+        file: '',
+        file1: '',
+        file2: '',
+        file3: '',
+        file4: '',
+        tags:[],
+        CategoryInProduct:null,
+        CatSpecs:[],
+        ...st
       })
       Alert.success('عملیات با موفقیت انجام شد', 5000);
       that.setState({
@@ -1230,7 +1270,7 @@ class AdminProduct extends React.Component {
     this.setState({
       loading: 1
     })
-    let Tags = this.state.tags_edit.filter(e => e.remove != "1");
+    let Tags = typeof this.state.tags_edit == "object" && this.state.tags_edit.filter(e => e.remove != "1");
     let Spec = [];
     if (this.state.CatSpecs_Edit) {
       for (let i = 0; i < this.state.CatSpecs_Edit.length; i++) {
@@ -1244,7 +1284,7 @@ class AdminProduct extends React.Component {
       set: false,
       id: this.state.id_edit,
       title: this.state.title_edit,
-      title2: this.state.title2_edit,
+      title2: this.state.title2_edit,  
       desc: this.state.desc_edit,
       price: this.state.price_edit.replace(/,/g, ""),
       off: this.state.off_edit,
@@ -1640,17 +1680,21 @@ class AdminProduct extends React.Component {
 
       let ShopArray = [],
         ShopArrayName = [],
-        ShopArraySelected = [];
+        ShopArrayOption = [];
       for (let i = 0; i < response.data.result.length; i++) {
         ShopArray[i] = response.data.result[i]._id;
         ShopArrayName[i] = response.data.result[i].name;
-        ShopArraySelected[i] = 0;
+        ShopArrayOption.push({
+          name:response.data.result[i].name,
+          value:response.data.result[i]._id
+        })
       }
       that.setState({
         ShopArray: ShopArray,
         ShopArrayName: ShopArrayName,
+        ShopArrayOption:ShopArrayOption,
         ShopId: ShopArray[0],
-        ShopArraySelected:0,
+        ShopArraySelected:[],
         loading: 0
       })
       that.GetProduct();
@@ -1681,7 +1725,6 @@ class AdminProduct extends React.Component {
     var _id = event.originalEvent.target.getAttribute("_id");
     var _catId = event.originalEvent.target.getAttribute("_catId");
     var _tagId = event.originalEvent.target.getAttribute("_tagId");
-		debugger;
 
     this.setState({
       brand: event.value.title
@@ -1940,6 +1983,12 @@ class AdminProduct extends React.Component {
 
 		})
 	}
+  onSelectTitle(event) {
+		this.setState({
+			title: event.value.title
+
+		})
+	}
   onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
   }
@@ -1978,6 +2027,21 @@ class AdminProduct extends React.Component {
 			})
 
 	}
+  suggestTitle(event) {
+		let that = this;
+		this.setState({ title: event.query, Count: 0 });
+		axios.post(this.state.absoluteUrl + 'MainApi/searchTitle', {
+			title: event.query
+		})
+			.then(response => {
+				let TitleSuggestions = response.data.result;
+				that.setState({ TitleSuggestions: TitleSuggestions,title:event.query });
+			})
+			.catch(error => {
+				console.log(error)
+			})
+
+	}
   itemTemplateTag(tag) {
 			return (
 				<div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
@@ -1993,6 +2057,18 @@ class AdminProduct extends React.Component {
 		
 
 	}
+  itemTemplateTitle(item) {
+    return (
+      <div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
+        <div style={{ margin: '10px 10px 0 0' }} className="row"  >
+
+          <div className="col-8" style={{ textAlign: 'right' }}>
+              <span className="yekan" style={{whiteSpace:'pre-wrap'}} >{item.title}</span><br />
+          </div>
+        </div>
+      </div>
+    );
+  }
   render() {
     const footer = (
       <div style={{ textAlign: 'center' }}>
@@ -2025,8 +2101,8 @@ class AdminProduct extends React.Component {
 
                 <form onSubmit={this.setProduct} >
                   <div className="group">
-                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.title} name="title" onChange={this.handleChangeTitle} required="true" />
-                    <label>عنوان</label>
+                    <AutoComplete placeholder="عنوان محصول " inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, padding: 7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ title: e.value })} itemTemplate={this.itemTemplateTitle.bind(this)} value={this.state.title} onSelect={(e) => this.onSelectTitle(e)}  suggestions={this.state.TitleSuggestions} completeMethod={this.suggestTitle.bind(this)} />
+
                   </div>
 
                   <div className="group">
@@ -2060,20 +2136,14 @@ class AdminProduct extends React.Component {
                     <div>
 
                       <div>
-                        <label className="labelNoGroup irsans" style={{ marginTop: 10 }}>انتخاب فروشگاه</label>
 
                         <div style={{ textAlign: 'center' }}>
 
-                          <select className="custom-select irsans" value={this.state.ShopId_product} name="ShopId_product" onChange={(event) => this.setState({
+
+                          <Dropdown value={this.state.ShopId_product} panelStyle={{ width: '100%', textAlign: 'right' }} style={{ fontFamily: 'iranyekanwebregular', width: '100%', textAlign: 'right', marginTop: 20 }} options={this.state.ShopArrayOption} onChange = {(event) => this.setState({
                             ShopId_product: event.target.value
-                          })} >
-                            <option value=""></option>
-                            {
-                              this.state.ShopArray && this.state.ShopArray.map((v, i) => {
-                                return (<option value={v} >{this.state.ShopArrayName[i]}</option>)
-                              })
-                            }
-                          </select>
+                          })} optionLabel="name" placeholder="فروشگاه"
+                      valueTemplate={this.selectedShopTemplate} filter filterBy="name" itemTemplate={this.ShopOptionTemplate} />
 
 
                         </div>
@@ -2214,7 +2284,7 @@ class AdminProduct extends React.Component {
                     return(
                       <div className="col-lg-12" style={{ marginBottom: 20,padding:0 }}>
                         <div className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</div>
-                        <MultiSelect value={this.state[v.Etitle+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
+                        <MultiSelect filter value={this.state[v.Etitle+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
                           let vv=[]
 
                           for(let val of v.values){
@@ -2319,24 +2389,19 @@ class AdminProduct extends React.Component {
                 <div className="col-lg-12" style={{ marginBottom: 20 }}>
                   <div className="row" style={{alignItems:'baseline'}}>
                   <div className="col-lg-10 col-12">
-                  <label className="labelNoGroup irsans" style={{ marginTop: 10 }}>انتخاب فروشگاه</label>
 
                   <div className="group" style={{ textAlign: 'center' }}>
 
-                    <select className="custom-select irsans" value={this.state.ShopId_product_edit} name="ShopId_product_edit" onChange={(event) => {
+                    
+
+                    <Dropdown value={this.state.ShopId_product_edit} panelStyle={{ width: '100%', textAlign: 'right' }} style={{ fontFamily: 'iranyekanwebregular', width: '100%', textAlign: 'right', marginTop: 20 }} options={this.state.ShopArrayOption_edit} onChange={(event) => {
                       this.setState({
                         ShopId_product_edit: event.target.value
                       })
                       this.GetProductPerShop(event.target.value);
                     }
-                    } >
-                      <option value=""></option>
-                      {
-                        this.state.ShopArray && this.state.ShopArray.map((v, i) => {
-                          return (<option value={v} >{this.state.ShopArrayName[i]} {this.state.ShopArraySelected[i] ? '*' : ''}</option>)
-                        })
-                      }
-                    </select>
+                    } optionLabel="name" placeholder="فروشگاه"
+                      valueTemplate={this.selectedShopTemplate} filter filterBy="name" itemTemplate={this.ShopOptionTemplate} />
 
 
                   </div>
@@ -2400,7 +2465,7 @@ class AdminProduct extends React.Component {
                     <div style={{marginTop:20}}>
                     <AutoComplete placeholder="تگ های محصول را انتخاب کنید ... " disabled={this.state.SellerId != this.state.MainShopId} inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 16, padding: 7 }} style={{ width: '100%' }} onChange={(e) => this.setState({ tag_edit: e.value })} itemTemplate={this.itemTemplateTag.bind(this)} value={this.state.tag_edit} onSelect={(e) => this.onSelectTagEdit(e)}  suggestions={this.state.TagSuggestions} completeMethod={this.suggestTags.bind(this)} />
                       <div style={{marginTop:10,textAlign:'right',marginBottom:10}}>
-                      {this.state.tags_edit.map((v, i) => {
+                      {typeof this.state.tags_edit == "object" && this.state.tags_edit.map((v, i) => {
                         if(!v.remove){
                           return (<Chip label={v.title} _id={v._id} style={{marginLeft:5}} removable={this.state.SellerId == this.state.MainShopId} onRemove={(event)=>{
                             let title = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
@@ -2489,12 +2554,12 @@ class AdminProduct extends React.Component {
               
               <div className="col-lg-12">
               <div style={{display:'flex'}} >
-                  {this.state.CategoryInProduct_edit && this.state.CodeFile.map((v, i) => {
+                  { this.state.CategoryInProduct_edit && this.state.CodeFile.map((v, i) => {
                     
                     return(
                       <div  style={{ marginBottom: 20,width:'100%' }}>
                         <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</p>
-                        <MultiSelect value={this.state[v.Etitle+"_edit"+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
+                        <MultiSelect filter value={this.state[v.Etitle+"_edit"+"_0"]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { 
                           let vv=[]
                           for(let val of v.values){
 
@@ -2534,7 +2599,7 @@ class AdminProduct extends React.Component {
               
                       
               {
-               this.state.CatSpecs_Edit && this.state.CatSpecs_Edit.map((v, i) => {
+               this.state.CatSpecs_Edit && typeof this.state.CatSpecs_Edit == "object" && this.state.CatSpecs_Edit.map((v, i) => {
                 if(v.checked !== false){
 
                   let name = "Spec_edit_" + v.id;
@@ -2671,13 +2736,13 @@ class AdminProduct extends React.Component {
 
                   <div className="card" style={{ maxHeight: '400px' }} >
                     <DataTable value={this.state.grid} editMode="cell" className="editable-cells-table" paginator={true} rows={14}  >
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="title" header="عنوان" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="subTitle" header="عنوان دوم"  ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="level" header="کد درجه کاربری"></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="levelName" header="درجه کاربری" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="price" header="قیمت خرید" editor={(props) => this.gridEditor('price', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="relativeLevel" header="نسبت به" editor={(props) => this.gridEditor('relativeLevel', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} field="off" header="درصد تخفیف" editor={(props) => this.gridEditor('off', props)}></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="title" header="عنوان" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="subTitle" header="عنوان دوم"  ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="level" header="کد درجه کاربری"></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="levelName" header="درجه کاربری" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="price" header="قیمت خرید" editor={(props) => this.gridEditor('price', props)}></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="relativeLevel" header="نسبت به" editor={(props) => this.gridEditor('relativeLevel', props)}></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="off" header="درصد تخفیف" editor={(props) => this.gridEditor('off', props)}></Column>
                       <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="opr" header="عمل" editor={(props) => this.gridEditor('opr', props)}></Column>
                       <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="result" header="قیمت نهایی" ></Column>
                       <Column headerStyle={{ fontFamily: 'iranyekanweblight',textAlign:'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="number" header="موجودی" ></Column>

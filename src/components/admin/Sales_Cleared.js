@@ -43,6 +43,7 @@ class Sales_Registered extends React.Component {
       selectedFactor: null,
       newStatus: null,
       selectedId: null,
+      SelectedChequeList:[],
       statusDesc: null,
       SellerId: null,
       LastAmount: 0,
@@ -204,7 +205,9 @@ class Sales_Registered extends React.Component {
       selectedUsername: value.username,
       selectedId: value._id,
       selectedFactor: value.products,
-      newStatus: value.status
+      newStatus: value.status,
+      SelectedChequeList : value.ChequeList||[]
+
     })
 
   }
@@ -286,10 +289,10 @@ class Sales_Registered extends React.Component {
         v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         if (v.status == "1")
           NewFactors++;
+        if (v.status == "-3")
+          v.statusDesc = "مرجوع شده"
         if (v.status == "-2")
-          v.statusDesc = "لغو محصول توسط فروشنده"
-        if (v.status == "-2")
-          v.statusDesc = "درخواست لغو توسط خریدار"
+          v.statusDesc = "درخواست مرجوعی"
         if (v.status == "-1")
           v.statusDesc = "لغو شده"
         if (v.status == "0")
@@ -305,7 +308,7 @@ class Sales_Registered extends React.Component {
         if (v.status == "5")
           v.statusDesc = "تسویه شده"
         if (v.InPlace)
-          v.InPlace = <span className="text-warning">در محل</span>
+          v.InPlace = !v.ChequeList ? <span className="text-warning">در محل</span> : <span className="text-warning">  چک _ در محل</span>
         else
           v.InPlace = <span className="text-success">نقدی</span>    
         if (v.userData && v.userData[0]) {
@@ -556,6 +559,37 @@ class Sales_Registered extends React.Component {
 
             </DataTable>
             </div>
+            {this.state.SelectedChequeList.map((item, index) => {
+               if(item.InChequeNumber || item.InChequeDate){
+                return(
+                  <div style={{display:'flex',justifyContent:'space-between',backgroundColor:'#eee',padding:10,alignItems:'center'}} className="yekan">
+
+                    <div>
+                      <span>شماره چک : </span><span>{item.InChequeNumber}</span>
+                    </div>
+                    <div>
+                    <span>تاریخ چک : </span><span>{item.InChequeDate}</span>
+                    </div>
+                    <div>
+                    <span>مبلغ چک : </span><span>{item.InChequeAmount}</span>
+                    </div>
+                    <div>
+                    <span>صاحب حساب : </span><span>{item.InChequeName}</span>
+
+                    </div>
+                    <div>
+                    <img style={{height:150}} src={item.InChequeImg} />
+
+                    </div>
+
+                    
+                  </div>
+                )
+               }
+                
+
+              })
+            }
           </div>
         </Dialog>
       </div>

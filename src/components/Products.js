@@ -131,6 +131,7 @@ class Products extends React.Component {
         };
         
         let SCallBack = function (response) {
+            debugger;
             that.setState({
                 MainShopInfo:response.data.result
             })
@@ -171,6 +172,7 @@ class Products extends React.Component {
         this.getPics();
     }
     getProduct(){
+        debugger;
         let that = this;
         let param = {
             id: null,
@@ -489,12 +491,14 @@ class Products extends React.Component {
     }
     getSettings() {
 		let that = this;
+        debugger;
 		that.Server.send("AdminApi/getSettings", {}, function (response) {
 	
 		  if (response.data.result) {
 			that.setState({
               ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
-              SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+              SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false,
+              AlarmIfExistProduct: response.data.result[0] ? response.data.result[0].AlarmIfExistProduct : false
 
 			})
 	
@@ -608,6 +612,42 @@ class Products extends React.Component {
                     // alert(error)
                 }
                 that.Server.send("MainApi/ManageCart", param, SCallBack, ECallBack)
+
+            }).catch(error => {
+                that.setState({
+                    GotoLogin: true
+                })
+                console.log(error)
+            })
+
+
+    }
+    AlarmWhenExisted(PDId, PId) {
+        let that = this;
+        if (!this.state.IsSeveralShop)
+            PId = PDId;
+        axios.post(that.state.url + 'checktoken', {
+            token: localStorage.getItem("api_token")
+        })
+            .then(response => {
+                
+                let param = {
+                    PDId: PDId,
+                    PId: PId,
+                    UId: response.data.authData.userId,
+                    SellerId: this.state.SellerId,
+                    IsSeveralShop: this.state.IsSeveralShop
+                };
+                let SCallBack = function (response) {
+                    let res = response.data.result;
+                    that.toast.current.show({severity: 'success', summary: 'اطلاعات ثبت شد', detail: 'به محض موجود شدن محصول از طریق پیامک به شما اطلاع داده خواهد شد'});
+
+                };
+                let ECallBack = function (error) {
+
+                    // alert(error)
+                }
+                that.Server.send("MainApi/AlarmWhenExisted", param, SCallBack, ECallBack)
 
             }).catch(error => {
                 that.setState({
@@ -812,6 +852,9 @@ class Products extends React.Component {
                                                     ?
                                                     <form action="#">
 
+                                                        {this.state.number && this.state.number < 10 && this.state.ProductBase && 
+                                                            <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right',color:'green' }}> تنها <span style={{color:'red'}}>{this.state.number} مورد</span> از این محصول در انبار باقی مانده است</p></div>
+                                                        }
                                                         {this.state.SellerName && this.state.IsSeveralShop &&
                                                             <div className="product_text borderBottom" ><p className="YekanBakhFaBold" style={{ padding: "10px", textAlign: 'right' }}> فروشنده : <Link to={`${process.env.PUBLIC_URL}/Shop?&name=${this.state.SellerName}&id=` + this.state.SellerId} className="title iranyekanwebmedium" ><span style={{ color: '#333', fontSize: 20 }}>{this.state.SellerName} </span></Link> </p></div>
                                                         }
@@ -885,7 +928,12 @@ class Products extends React.Component {
 
                                                     </form>
                                                     :
-                                                    <div className="car-subtitle iranyekanwebmedium" style={{ textAlign: 'center', marginBottom: 15, width: '100%' }} ><span className="iranyekanwebmedium product_no" style={{ fontSize: 20, marginTop: 10 }}>ناموجود</span> </div>
+                                                    <div className="car-subtitle iranyekanwebmedium" style={{ textAlign: 'center', marginBottom: 15, width: '100%' }} >
+                                                        <span className="iranyekanwebmedium product_no" style={{ fontSize: 20, marginTop: 10 }}>ناموجود</span> 
+                                                        {this.state.AlarmIfExistProduct &&
+                                                            <Button color="secondary" style={{ marginTop: 40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.AlarmWhenExisted(this.state.id, this.state.ProductId) }}>موجود شد به من اطلاع بده</Button>
+                                                        }
+                                                    </div>
 
                                             }
                                         </div>
@@ -1037,7 +1085,7 @@ class Products extends React.Component {
                                 
                                 }
 
-                                {this.state.Tags && this.state.Tags.length > 0 &&
+                                {this.state.Tags && (typeof this.state.Tags == "object") && this.state.Tags.length > 0 &&
                                 <div style={{padding:50,backgroundColor:'#fff',textAlign:'right',borderRadius:5}}>
                                     <p className="iranyekanwebmedium" style={{borderBottom:'1px solid #eee'}}>برچسب های محصول</p>
                                     {this.state.Tags.map((v,i)=>{
@@ -1061,7 +1109,7 @@ class Products extends React.Component {
                                                     <hr />
                                                     <div style={{ color: '#333', fontSize: 20 }}>مشخصات فنی</div>
                                                     <div style={{ color: '#333', fontSize: 14, marginBottom: 30 }} className="YekanBakhFaLight">{this.state.title}</div>
-                                                    {this.state.Spec.map((v, i) => {
+                                                    {typeof this.state.Spec == "object" && this.state.Spec.map((v, i) => {
                                                         if (v.value && v.value != "-")
                                                             return (<p className="iranyekanwebmedium" style={{ display: 'flex', flexDirection: 'row' }}><div className="YekanBakhFaBold" style={{ width: "30%", background: "#f2f2f2", padding: 10 }}>{v.title}</div><div style={{ width: "5%" }}></div><div className="YekanBakhFaMedium" style={{ width: "65%", background: "#f2f2f2", padding: 10,whiteSpace:'pre-wrap' }}>{v.value}</div></p>)
                                                     })

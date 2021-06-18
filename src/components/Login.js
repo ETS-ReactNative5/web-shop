@@ -11,6 +11,9 @@ import './Login.css';
 import Header1  from './Header1.js'
 import Footer  from './Footer.js' 
 import Header2  from './Header2.js'
+import Header  from './Header.js'
+
+
 class Login extends React.Component {
   constructor(props){
     super(props);
@@ -70,7 +73,9 @@ class Login extends React.Component {
         STitle:response.data.result ? response.data.result.STitle : "",
         AccessAfterReg:response.data.result ? response.data.result.AccessAfterReg : 0,
         RegSmsText:response.data.result ? response.data.result.RegSmsText : '',
-        RegisterByMob: response.data.result ? response.data.result.RegisterByMob : false
+        RegisterByMob: response.data.result ? response.data.result.RegisterByMob : false,
+        System: response.data.result ? response.data.result.System : "shop"
+
 
       })
     })
@@ -369,19 +374,37 @@ class Login extends React.Component {
       })
       .then(response => {
         
-        this.setState({
-          Step:response.data.result=="yes" ? 1 : 2
-        })
+        
         if(response.data.result=="no" ){
-          this.Register();
+          
+          if(this.state.System =="shop"){
+            this.setState({
+              Step:2
+            })
+            this.Register();
+
+          }else{
+            this.setState({
+              HasError:"نام کاربری نادرست است"
+            })
+          }
+         
+        }else{
+          this.setState({
+            Step:1
+          })
         }
+        
       })
       .catch(error => {
-        this.setState({
-          Step:2
-        })
-        this.Register();
-        console.log(error)
+        if(this.state.System =="shop"){
+          this.setState({
+            Step:2
+          })
+          this.Register();
+          console.log(error)
+        }
+        
       })
       
       return;
@@ -441,7 +464,7 @@ class Login extends React.Component {
     .catch(error => {
       
       this.setState({
-        HasError:"نام کاربری یا رمز عبور اشتباه است"
+        HasError:"رمز عبور اشتباه است"
       })
       console.log(error)
     })
@@ -461,7 +484,7 @@ class Login extends React.Component {
 
       }  
     if (this.state.AutenticatedUser == true) {
-      return <Redirect to='/MainBox1'  Autenticated={this.state.AutenticatedUser}/>;
+      return <Redirect to='/MainShop'  Autenticated={this.state.AutenticatedUser}/>;
 
     }
     if (this.state.AutenticatedAdmin == true) {
@@ -471,14 +494,25 @@ class Login extends React.Component {
     if(!this.state.changePassState && this.state.loginState){
         return (
           <div>
+          {!this.props.noHeader && this.state.System == "shop" &&
               <Header1 /> 
+
+          }
+          {!this.props.noHeader && this.state.System == "shop" &&
               <Header2 /> 
-          <div className="container p-md-5 p-3" style={{direction:'rtl',minHeight:600}}>
+
+          }
+
+          {!this.props.noHeader && this.state.System != "shop" &&
+              <Header /> 
+
+          }
+          <div className="mt-lg-5 mt-2" style={{direction:'rtl',minHeight:!this.props.noHeader ? 600 : 'auto'}}>
             <div className="row">
-              <div className="col-sm-10 col-12 col-md-9 col-lg-7 mt-md-0 mt-5 mx-auto" style={{position:'relative'}}>
+              <div className="col-sm-10 col-12 col-md-9 col-lg-12 mt-md-0 mt-5 mx-auto" style={{position:'relative'}}>
               <Toast ref={this.toast} position="bottom-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
 
-                <div className="card card-signin" style={{paddingTop:20,paddingBottom:40}} >
+                <div className={(this.props.noHeader) ? "card-signin2" : "card card-signin"} style={{paddingTop:20,paddingBottom:40}} >
                   <div className="card-body">
                     <div style={{display:'flex',justifyContent:'spaceBetween'}}>
                       <div>
@@ -490,7 +524,11 @@ class Login extends React.Component {
 
                       </div>
                     </div>
-                    <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>{this.state.Step =="-1" ? 'درخواست بازیابی رمز عبور' : 'ورود / ثبت نام'}</h5>
+                    {this.state.System != "shop" ?
+                       <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>{this.state.Step =="-1" ? 'درخواست بازیابی رمز عبور' : 'ورود به محیط کاربری'}</h5>
+                    :
+                      <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>{this.state.Step =="-1" ? 'درخواست بازیابی رمز عبور' : 'ورود / ثبت نام'}</h5>
+                    }
                     {(this.state.Step == "0" || this.state.Step=="-1") &&
                     <div >
                     {this.state.Step=="-1" &&
@@ -529,7 +567,7 @@ class Login extends React.Component {
 
                   </div>  
                   {this.state.HasError ?
-                  <Alert color="danger" fade={false} isOpen={this.state.HasError} toggle={()=>{this.setState({HasError:0})}}   style={{textAlign:"center"}} className="YekanBakhFaBold">
+                  <Alert color="danger" fade={false} isOpen={this.state.HasError} toggle={()=>{this.setState({HasError:0})}}   style={{textAlign:"center",margin:10}} className="YekanBakhFaBold">
                     {this.state.HasError}
                   </Alert>
                   :<p></p>
@@ -541,7 +579,9 @@ class Login extends React.Component {
               
             </div>
           </div>
-          <Footer /> 
+          {!this.props.noFooter &&
+            <Footer /> 
+          }
           </div>
 
         )

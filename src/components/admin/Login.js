@@ -42,12 +42,26 @@ class Login extends React.Component {
       console.log(error)
     })
   }
+  convertNum(str){
+    var persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g],
+       arabicNumbers  = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+     
+        if(typeof str === 'string')
+        {
+          for(var i=0; i<10; i++)
+          {
+            str = str.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
+          }
+        }
+        return str;
+  }
   get(){
     this.setState({
       HasError:false
     })
+    let inputEmail = this.convertNum(this.state.inputEmail);
     axios.post(this.state.url+'getuser', {
-      username: this.state.inputEmail,
+      username: inputEmail,
       password: this.state.inputPassword,
       token: localStorage.getItem("api_token")
     })
@@ -60,7 +74,7 @@ class Login extends React.Component {
       this.props.dispatch({
         type: 'LoginTrueAdmin',    
         admin:{
-          username:this.state.inputEmail
+          username:inputEmail
         }
       })
       this.setState({

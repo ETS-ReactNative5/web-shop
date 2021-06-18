@@ -37,7 +37,7 @@ class Cancel_Products extends React.Component {
       dashData: (this.props && this.props.location && this.props.location.state && this.props.location.state.data) ? this.props.location.state.data : [],
       NewFactors: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewFactors) ? this.props.location.state.NewFactors : null,
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
-      Filter: '4',
+      Filter: '-2',
       GridDataUsers: [],
       GridDataFactors: [],
       selectedFactor: null,
@@ -288,10 +288,10 @@ class Cancel_Products extends React.Component {
         v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         if (v.status == "1")
           NewFactors++;
+        if (v.status == "-3")
+          v.statusDesc = "مرجوع شده"
         if (v.status == "-2")
-          v.statusDesc = "لغو محصول توسط فروشنده"
-        if (v.status == "-2")
-          v.statusDesc = "درخواست لغو توسط خریدار"
+          v.statusDesc = "درخواست مرجوعی"
         if (v.status == "-1")
           v.statusDesc = "لغو شده"
         if (v.status == "0")

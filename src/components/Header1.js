@@ -56,12 +56,11 @@ class Header1 extends React.Component {
 				})
 				
 				axios.post(this.state.absoluteUrl + 'MainApi/getuserInformation', { user_id: response.data.authData.userId }).then(response => {
-
 					this.props.dispatch({
 						type: 'LoginTrueUser',
 						CartNumber: localStorage.getItem("CartNumber"),
 						off: localStorage.getItem("off") == "undefined" ? 0 : localStorage.getItem("off"),
-						credit: response.data.result[0].credit ? response.data.result[0].credit : 0
+						credit: response.data.result[0].credit ? parseInt(response.data.result[0].credit) : 0
 					})
 					axios.post(this.state.absoluteUrl + 'AdminApi/ShopInformation', { main: true }).then(response => {
 						this.setState({

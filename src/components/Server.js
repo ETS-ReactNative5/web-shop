@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios'  
 import {ProgressSpinner} from 'primereact/progressspinner';
 
-class Server extends React.Component {
+class Server extends React.Component {   
    constructor(props){
      super(props);
      let serverUrl=[
@@ -15,7 +15,7 @@ class Server extends React.Component {
      this.state={
         isLoading:false,
         serverUrl: serverUrl[0]
-     };
+     };   
    }
    getUrl(admin){
       return admin ? this.state.serverUrl+"AdminApi/" : this.state.serverUrl+"MainApi/" 

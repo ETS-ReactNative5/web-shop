@@ -40,7 +40,7 @@ class Blog extends React.Component {
       title: null,
       BlogId: null,
       address: null,
-      FixPage: 0,
+      FixPage: false,
       loading: 0,
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
@@ -216,7 +216,7 @@ class Blog extends React.Component {
                 </div>
                 <div className="row">
                   <div className="col-lg-4" >
-                    <div style={{ paddingRight: 8 }}>
+                    <div style={{ paddingRight: 8,display:'flex' }}>
 
                       <Checkbox inputId="laon" value={this.state.FixPage} checked={this.state.FixPage} onChange={e => this.setState({ FixPage: e.checked })}></Checkbox>
                       <label htmlFor="laon" className="p-checkbox-label" style={{ paddingRight: 5 }}>صفحه مستقل</label>

@@ -1,29 +1,15 @@
 import React, { Component } from 'react';
-import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
-import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
-import { SelectButton } from 'primereact/selectbutton';
-import { ComponentToPrint } from './../ComponentToPrint.js';
-
+import { Message } from 'primereact/message';
 import { connect } from 'react-redux';
-import { Dropdown } from 'primereact/dropdown';
 import { Loader } from 'rsuite';
-import { Alert } from 'rsuite';
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import GoogleMapReact from 'google-map-react';
-import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
 import Charts from '.././Charts.js'
 
@@ -52,12 +38,72 @@ class Board extends React.Component {
       isMainShop: 0,
       showProductStatus: 0,
       onBeforePrint: {},
+      msg1:"",
       url: this.Server.getUrl()
 
     }
 
 
 
+  }
+  GetUsers() {
+    let that = this;
+    this.setState({
+      loading: 1
+    })
+    let param = {
+      token: localStorage.getItem("api_token"),
+      GetAll: 1
+    };
+    let SCallBack = function (response) {
+      that.setState({
+        loading: 0
+      })
+      let NewUsers = 0;
+      let managers = 0;
+      let SiteUsers = 0 ;
+      let ActiveUsers = 0;
+      let NotActiveUsers = 0;
+      response.data.result.map(function (v, i) {
+        if (v.level == "0" && (v.status=="0" && v.levelOfUser == -1 || v.levelOfUser == null))
+          NewUsers++;
+        if (v.level == "0"){
+          v.level = "کاربر";
+          SiteUsers++;
+        }
+        else{
+          v.level = "مدیر";
+          managers++;
+        }
+        if (v.status == "1"){
+          ActiveUsers++;
+          v.status = "فعال"
+
+        }
+        else{
+          NotActiveUsers++;
+          v.status = "غیر فعال";
+        }
+      })
+      that.setState({
+        GridDataUsers: response.data.result,
+        NewUsers: NewUsers,
+        managers: managers,
+        SiteUsers: SiteUsers,
+        ActiveUsers:ActiveUsers,
+        NotActiveUsers: NotActiveUsers,
+        msg1:<div style={{display:'flex',justifyContent:'space-between',padding:20,marginTop:10,flexWrap:'wrap',textAlign:'right'}} className="yekan alert-info"><div style={{width:'100%',marginBottom:10}}><span>خلاصه وضعیت کاربران</span></div><div><span>کاربران : </span><span>{SiteUsers}</span></div><div><span>مدیران : </span><span>{managers}</span></div><div><span>کاربران فعال : </span><span>{ActiveUsers}</span></div><div><span>کاربران غیر فعال : </span><span>{NewUsers}</span></div></div>
+      })
+      that.GetFactors();
+
+    };
+    let ECallBack = function (error) {
+      that.setState({
+        loading: 0
+      })
+      console.log(error)
+    }
+    this.Server.send("AdminApi/getuser", param, SCallBack, ECallBack)
   }
   componentDidMount() {
     let param = {
@@ -132,7 +178,7 @@ class Board extends React.Component {
           RegSmsText: response.data.result ? resp.RegSmsText : ''
         })
       }
-      that.GetFactors();
+      that.GetUsers();
 
 
 
@@ -173,30 +219,70 @@ class Board extends React.Component {
       let InPlace = 0;
       let reqBack = 0;
       let Back = 0; 
+      let Canceled_p = 0;
+      let PreparForSend_p = 0;
+      let Sended_p = 0 ;
+      let Get_p = 0;
+      let Ended_p = 0;
+      let NewFactors_p = 0;
+      let NokFactors_p = 0;
+      let reqBack_p = 0;
+      let Back_p = 0; 
       response.data.result.result.map(function (v, i) {
+
         /*v.Amount = !v.Amount ? "0" : v.Amount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         v.Credit = !v.Credit ? "0" : v.Credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         v.paykAmount = !v.paykAmount ? "0" : v.paykAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         v.finalAmount = !v.finalAmount ? "0" : v.finalAmount.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");*/
 
-        if (v.status == "1")
+        if (v.status == "1"){
           NewFactors++;
-        if (v.status == "-1")
+          NewFactors_p+=v.finalAmount||0;
+
+        }
+        if (v.status == "-1"){
           Canceled++;
-        if (v.status == "0")
+          Canceled_p+=v.finalAmount||0;
+
+
+        }
+        if (v.status == "0"){
           NokFactors++
-        if (v.status == "2")
+          NokFactors_p+=v.finalAmount||0;
+
+
+        }
+        if (v.status == "2"){
           PreparForSend++;
-        if (v.status == "3")
+          PreparForSend_p+=v.finalAmount||0;
+
+
+        }
+        if (v.status == "3"){
           Sended++;
-        if (v.status == "4")
+          Sended_p+=v.finalAmount||0;
+
+
+        }
+        if (v.status == "4"){
           Get++;
-        if (v.status == "5")
+          Get_p+=v.finalAmount||0;
+
+
+        }
+        if (v.status == "5"){
           Ended++;
-        if (v.status == "-2")
+          Ended_p+=v.finalAmount||0;
+
+        }
+        if (v.status == "-2"){
           reqBack++;
-        if (v.status == "-3")
+          reqBack_p+=v.finalAmount||0;
+        }
+        if (v.status == "-3"){
           Back++;  
+          Back_p+=v.finalAmount||0;
+        }
         if (v.InPlace && (v.status == "5" || v.status == "4" || v.status == "3" || v.status == "2" ||  v.status == "1"))
           InPlace++;
         else if(!v.InPlace && (v.status == "5" || v.status == "4" || v.status == "3" || v.status == "2" ||  v.status == "1"))
@@ -205,15 +291,20 @@ class Board extends React.Component {
 
 
       })
+      let Success = Get_p+Ended_p+Sended_p+PreparForSend_p+NewFactors_p;
+      let inCurrent = Get_p+Sended_p+PreparForSend_p+NewFactors_p;
+
       let FactorStatusDate = [Canceled, reqBack,Back,NokFactors,NewFactors,PreparForSend,Sended,Get,Ended];
       let FactorStatusLabels = ["لغو شده", "درخواست مرجوعی","مرجوع شده","ناموفق","ثبت شده","آماده ارسال","ارسال شده","تحویل شده","تسویه شده"];
 
       
       that.setState({
-        FactorStatusLabel: 'نمودار فاکتورهای ثبت شده ',
+        FactorStatusLabel: 'تعداد فاکتورها ',
         FactorStatusDate:FactorStatusDate,
         FactorStatusLabels:FactorStatusLabels,
-        GridDataFactors: response.data.result.result
+        GridDataFactors: response.data.result.result,
+        msg2:<div style={{display:'flex',justifyContent:'space-between',padding:20,marginTop:10,flexWrap:'wrap',textAlign:'right'}} className="yekan alert-success"><div style={{width:'100%',marginBottom:10}}><span>خلاصه وضعیت فروش</span></div><div style={{width:'50%'}}><span>تسویه شده : </span><span>{Ended_p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</span></div><div style={{width:'50%'}}><span>تحویل شده : </span><span>{Get_p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</span></div><div><span>ارسال شده : </span><span>{Sended_p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</span></div><div style={{width:'50%'}}><span>آماده ارسال : </span><span>{PreparForSend_p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان </span></div><div style={{width:'50%'}}> <span>ثبت شده : </span><span>{NewFactors_p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</span></div><div style={{width:'100%',color:'green',fontSize:18,marginTop:10}}><span> سفارشات جاری سیستم : </span><span>{inCurrent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</span></div><div style={{width:'100%',color:'green',fontSize:25,marginTop:20}}><span>مجموع کل سفارشات  : </span><span style={{color:'red'}}>{Success.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</span></div>  </div>
+
       })
     };
     let ECallBack = function (error) {
@@ -237,7 +328,12 @@ class Board extends React.Component {
           </div>
         }
         <div className="row justify-content-center">
-
+          <div className="col-12">
+            {this.state.msg1}
+          </div>
+          <div className="col-12">
+            {this.state.msg2}
+          </div>
           <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
           {this.state.FactorStatusDate &&
             <Charts data={this.state.FactorStatusDate} labels={this.state.FactorStatusLabels} label={this.state.FactorStatusLabel}  backgroundColor={['#d23e3e','#62d23e','#0d2904','#3c2acc','#94a21e','#f1b42b','#cd94d8','#d23e3e','#2adad2','#e4d8bd']} type="bar" />

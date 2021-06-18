@@ -105,7 +105,6 @@ class Pics extends React.Component {
             loading: 0,
             GridDataExtra: response.data.result
           })
-          Alert.success('عملیات با موفقیت انجام شد', 5000);
         }, function (error) {
           that.setState({
             loading: 0
@@ -802,11 +801,11 @@ class Pics extends React.Component {
               <div>
                 <Panel header="بارگزاری فایل و دریافت لینک" style={{ marginTop: 50, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
                     <div className="row">
-                      <div className="col-12" style={{ textAlign: 'right' }}>
-                        <RadioButton inputId="TypeOfFile1" name="TypeOfFile" value="1" onChange={(e) => this.setState({ TypeOfFile: e.value, GridDataExtra: [] })} checked={this.state.TypeOfFile === '1'} />
-                        <label htmlFor="TypeOfFile1" className="p-checkbox-label yekan"> تصویر </label>
-                        <RadioButton inputId="TypeOfFile2" name="TypeOfFile" value="2" onChange={(e) => this.setState({ TypeOfFile: e.value, GridDataExtra: [] })} checked={this.state.TypeOfFile === '2'} />
-                        <label htmlFor="TypeOfFile2" className="p-checkbox-label yekan"> فایل </label>
+                      <div className="col-12" style={{ textAlign: 'right',display:'flex',alignItems:'baseline' }}>
+                        <RadioButton inputId="TypeOfFile1" name="TypeOfFile" value="1" style={{paddingRight:10}} onChange={(e) => this.setState({ TypeOfFile: e.value, GridDataExtra: [] })} checked={this.state.TypeOfFile === '1'} />
+                        <label htmlFor="TypeOfFile1" className="p-checkbox-label yekan" style={{paddingRight:10}}> تصویر </label>
+                        <RadioButton inputId="TypeOfFile2" name="TypeOfFile" value="2" style={{paddingRight:10}} onChange={(e) => this.setState({ TypeOfFile: e.value, GridDataExtra: [] })} checked={this.state.TypeOfFile === '2'} />
+                        <label htmlFor="TypeOfFile2" className="p-checkbox-label yekan" style={{paddingRight:10}}> فایل </label>
                       </div>
                       <div className="col-2" >
                         <div className="group">

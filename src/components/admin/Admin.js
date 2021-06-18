@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import axios from 'axios'  
 import {BrowserRouter , Route,withRouter,Redirect} from 'react-router-dom'
-import Login  from './Login.js'
+import Login  from '../Login.js'
 import Management  from './Management.js'
+import Server from './../Server.js'
 
 class Admin extends React.Component {
   constructor(props){
     super(props);
+    this.Server = new Server();
+
     this.state={
       Show:false,
       Aute :  this.props.Autenticated ?  this.props.Autenticated : false,
-      url:'https://api.emdcctv.com/AdminApi/'/*
-      url:'http://localhost:3000/MainApi/'*/
+      absoluteUrl: this.Server.getAbsoluteUrl(),
+      url: this.Server.getUrl(1)
 
     }
     axios.post(this.state.url+'checktoken', {

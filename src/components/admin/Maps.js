@@ -235,10 +235,10 @@ class Maps extends React.Component {
 
             <h2 style={{ textAlign: "center", fontSize: "14px", marginTop: 15 }} className="irsans alert-primary">لیست اعضا</h2>
             <DataTable ref={(el) => this.dt = el} value={this.state.GridDataUsers} selectionMode="single" selection={this.state.selectedUser} onSelectionChange={e => this.selectedUserChange(e.value)}>
-              <Column field="username" filter={true} header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="name" filter={true} header="نام" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="username" filter={true} filterMatchMode="contains" header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="name" filter={true} filterMatchMode="contains" header="نام" className="irsans" style={{ textAlign: "center" }} />
               <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="level" header="سطح" className="irsans" style={{ textAlign: "center" }} filter={true} filterElement={levelFilter} />
+              <Column field="level" header="سطح" className="irsans" style={{ textAlign: "center" }} filter={true} filterMatchMode="contains" filterElement={levelFilter} />
               <Column field="map" header="دسترسی" className="irsans" style={{ textAlign: "center" }} />
             </DataTable>
           </div>

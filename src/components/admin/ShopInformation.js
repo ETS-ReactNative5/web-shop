@@ -189,7 +189,10 @@ class ShopInformation extends React.Component {
         that.setState({
           ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
           SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false,
-          Raymand: response.data.result[0] ? response.data.result[0].Raymand : false
+          Raymand: response.data.result[0] ? response.data.result[0].Raymand : false,
+          System: response.data.result[0] ? response.data.result[0].System : "shop",
+          SystemTitle: response.data.result[0]?.System =="shop" ? "فروشگاه" : "سایت"
+
 
 
         })
@@ -415,7 +418,7 @@ class ShopInformation extends React.Component {
                   <div className="col-lg-7">
                     <div className="group">
                       <input className="form-control yekan" autoComplete="off" type="text" value={this.state.name} name="name" onChange={(event) => this.setState({ name: event.target.value })} required="true" />
-                      <label className="yekan">نام فروشگاه</label>
+                      <label className="yekan">نام {this.state.SystemTitle}</label>
                     </div>
                   </div>
                   
@@ -424,7 +427,7 @@ class ShopInformation extends React.Component {
                     <div className="group">
 
                       <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.call} name="call" onChange={(event) => this.setState({ call: event.target.value })} required="true" />
-                      <label className="yekan">اطلاعات تماس فروشگاه</label>
+                      <label className="yekan">اطلاعات تماس {this.state.SystemTitle}</label>
 
                     </div>
                   </div>
@@ -458,10 +461,11 @@ class ShopInformation extends React.Component {
                     <div className="group">
 
                       <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.about} name="about" onChange={(event) => this.setState({ about: event.target.value })} required="true" />
-                      <label className="yekan">درباره فروشگاه</label>
+                      <label className="yekan">درباره {this.state.SystemTitle}</label>
 
                     </div>
                   </div>
+                  {this.state.System == "shop" &&
                   <div className="col-12">
                     <div style={{textAlign:'left'}} >
                       <img src={this.state.barCode} style={{width:300,marginBottom:30}} />
@@ -486,6 +490,7 @@ class ShopInformation extends React.Component {
                     </div>
 
                   </div>
+                  }
                   <div className="col-12" style={{ marginTop: 50 }}>
                     <hr />
                   </div>
@@ -498,7 +503,7 @@ class ShopInformation extends React.Component {
 
                   </div>
                   }
-                  {this.state.Opened && !this.state.ProductBase &&
+                  {this.state.Opened && !this.state.ProductBase && this.state.System =="shop" &&
                     <div className="col-lg-12">
                       <div className="row">
                         <div className="col-lg-2 col-12">
@@ -801,7 +806,7 @@ class ShopInformation extends React.Component {
                     <hr />
                   </div>
                   }
-                  {!this.state.ProductBase &&
+                  {!this.state.ProductBase && this.state.System =="shop" &&
                   <div className="col-7">
                     <div className="group">
 
@@ -811,13 +816,15 @@ class ShopInformation extends React.Component {
                     </div>
                   </div>
                   }
-                  <div className="col-lg-7" style={{ marginTop: 10 }}>
-                    <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }} >
-                      <Checkbox inputId="AllowCredit" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                      <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>امکان پرداخت از  کیف پول {this.state.Raymand ? '/ مهرکارت' : ''} وجود دارد</label>
+                  {this.state.System == "shop" &&
+                    <div className="col-lg-7" style={{ marginTop: 10 }}>
+                      <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }} >
+                        <Checkbox inputId="AllowCredit" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
+                        <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>امکان پرداخت از  کیف پول {this.state.Raymand ? '/ مهرکارت' : ''} وجود دارد</label>
+                      </div>
                     </div>
-                  </div>
-                  {this.state.AllowCredit &&
+                  }
+                  {this.state.AllowCredit && this.state.System =="shop" &&
                     <div className="col-lg-6" >
                       <div className="row">
                         <div className="col-12">
@@ -882,7 +889,7 @@ class ShopInformation extends React.Component {
                     </div>
                   }
                     <div className="col-6" style={{ marginTop: 20 }}>
-                      <img src={this.state.SpecialPic} />
+                      <img src={this.state.SpecialPic} style={{maxHeight:150}} />
                     </div>
                   <div className="col-6" style={{ marginTop: 20 }} >
                     <div className="group">
@@ -891,7 +898,7 @@ class ShopInformation extends React.Component {
                     </div>
                   </div>
                   <div className="col-6" style={{ marginTop: 20 }}>
-                    <img src={this.state.logo} />
+                    <img src={this.state.logo} style={{maxHeight:150}} />
                   </div>
                   {this.state.main &&
                     <div className="col-6" style={{ marginTop: 20 }} >
@@ -903,10 +910,10 @@ class ShopInformation extends React.Component {
                   }
                   {this.state.main &&
                     <div className="col-6" style={{ marginTop: 20 }}>
-                      <img src={this.state.logoCopyRight} />
+                      <img src={this.state.logoCopyRight} style={{maxHeight:150}} />
                     </div>
                   }
-
+                  { this.state.System =="shop" &&
                   <div className="col-12" style={{ marginTop: 20 }}>
 
                     <Fieldset legend="تنظیمات ارسال کالا" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
@@ -951,7 +958,7 @@ class ShopInformation extends React.Component {
                   </div>
                   <div className="col-lg-12">
                     <div style={{ marginTop: 30, overflow: 'hidden' }}>
-                      <label className="yekan" style={{margin:20}}>آدرس فروشگاه : {this.state.address}</label>
+                      <label className="yekan" style={{margin:20}}>آدرس {this.state.SystemTitle} : {this.state.address}</label>
                       <Mapir
                       center={[this.state.longitude || this.state.lon,  this.state.latitude  || this.state.lat]}
                       onClick={this.reverseFunction}
@@ -965,7 +972,7 @@ class ShopInformation extends React.Component {
                     <div className="group" style={{display:'none'}}>
 
                       <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.address} name="address" onChange={(event) => this.setState({ address: event.target.value })} required="true" />
-                      <label className="yekan">آدرس فروشگاه</label>
+                      <label className="yekan">آدرس {this.state.SystemTitle}</label>
 
                     </div>
                   </div>
@@ -973,6 +980,7 @@ class ShopInformation extends React.Component {
                       </div>
                     </Fieldset>
                   </div>
+                  }
 
                   <div className="col-lg-12">
                     <Button style={{ marginLeft: 5, marginTop: 10 }} color="primary" onClick={this.EditShopInformation}>ویرایش اطلاعات</Button>

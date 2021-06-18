@@ -112,7 +112,7 @@ class Header2 extends React.Component {
 	return string.join('');
 }
  getCategory(){
-	axios.post(this.state.url+'GetCategory')
+	axios.post(this.state.url+'GetCategory',{ condition: {} })
 	.then(response => {
 		   let resp = [];
 		   
@@ -121,14 +121,18 @@ class Header2 extends React.Component {
 		   for(let i=0;i<response.data.result.length;i++){
 			   let children=[];
 			   response.data.result.map(function(item,index){
-				if(response.data.result[i]._id==item.Parent){
+				if(response.data.result[i]._id==item.Parent && !item.Deactivate){
 					children.push(item);
 					if(forRem.indexOf(item._id) == -1)
 						forRem.push(item._id)
 					//response.data.result.splice(i,1)
 				}
+				if(forRem.indexOf(item._id) == -1 && item.Deactive){
+					forRem.push(item._id)
+				}
 					
 			   })
+			   
 			   //if(children.length > 0)
 			   	response.data.result[i].children=children
 		   }
@@ -163,7 +167,7 @@ class Header2 extends React.Component {
 	    console.log(error)
 	})
 
- }
+   }
    GoToProduct(event){
 	this.setState({
 		id:event.currentTarget.id

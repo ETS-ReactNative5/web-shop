@@ -4,6 +4,7 @@ import {withRouter , NavLink ,Link,Redirect} from 'react-router-dom'
 import axios from 'axios'  
 import Header1  from './Header1.js'
 import Header2  from './Header2.js'
+import Header  from './Header.js'
 
 import {TabView,TabPanel} from 'primereact/tabview';
 import { Button,Alert } from 'reactstrap';
@@ -61,7 +62,8 @@ class Products extends React.Component {
             if (response.data.result) {
                 that.setState({
                     ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
-                    SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false
+                    SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false,
+                    System: response.data.result[0] ? response.data.result[0].System : "shop"
                 })
             }
             that.getBlogs(); 
@@ -122,7 +124,8 @@ class Products extends React.Component {
                 Blog:response.data.result,
                 loading:0
             })
-            that.getProducts();
+            if(that.state.System == "shop")
+                that.getProducts();
             that.myRef.current.scrollTo(0,0)
 
         };
@@ -195,14 +198,24 @@ class Products extends React.Component {
     }
     return (
       <div ref={this.myRef}>  
+      {this.state.System=="shop" ?
+        <div>
+            
         <Header1 /> 
-        <Header2 /> 
+        <Header2 />
+        </div>
+        :
+        <div>
+          <Header /> 
+ 
+        </div>
+        }
         {!this.state.loading ? 
         <div className="single_product firstInPage blogs" style={{direction:'rtl'}} >
         
 		<div className="container">
             <div className="row" >
-                {this.state.ProductBase &&
+                {this.state.ProductBase && this.state.System=="shop" &&
                 <div className="col-md-3 col-12 order-md-1 order-2" style={{marginTop:50,opacity:'0.8'}} >
                 {this.state.Newproducts.map((item,index) => {
                     var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
@@ -243,11 +256,11 @@ class Products extends React.Component {
                 }
                 </div>
                 }
-                <div className={this.state.ProductBase ? "col-md-9 col-12 order-md-2 order-1" : "col-md-12 col-12 order-md-2 order-1"} style={{marginTop:50}} >
+                <div className={(this.state.ProductBase && this.state.System=="shop") ? "col-md-9 col-12 order-md-2 order-1" : "col-md-12 col-12 order-md-2 order-1"} style={{marginTop:50}} >
                     {this.state.id && this.state.Blog[0] ? 
                     <div>
                         <div className="iranyekanwebblack" style={{textAlign:'center',fontSize:22}}>{this.state.Blog[0].title}</div>
-                        <div dangerouslySetInnerHTML={{ __html: this.state.Blog[0].content }} style={{textAlign:'right'}} />
+                        <div dangerouslySetInnerHTML={{ __html: this.state.Blog[0].content }} className="blog" style={{textAlign:'right'}} />
                     </div>
                     :
                     <div>

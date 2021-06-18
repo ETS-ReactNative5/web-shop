@@ -159,6 +159,9 @@ class Edit_User_Credit extends React.Component {
   }
   EditCredit(id) {
     let that = this;
+
+    if(!this.state.newCredit)
+      return;
     this.setState({
       loading: 1
     })
@@ -256,7 +259,9 @@ class Edit_User_Credit extends React.Component {
       name: "",
       username: "",
       credit: 0,
-      newCredit:0
+      newCredit:'',
+      desc:'',
+      payType:1
     });
 
   }
@@ -272,7 +277,7 @@ class Edit_User_Credit extends React.Component {
     var p = [];
     this.setState({
       selectedId: value._id,
-      newCredit:0,
+      newCredit:'',
       name: value.name,
       mail: value.mail,
       company: value.company,
@@ -398,6 +403,9 @@ class Edit_User_Credit extends React.Component {
     this.Server.send("AdminApi/getuser", param, SCallBack, ECallBack)
   }
   rowClass(data) {
+    if(data.credit)
+      data.credit = data.credit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
     return {
       'row-highlight1':0
     }
@@ -431,7 +439,7 @@ class Edit_User_Credit extends React.Component {
                   <label className="IRANYekan">وضعیت کاربری را انتخاب کنید</label>
 
                   <SelectButton value={this.state.userType} options={[{label:'کاربران',value:0},{label:'پذیرندگان',value:1}]} onChange={(e) => {
-                    this.setState({userType:e.value})
+                    this.setState({userType:e.value === null ? this.state.userType : e.value,searchName:'',GridDataUsers:[]})
                   
                   }}></SelectButton>
                   </div>
@@ -507,15 +515,15 @@ class Edit_User_Credit extends React.Component {
               }
                 <div className="col-lg-12" style={{textAlign:'right'}}>
                   <div style={{marginRight:10}}>
-                  <label className="IRANYekan">نواع تراکنش</label>
+                  <label className="IRANYekan">نوع تراکنش</label>
 
-                  <SelectButton value={this.state.payType} options={[{label:'واریز',value:1},{label:'برداشت',value:0}]} onChange={(e) => this.setState({payType:e.value})}></SelectButton>
+                  <SelectButton value={this.state.payType} options={[{label:'واریز',value:1},{label:'برداشت',value:0}]} onChange={(e) => {this.setState({payType:e.value === null ? this.state.payType : e.value})}}></SelectButton>
                   </div>
                 </div>
                 <div className="col-lg-6" style={{marginTop:10}}>
                   <div className="group">
                     <input className="form-control irsans"  autoComplete="off" type="text" value={this.state.newCredit} name="newCredit" onChange={this.handleChangeNewCredit} required="true" />
-                    <label>مبلغ(تومان)</label>
+                    <label>مبلغ(ریال)</label>
                   </div>
                 </div>
                 <div className="col-lg-12" style={{marginTop:10}}>
