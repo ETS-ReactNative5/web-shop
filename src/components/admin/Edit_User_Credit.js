@@ -34,6 +34,7 @@ class Edit_User_Credit extends React.Component {
       NewFactors: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewFactors) ? this.props.location.state.NewFactors : null,
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
       payType:1,
+      selectedWallet:{},
       GridDataUsers: [],
       GridDataFactors: [],
       visibleCreateUser: false,
@@ -114,6 +115,7 @@ class Edit_User_Credit extends React.Component {
           Raymand: response.data.result[0].Raymand,
         })
       }
+      that.GetWallets();
 
 
 
@@ -138,7 +140,6 @@ class Edit_User_Credit extends React.Component {
         loading: 1
       })
       let SCallBack = function (response) {
-        debugger;
         response.data.result[0].status = response.data.result[0].AllowCredit ? "متصل به مهرکارت" : "مهرکارت ندارد"
 
         that.setState({
@@ -159,6 +160,7 @@ class Edit_User_Credit extends React.Component {
   }
   EditCredit(id) {
     let that = this;
+    debugger;
 
     if(!this.state.newCredit)
       return;
@@ -176,7 +178,8 @@ class Edit_User_Credit extends React.Component {
       Amount: this.state.newCredit.toString().replace(/,/g, ""),
       desc: this.state.desc,
       ShopId:this.state.userType == 1 ? this.state.GridDataUsers[0]._id : null,
-      Step:2
+      Step:2,
+      wallet:this.state.wallet
     };
     let SCallBack = function (response) {
       that.setState({
@@ -275,8 +278,21 @@ class Edit_User_Credit extends React.Component {
   selectedUserChange(value) {
     let that = this;
     var p = [];
+    let wallet={};
+    for(let w of this.state.wallets){
+      if(w.value == this.state.wallet)
+        wallet = w;
+    }
+    let walletCredit={};
+    for(let w of value.wallet){
+      if(w.name == this.state.wallet)
+        walletCredit = w.credit;
+    }
+    value.wallet = value.wallet || {};
     this.setState({
       selectedId: value._id,
+      selectedWallet:wallet,
+      walletName:wallet.label,
       newCredit:'',
       name: value.name,
       mail: value.mail,
@@ -286,7 +302,8 @@ class Edit_User_Credit extends React.Component {
       pass: value.password,
       pass2: value.password,
       address: value.address,
-      credit: value.credit ? value.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value.credit,
+      credit: wallet.value == "mehr" ? (value.credit ? value.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value.credit) : 
+              (walletCredit ? walletCredit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : (walletCredit||0)),
       RaymandAcc:value.RaymandAcc,
       RaymandUser:value.RaymandUser,
       ShopId: value.shopId,
@@ -331,6 +348,7 @@ class Edit_User_Credit extends React.Component {
       let that = this;
       this.setState({ brand: event.query, Count: 0 });
       let param = {};
+      debugger;
       if(this.state.userType == 0 ){
          param = {
           title: event.query,
@@ -338,10 +356,16 @@ class Edit_User_Credit extends React.Component {
           name:["name","username","RaymandAcc","RaymandUser"]
         };
       }else{
+        let shops=[];
+        for(let w of this.state.wallets){
+          if(w.value == this.state.wallet)
+            shops = w.shops;
+        }
          param = {
           title: event.query,
           table:"shops",
-          name:["name","name"]
+          condition:{convertToObject:1,key:"_id",value:shops},
+          name:"name"/*["name","name"]*/
         };
       }
       
@@ -376,7 +400,35 @@ class Edit_User_Credit extends React.Component {
     }
 
 
-
+    GetWallets() {
+      let that = this;
+      let param = {
+        token: localStorage.getItem("api_token")
+      };
+      this.setState({
+        loading: 1
+      })
+      let SCallBack = function (response) {
+        let wallets = [];
+        for(let resp of response.data.result){
+          wallets.push({label:resp.name,value:resp.latinName,shops:resp.shops});
+        }
+        that.setState({
+          wallet:wallets[0]?.value,
+          wallets: wallets
+        })
+        that.setState({
+          loading: 0
+        })
+      };
+      let ECallBack = function (error) {
+        console.log(error)
+        that.setState({
+          loading: 0
+        })
+      }
+      this.Server.send("AdminApi/GetWallets", param, SCallBack, ECallBack)
+    }
   GetUsers(id) {
     let that = this;
     this.setState({
@@ -435,6 +487,16 @@ class Edit_User_Credit extends React.Component {
         }
         <div className="row justify-content-center">
         <div className="col-lg-12" style={{textAlign:'right',marginTop:60}}>
+                  <div style={{marginRight: 10,border: "1px solid #eee",borderRadius: 10,padding: 10}}>
+                  <label className="IRANYekan">نوع کیف پول را انتخاب کنید</label>
+
+                  <SelectButton value={this.state.wallet} options={this.state.wallets} onChange={(e) => {
+                    this.setState({wallet:e.value === null ? this.state.wallet : e.value,searchName:'',GridDataUsers:[]})
+                  
+                  }}></SelectButton>
+                  </div>
+          </div>
+        <div className="col-lg-12" style={{textAlign:'right',marginTop:20}}>
                   <div style={{marginRight:10}}>
                   <label className="IRANYekan">وضعیت کاربری را انتخاب کنید</label>
 
@@ -487,7 +549,7 @@ class Edit_User_Credit extends React.Component {
 
         </div>
         <Dialog header={"اصلاح"} visible={this.state.visibleCreateUser} width="800px" footer={footer} minY={70} maxY={400} onHide={this.onHide} maximizable={true}>
-
+          <p style={{textAlign:'right',fontSize:22,fontFamily:'YekanBakhFaBold',marginBottom:'20px !important'}}>کیف پول جاری : {this.state.selectedWallet.label}</p>
           <form style={{ maxWidth: 800, maxHeight: 450, marginBottom: 10, maxWidth: 1000 }}  >
             <div className="row">
               <div className="col-lg-6 col-12">

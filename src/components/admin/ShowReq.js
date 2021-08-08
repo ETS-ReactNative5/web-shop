@@ -255,26 +255,26 @@ class ShowReq extends React.Component {
             <div className="row" style={{ margin: 20 }}>
               
               <div className="col-lg-7 col-12 yekan" style={{ textAlign: "right",backgroundColor:'#f5f5f54a',padding:10,borderRadius:10 }}>
-                <p className="yekan" style={{fontSize:15,color:'blue'}}>{car.request ? car.request[0].title : car.title}</p>
-                <p className="yekan" style={{fontSize:18}}>{car.request ? car.request[0].desc : car.desc}</p>
+                <p className="yekan" style={{fontSize:15,color:'blue'}}>{car.request[0] ? car.request[0].title : car.title}</p>
+                <p className="yekan" style={{fontSize:18}}>{car.request[0] ? car.request[0].desc : car.desc}</p>
 
               </div>
               <div className="col-lg-3 col-12 yekan" style={{ textAlign: "right" }}>
-                <div>شماره درخواست : {car.request ? car.request[0].number : car.number}</div>
+                <div>شماره درخواست : {car.request[0] ? car.request[0].number : car.number}</div>
 
                 <p className="yekan" >فرستنده : {car.User}</p>
                 <p className="yekan" style={{color:'#34d634',display:'none'}} >گیرنده : {car.RecieverName}</p>
 
-                <p className="yekan" >اولویت : {car.request ? car.request[0].Priority : car.Priority}</p>
-                <p className="yekan" >{car.request ? car.request[0].Time : car.Time} : {car.request ? car.request[0].Date : car.Date}</p>
-                {((car.request && car.request[0].status != 1) || (!car.request && car.status != 1) ) &&
+                <p className="yekan" >اولویت : {car.request[0] ? car.request[0].Priority : car.Priority}</p>
+                <p className="yekan" >{car.request[0] ? car.request[0].Time : car.Time} : {car.request[0] ? car.request[0].Date : car.Date}</p>
+                {((car.request[0] && car.request[0].status != 1) || (!car.request && car.status != 1) ) &&
 
                   <p className="yekan" style={{color:'red'}} >وضعیت : بایگانی</p>
 
                 }
-                {((car.request && car.request[0].attach) || car.attach) &&
+                {((car.request[0] && car.request[0].attach) || car.attach) &&
 
-                <a href={car.request ? car.request[0].attach : car.attach} className="yekan" target="_blank"  >
+                <a href={car.request[0] ? car.request[0].attach : car.attach} className="yekan" target="_blank"  >
                   <i className="fa fa-paperclip" style={{paddingLeft:5}} />
                   دانلود فایل ضمیمه
                 </a>
@@ -285,9 +285,9 @@ class ShowReq extends React.Component {
               </div>
               <div className="col-lg-2 col-12 yekan" style={{ textAlign: "center" }}>
                 {this.state.activeIndex == 1 ?
-                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>مشاهده</button>
+                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request[0] ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>مشاهده</button>
                 :
-                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>پاسخ</button>
+                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request[0] ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>پاسخ</button>
 
                 }
               </div>
