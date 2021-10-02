@@ -5,8 +5,8 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { Button } from 'reactstrap';
@@ -320,7 +320,7 @@ class SiteSettings extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <Panel header="تنظیمات کلی سایت" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <div className="row" >
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>

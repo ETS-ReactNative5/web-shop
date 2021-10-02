@@ -59,7 +59,6 @@ class CatList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.Server = new Server();
-        this.itemTemplate = this.itemTemplate.bind(this);
 		this.onHide = this.onHide.bind(this);
 
 		this.state = {
@@ -159,60 +158,6 @@ class CatList extends React.Component {
 		}
 		that.Server.send("MainApi/GetProductsPerCat", { id: param._id, limit: 10, getSubs: 1, levelOfUser: that.state.levelOfUser, Exist: true }, SCallBack, ECallBack)
 	}
-	itemTemplate(item, layout) {
-		var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
-		return (
-		<div  >
-		<span className="fa fa-plus-circle text-info" style={{ top: 0, fontSize: 30, right: 30, cursor: 'pointer' }}
-			onClick={() => {
-				this.setState({
-					displayProductComp: true
-				})
-			}} >
-		</span>
-
-		<div className="p-col-12 c-product-box__img" align="center" >
-			<img src={img} alt="" />
-		</div>
-		<div className="p-col-12 car-data" style={{ marginTop: 10 }}>
-			<div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 14 }}>{item.title}</div>
-			{item.subTitle && item.subTitle != "-" &&
-				<div className="car-title yekan" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 12, marginTop: 5, marginBottom: 5 }} >{item.subTitle}</div>
-			}
-			{
-				item.number > 0
-					?
-					<div>
-						{(this.state.UId || !item.ShowPriceAftLogin) &&
-							<div>
-								{
-									((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" ?
-										<div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#a09696' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
-										:
-										<div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#a09696', height: 16 }} ></div>
-								}
-								<div className="car-subtitle yekan" style={{ textAlign: 'center' }} ><span className="iranyekanweblight" style={{ float: 'left', fontSize: 11, marginTop: 10 }}>تومان</span> <span className="iranyekanweblight" style={{ fontSize: 20 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100)).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> </div>
-							</div>
-						}
-					</div>
-					:
-					(this.state.UId || !item.ShowPriceAftLogin) &&
-					<div>
-
-						<div className="car-subtitle yekan" style={{ height: 22 }} ></div>
-						<div className="car-subtitle yekan" style={{ textAlign: 'center' }} ><span className="iranyekanweblight" style={{ fontSize: 14, marginTop: 10, color: 'red' }}>ناموجود</span> </div>
-					</div>
-			}
-
-		</div>
-		{
-			item.number > 0 && ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" &&
-			<div className="car-title yekan off" style={{ position: 'absolute', top: 0 }} >{this.persianNumber(((!item.NoOff ? parseInt(this.props.off) : 0) + item.off))} %</div>
-
-		}
-		</div>
-		)
-	}
 	GoToProduct(item){
 		if(!this.props.ProductBase && item.product_detail && item.product_detail.length > 1){
 			this.setState({
@@ -252,7 +197,7 @@ class CatList extends React.Component {
 							<div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ {this.state.CatData.name} </span> <Link to={`${process.env.PUBLIC_URL}/Category?getSubs=1&id=` + this.state.CatData.id} className="title iranyekanwebmedium" style={{ fontSize: 13, float: 'left', color: '#000', textDecoration: 'none' }}>    مشاهده محصولات  ...</Link></div>
 							<Swiper {...params}>
 								{this.state.CatData.data.map((item, index) => {
-									var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
+									var img = this.state.absoluteUrl + item.fileUploaded?.split("public")[1];
 									//  url = 'Products?id='+((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)+'';
 										
 									return (

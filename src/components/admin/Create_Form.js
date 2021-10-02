@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import { Multiselect } from 'multiselect-react-dropdown';
 import Server from './../Server.js'
@@ -73,7 +73,7 @@ class Create_Forms extends React.Component {
   SetForms() {
     let that = this;
     let Filters = []
-
+    debugger;
     this.state.FilterListForDropDown.map((v,index)=>{
       if(v.checked){
         Filters.push({
@@ -323,7 +323,17 @@ class Create_Forms extends React.Component {
         <div className="product-item">
 
           <div className="product-list-detail" style={{ display: 'flex' }}>
-            <Checkbox inputId={id} value={item.id} style={{ verticalAlign: 'text-bottom' }} onChange={this.ChangeFilterCheckBoxs} checked={this.state.FilterListForDropDown.filter(function (v) { return v.id == item.id })[0]?.checked == false ? false : true}></Checkbox>
+            <Checkbox inputId={id} value={item.id} style={{ verticalAlign: 'text-bottom' }} onChange={(event)=>{
+              let FilterListForDropDown = this.state.FilterListForDropDown;
+              for(let i=0;i<FilterListForDropDown.length;i++){
+                if(event.value ==  FilterListForDropDown[i].id)
+                  FilterListForDropDown[i].checked = event.checked
+              }
+              this.setState({
+                FilterListForDropDown:FilterListForDropDown
+              })
+            
+            }} checked={this.state.FilterListForDropDown.filter(function (v) { return v.id == item.id })[0]?.checked == false ? false : true}></Checkbox>
 
             <h5 className="p-mb-2">{item.name}</h5>
           </div>
@@ -341,7 +351,7 @@ class Create_Forms extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <div className="row" >
               <div className="col-6" style={{ textAlign: 'center' }}>
                 <button className="btn btn-primary irsans" onClick={this.CreateForm} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>ساخت فرم جدید</button>
@@ -420,7 +430,7 @@ class Create_Forms extends React.Component {
                     />
 
                  </div>
-                 <OrderList value={this.state.FilterListForDropDown} itemTemplate={itemTemplate} header="مشخصات محصول" onChange={(e) => {this.setState({ FilterListForDropDown: e.value })}}></OrderList>
+                 <OrderList value={this.state.FilterListForDropDown} itemTemplate={itemTemplate} header="اختصاص فیلد" onChange={(e) => {this.setState({ FilterListForDropDown: e.value })}}></OrderList>
 
               </div>
               <div className="col-lg-12">

@@ -228,8 +228,13 @@ class Category extends React.Component {
                 <br />
             </div>
 
+                {car.Seller && car.Seller[0] && car.Seller[0].name ?
+                            <div style={{ textAlign: 'right' }}><i className="fas fa-id-card-alt" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="iranyekanwebmedium">فروشنده:</span> <span className="YekanBakhFaBold">{car.Seller && car.Seller[0] && car.Seller[0].name}</span></div>
 
-            <div style={{ textAlign: 'right' }}><i className="fas fa-id-card-alt" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="iranyekanwebmedium">فروشنده:</span> <span className="YekanBakhFaBold">{Seller.name}</span></div>
+                :
+                <div style={{ textAlign: 'right' }}><i className="fas fa-id-card-alt" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="iranyekanwebmedium"></span></div>
+       
+                }
             {this.state.ProductBase ?
                 <div style={{ textAlign: 'right' }}><i className="fas fa-truck" style={{ paddingRight: 8, paddingLeft: 8, fontSize: 16 }} ></i><span className="YekanBakhFaBold">زمان ارسال: {this.persianNumber(car.PrepareTime || "3")} روز کاری</span></div>
             :

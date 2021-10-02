@@ -31,6 +31,8 @@ class Cart extends React.Component {
         //alert(1)
         this.itemTemplate = this.itemTemplate.bind(this);
         this.Payment = this.Payment.bind(this);
+        this.SetOffCode = this.SetOffCode.bind(this);
+
         this.computeReduce = this.computeReduce.bind(this);
         this.Server = new Server();
         this.toast = React.createRef();
@@ -82,7 +84,6 @@ class Cart extends React.Component {
         e.preventDefault();
         const formData = new FormData();
         let name = e.target.name;
-        debugger;
         formData.append('myImage', e.target.files[0]);
         formData.append('ExtraFile', 1);
         
@@ -143,6 +144,9 @@ class Cart extends React.Component {
         }
 
 
+    }
+    SetOffCode(){
+        alert("در حال پیاده سازی ...")
     }
     Payment() {
         let that = this;
@@ -237,12 +241,12 @@ class Cart extends React.Component {
                             , SellerAddress: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].address : ""), SellerLat: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].latitude : ""), SellerLon: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].longitude : "")
                             , SellerMobile: ((this.state.GridData[i].Seller && this.state.GridData[i].Seller[0]) ? this.state.GridData[i].Seller[0].mobile : ""), number: this.state.GridData[i].number, CatId: this.state.GridData[i].products[0].category_id, title: this.state.GridData[i].products[0].title, subTitle: this.state.GridData[i].products[0].subTitle, desc: this.state.GridData[i].products[0].desc, price: (this.roundPrice(this.state.GridData[i].number * this.state.GridData[i].price)), UnitPrice: this.state.GridData[i].price,
                              credit: (this.state.InRaymand && this.state.GridData[i].getFromCredit > 0) ? parseInt(this.state.GridData[i].getFromCredit.toString()+"0") : this.state.GridData[i].getFromCredit ,
-                              SellerId: this.state.GridData[i].products[0].SellerId, fileUploaded: this.state.GridData[i].products[0].fileUploaded, status: "0", color: this.state.GridData[i].Color, size: this.state.GridData[i].Size });
+                              SellerId: this.state.GridData[i].products[0].SellerId, fileUploaded: this.state.GridData[i].products[0].fileUploaded, status: "0", color: this.state.GridData[i].Color, size: this.state.GridData[i].Size,
+                              RemainedNumber:((this.state.GridData[i].product_detail && this.state.GridData[i].product_detail[0]) ? this.state.GridData[i].product_detail[0].number - this.state.GridData[i].number : this.state.GridData[i].products[0].number - this.state.GridData[i].number) });
                     }
                     that.setState({
                         StepNumber: 3
                     })
-    
                     let url = that.state.ActiveBank == "z" ? this.state.url + 'payment' : this.state.url + 'payment2';
                     let param = {
                         paykAmount: this.state.paykAmount,
@@ -514,7 +518,6 @@ class Cart extends React.Component {
                 loading:0,
                 CatId: (response.data.result[0] && response.data.result[0].products && response.data.result[0].products.length > 0) ? response.data.result[0].products[0].category_id : null
             })
-            debugger;
             that.props.dispatch({
                 type: 'LoginTrueUser',
                 CartNumber: that.state.CartNumber,
@@ -989,7 +992,7 @@ class Cart extends React.Component {
                     {this.state.GridData.length > 0 &&
                         <div className="col-lg-4">
 
-                            <div className="card mt-md-0 mt-5" style={{ padding: 10, borderRadius: 20 }}>
+                            <div className="card mt-md-0 mt-5" style={{ padding: 40, borderRadius: 20 }}>
 
                                 <div style={{ textAlign: 'left', marginRight: 10, borderBottom: '1px solid #eee' }} >
                                     <p className="YekanBakhFaBold">موجودی کیف پول : {this.state.credit?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} تومان</p>
@@ -1022,6 +1025,23 @@ class Cart extends React.Component {
 
                                     </p>
                                 }
+                                {this.state.AcceptAddress &&
+                                    <div className="row" >
+                                    <div className="col-md-9 col-12" >
+                                        <div className="group">
+                                            <input className="form-control YekanBakhFaBold" placeholder="کد تخفیف" autoComplete="off" type="text" value={this.state.ReducePrice} name="ReducePrice" onChange={(event) => { this.setState({ offCode: event.target.value }) }} required="true" style={{direction:'ltr'}} />
+                                        </div>
+
+                                    </div>
+                                    <div className="col-md-3 col-12" >
+                                        <div className="group" style={{textAlign:'center'}}>
+                                            <button className="btn btn-info YekanBakhFaMedium"  disabled={!this.state.offCode} onClick={this.SetOffCode}>ثبت </button>
+                                        </div>
+
+                                    </div>
+                                    </div>
+                                }
+                                
                                 {(this.state.ActiveBank != "none" && this.state.ActiveBank != "inPlace" && this.state.ActiveBank != "Cheque"  ) ?
                                     <button className="btn btn-success YekanBakhFaMedium" style={{ marginTop: 40, marginBottom: 10 }} disabled={(this.state.AcceptAddress && (!this.state.Address || this.state.Address == ""))} onClick={this.Payment}>{this.state.AcceptAddress ? <span>پرداخت</span> : <span>ادامه فرایند خرید</span>}  </button>
 

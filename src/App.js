@@ -9,10 +9,20 @@ import Photos from './components/Photos.js'
 import Charts from './components/Charts.js'
 import Tag from './components/Tag.js'
 import Blogs from './components/Blogs.js'
+import Pages from './components/Pages.js'
+
 import Blog from './components/admin/Blog.js'
 import Cats from './components/admin/Cats.js'
 import Billing from './components/admin/Billing.js'
+
+import MoneyManagement from './components/admin/MoneyManagement.js'
+import AppSettings from './components/admin/AppSettings.js'
+
+
 import MehrCartClear from './components/admin/MehrCartClear.js'
+import Company from './components/Company.js'
+
+
 import AutoCredit from './components/admin/AutoCredit.js'
 import LaonReq from './components/admin/LaonReq.js'
 import AccReq from './components/admin/AccReq.js'
@@ -56,13 +66,21 @@ import Invoice from './components/Invoice.js'
 import Dashboard from './components/admin/Dashboard.js'
 import User from './components/User.js'
 import MainCompany from './components/MainCompany.js'
+import ShopGroups from './components/admin/ShopGroups.js'
+import SaleSystem from './components/admin/SaleSystem.js'
 
+import Chat from './components/admin/Chat.js'
+
+import ThermalPrinter from './components/admin/ThermalPrinter.js'
 
 import Wallets from './components/admin/Wallets.js'
 import Score_List from './components/admin/Score_List.js'
 
 import Off_List from './components/admin/Off_List.js'
 import Unit_List from './components/admin/Unit_List.js'
+import Chat_Settings from './components/admin/Chat_Settings.js'
+import FirstPageLayout from './components/admin/FirstPageLayout.js'
+import TransferReqs from './components/admin/TransferReqs.js'
 
 
 import ChangeInformation from './components/admin/ChangeInformation.js'
@@ -77,6 +95,8 @@ import { Provider } from 'react-redux'
 import reducer from './reducer.js'
 import { createStore } from 'redux'
 import ReactGA from 'react-ga';
+import 'primereact/resources/themes/nova-alt/theme.css';
+import { io } from "socket.io-client";
 
 class App extends Component {
 
@@ -92,11 +112,14 @@ class App extends Component {
       url: this.Server.getUrl(1)
     }
   }
+  
   componentDidMount() {
     // Include the Crisp code here, without the <script></script> tags
     window.$crisp = [];
     ReactGA.initialize('G-TWHDY0YJDL');
-
+    
+    
+    
     this.getSettings();
 
   };
@@ -106,21 +129,40 @@ class App extends Component {
     that.Server.send("AdminApi/getSettings", {}, function (response) {
 
       if (response.data.result) {
+        let chatId = response.data.result[0] ? response.data.result[0].ChatId : '';
         that.setState({
           STitle: response.data.result[0] ? response.data.result[0].STitle : "فروشگاه آنلاین ",
           Tags: response.data.result[0] ? response.data.result[0].Tags : '',
           ChatId: response.data.result[0] ? response.data.result[0].ChatId : '',
-          System: response.data.result[0] ? response.data.result[0].System : 'shop'
-        })
-        window.CRISP_WEBSITE_ID = response.data.result[0] ? response.data.result[0].ChatId : '';
-        (function () {
-          var d = document;
-          var s = d.createElement("script");
+          System: response.data.result[0] ? response.data.result[0].System : 'shop',
+          ColorTheme: response.data.result[0] ? response.data.result[0].ColorTheme : ''
 
-          s.src = "https://client.crisp.chat/l.js";
-          s.async = 1;
-          d.getElementsByTagName("head")[0].appendChild(s);
-        })();
+        })
+        if(response.data.result[0] && response.data.result[0].ColorTheme){
+          import('primereact/resources/themes/'+response.data.result[0].ColorTheme+'/theme.css').then(Bar => {
+            that.setState({
+              themeLoaded:true
+            })
+          });
+        }
+        debugger;
+        if(chatId.indexOf("Ania-") == -1){
+          (function () {
+            var d = document;
+            var s = d.createElement("script");
+  
+            s.src = "https://client.crisp.chat/l.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+          })();
+          window.CRISP_WEBSITE_ID = chatId ;
+        }
+        else{
+          window.AniaChatId=chatId;
+          window.AniaChatInit(io,that.Server.getAbsoluteUrl())
+        }
+          
+        
 
       }
     }, function (error) {
@@ -131,11 +173,11 @@ class App extends Component {
 
   render() {
     return (
-      <div >
+      <div style={{height:'100%'}} >
         <Provider store={this.store}>
           <HashRouter >
-            <div style={{background: "#fff"}}>
-
+            <div style={{background: "#fff",height:'100%'}}>
+              
               <Helmet>
                 <title>{this.state.STitle}</title>
                 <link rel="shortcut icon" href="/favicon.png"></link>
@@ -202,9 +244,7 @@ class App extends Component {
                   {this.state.System == "shop" &&
                     <Route path="/Category" exact component={Category} />
                   }
-                  {this.state.System == "shop" &&
-                    <Route path="/Invoice" component={Invoice} />
-                  }
+                  <Route path="/Invoice" component={Invoice} />
                   {this.state.System == "shop" &&
                     <Route path="/admin/Seller" component={Seller} />
                   }
@@ -230,11 +270,19 @@ class App extends Component {
                   {this.state.System == "company" &&
                     <Route path="/" component={withTracker(MainCompany)} exact />
                   }
+                  {this.state.System == "company" &&
+                  <Route path="/Company" component={Company} />
+                }
                   <Route path="/admin/MehrCartClear" component={MehrCartClear} />
                   <Route path="/admin/AutoCredit" component={AutoCredit} />
+                  <Route path="/admin/SaleSystem" component={SaleSystem} />
 
-                   
+                  
                   <Route path="/Charts" component={Charts} />
+                  <Route path="/admin/MoneyManagement" component={MoneyManagement} />
+                  <Route path="/admin/AppSettings" component={AppSettings} />
+
+                  
                   <Route path="/admin/Billing" component={Billing} />
                   <Route path="/admin/Accounts" component={Accounts} />
                   <Route path="/admin/Admin" component={Admin} />
@@ -243,6 +291,7 @@ class App extends Component {
                   <Route path="/admin/Maps" component={Maps} />
                   <Route path="/admin/Blog" component={Blog} />
                   <Route path="/Blogs" component={Blogs} />
+                  <Route path="/Pages" component={Pages} />                  
                   <Route path="/Cities" component={Cities} />
                   <Route path="/admin/Management" component={Management} />
                   <Route path="/admin/Comments" component={Comments} />
@@ -252,6 +301,7 @@ class App extends Component {
                   <Route path="/admin/Pics" component={Pics} />
                   <Route path="/admin/Set" component={Set} />
                   <Route path="/admin/Dashboard" component={Dashboard} />
+                  <Route path="/admin/ShopGroups" component={ShopGroups} />
                   <Route path="/admin/ChangeInformation" component={ChangeInformation} />
                   <Route path="/Photos" component={Photos} />
                   <Route path="/Map" component={Map} />
@@ -265,7 +315,16 @@ class App extends Component {
                   <Route path="/admin/LaonReq" component={LaonReq} />
                   <Route path="/admin/AccReq" component={AccReq} />
                   <Route path="/admin/Unit_List" component={Unit_List} />
+                  <Route path="/admin/Chat" component={Chat} />
+                  <Route path="/admin/Chat_Settings" component={Chat_Settings} />
+                  <Route path="/admin/ThermalPrinter" component={ThermalPrinter} />
 
+                  
+                  <Route path="/admin/FirstPageLayout" component={FirstPageLayout} />
+
+                  <Route path="/admin/TransferReqs" component={TransferReqs} />
+
+                  
                   
                 </Switch>
               </ScrollToTop>

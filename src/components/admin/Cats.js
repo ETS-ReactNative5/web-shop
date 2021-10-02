@@ -7,8 +7,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -686,6 +686,7 @@ class AdminProduct extends React.Component {
       } else {
         Cats = response.data.result;
       }
+      debugger;
       for (let i = 0; i < response.data.result.length; i++) {
         if (response.data.result[i].Special) {
           SpecialCats.push(response.data.result[i]._id);
@@ -788,7 +789,7 @@ class AdminProduct extends React.Component {
           </div>
         }
 
-        <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+        <div className="col-12" style={{ background: '#fff' }}>
 
 
 

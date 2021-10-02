@@ -5,8 +5,8 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -499,6 +499,7 @@ class Sales_Payk extends React.Component {
           RegSmsText: response.data.result ? resp.RegSmsText : '',
           SaleFromMultiShops:resp.SaleFromMultiShops,          
           InRaymand:  response.data.result ? response.data.result[0].Raymand : false,
+          SeveralShop: response.data.result ? resp.SeveralShop : false
         })
       }
 
@@ -573,7 +574,7 @@ class Sales_Payk extends React.Component {
     return (
       <div style={{ direction: 'rtl' }}>
         <div style={{ display: "none" }}>
-        <ComponentToPrint param={this.state.printParam} ref={el => (this.componentRef = el)} />
+        <ComponentToPrint SeveralShop={this.state.SeveralShop} param={this.state.printParam} ref={el => (this.componentRef = el)} />
         </div>
 
         {this.state.loading == 1 &&

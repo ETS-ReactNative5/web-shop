@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -277,7 +277,7 @@ class Pics extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
               <div> <Panel header="تصاویر اسلایدر نرم افزار" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
                   <div className="row">
 

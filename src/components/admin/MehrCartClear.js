@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import './Dashboard.css'
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+import { SelectButton } from 'primereact/selectbutton';
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { Dropdown } from 'primereact/dropdown';
@@ -114,8 +115,8 @@ class MehrCartClear extends React.Component {
         user_Id: response.data.authData.userId,
         loading: 0
       })
+      that.GetWallets();
 
-      that.GetShopList();
 
     };
     let ECallBack = function (error) {
@@ -182,7 +183,7 @@ class MehrCartClear extends React.Component {
       temp.type = 0;
       temp.cleared = 1;
   
-      
+      temp.wallet = this.state.wallet;
       temp.ShopId = this.state.ShopId;
       temp2.ShopId = this.state.ShopId;
       temp2.user_Id = this.state.user_Id;
@@ -194,10 +195,12 @@ class MehrCartClear extends React.Component {
     this.setState({
       showButton:false
     })
+    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       Amount: Amount,
       ShopId: this.state.ShopId,
+      wallet:this.state.wallet,
       UserId: this.state.user_Id,
       username:'system',
       items:items,
@@ -209,6 +212,15 @@ class MehrCartClear extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
+      if(response.data.error){
+        that.toast.current.show({ severity: 'error', summary: <div>{response.data.error}</div>, life: 8000 });
+        that.setState({
+          loading: 0,
+          showButton:true
+
+        })
+        return;
+      }
       that.toast.current.show({ severity: 'success', summary: <div>عملیات انجام شد</div>, life: 8000 });
       let state={};
       for (let i=0; i<that.state.Count; i++) {
@@ -252,6 +264,7 @@ class MehrCartClear extends React.Component {
       Amount: this.state.SCommission.toString().replace(/,/g, ""),
       ShopId: this.state.ShopId,
       UserId: this.state.user_Id,
+      wallet:this.state.wallet,
       username:'system',
       desc:'برداشت کمیسیون صندوق',
       Step:2,
@@ -292,6 +305,38 @@ class MehrCartClear extends React.Component {
     this.Server.send("MainApi/setCredit", param, SCallBack, ECallBack)
 
   }
+  GetWallets() {
+    let that = this;
+    let param = {
+      token: localStorage.getItem("api_token")
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      that.GetShopList();
+
+      let wallets = [];
+      for(let resp of response.data.result){
+        wallets.push({label:resp.name,value:resp.latinName,shops:resp.shops});
+      }
+      that.setState({
+        wallet:wallets[0]?.value,
+        wallets: wallets
+      })
+      that.setState({
+        loading: 0
+      })
+    };
+    let ECallBack = function (error) {
+      console.log(error)
+      that.setState({
+
+        loading: 0
+      })
+    }
+    this.Server.send("AdminApi/GetWallets", param, SCallBack, ECallBack)
+  }
 
   render() {
 
@@ -309,6 +354,22 @@ class MehrCartClear extends React.Component {
         <div className="section-title " style={{ width:'100%',textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >عملیات تسویه حساب</span></div>
 
           <div className="col-12" style={{ textAlign: 'right' }}>
+          
+          
+          <Panel header="انتخاب فروشگاه" style={{ marginTop: 20, textAlign: 'right', fontFamily: 'yekan' }}>
+            <div  style={{textAlign:'right'}}>
+                    <div style={{marginRight: 10,border: "1px solid #eee",borderRadius: 10,padding: 10}}>
+                    <label className="IRANYekan">نوع کیف پول را انتخاب کنید</label>
+
+                    <SelectButton value={this.state.wallet} options={this.state.wallets} onChange={(e) => {
+                      this.setState({wallet:e.value === null ? this.state.wallet : e.value,searchName:'',GridDataUsers:[]})
+                    
+                    }}></SelectButton>
+                    </div>
+            </div>
+          </Panel>
+          
+          
           <Panel header="انتخاب فروشگاه" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
             <Dropdown value={this.state.ShopId} panelStyle={{ width: '100%', textAlign: 'right' }} style={{ fontFamily: 'iranyekanwebregular', width: '100%', textAlign: 'right', marginTop: 20 }} options={this.state.ShopArrayOption} onChange={(event) => this.setState({
               ShopId: event.target.value
@@ -324,7 +385,7 @@ class MehrCartClear extends React.Component {
           </Panel>
           <Panel header="تسویه حساب فروشگاههای طرف قرارداد مهرکارت" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
             
-            <button className="irsans" onClick={() => {
+            <button className="btn btn-secondary irsans" onClick={() => {
               let Count = this.state.Count + 1;
               this.setState({
                 Count: Count

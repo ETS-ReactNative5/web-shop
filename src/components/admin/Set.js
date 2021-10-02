@@ -5,8 +5,6 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { Button } from 'reactstrap';
@@ -50,6 +48,7 @@ class Set extends React.Component {
       ActiveSms: null,
       Template: 1,
       Theme:1,
+      ColorTheme:"saga-blue",
       ParsianTerminal: '',
       ParsianPin: '',
       ZarinPalCode: '',
@@ -219,7 +218,8 @@ class Set extends React.Component {
           UserChangeSmsText: response.data.result[0].UserChangeSmsText,
           RegSmsText: response.data.result[0].RegSmsText,
           Template: response.data.result[0].Template,
-          Theme: response.data.result[0].Theme
+          Theme: response.data.result[0].Theme,
+          ColorTheme: response.data.result[0].ColorTheme||"saga-blue"
         })
       }
 
@@ -286,7 +286,8 @@ class Set extends React.Component {
           UserChangeSmsText: this.state.UserChangeSmsText,
           RegSmsText: this.state.RegSmsText,
           Template: this.state.Template,
-          Theme: this.state.Theme
+          Theme: this.state.Theme,
+          ColorTheme: this.state.ColorTheme
         }
       };
     }
@@ -331,7 +332,7 @@ class Set extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className=" col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className=" col-12" style={{ background: '#fff' }}>
             <Panel header="تنظیمات سیستم" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <div className="row" >
                 <div className="col-12" style={{display:'none'}} >
@@ -361,10 +362,38 @@ class Set extends React.Component {
                 </div>
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <div>
-                  <p className="yekan" style={{ float: "right" }}>قالب ظاهری</p>
+                  <p className="yekan" style={{ float: "right" }}>قالب جایگزاری اجزا صفحه</p>
                   <select className="custom-select yekan" value={this.state.Theme} name="Theme" onChange={(event)=>{this.setState({Theme:event.target.value})}} >
                     <option value="1">قالب 1</option>
                     <option value="2">قالب 2</option>
+
+                  </select>
+                  <hr />
+                  </div>
+                </div>
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <div>
+                  <p className="yekan" style={{ float: "right" }}>قالب و رنگبندی پنل مدیریت</p>
+                  <select className="custom-select yekan" value={this.state.ColorTheme} name="ColorTheme" onChange={(event)=>{this.setState({ColorTheme:event.target.value})}} >
+                    <option value="bootstrap4-light-blue">bootstrap4-light-blue</option>
+                    <option value="bootstrap4-light-purple">bootstrap4-light-purple</option>
+                    <option value="md-light-indigo">md-light-indigo</option>
+                    <option value="md-light-deeppurple">md-light-deeppurple</option>
+                    <option value="mdc-light-indigo">mdc-light-indigo</option>
+                    <option value="mdc-light-deeppurple">mdc-light-deeppurple</option>
+                    <option value="fluent-light">fluent-light</option>
+                    <option value="saga-blue">saga-blue</option>
+                    <option value="saga-green">saga-green</option>
+                    <option value="saga-orange">saga-orange</option>
+                    <option value="saga-purple">saga-purple</option>
+                    <option value="nova">nova</option>
+                    <option value="nova-alt">nova-alt</option>
+                    <option value="nova-accent">nova-accent</option>
+                    <option value="luna-amber">luna-amber</option>
+                    <option value="luna-blue">luna-blue</option>
+                    <option value="luna-green">luna-green</option>
+                    <option value="luna-pink">luna-pink</option>
+                    <option value="rhea">rhea</option>
 
                   </select>
                   <hr />

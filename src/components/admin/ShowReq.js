@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Link } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -51,6 +51,7 @@ class ShowReq extends React.Component {
       edit: false
     }
   }
+  
   componentDidMount() {
     let param = {
       token: localStorage.getItem("api_token"),
@@ -334,7 +335,7 @@ class ShowReq extends React.Component {
         }
         <div className="row justify-content-center AdminProduct">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <div className="row" style={{ alignItems: 'baseline' }} >
               <div className="col-lg-3 col-12">
               <div className="group">

@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -141,7 +141,35 @@ class Edit_User_Credit extends React.Component {
       })
       let SCallBack = function (response) {
         response.data.result[0].status = response.data.result[0].AllowCredit ? "متصل به مهرکارت" : "مهرکارت ندارد"
+        let AllCredit=0;
+        debugger;
+        for(let i=0;i<response.data.result.length;i++){
 
+          if(that.state.wallet == "mehr"){
+            response.data.result[i].realCredit = response.data.result[i].credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  
+          }
+          else{
+            for(let item of response.data.result[i].wallet){
+              if(item.name == that.state.wallet){
+                response.data.result[i].realCredit = item.credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              }
+  
+            }
+          }
+          AllCredit+=response.data.result[i].credit;
+          for(let item of response.data.result[i].wallet){
+              AllCredit+=item.credit||0;
+
+          }
+
+          if(!response.data.result[i].realCredit)
+            response.data.result[i].realCredit = "0".replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          response.data.result[i].AllCredit = AllCredit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  
+        }
+        
         that.setState({
           GridDataUsers: response.data.result,
           loading: 0
@@ -160,10 +188,14 @@ class Edit_User_Credit extends React.Component {
   }
   EditCredit(id) {
     let that = this;
-    debugger;
 
     if(!this.state.newCredit)
       return;
+    let Amount = this.state.newCredit.toString().replace(/,/g, "");
+    if(isNaN(Amount)){
+      Alert.warning('مبلغ نمیتواند غیر عددی باشد', 5000);
+      return;
+    }
     this.setState({
       loading: 1
     })
@@ -175,11 +207,12 @@ class Edit_User_Credit extends React.Component {
       username: this.state.userType == 0 ? this.state.username : 'system',
       status: this.state.status,
       payType: this.state.payType,
-      Amount: this.state.newCredit.toString().replace(/,/g, ""),
+      Amount: Amount,
       desc: this.state.desc,
       ShopId:this.state.userType == 1 ? this.state.GridDataUsers[0]._id : null,
       Step:2,
-      wallet:this.state.wallet
+      wallet:this.state.wallet,
+      userOfSite: this.state.userOfSite
     };
     let SCallBack = function (response) {
       that.setState({
@@ -283,11 +316,15 @@ class Edit_User_Credit extends React.Component {
       if(w.value == this.state.wallet)
         wallet = w;
     }
-    let walletCredit={};
-    for(let w of value.wallet){
-      if(w.name == this.state.wallet)
-        walletCredit = w.credit;
+    let walletCredit=0;
+    if(value.wallet){
+      for(let w of value.wallet){
+        if(w.name == this.state.wallet)
+          walletCredit = w.credit;
+      }
     }
+    
+    debugger;
     value.wallet = value.wallet || {};
     this.setState({
       selectedId: value._id,
@@ -322,7 +359,8 @@ class Edit_User_Credit extends React.Component {
       token: localStorage.getItem("api_token")
     }, function (response) {
       that.setState({
-        ShopId: response.data.authData.shopId
+        ShopId: response.data.authData.shopId,
+        userOfSite: response.data.authData.username
       })
       that.getSettings();
     }, function (error) {
@@ -348,7 +386,6 @@ class Edit_User_Credit extends React.Component {
       let that = this;
       this.setState({ brand: event.query, Count: 0 });
       let param = {};
-      debugger;
       if(this.state.userType == 0 ){
          param = {
           title: event.query,
@@ -442,6 +479,25 @@ class Edit_User_Credit extends React.Component {
       that.setState({
         loading: 0
       })
+      debugger;
+      for(let i=0;i<response.data.result.length;i++){
+        if(that.state.wallet == "mehr"){
+          debugger;
+          response.data.result[i].realCredit = response.data.result[i].credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
+        }
+        else{
+          for(let item of response.data.result[i].wallet){
+            if(item.name == that.state.wallet){
+              debugger;
+              response.data.result[i].realCredit = item.credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
+            }
+
+          }
+        }
+
+      }
       that.setState({
         GridDataUsers: response.data.result
       })
@@ -507,7 +563,7 @@ class Edit_User_Credit extends React.Component {
                   </div>
           </div>
           {this.state.userType == 0 &&
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
           <AutoComplete placeholder="بخشی از نام / شماره موبایل / شناسه کاربری / شماره حساب  را وارد کنید"  style={{ width: '100%' }} onChange={(event)=>{this.setState({searchName:event.value})}} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
 
 
@@ -521,13 +577,14 @@ class Edit_User_Credit extends React.Component {
               <Column field="username"  header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
               <Column field="name"  header="نام" className="irsans" style={{ textAlign: "center" }} />
               <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="credit" header="موجودی مهرکارت" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="realCredit" header="موجودی کیف پول" className="irsans" style={{ textAlign: "center" }} />
 
+              
             </DataTable>
           </div>
           }
           {this.state.userType == 1 &&
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
           <AutoComplete placeholder="بخشی از نام فروشگاه / شماره موبایل   را وارد کنید"  style={{ width: '100%' }} onChange={(event)=>{this.setState({searchName:event.value})}} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
 
 
@@ -541,7 +598,8 @@ class Edit_User_Credit extends React.Component {
               <Column field="username"  header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
               <Column field="name"  header="نام" className="irsans" style={{ textAlign: "center" }} />
               <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="credit" header="موجودی مهرکارت" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="realCredit" header="موجودی کیف پول" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="AllCredit" header="مجموع موجودی کیفها" className="irsans" style={{ textAlign: "center" }} />
 
             </DataTable>
           </div>

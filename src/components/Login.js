@@ -65,6 +65,7 @@ class Login extends React.Component {
   }
   getSetting(){
     let that = this;
+    debugger;
     axios.post(this.state.url+'getSettings', {
       token: localStorage.getItem("api_token")
     })
@@ -231,7 +232,7 @@ class Login extends React.Component {
         username: this.state.inputEmail.trim(),
         Step: "1",
         level: this.state.System == "company" ? "1" : "0",
-        map: this.state.System == "company" ? "subCompany_User" : null,
+        map: this.state.System == "company" ? "کارمند سیستم" : null,
         AccessAfterReg:this.state.AccessAfterReg
       }) 
       .then(response => {
@@ -297,7 +298,7 @@ class Login extends React.Component {
         password: this.state.SecurityCode,
         SecurityCode: this.state.SecurityCode,
         level:this.state.System == "company" ? "1" : "0",
-        map: this.state.System == "company" ? "subCompany_User" : null,
+        map: this.state.System == "company" ? "کارمند سیستم" : null,
         shopId: this.state.System == "company" ? this.state.shopId : null,
         Step: "2"
       })
@@ -313,7 +314,7 @@ class Login extends React.Component {
             username: this.state.inputEmail,
             password: this.state.SecurityCode,
             level:this.state.System == "company" ? "1" : "0",
-            map: this.state.System == "company" ? "subCompany_User" : null,
+            map: this.state.System == "company" ? "کارمند سیستم" : null,
             Step: "3"
           })
           .then(response => {
@@ -561,12 +562,20 @@ class Login extends React.Component {
                     </div>
                     {this.state.System != "shop" ?
                       this.state.AllowRegister ?
+                      <div style={{textAlign:'center'}}>
+                        <i class="fas fa-user-circle" style={{fontSize:60}}></i>
                        <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>{this.state.Step =="-1" ? 'درخواست بازیابی رمز عبور' : 'ورود / ثبت نام'}</h5>
+                       </div>
                         :
+                        <div style={{textAlign:'center'}}>
+                          <i class="fas fa-user-circle" style={{fontSize:60}}></i>
                       <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>{this.state.Step =="-1" ? 'درخواست بازیابی رمز عبور' : 'ورود به محیط کاربری'}</h5>
-
+                        </div>
                     :
+                    <div style={{textAlign:'center'}}>
+                      <i class="fas fa-user-circle" style={{fontSize:60}}></i>
                       <h5 className="card-title text-center YekanBakhFaBold" style={{marginTop:20}}>{this.state.Step =="-1" ? 'درخواست بازیابی رمز عبور' : 'ورود / ثبت نام'}</h5>
+                    </div>
                     }
                     {(this.state.Step == "0" || this.state.Step=="-1") &&
                     <div >

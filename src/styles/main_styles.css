@@ -283,7 +283,7 @@ a{
      -moz-transition: all 0.4s ease;
      transition: all 0.4s ease;
  }
- .ellipsis{
+.ellipsis{
   display: block;
   display: -webkit-box;
   max-width: 200px;
@@ -291,4 +291,4 @@ a{
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
- }
+}

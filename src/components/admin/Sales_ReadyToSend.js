@@ -5,8 +5,8 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -24,7 +24,7 @@ import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import GoogleMapReact from 'google-map-react';
-import ReactToPrint from 'react-to-print';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
 
 
@@ -120,8 +120,9 @@ class Sales_Registered extends React.Component {
       
       let x = that;
       let selectedP = that.state.GridDataFactors[0].products[that.state.ProductSelectedIndex];
+
       that.setState({
-        AllowChangeStatusReadyToSend:((Date.now() - selectedP.LastChangeDate_num) > 1200000 && selectedP.status == "3") ? false : true
+        AllowChangeStatusReadyToSend: selectedP.LastChangeDate_num && ((Date.now() - selectedP.LastChangeDate_num) > 1200000 && selectedP.status == "3") ? false : true
 
       })
     },0)
@@ -206,6 +207,7 @@ class Sales_Registered extends React.Component {
     let that = this;
     var p = [];
     for (let i = 0; i < value.products.length; i++) {
+      value.products[i].radif=i+1;
       value.products[i].credit = value.products[i].credit ? value.products[i].credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].price = value.products[i].price ? value.products[i].price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
       value.products[i].UnitPrice = value.products[i].UnitPrice ? value.products[i].UnitPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
@@ -333,8 +335,27 @@ class Sales_Registered extends React.Component {
           v.company = v.userData[0].company;
         }
         v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
-        v.share_address = <i className="fa fa-share" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.shareAddress(v)}></i>
+        v.radif = i+1;
 
+        v.share_address = <i className="fa fa-share" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.shareAddress(v)}></i>
+        v.print =
+        <ReactToPrint
+          content={() => that.componentRef}
+        >
+          <PrintContextConsumer>
+            {({ handlePrint }) => (
+              <i className="far fa-print" onClick={()=>{
+                that.setState({
+                  printParam: v
+                })
+                setTimeout(function(){
+                  handlePrint();
+
+                },0)
+              }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
+            )}
+          </PrintContextConsumer>
+        </ReactToPrint>
       })
       that.setState({
         GridDataFactors: response.data.result.result,
@@ -456,7 +477,8 @@ class Sales_Registered extends React.Component {
           AccessAfterReg: response.data.result ? resp.AccessAfterReg : 0,
           RegSmsText: response.data.result ? resp.RegSmsText : '',
           SaleFromMultiShops:response.data.result ? resp.SaleFromMultiShops : false,          
-          InRaymand:  response.data.result ? response.data.result[0].Raymand : false
+          InRaymand:  response.data.result ? response.data.result[0].Raymand : false,
+          SeveralShop: response.data.result ? resp.SeveralShop : false
         })
       }
 
@@ -527,7 +549,7 @@ class Sales_Registered extends React.Component {
     return (
       <div style={{ direction: 'rtl' }}>
         <div style={{ display: "none" }}>
-          <ComponentToPrint param={this.state.printParam} ref={el => (this.componentRef = el)} />
+          <ComponentToPrint SeveralShop={this.state.SeveralShop} param={this.state.printParam} ref={el => (this.componentRef = el)} />
         </div>
 
         {this.state.loading == 1 &&
@@ -545,6 +567,7 @@ class Sales_Registered extends React.Component {
             
             <div className="datatable-responsive-demo">
               <DataTable  resizableColumns={true} paginator={true} className="p-datatable-responsive-demo" rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedFactor} onSelectionChange={e => { if (e.originalEvent.target.tagName != "I") this.selectedFactorChange(e.value) }} >
+                <Column field="radif" filter={false} header="ردیف"  className="yekan" style={{ textAlign: "right",width:60 }} />
                 <Column field="name" header="نام خریدار"  body={BodyTemplate}   className="yekan" style={{ textAlign: "right" }} />
                 {this.state.isMainShop == 1 &&
                 <Column field="username" header="نام کاربری" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
@@ -566,10 +589,14 @@ class Sales_Registered extends React.Component {
                 <Column field="InPlace" header=" پرداخت"  body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
 
                 <Column field="statusDesc" filter={false} header="وضعیت"  body={BodyTemplate} filterElement={StatusFilter} className="yekan" style={{ textAlign: "right" }} />
+                <Column field="share_address" filter={false} header="اشتراک آدرس"  className="yekan"  />
+
                 {this.state.isMainShop == 1 &&
-                  <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "right" }} />
+                  <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "center",width:60 }} />
                 }
-                <Column field="share_address" filter={false} header="اشتراک آدرس"  className="yekan" style={{ textAlign: "right" }} />
+                {this.state.isMainShop == 1 &&
+                  <Column field="print" filter={false} header="چاپ"  className="yekan" style={{ textAlign: "center",width:60 }} />
+                }
 
               </DataTable>
             </div>
@@ -656,6 +683,7 @@ class Sales_Registered extends React.Component {
                 }
               }
             }} selectionMode="single" dataKey="id" body={ProductBodyTemplate} resizableColumns={true} paginator={true} rows={10} value={this.state.selectedFactor}  >
+              <Column field="radif" filter={false} header="ردیف"  className="yekan" style={{ textAlign: "right",width:60 }} />
               <Column field="title" header="عنوان" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               <Column field="subTitle" header="عنوان دوم" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               {this.state.isMainShop == 1 &&

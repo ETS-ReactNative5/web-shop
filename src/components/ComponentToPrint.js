@@ -50,8 +50,15 @@ export class  ComponentToPrint extends React.Component {
       let name = newProps.param.name ? newProps.param.name : '';
       let trs=""
       for(let i=0;i<newProps.param.products.length >0 ;i++){
-        trs +="<tr><td>"+(i+1)+"</td><td>"+newProps.param.products[i].title+"</td><td>"+newProps.param.products[i].SellerName+"</td><td>"+newProps.param.products[i].number+"</td><td>"+newProps.param.products[i].UnitPrice+" تومان</td><td>"+newProps.param.products[i].price+" تومان</td></tr>"
+        if(this.props.SeveralShop){
+          trs +="<tr><td>"+(i+1)+"</td><td>"+newProps.param.products[i].title+"</td><td>"+newProps.param.products[i].SellerName+"</td><td>"+newProps.param.products[i].number+"</td><td>"+newProps.param.products[i].UnitPrice+" تومان</td><td>"+newProps.param.products[i].price+" تومان</td></tr>"
+
+        }else{
+          trs +="<tr><td>"+(i+1)+"</td><td>"+newProps.param.products[i].title+"</td><td>"+newProps.param.products[i].subTitle+"</td><td>"+newProps.param.products[i].number+"</td><td>"+newProps.param.products[i].UnitPrice+" تومان</td><td>"+newProps.param.products[i].price+" تومان</td></tr>"
+
+        }
       }
+      let subTitle = this.props.SeveralShop ? "فروشنده" : "عنوان دوم"
       let html=
           "<div>"
           +"<div style='border:1px solid;margin-bottom:10px'><div style='text-align:center'>فاکتور خرید</div>"
@@ -61,7 +68,7 @@ export class  ComponentToPrint extends React.Component {
           +"<div ><p class='yekan' style='text-align:right;padding-right:2px;padding-left:2px'>"+"نام خریدار: "+ name+"</p></div><div ><p class='yekan' style='text-align:right;padding-right:2px;padding-left:2px'>"+"تلفن همراه: "+ newProps.param.username+"</p></div></div>"
           +"<div style='display:flex;flex-direction:row;justify-content:space-between'>"
           +"<div ><p class='yekan' style='text-align:right;padding-right:2px;padding-left:2px'>"+"آدرس: "+ address+"</p></div><div ></div></div>"
-          +"</div><div style='display:flex;justify-content:center'><table border='1' style='text-align:center'><thead><tr><td style='width:50px'>ردیف</td><td style='width:200px'>نام کالا</td><td style='width:120px'>فروشنده</td><td style='width:120px'>تعداد</td><td style='width:120px'>قیمت واحد</td><td style='width:120px'>قیمت کل</td></tr></thead><tbody>"
+          +"</div><div style='display:flex;justify-content:center'><table border='1' style='text-align:center'><thead><tr><td style='width:50px'>ردیف</td><td style='width:200px'>نام کالا</td><td style='width:120px'>"+subTitle+"</td><td style='width:120px'>تعداد</td><td style='width:120px'>قیمت واحد</td><td style='width:120px'>قیمت کل</td></tr></thead><tbody>"
           +trs+
           "</tbody></table></div>";
           html+="<div style='border:1px solid;margin-top:10px'>"

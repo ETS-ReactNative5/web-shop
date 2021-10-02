@@ -354,8 +354,10 @@ class Products extends React.Component {
             token: localStorage.getItem("api_token")
         })
             .then(response => {
+                debugger;
                 this.setState({
-                    UId: response.data.authData.userId
+                    UId: response.data.authData.userId,
+                    levelOfUser: response.data.authData.levelOfUser
                 })
                 param = {
                     id: that.state.id,
@@ -413,7 +415,7 @@ class Products extends React.Component {
             loading: false
         })
         let param = {
-            ProductId: this.state.id,
+            ProductId: this.state.ProductId||this.state.id,
             limit: limit || 5,
             All: 0
         };
@@ -467,7 +469,7 @@ class Products extends React.Component {
     }
     SendComment() {
         let that = this;
-
+        debugger;
         if (!this.state.CommentText) {
             that.setState({
                 HasError: {
@@ -485,7 +487,8 @@ class Products extends React.Component {
                 let param = {
                     CommentText: that.state.CommentText,
                     SellerId: that.state.SellerId,
-                    ProductId: that.state.id,
+                    ProductId: that.state.ProductId||that.state.id,
+                    Product_Detail_Id: that.state.id,
                     UserId: response.data.authData.userId,
                     set: 1
                 };
@@ -982,8 +985,8 @@ class Products extends React.Component {
                                                                         :
                                                                         <div className="borderBottom">
 
-                                                                            <div className="button_container">
-                                                                                <Button color="success" style={{ marginBottom: 40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, null, null, this.state.CatId) }}>انتقال به سبد خرید</Button>
+                                                                            <div className="button_container" style={{textAlign:'center'}}>
+                                                                                <Button color="success" style={{ marginBottom: 40,marginTop:40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, null, null, this.state.CatId) }}>انتقال به سبد خرید</Button>
                                                                                 <div className="product_fav"><i className="fas fa-heart"></i></div>
                                                                             </div>
                                                                         </div>
@@ -1218,10 +1221,10 @@ class Products extends React.Component {
                                                                             </div>
                                                                         </div>
                                                                         :
-                                                                        <div className="borderBottom">
+                                                                        <div className="borderBottom" >
 
-                                                                            <div className="button_container">
-                                                                                <Button color="success" style={{ marginBottom: 40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, null, null, this.state.CatId) }}>انتقال به سبد خرید</Button>
+                                                                            <div className="button_container" style={{textAlign:'center'}}>
+                                                                                <Button color="success" style={{ marginBottom: 40,marginTop:40 }} className=" cart_button iranyekanwebmedium" onClick={() => { this.SendToCart(this.state.id, this.state.ProductId, this.state.reqNumber, null, null, null, this.state.CatId) }}>انتقال به سبد خرید</Button>
                                                                                 <div className="product_fav"><i className="fas fa-heart"></i></div>
                                                                             </div>
                                                                         </div>
@@ -1412,7 +1415,7 @@ class Products extends React.Component {
 
                                                             return (
 
-                                                                <Panel header={v.user[0].name + "   .....   " + this.persianNumber(v.date)} className="iranyekanwebmedium" headerClassName="iranyekanwebmedium" style={{ textAlign: 'right', fontFamily: 'IRANiranyekanwebmedium' }}>
+                                                                <Panel header={v.user[0]?.name + "   .....   " + this.persianNumber(v.date)} className="iranyekanwebmedium" headerClassName="iranyekanwebmedium" style={{ textAlign: 'right', fontFamily: 'IRANiranyekanwebmedium' }}>
                                                                     <p className="iranyekanwebmedium" style={{ whiteSpace: 'pre-line' }} >{v.CommentText}</p>
                                                                 </Panel>
                                                             )

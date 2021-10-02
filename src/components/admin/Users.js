@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -95,7 +95,7 @@ class Users extends React.Component {
     this.handleChangeMap = this.handleChangeMap.bind(this);
 
   }
-
+  
   GetMaps() {
     let that = this;
     this.setState({
@@ -297,7 +297,7 @@ class Users extends React.Component {
       RaymandAcc:this.state.RaymandAcc,
       RaymandUser:this.state.RaymandUser,
       credit: this.state.credit ? this.state.credit.replace(/,/g, "") : 0,
-      map: (this.state.System == "company" && !this.state.main) ?  "subCompany_User" : this.state.map,
+      map: this.state.map,
       levelOfUser: this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0 ? this.state.levelOfUser : null,
       ShopId: this.state.ShopId,
       insert: (!this.state.selectedId && !del)
@@ -639,12 +639,12 @@ class Users extends React.Component {
         <div className="row justify-content-center">
         <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <div className="row" >
                 <div className="col-6" style={{ textAlign: 'center' }}>
                   <button className="btn btn-info irsans" onClick={this.CreateUser} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> ساخت کاربر جدید </button>
                 </div>
-              {(this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0) &&
+              {(this.state.System=="shop" && this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0) &&
                 <div className="col-6" style={{ textAlign: 'center' }}>
                   <button className="btn btn-warning irsans" onClick={() => {
                     this.setState({
@@ -706,22 +706,15 @@ class Users extends React.Component {
                 </div>
               </div>
               {!this.state.Raymand &&
-                <div className="col-lg-6 col-12">
+                <div className="col-lg-12 col-12">
                   <div className="group">
-                    <input className="form-control irsans" autoComplete="off" type="text" value={this.state.mail} name="mail" onChange={this.handleChangeMail} required="true" />
+                    <input className="form-control irsans" style={{direction:'ltr'}} autoComplete="off" type="text" value={this.state.mail} name="mail" onChange={this.handleChangeMail} required="true" />
                     <label>پست الکترونیکی</label>
                   </div>
                 </div>
               }
               
-                <div className="col-lg-6 col-12">
-                {!this.state.Raymand && this.state.System == "shop" &&
-                  <div className="group">
-                    <input className="form-control irsans" autoComplete="off" type="text" value={this.state.company} name="company" onChange={this.handleChangeCompany} required="true" />
-                    <label>نام شرکت</label>
-                  </div>
-                  }
-                </div>
+             
               
               <div className="col-lg-6">
                 <div className="group">
@@ -736,6 +729,14 @@ class Users extends React.Component {
                   <label>تکرار رمز عبور</label>
                 </div>
               </div>
+              <div className="col-lg-12 col-12">
+                {!this.state.Raymand && this.state.System == "shop" &&
+                  <div className="group">
+                    <input className="form-control irsans" autoComplete="off" type="text" value={this.state.company} name="company" onChange={this.handleChangeCompany} required="true" />
+                    <label>نام شرکت</label>
+                  </div>
+                  }
+                </div>
               {this.state.System == "shop" && this.state.level == "0" && !this.state.Raymand && 
                 <div className="col-lg-6" style={{ textAlign: 'center' }}>
 
@@ -783,7 +784,7 @@ class Users extends React.Component {
                   <select className="custom-select irsans" value={this.state.map} name="map" onChange={this.handleChangeMap} >
                     {
                       this.state.mapList && this.state.mapList.map((v, i) => {
-                        if(this.state.main || v._id == "subCompany_User" || v._id == "subCompany_Admin")
+                        if(this.state.main || !v.main)
                         return (<option value={v._id} >{v._id}</option>)
                       })
                     }
@@ -834,7 +835,7 @@ class Users extends React.Component {
                   </div>
                 </div>
               }
-
+              
               <div className="col-lg-12">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.address} name="address" onChange={this.handleChangeAddress} required="true" />

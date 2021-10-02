@@ -13,7 +13,13 @@ import './fontawesome_pro/css/fontawesome-all.css';
 import 'react-table/react-table.css'
 import './styles/hover.css';
 import '../node_modules/animate.css/animate.min.css';
+import './styles/ania_chat.css';
+import 'primereact/resources/primereact.min.css';
+  
 
+
+
+import './js/ania_chat.js';
 
 
 

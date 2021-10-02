@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Header  from './Header.js'
 import MainBox4  from './MainBox4.js'
-import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
+import SaleSystem  from './admin/SaleSystem.js'
 
 
 import SlideBox  from './SlideBox.js'
@@ -24,7 +24,6 @@ class MainCompany extends React.Component {
     constructor(props){
         super(props)
         this.Server = new Server();
-        this.onHide = this.onHide.bind(this);
         this.CreateSubSystem = this.CreateSubSystem.bind(this);
         this.toast = React.createRef();
 
@@ -68,12 +67,17 @@ class MainCompany extends React.Component {
         AllowRegister:  response.data.result[0] ? response.data.result[0].AllowRegister : false
 
 			})
-            that.getBlogs();
+            //that.getBlogs();
+            that.getPics();
+
 
 	
 		  }
 		}, function (error) {
-            that.getBlogs();
+            //that.getBlogs();
+            that.getPics();
+
+
 
 		})
 	
@@ -105,20 +109,20 @@ class MainCompany extends React.Component {
               })
                   
             })
+            that.getPageLayout();
+
           })
           .catch(error => {
+            that.getPageLayout();
+
           })
     
       }
-      onHide(event) {
-        this.setState({ VisibleDialog: null });
-    }
     getBlogs(){
         let that = this;
-        
         let param={
             BlogId:this.state.id,
-            condition:this.state.id ? {} : {FixPage:false} 
+            condition:this.state.id ? {} : {FixPage:false,draft:{$ne:true}} 
         }; 
         let SCallBack = function(response){
             that.setState({
@@ -135,11 +139,32 @@ class MainCompany extends React.Component {
         }
         that.Server.send("AdminApi/getBlogs",param,SCallBack,ECallBack)
     }
+    getPageLayout(){
+      let that = this;
+      let param={
+          page:'first' 
+      }; 
+      let SCallBack = function(response){
+          that.setState({
+              Layout:response.data.result[0].content,
+              LayoutItems:response.data.result[0].items,
+              loading:0
+          })
+
+      };
+      
+      let ECallBack = function(error){
+
+      }
+      that.Server.send("AdminApi/getPageLayout",param,SCallBack,ECallBack)
+  }
+
     CreateSubSystem(){
 
       let param={
         name : this.state.name,
-        address : this.state.address,
+        latinName: this.state.latinName,
+        pass : this.state.pass,
         mobile : this.state.mobile
       };  
       let that = this;
@@ -169,83 +194,24 @@ class MainCompany extends React.Component {
     return (
             <div className="A-container" style={{backgroundColor:'#fff'}}>
                 <Toast ref={this.toast} position="bottom-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
-                <Header />
+                <Header Company={1} />
                 <div className="row"  >
-                    <div className="col-lg-9 col-12">
+                    
+                    <div className="col-lg-12 col-12">
                     <SlideBox/> 
 
                     </div>
-                  {this.state.Autenticated == 1 ?
-                  <div className="col-lg-3 col-0 d-lg-block d-none "  >
-                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                      <div style={{ height: '49%', overflow: 'hidden' }}>
-                        
-                        {this.state.link4 && this.state.link4.indexOf("http") > -1 ?
-                          <a href={this.state.link4} className="" target="_blank" style={{ textDecoration: 'none' }}>
-                            {this.state.text4 &&
-                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgba(20, 15, 21, 0.09)', paddingBottom: 5, width: '37%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text4}</p>
-                            }
-                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo4})` }} ></div>
-                          </a>
-                          :
-                          <Link to={`${process.env.PUBLIC_URL}/` + this.state.link4} className="" href="#" target="_blank" style={{ textDecoration: 'none' }}>
-                            {this.state.text4 &&
-                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgba(20, 15, 21, 0.09)', paddingBottom: 5, width: '37%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text4}</p>
-                            }
-                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo4})` }} ></div>
-                          </Link>
-                        }
-                      </div>
-                      <div style={{ height: '2%' }}>
-
-                      </div>
-                      <div style={{ height: '49%', overflow: 'hidden' }}>
-                        {this.state.link5 && this.state.link5.indexOf("http") > -1 ?
-                          <a href={this.state.link5} className="" target="_blank" style={{ textDecoration: 'none' }}>
-                            {this.state.text5 &&
-                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgb(20 15 21 / 76%)', paddingBottom: 5, width: '50%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text5}</p>
-                            }
-                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo5})` }} ></div>
-                          </a>
-                          :
-                          <Link to={`${process.env.PUBLIC_URL}/` + this.state.link5} className="" href="#" target="_blank" style={{ textDecoration: 'none' }}>
-                            {this.state.text5 &&
-                              <p className="iranyekanwebmedium  p-md-3 , p-0" style={{ position: 'absolute', zIndex: 2, fontSize: 16, color: '#fff', backgroundColor: 'rgb(20 15 21 / 76%)', paddingBottom: 5, width: '50%', textAlign: 'right', boxShadow: '10px 10px 15px #e6d5d5', bottom: 0 }}>{this.state.text5}</p>
-                            }
-                            <div style={{ width: '100%', height: '100%', backgroundSize: 'cover', borderRadius: 12, backgroundImage: `url(${this.state.logo5})` }} ></div>
-                          </Link>
-                        }
-
-                      </div>
-                    </div>
-
-                  </div>
-                :
-                    <div className="col-lg-3 col-12">
-                      {this.state.SeveralShop && this.state.AllowSubSystem &&
-                          <div style={{width:'100%',textAlign:'left'}}>
-                           <button className="btn btn-info YekanBakhFaMedium" style={{marginTop:10}} onClick={()=>{this.setState({
-                             VisibleDialog:true
-                           })}}>زیر سیستم خود را بسازید</button>
-                          </div>
-                        }
-                        {this.state.Autenticated == 0 &&
-                            <Login noHeader={1} noFooter={1} />
-                        }
-                        
-                        
-                    </div>
-                    }
+                  
                 </div>
                 <div className="row" style={{marginTop:50}}>
                 <div className="col-12">
-                <Accordion multiple activeIndex={this.state.activeIndex} onTabChange={(e) => this.setState({activeIndex: e.index})}>
+                <Accordion multiple activeIndex={this.state.activeIndex} style={{display:'none'}} onTabChange={(e) => this.setState({activeIndex: e.index})}>
     
     
                     {this.state.Blog.map((item,index)=>{
                         return(
                             <AccordionTab header={item.title}>
-                                <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight blog" style={{textAlign:'right',overflow:'hidden',height:400}} />
+                                <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight blog" style={{textAlign:'right',overflow:'hidden'}} />
                                 <NavLink    className="car-details" to={`${process.env.PUBLIC_URL}/Blogs?id=`+item._id} style={{color:'#333',backgroundColor:'#eee',textDecoration:'none'}} >
                                     مشاهده متن کامل
                                 </NavLink>
@@ -254,8 +220,44 @@ class MainCompany extends React.Component {
                         )
                     })}   
                 </Accordion>
-                <MainBox4 BrandTitle="برخی از مشتریان"/>
+                
+                {this.state.Layout && this.state.Layout.map((item,index)=>{
+                    if(!this.state.LayoutItems["hidden"+item.id]){
+                      return(
+                        <div style={{textAlign:'right',marginTop:index == 0 ? 0 : 100}}>
+                            {this.state.LayoutItems["link"+item.id]
+                            ?
+                            this.state.LayoutItems["link"+item.id].indexOf("http://") != -1 ?
+                            <a  href={this.state.LayoutItems["link"+item.id]} target="_blank" style={{cursor:'pointer'}} >
+                              <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight " style={{textAlign:'right',overflow:'hidden'}} />
+                            </a>
+                            :
 
+                            <NavLink  to={this.state.LayoutItems["link"+item.id].indexOf("http://") != -1 ? this.state.LayoutItems["link"+item.id] : `${process.env.PUBLIC_URL}/${this.state.LayoutItems["link"+item.id]}`} target="_blank" style={{cursor:'pointer'}} >
+                              <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight " style={{textAlign:'right',overflow:'hidden'}} />
+                            </NavLink>
+                            :
+                            <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight " style={{textAlign:'right',overflow:'hidden'}} />
+                            }
+                        </div>
+                        
+                    )
+                    }
+                        
+                    })}
+                {this.state.Blog.map((item,index)=>{
+                        return(
+                            <div style={{textAlign:'right',marginTop:50}}>
+                                <NavLink    className="car-details" to={`${process.env.PUBLIC_URL}/Blogs?id=`+item._id} style={{textDecoration:'none',fontSize:35}} >
+                                  {item.title}                                </NavLink>
+                                <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight blog" style={{textAlign:'right',overflow:'hidden'}} />
+                                
+                            </div>
+                            
+                        )
+                    })}
+
+                <MainBox4 BrandTitle="برخی از مشتریان"/>
                 </div>
                 </div>
                 {!this.state.loading ?
@@ -264,39 +266,7 @@ class MainCompany extends React.Component {
                     <div style={{ textAlign: 'center' }}></div>
                 }
 
-              <Dialog visible={this.state.VisibleDialog} onHide={this.onHide}  style={{ width: '700px' }} maximizable={false} maximized={false}>
-                  <div className="row">
-                  <div className="col-12" style={{textAlign:'center',marginTop:15}}>
-                  <p className="YekanBakhFaBold" style={{fontSize:18}}>پس از ساخت زیر سیستم بلافاصله امکان استفاده از امکانات آن برای شما فراهم خواهد شد</p>
-                  </div>
-                  <div className="col-12">
-                    <div className="group">
-
-                            <input type="text" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="name" name="name" value={this.state.name} onChange={(event)=>{this.setState({name:event.target.value})}} required />
-                            <label className="YekanBakhFaBold">نام مجموعه</label>
-                    </div>
-                    
-                    </div>
-                    <div className="col-12">
-                    <div className="group">
-
-                            <input type="text" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="mobile" name="mobile" value={this.state.mobile} onChange={(event)=>{this.setState({mobile:event.target.value})}} required />
-                            <label className="YekanBakhFaBold">شماره موبایل</label>
-                    </div>
-                    
-                    </div>
-                    <div className="col-12">
-                    <div className="group">
-                            <input type="text" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="address" name="address" value={this.state.address} onChange={(event)=>{this.setState({address:event.target.value})}} required />
-                            <label className="YekanBakhFaBold">آدرس</label>
-                    </div>
-                      </div>
-                      <div className="col-12">
-                      <button className="btn btn-info YekanBakhFaMedium" style={{marginTop:10}} onClick={this.CreateSubSystem}>ساخت </button>
-                      </div>
-                   
-                  </div>
-                </Dialog>
+             
            </div>
             
             

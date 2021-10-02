@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -203,14 +203,19 @@ class Forms extends React.Component {
       this.state.SelectedComponents = Components;
     }
     let firstForm="";
+    let main=false;
     for(let list of this.state.mapList){
-      if(list._id == event.target.value)
+      if(list._id == event.target.value){
         firstForm = list.firstForm||"";
+        main=list.main
+      }
+        
     }
     this.setState({
       mapSelection: event.target.value,
       mapId: event.target.value,
       mapListTemp: mapListTemp,
+      main:main,
       firstForm:firstForm,
       permitions:permitions
     });  
@@ -224,6 +229,7 @@ class Forms extends React.Component {
       token: localStorage.getItem("api_token"),
       mapId: this.state.mapId,
       firstForm:this.state.firstForm,
+      main:this.state.main,
       components: this.state.SelectedComponents,
       permitions : this.state.permitions,
       edit: this.state.mapSelection == "" ? "0" : "1"
@@ -457,7 +463,7 @@ class Forms extends React.Component {
         }
         <div className="row justify-content-center">
           <button  onClick={this.test} style={{display:'none'}} >تست</button>
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <div className="row" >
               <div className="col-6" style={{ textAlign: 'center' }}>
                 <button className="btn btn-primary irsans" onClick={this.CreateForm} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> ساخت فرم جدید </button>
@@ -484,7 +490,7 @@ class Forms extends React.Component {
           <form >
             <div className="row">
               {this.state.mapList.length > 0 &&
-                <div className="col-lg-4">
+                <div className="col-lg-3">
                   <label className="labelNoGroup irsans">دسترسی را انتخاب کنید</label>
                   <select className="custom-select irsans" value={this.state.mapSelection} name="mapSelection" onChange={this.handleChangeMapSelection} >
                     <option value="" ></option>
@@ -498,13 +504,21 @@ class Forms extends React.Component {
                   </select>
                 </div>
               }
-              <div className="col-lg-4">
+              <div className="col-lg-3">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.mapId} name="mapId" onChange={this.handleChangeMap} required="true" />
                   <label>دسترسی</label>
                 </div>
               </div>
-              <div className="col-lg-4">
+              <div className="col-lg-3">
+                <div className="group" style={{display:'flex',alignItems:'center'}}>
+                <Checkbox inputId="IsTitle" value={this.state.main} checked={this.state.main} onChange={e => this.setState({ main: e.checked })} style={{ marginBottom: 10 }}></Checkbox>
+                <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>اصلی(فقط مدیران سیستم اصلی میتوانند انتخاب کنند)</label>
+                </div>
+              </div>
+              <div className="col-lg-12">
+              </div>
+              <div className="col-lg-3">
                 {this.state.mapSelection &&
                   <div>
                   <label className="labelNoGroup irsans">نخستین امکان پنل مدیریت</label>
@@ -519,6 +533,8 @@ class Forms extends React.Component {
                   </select>
                   </div>
               }
+              </div>
+              <div className="col-lg-12">
               </div>
 
               {

@@ -52,6 +52,10 @@ import Edit_User_Credit from './Edit_User_Credit.js'
 import ShowReq from './ShowReq.js'
 import Forms_Details from './Forms_Details.js'
 import ReserveReqs from './ReserveReqs.js'
+import FirstPageLayout from './FirstPageLayout.js'
+import MoneyManagement from './MoneyManagement.js'
+import AppSettings from './AppSettings.js'
+import TransferReqs from './TransferReqs.js'
 
 
 import Set from './Set.js'
@@ -63,8 +67,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import { InputText } from 'primereact/inputtext';
 import Server from './../Server.js'
@@ -74,8 +78,11 @@ import MehrCartClear from './MehrCartClear.js';
 import AutoCredit from './AutoCredit.js';
 import LaonReq from './LaonReq.js';
 import AccReq from './AccReq.js';
+import ShopGroups from './ShopGroups.js';
+import SaleSystem from './SaleSystem.js';
 
 
+import Chat_Settings from './Chat_Settings.js';
 
 class Management extends React.Component {
   constructor(props) {
@@ -122,7 +129,6 @@ class Management extends React.Component {
   }
   GetMaps() {
     let that = this;
-    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       user_Id: this.state.user_Id,
@@ -158,14 +164,14 @@ class Management extends React.Component {
 
     return (
 
-      <div style={{ direction: 'rtl' }} >
+      <div style={{ direction: 'rtl',height:'100%' }} >
 
-        <div className="row justify-content-center">
+        <div className="row justify-content-center" style={{height:'100%'}}>
           <div className="col-12 col-md-3 col-lg-3 ">
 
             <Dashboard callback={this.getResponse.bind(this)} list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
           </div>
-          <div className="col-lg-9 col-md-9 col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-lg-9 col-md-9 col-12" style={{ background: '#fff',height:'100%' }}>
             {this.state.help &&
               <p style={{position:'absolute',top:5,right:20,color:'darkred',fontSize:18,cursor:'pointer',zIndex:2,alignItems:'center'}}  onClick={()=>{this.setState({VisibleDialog:true})}}>
                 <i class="fas fa-question-circle" ></i>
@@ -297,9 +303,7 @@ class Management extends React.Component {
             {this.state.CId == "166" && !this.state.IsReport &&
               <Create_Reserve permition={this.state.permitions[this.state.CId]} />
             }
-            {this.state.CId == "169" && !this.state.IsReport &&
-              <Chat permition={this.state.permitions[this.state.CId]} />
-            }
+            
             {this.state.CId == "168" && !this.state.IsReport &&
               <ShowReq permition={this.state.permitions[this.state.CId]} />
             }
@@ -338,6 +342,37 @@ class Management extends React.Component {
             {this.state.CId == "180" && !this.state.IsReport &&
               <Unit_List permition={this.state.permitions[this.state.CId]} />
             }
+            {this.state.CId == "181" && !this.state.IsReport &&
+              <ShopGroups permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "182" && !this.state.IsReport &&
+              <SaleSystem permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "183" && !this.state.IsReport &&
+              <Chat permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "184" && !this.state.IsReport &&
+              <Chat_Settings permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "185" && !this.state.IsReport &&
+              <FirstPageLayout permition={this.state.permitions[this.state.CId]} />
+            }
+
+            {this.state.CId == "186" && !this.state.IsReport &&
+              <MoneyManagement permition={this.state.permitions[this.state.CId]} />
+            }
+
+            {this.state.CId == "187" && !this.state.IsReport &&
+              <AppSettings permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "188" && !this.state.IsReport &&
+              <TransferReqs permition={this.state.permitions[this.state.CId]} />
+            }
+
+
+
+
+
 
 
 

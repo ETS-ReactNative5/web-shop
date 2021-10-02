@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -214,7 +214,7 @@ class Forms_Details extends React.Component {
                 }
                 <div className="row justify-content-center">
 
-                    <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+                    <div className="col-12" style={{ background: '#fff' }}>
 
                         <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >فرم های سیستم مدیریت</span></div>
 
@@ -232,7 +232,7 @@ class Forms_Details extends React.Component {
 
                 <Dialog header="اصلاح جزئیات" visible={this.state.visibleManageComponent} style={{ width: '700px' }} footer={footer} minY={70} onHide={this.onHideFormsDialog} maximizable={true} maximized={true}>
                     <div className="col-lg-12" style={{ marginTop: 20, marginRight: 5, textAlign: 'right' }}>
-                        <button className="irsans" onClick={() => {
+                        <button className="btn btn-secondary irsans" onClick={() => {
                             let Count = this.state.Count + 1;
                             this.setState({
                                 Count: Count

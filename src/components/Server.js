@@ -12,7 +12,7 @@ class Server extends React.Component {
       'https://foodapi.sarvapps.ir/',
       'https://siteapi.sarvapps.ir/',
       'https://api.aniabook.ir/',
-      'https://crmapi.sarvapps.ir/'
+      'https://crmapi.sarvapps.ir/'     
 
      ]
      this.state={

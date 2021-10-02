@@ -336,7 +336,7 @@ class MainBox4 extends React.Component {
 				{this.state.BestShops.length > 0 && 
 				<Swiper {...params1}>
 				{this.state.BestShops.map((data) => {
-				let img = data.logo ? this.state.absoluteUrl + data.logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png";
+				let img = data.logo ? this.state.absoluteUrl + data.logo.split("public")[1] : "http://siteapi.sarvapps.ir/nophoto.png";
 				
 				return (
 

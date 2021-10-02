@@ -5,8 +5,8 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -23,7 +23,7 @@ import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import GoogleMapReact from 'google-map-react';
-import ReactToPrint from 'react-to-print';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import './DataTableDemo.css';
 
 
@@ -315,8 +315,27 @@ class Sales_Registered extends React.Component {
           v.name = v.userData[0].name;
           v.company = v.userData[0].company;
         }
+        v.radif = i+1;
+
         v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
-        
+        v.print =
+          <ReactToPrint
+            content={() => that.componentRef}
+          >
+            <PrintContextConsumer>
+              {({ handlePrint }) => (
+                <i className="far fa-print" onClick={()=>{
+                  that.setState({
+                    printParam: v
+                  })
+                  setTimeout(function(){
+                    handlePrint();
+
+                  },0)
+                }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
+              )}
+            </PrintContextConsumer>
+          </ReactToPrint>
 
       })
       that.setState({
@@ -359,7 +378,8 @@ class Sales_Registered extends React.Component {
           STitle: response.data.result ? resp.STitle : "",
           AccessAfterReg: response.data.result ? resp.AccessAfterReg : 0,
           RegSmsText: response.data.result ? resp.RegSmsText : '',          
-          InRaymand:  response.data.result ? response.data.result[0].Raymand : false
+          InRaymand:  response.data.result ? response.data.result[0].Raymand : false,
+          SeveralShop: response.data.result ? resp.SeveralShop : false
         })
       }
 
@@ -431,7 +451,7 @@ class Sales_Registered extends React.Component {
     return (
       <div style={{ direction: 'rtl' }}>
         <div style={{ display: "none" }}>
-          <ComponentToPrint param={this.state.printParam} ref={el => (this.componentRef = el)} />
+          <ComponentToPrint SeveralShop={this.state.SeveralShop} param={this.state.printParam} ref={el => (this.componentRef = el)} />
         </div>
 
         {this.state.loading == 1 &&
@@ -448,6 +468,7 @@ class Sales_Registered extends React.Component {
             
             <div className="datatable-responsive-demo">
               <DataTable  resizableColumns={true} paginator={true} className="p-datatable-responsive-demo" rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedFactor} onSelectionChange={e => { if (e.originalEvent.target.tagName != "I") this.selectedFactorChange(e.value) }} >
+                <Column field="radif" filter={false} header="ردیف"  className="yekan" style={{ textAlign: "right",width:60 }} />
                 <Column field="name" header="نام خریدار"  body={BodyTemplate}   className="yekan" style={{ textAlign: "right" }} />
                 {this.state.isMainShop == 1 &&
                 <Column field="username" header="نام کاربری" body={BodyTemplate} className="yekan" style={{ textAlign: "right" }} />
@@ -472,6 +493,9 @@ class Sales_Registered extends React.Component {
                 <Column field="statusDesc" filter={false} header="وضعیت"  body={BodyTemplate} filterElement={StatusFilter} className="yekan" style={{ textAlign: "right" }} />
                 {this.state.isMainShop == 1 &&
                   <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "right" }} />
+                }
+                {this.state.isMainShop == 1 &&
+                  <Column field="print" filter={false} header="چاپ"  className="yekan" style={{ textAlign: "right" }} />
                 }
               </DataTable>
             </div>
@@ -558,6 +582,7 @@ class Sales_Registered extends React.Component {
               {this.state.isMainShop == 1 &&
                 <Column field="edit" header="حذف" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               }
+              
 
             </DataTable>
              

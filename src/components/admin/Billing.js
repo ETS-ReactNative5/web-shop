@@ -3,9 +3,9 @@ import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
-import 'primereact/resources/themes/saga-blue/theme.css';
+
 import './Billing.css'
-import 'primereact/resources/primereact.min.css';
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { connect } from 'react-redux';
@@ -286,7 +286,7 @@ class Billing extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <div className="row" style={{display:'none'}}>
               <div className="col-md-6 col-12">
                 {(this.state.LastCredit != 0 || this.state.LastAmount != 0) ?

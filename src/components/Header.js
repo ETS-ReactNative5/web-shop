@@ -2,11 +2,11 @@ import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect, Link } from 'react-router-dom'
 import axios from 'axios'
-import { OverlayPanel } from 'primereact/overlaypanel';
+import { Toast } from 'primereact/toast';
 
 import ReactGA from 'react-ga';
 
-import { AutoComplete } from 'primereact/autocomplete';
+import { Dialog } from 'primereact/dialog';
 
 import Server from './Server.js'
 import { FlexboxGrid } from 'rsuite';
@@ -19,6 +19,8 @@ class Header extends React.Component {
 	constructor(props) {
 		super(props);
 		this.op = React.createRef();
+        this.CreateSubSystem = this.CreateSubSystem.bind(this);
+		this.toast = React.createRef();
 
 		this.Server = new Server();
 		this.data = "dssddsdss"
@@ -33,7 +35,7 @@ class Header extends React.Component {
 			logo: "",
 			selectedproductId: null,
 			selectedCatId: null,
-			top_image: '',
+			top_image: '',  
 			RegisterByMob: true,
 			_id: [],
 			img: [],
@@ -82,7 +84,37 @@ class Header extends React.Component {
 				})
 			})
 	}
+	CreateSubSystem(){
 
+		let param={
+		  name : this.state.name,
+		  latinName: this.state.latinName,
+		  pass : this.state.pass,
+		  mobile : this.state.mobile
+		};  
+		let that = this;
+		let SCallBack = function(response){
+		  localStorage.setItem("api_token","")
+		  
+		  if(response.data.error)
+			that.toast.current.show({severity: 'error', summary: 'ایجاد زیر سیستم', detail: <div><span> {response.data.result}</span></div>, life: 8000});
+		  else{
+			that.toast.current.show({severity: 'success', summary: 'ایجاد زیر سیستم', detail: <div><span>زیر سیستم <span>{that.state.name}</span> با موفقیت ایجاد شد </span><br/><Link to={`${process.env.PUBLIC_URL}/Login`} style={{ textDecoration: 'none', color: '#333' }}>ورود به سیستم</Link></div>, life: 8000});
+			that.setState({
+			  VisibleDialog:false
+			})
+			
+		  }
+  
+		  
+  
+		};
+		let ECallBack = function(error){
+		  that.toast.current.show({severity: 'error', summary: 'ایجاد زیر سیستم', detail: <div><span> اشکال در ثبت زیر سیستم</span></div>, life: 8000});
+		}
+		this.Server.send("AdminApi/CreateSubSystem",param,SCallBack,ECallBack)
+  
+	  }
 	onSelect(event) {
 		var _id = event.originalEvent.target.getAttribute("_id");
 		var _catId = event.originalEvent.target.getAttribute("_catId")
@@ -214,10 +246,12 @@ class Header extends React.Component {
 		axios.post(this.state.url + 'getPics', {})
 		  .then(response => {
 			response.data.result.map(function (item, index) {
-			  if (item.name == "file12")
-				that.setState({
-				  top_image: that.state.absoluteUrl + item.fileUploaded?.split("public")[1]
-				})
+			  if (item.name == "file12" && item.fileUploaded){
+				  that.setState({
+					top_image: that.state.absoluteUrl + item.fileUploaded?.split("public")[1]
+				  })
+			  }
+			
 			that.getSettings();	  
 			})
 		  })
@@ -280,7 +314,8 @@ class Header extends React.Component {
 	}
 
 	render() {
-
+		if (this.state.GotoLogin)
+			return <Redirect to='/login' />;
 		return (
 			<div style={{ background: '#fff', paddingBottom: 10 }}>
 				
@@ -290,13 +325,8 @@ class Header extends React.Component {
 				<div ></div>
 				}
 				<div >
-					<div className="row" style={{ direction: 'ltr', marginTop: 15, alignItems: 'center', marginLeft: 0, marginRight: 0,backgroundColor:'#eceff1',padding:8 }}>
-
-
-
-
-
-					{this.state.userId &&
+					<div className="row" style={{ direction: 'ltr', marginTop: 15, alignItems: 'center', marginLeft: 0, marginRight: 0,borderBottom:'1px solid #eee',padding:8 }}>
+					{this.state.userId ?
 						<div className="col-lg-8 col-12 order-lg-1 order-2 text-lg-left text-right">
 							<div className="wishlist_cart d-flex flex-row align-items-center " style={{ justifyContent: 'flex-start' }}>
 							
@@ -321,9 +351,24 @@ class Header extends React.Component {
 
 							</div>
 						</div>
+						:
+						<div className="col-lg-3 col-12 order-lg-1 order-2 text-lg-left text-right">
+						{this.props.Company &&
+                          <div style={{width:'100%',textAlign:'center',display:'flex',justifyContent:'space-evenly'}}>
+                           <button className="btn btn-warning YekanBakhFaMedium" style={{marginTop:10,width:180}} onClick={()=>{this.setState({
+                             VisibleDialog:true
+                           })}}>
+
+                             <span >عضویت رایگان !</span>
+                           </button>
+						   <Link to={`${process.env.PUBLIC_URL}/Login`} style={{ marginTop:10,width:180,textDecoration: 'none', fontSize: 16,fontStyle:'normal' }} className="btn btn-success YekanBakhFaMedium">ورود</Link>
+
+                          </div>
+                        }
+						</div>
 						}
 
-						<div className={this.state.userId ? "col-lg-4 col-12 order-lg-3 order-1" : "col-lg-12 col-12 order-lg-3 order-1"}>
+						<div className={this.state.userId ? "col-lg-4 col-12 order-lg-3 order-1" : "col-lg-9 col-12 order-lg-3 order-1"}>
 							<div className="text-lg-right text-center mr-lg-4 mr-0 ">
 								{this.state.logo &&
 									<div className="text-lg-right text-center" >
@@ -336,6 +381,47 @@ class Header extends React.Component {
 							</div>
 						</div>
 					</div>
+					<Dialog visible={this.state.VisibleDialog} onHide={()=>{this.setState({ VisibleDialog: null });}}  style={{ width: '700px' }} maximizable={false} maximized={false}>
+                  <div className="row">
+                  <div className="col-12" style={{textAlign:'center',marginTop:15}}>
+                  <p className="YekanBakhFaBold" style={{fontSize:18}}>پس از ساخت زیر سیستم بلافاصله امکان استفاده از امکانات آن برای شما فراهم خواهد شد</p>
+                  </div>
+                  <div className="col-12">
+                    <div className="group">
+
+                            <input type="text" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="name" name="name" value={this.state.name} onChange={(event)=>{this.setState({name:event.target.value})}} required />
+                            <label className="YekanBakhFaBold">نام مجموعه</label>
+                    </div>
+                    </div>
+
+                    <div className="col-12">
+                      <div className="group">
+                              <input type="text" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="latinName" name="latinName" value={this.state.latinName} onChange={(event)=>{this.setState({latinName:event.target.value})}} required />
+                              <label className="YekanBakhFaBold">نام لاتین (آدرس صفحه اختصاصی شما با این نام شناخته میشود)</label>
+                      </div>
+                    </div>
+                    
+                    <div className="col-12">
+                    <div className="group">
+                        <input type="text" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="mobile" name="mobile" value={this.state.mobile} onChange={(event)=>{this.setState({mobile:event.target.value})}} required />
+                        <label className="YekanBakhFaBold">شماره موبایل (این شماره به عنوان نام کاربری شما در سایت در نظر گرفته می شود) </label>
+                    </div>
+                    
+                    </div>
+                    <div className="col-12">
+                    <div className="group">
+                            <input type="password" className="form-control YekanBakhFaBold" style={{textAlign:'center'}} id="pass" name="pass" value={this.state.pass} onChange={(event)=>{this.setState({pass:event.target.value})}} required />
+                            <label className="YekanBakhFaBold">رمز عبور</label>
+                    </div>
+                      </div>
+                      <div className="col-12">
+                      <button className="btn btn-info YekanBakhFaMedium" style={{marginTop:10}} onClick={this.CreateSubSystem}>ساخت </button>
+                      </div>
+                   
+                  </div>
+                </Dialog>
+				<Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
+
 				</div>
 
 			</div>

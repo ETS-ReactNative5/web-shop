@@ -5,8 +5,8 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -47,7 +47,7 @@ class Comments extends React.Component {
   selectedListChange(value) {
     let that = this;
     let param = {
-      _id: value._id,
+      _id: value.value,
       status: that.state.Status ? 0 : 1
     };
     this.setState({
@@ -103,7 +103,18 @@ class Comments extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
-      console.log(response.data.result)
+      for(let i=0;i<response.data.result.length;i++){
+        response.data.result[i].radif = i+1;
+
+        response.data.result[i].SellerName = response.data.result[i].Seller[0]?.name;
+        response.data.result[i].ProductName = response.data.result[i].product[0]?.title;
+        if(response.data.result[i].status == 1)
+          response.data.result[i].changeStatus = <i className="fa fa-lock-alt" _id={response.data.result[i]._id} style={{ cursor: 'pointer' }} aria-hidden="true" onClick={(e) => {that.selectedListChange(e.currentTarget.attributes["_id"])}}></i>
+        else  
+          response.data.result[i].changeStatus = <i className="fa fa-lock-open-alt" _id={response.data.result[i]._id} style={{ cursor: 'pointer' }} aria-hidden="true" onClick={(e) => {that.selectedListChange(e.currentTarget.attributes["_id"])}}></i>
+        response.data.result[i].delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.Delete(response.data.result[i]._id)}></i>
+
+      }
       that.setState({
         loading: 0,
         GridDataComments: response.data.result
@@ -116,6 +127,29 @@ class Comments extends React.Component {
       console.log(error)
     }
     this.Server.send("MainApi/getComment", param, SCallBack, ECallBack)
+  }
+  Delete(_id){
+    let that = this;
+    let param = {
+      _id: _id,
+      delete: 1
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      that.setState({
+        loading: 0
+      })
+      that.GetComments(that.state.Status ? 1 : 0);
+    };
+    let ECallBack = function (error) {
+      that.setState({
+        loading: 0
+      })
+      console.log(error)
+    }
+    this.Server.send("MainApi/modifyComment", param, SCallBack, ECallBack)
   }
   EditShopSelected() {
     let that = this;
@@ -158,7 +192,7 @@ class Comments extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >‍‍‍‍‍‍‍لیست پیام ها</span></div>
 
             <div>
@@ -172,9 +206,7 @@ class Comments extends React.Component {
                     style={{ textAlign: 'right', fontSize: 15 }}
                     description={
                       <p className="yekan">
-                        برای  عدم تایید پیام  روی سطر آن  کلیک کنید
 
-            <br />
                         <ToggleButton onLabel="مشاهده پیامهای تایید نشده" offLabel="مشاهده پیامهای تایید شده" className="iranyekanwebregular" style={{ fontFamily: 'iranyekanwebregular', marginBottom: 10, float: 'left' }} checked={this.state.Status} onChange={(e) => { this.setState({ Status: e.value }); this.GetComments(e.value ? 1 : 0) }} />
 
                       </p>
@@ -186,11 +218,10 @@ class Comments extends React.Component {
                     type="error"
                     title="پیامهای تایید نشده"
                     className="yekan"
-                    style={{ textAlign: 'right', fontSize: 15 }}
+                    style={{ textAlign: 'right', fontSize: 15,fontSize:'yekan' }}
                     description={
                       <p className="yekan">
-                        برای   تایید پیام  روی سطر آن  کلیک کنید
-            <br />
+                   
                         <ToggleButton onLabel="مشاهده پیامهای تایید نشده" offLabel="مشاهده پیامهای تایید شده" className="yekan" style={{ fontFamily: 'yekan', marginBottom: 10, float: 'left' }} checked={this.state.Status} onChange={(e) => { this.setState({ Status: e.value }); this.GetComments(e.value ? 1 : 0) }} />
 
                       </p>
@@ -200,12 +231,14 @@ class Comments extends React.Component {
               }
             </div>
 
-            <DataTable responsive resizableColumns={true} paginator={true} rows={10} value={this.state.GridDataComments} selectionMode="single" style={{ marginTop: 20 }} selection={this.state.selectedId} onSelectionChange={e => this.selectedListChange(e.value)} >
-              <Column field="_id" header="شناسه پیام" className="yekan" style={{ textAlign: "center" }} />
+            <DataTable responsive resizableColumns={true} paginator={true} rows={10} value={this.state.GridDataComments} selectionMode="single" style={{ marginTop: 20 }} selection={this.state.selectedId}  >
+              <Column field="radif" header="ردیف" className="yekan" style={{ textAlign: "center" }} />
               <Column field="CommentText" header="متن پیام" className="yekan" style={{ textAlign: "center" }} />
-              <Column field="ProductId" header="شناسه محصول" className="yekan" style={{ textAlign: "center" }} />
-              <Column field="SellerId" header="شناسه فروشنده" className="yekan" style={{ textAlign: "center" }} />
+              <Column field="ProductName" header=" محصول" className="yekan" style={{ textAlign: "center" }} />
+              <Column field="SellerName" header=" فروشنده" className="yekan" style={{ textAlign: "center" }} />
               <Column field="date" header="تاریخ" className="yekan" style={{ textAlign: "center" }} />
+              <Column field="changeStatus" header="تغییر وضعیت" className="yekan" style={{ textAlign: "center" }} />
+              <Column field="delete" header="حذف" className="yekan" style={{ textAlign: "center" }} />
 
             </DataTable>
 

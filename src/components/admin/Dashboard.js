@@ -6,8 +6,9 @@ import { Sidenav, Nav, Dropdown, Icon, FlexboxGrid } from 'rsuite';
 import { Alert } from 'rsuite';
 import { Badge, Button } from 'rsuite';
 import { Sidebar } from 'primereact/sidebar';
-import { ScrollPanel } from 'primereact/scrollpanel';
+import { io } from "socket.io-client";
 import { PanelMenu } from 'primereact/panelmenu';
+import { Toast } from 'primereact/toast';
 
 import './Dashboard.css'
 const styles = {
@@ -16,13 +17,13 @@ const styles = {
   marginRight: 10,
   marginTop: 15
 };
+var socket;
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
     this.Server = new Server();
-
     this.state = {
       list: this.props.list || [],
       data: this.props.data || [],
@@ -36,8 +37,11 @@ class Dashboard extends React.Component {
       ShopId: (this.props.data && this.props.data.length > 0) ? this.props.data[0]._id : null,
       user_id: (this.props.data && this.props.data.length > 0) ? this.props.data[0].UserId : null,
       name: (this.props.data && this.props.data.length > 0) ? this.props.data[0].name : null,
-      logo: (this.props.data && this.props.data.length > 0 && this.props.data[0].logo) ? this.Server.getAbsoluteUrl() + this.props.data[0].logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
+      logo: (this.props.data && this.props.data.length > 0 && this.props.data[0].logo) ? this.Server.getAbsoluteUrl() + this.props.data[0].logo.split("public")[1] : "http://siteapi.sarvapps.ir/nophoto.png",
     }
+    socket = io(this.Server.getAbsoluteUrl());
+    this.toast = React.createRef();
+
     this.logout = this.logout.bind(this);
     if (this.props.list && this.props.list.length > 0)
       return;
@@ -46,6 +50,47 @@ class Dashboard extends React.Component {
 
     this.getShopInformation();
 
+
+  }
+  componentDidMount() {
+    socket.on("factorCreated", (data) => {
+        var product= "";
+        var warningNumber= "";
+        var errorNumber= "";
+        if(data.products_id){
+          for(let i=0;i<data.products_id.length;i++){
+            product+=""+data.products_id[i].title+" \n ("+data.products_id[i].number+") عدد";
+            if(data.products_id[i].RemainedNumber == 0){
+
+              errorNumber+=""+data.products_id[i].title+"\n ";
+            }
+            else if(data.products_id[i].RemainedNumber < 3){
+
+              warningNumber+=""+data.products_id[i].title+"\n ";
+            }
+          }
+        }   
+  
+        let msg = <div>
+                    <div>سفارش جدیدی ثبت شد</div>
+                    <div style={{whiteSpace:'pre-wrap'}}>{product}</div>
+                  </div>
+        this.toast.current.show({ sticky: true,severity: 'success', summary: msg,position:'bottom-left'});
+        if(warningNumber){
+          this.toast.current.show({ sticky: true,severity: 'warn', summary: <div>
+          <div>موجودی محصولات زیر رو به پایان است</div>
+            <div style={{whiteSpace:'pre-wrap'}}>{warningNumber}</div>
+          </div> ,position:'bottom-left'});
+        }
+        if(errorNumber){
+          this.toast.current.show({ sticky: true,severity: 'error', summary: <div>
+          <div>موجودی محصولات زیر  به پایان رسیده است</div>
+            <div style={{whiteSpace:'pre-wrap'}}>{errorNumber}</div>
+          </div> ,position:'bottom-left'});
+        }
+         
+
+    });
 
   }
   componentWillReceiveProps(newProps) {
@@ -150,6 +195,7 @@ class Dashboard extends React.Component {
       //onClick={() => this.GoToForm(u.CId,u.IsReport)}
       for (let i = 0; i < result.length; i++) {
         result[i].items = [];
+
         for (let j = 0; j < result.length; j++) {
           result[j].icon = result[j].Icon;
           result[j].label = result[j].FName;
@@ -159,14 +205,21 @@ class Dashboard extends React.Component {
             result[j].remove = 1;
           }
           result[j].command = (event) => {
+            /*for(let i=0;i<document.getElementsByClassName("p-menuitem-link").length;i++)
+              document.getElementsByClassName("p-menuitem-link")[i].classList.remove("alert-success")
+            event.originalEvent.currentTarget.className=event.originalEvent.currentTarget.className+" alert-success";*/
             let u = event.item;
             if(u.items && u.items.length > 0);
-            else
-              that.GoToForm(u.CId,u.IsReport,u.help)
+            else{
+              that.GoToForm(u.CId,u.IsReport,u.help)  
+
+            }
           }
         }
       }
       for (let i = 0; i < result.length; i++) {
+        if(result[i].items.length == 0)
+          delete result[i].items
         if(!result[i].remove)
           res.push(result[i])
       }
@@ -215,7 +268,7 @@ class Dashboard extends React.Component {
             address: response.data.result[0].address,
             user_id: response.data.result[0].UserId,
             name: response.data.result[0].name,
-            logo: response.data.result[0].logo ? that.state.absoluteUrl + response.data.result[0].logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png"
+            logo: response.data.result[0].logo ? that.state.absoluteUrl + response.data.result[0].logo.split("public")[1] : "http://siteapi.sarvapps.ir/nophoto.png"
 
           })
         }
@@ -267,13 +320,14 @@ class Dashboard extends React.Component {
         <div>
 
           <div style={{ textAlign: 'center', margin: 5 }}>
+          <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
 
             <div style={styles}>
             
              <div  className="d-md-none d-block">
                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end'}}>
                <a href="/" style={{ textDecoration: 'none' }}>
-                    <img src={this.state.logo} style={{ marginTop: 20,height:40 }}  />
+                    <img src={this.state.logo} style={{ marginTop: 20,maxHeight:100 }}  />
                   </a>
              <i className="fas fa-bars" style={{fontSize:30,color:'#a7a7a7'}}  onClick={(e) => this.setState({
               SideVisible:true
@@ -288,7 +342,7 @@ class Dashboard extends React.Component {
                 <Sidenav.Header>
                   <a href="/" style={{ textDecoration: 'none' }}>
                     <img src={this.state.logo} style={{ marginTop: 20,maxWidth:150 }}  />
-                    <p className="yekan" style={{ marginTop: 20, background: '#3ee6a8', color: '#fff', padding: 4,display:'flex',justifyContent:'space-around',fontSize:25,alignItems:'center' }}>
+                    <p className="yekan" style={{ marginTop: 20, padding: 4,display:'flex',justifyContent:'space-around',fontSize:25,alignItems:'center' }}>
                       <span>{this.state.name}</span>
                     </p>
                     
@@ -315,7 +369,7 @@ class Dashboard extends React.Component {
                 <Sidenav.Header>
                   <a href="/" style={{ textDecoration: 'none' }}>
                     <img src={this.state.logo} style={{ marginTop: 20 }} className="d-none d-sm-inline-block" />
-                    <p className="yekan" style={{ marginTop: 20, background: '#3ee6a8', color: '#fff', padding: 4 }}>{this.state.name}</p>
+                    <p className="yekan" style={{ marginTop: 20, padding: 4 }}>{this.state.name}</p>
                   </a>
 
                 </Sidenav.Header>

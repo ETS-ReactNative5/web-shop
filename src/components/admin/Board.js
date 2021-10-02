@@ -3,8 +3,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { Message } from 'primereact/message';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { Loader } from 'rsuite';
 import './DataTableDemo.css';
 import Charts from '.././Charts.js'
+import { Fieldset } from 'primereact/fieldset';
 
 
 class Board extends React.Component {
@@ -94,7 +95,8 @@ class Board extends React.Component {
         NotActiveUsers: NotActiveUsers,
         msg1:<div style={{display:'flex',justifyContent:'space-between',padding:20,marginTop:10,flexWrap:'wrap',textAlign:'right'}} className="yekan alert-info"><div style={{width:'100%',marginBottom:10}}><span>خلاصه وضعیت کاربران</span></div><div><span>کاربران : </span><span>{SiteUsers}</span></div><div><span>مدیران : </span><span>{managers}</span></div><div><span>کاربران فعال : </span><span>{ActiveUsers}</span></div><div><span>کاربران غیر فعال : </span><span>{NewUsers}</span></div></div>
       })
-      that.GetFactors();
+      if(that.state.System == "shop")
+        that.GetFactors();
 
     };
     let ECallBack = function (error) {
@@ -126,7 +128,10 @@ class Board extends React.Component {
 
       that.Server.send("AdminApi/ShopInformation", { ShopId: that.state.SellerId }, function (response) {
         that.setState({
-          isMainShop: response.data.result[0].main
+          isMainShop: response.data.result[0].main,
+          tokenId: response.data.result[0].tokenId,
+          codeForHead:"<script src='https://sarvapps.ir/ania_chat.js'></script><link rel='stylesheet' href='https://sarvapps.ir/ania_chat.css' /><script>window.AniaChatId='"+response.data.result[0].tokenId+"';window.AniaChatInit()</script>",
+
         })
         that.getSettings();
 
@@ -175,7 +180,9 @@ class Board extends React.Component {
           ActiveSms: response.data.result ? resp.ActiveSms : "none",
           STitle: response.data.result ? resp.STitle : "",
           AccessAfterReg: response.data.result ? resp.AccessAfterReg : 0,
-          RegSmsText: response.data.result ? resp.RegSmsText : ''
+          RegSmsText: response.data.result ? resp.RegSmsText : '',
+          System: response.data.result ? resp.System : '',
+          
         })
       }
       that.GetUsers();
@@ -328,17 +335,35 @@ class Board extends React.Component {
           </div>
         }
         <div className="row justify-content-center">
-          <div className="col-12">
-            {this.state.msg1}
-          </div>
-          <div className="col-12">
-            {this.state.msg2}
-          </div>
+        <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
+
+              {this.state.msg1 &&
+                <Fieldset legend="خلاصه وضعیت کاربران" style={{ marginTop: 20, textAlign: 'right', fontFamily: 'yekan',width:'100%' }}>
+
+                <div className="col-12">
+                  {this.state.msg1}
+                </div>
+              </Fieldset>
+              }
+              </div>
+              <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
+
+                {this.state.msg2 &&
+                  <Fieldset legend="خلاصه وضعیت سفارشات" style={{ marginTop: 20, textAlign: 'right', fontFamily: 'yekan',width:'100%' }}>
+
+                  <div className="col-12">
+                    {this.state.msg2}
+                  </div>
+                  </Fieldset>
+
+                }
+                </div>
           <div className="col-12" style={{ marginTop: 20, backgroundColor: '#fff' }}>
           {this.state.FactorStatusDate &&
             <Charts data={this.state.FactorStatusDate} labels={this.state.FactorStatusLabels} label={this.state.FactorStatusLabel}  backgroundColor={['#d23e3e','#62d23e','#0d2904','#3c2acc','#94a21e','#f1b42b','#cd94d8','#d23e3e','#2adad2','#e4d8bd']} type="bar" />
           }
           </div>
+          
         </div>
       </div>
     )

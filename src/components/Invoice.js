@@ -7,9 +7,12 @@ import queryString from 'query-string';
 import Header1 from './Header1.js';
 import Footer from './Footer.js';
 import Header2 from './Header2.js';
+import Header from './Header.js';
+
 import { ComponentToPrint } from './ComponentToPrint.js';
 import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import { Button } from 'primereact/button';
+import { Link } from 'react-router-dom'
 
 class Invoice extends React.Component {
   constructor(props) {
@@ -295,7 +298,9 @@ class Invoice extends React.Component {
           ActiveSms: response.data.result ? response.data.result.ActiveSms : "none",
           STitle: response.data.result ? response.data.result.STitle : "",
           AccessAfterReg: response.data.result ? response.data.result.AccessAfterReg : 0,
-          RegSmsText: response.data.result ? response.data.result.RegSmsText : ''
+          RegSmsText: response.data.result ? response.data.result.RegSmsText : '',
+          System: response.data.result ? response.data.result.System : ''
+
 
         })
         setTimeout(function () {
@@ -364,20 +369,31 @@ class Invoice extends React.Component {
   render() {
     return (
       <div>
-        <Header1 />
-        <Header2 />
+        {!this.props.noHeader && this.state.System == "shop" &&
+              <Header1 /> 
+
+          }
+          {!this.props.noHeader && this.state.System == "shop" &&
+              <Header2 /> 
+
+          }
+
+          {!this.props.noHeader && this.state.System != "shop" &&
+              <Header /> 
+
+          }
         <div className="container" style={{ marginTop: 15, minHeight: 600 }}>
           <div className="row">
             <div className="col-lg-12 col-md-9 col-12 mx-auto">
-              <div className="card" style={{ padding: 40 }}>
-                <div className="alert alert-secondary" style={{ borderRadius: 20 }}>
+              <div className="card" style={{ padding: 40,marginTop:100 }}>
+                <div  style={{ borderRadius: 20 }}>
                   {this.state.refId && this.state.refId != -1 &&
-                    <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert text-secondary">
+                    <div style={{ textAlign: "center", opacity: 1,marginBottom:50 }} className="YekanBakhFaBold ">
                       پرداخت با موفقیت انجام شد  <br />
                    </div>
 
                   }
-                  {this.state.refId && this.state.refId != -1 ?
+                  {this.state.System == "shop" && this.state.refId && this.state.refId != -1 ?
                     <div style={{ textAlign: "center", opacity: 1,display:'flex',alignItems:'center',flexDirection:'column' }} className="alert  YekanBakhFaBold">
                       <div>از خرید شما سپاسگزاریم</div><br />
                       <div style={{ fontSize: 21, color: '#fff',backgroundColor:'#24bf30',borderRadius:20,justifyContent:'center',padding:10 }} className="row"> <span className="col-12">رسید تراکنش: </span> <span className="col-12"> {this.persianNumber(this.state.refId)} </span> </div><br />
@@ -385,8 +401,7 @@ class Invoice extends React.Component {
                     </div>
                     :
                     this.state.refId != -1 ?
-                      <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert alert-danger ">
-                        در حال دریافت اطلاعات ....
+                      <div >
                       </div>
 
                       : <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert alert-danger ">
@@ -398,9 +413,37 @@ class Invoice extends React.Component {
                         </p>
                       </div>
                   }
+
+
+                  {this.state.System == "company" && this.state.refId && this.state.refId != -1 ?
+                    <div style={{ textAlign: "center", opacity: 1,display:'flex',alignItems:'center',flexDirection:'column' }} className="alert  YekanBakhFaBold">
+                      
+                    </div>
+                    :
+                    this.state.refId != -1 ?
+                      <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert alert-success ">
+                        {this.state.refId == '' ?
+                        <span>در حال دریافت اطلاعات ....</span>
+                        :
+                        <span>رسید تراکنش : {this.state.refId}</span>
+
+                        }
+                      </div>
+
+                      : <div style={{ textAlign: "center", opacity: 1 }} className="YekanBakhFaBold alert alert-danger ">
+                        <p className="YekanBakhFaBold">
+                          پرداخت انجام نشد  
+                        </p>
+                        <p className="YekanBakhFaBold">
+                          در صورت کسر وجه از حساب شما حداکثر تا 72 ساعت آینده مبلغ به حساب شما برخواهد گشت . در غیر اینصورت موضوع را به پشتیبانی سایت اطلاع دهید
+                        </p>
+                      </div>
+                  }
+
+
                 </div>
 
-                {this.state.refId != -1 &&
+                {this.state.System == "shop" && this.state.refId != -1 &&
                   <div className="row">
                     <div className="col-12">
                       <ComponentToPrint param={this.state.GridDataFactors} forUser="1" ref={el => (this.componentRef = el)} />
@@ -430,7 +473,24 @@ class Invoice extends React.Component {
                     <div className="col-md-2"></div>
                   </div>
                 }
-                {this.state.InMobileApp == "0" &&
+                
+
+                {this.state.System != "shop" && 
+                  <div className="row">
+                    
+                    <div className="col-md-12">
+                      <div  style={{marginTop:20}}>
+                      <div style={{ textAlign: "center" }} className="YekanBakhFaBold alert">
+                        <Link to={`${process.env.PUBLIC_URL}/admin/admin`} style={{  fontSize: 18,fontStyle:'bold' }} className="YekanBakhFaMedium">بازگشت به پنل مدیریت</Link>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+
+
+                {this.state.System == "shop" && this.state.InMobileApp == "0" &&
                   <div style={{ textAlign: "center", opacity: 1,display:'none' }} className="YekanBakhFaBold alert">
                     <a href="http://aniashop.ir">بازگشت به صفحه اصلی سایت</a>
                   </div>

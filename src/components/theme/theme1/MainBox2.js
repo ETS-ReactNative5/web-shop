@@ -298,7 +298,7 @@ class MainBox2 extends React.Component {
         if(item.fileUploaded)
             var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
         else
-            var img ="http://www.youdial.in/ydlogo/nologo.png"    
+            var img ="http://siteapi.sarvapps.ir/nophoto.png"    
         return (
             <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?id=`+item._id} style={{display:'block',textDecorationStyle:'none',color:'#333',border:"1px solid #cac1c1",margin:5,padding:5,borderRadius:5,height:285}}>
                 <div className="p-grid p-nogutter" >

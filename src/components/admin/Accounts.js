@@ -5,8 +5,8 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -205,7 +205,7 @@ class Accounts extends React.Component {
         <div className="row justify-content-center">
 
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
 
             <div className="section-title " style={{ marginLeft: 10, marginRight: 10, textAlign: 'right' }}><span className="title iranyekanwebmedium" style={{ fontSize: 16, color: 'gray' }} >‍‍‍‍‍‍‍ لیست درخواست های انتقال وجه </span> </div>
             <SelectButton value={this.state.Filter} options={FilterItems} style={{ fontFamily: 'Yekan', textAlign: 'right', marginBottom: 15 }} className="yekan" onChange={(e) => { this.setState({ Filter: e.value }); this.GetTransfer(e.value) }}></SelectButton>

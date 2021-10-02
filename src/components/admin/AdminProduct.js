@@ -7,8 +7,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
 import { Dialog } from 'primereact/dialog';
 import JoditEditor from "jodit-react";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -831,7 +831,6 @@ class AdminProduct extends React.Component {
     }
   }
   PreparEditProduct(row) {
-    debugger;
     if (row.HarajDate)
       this.setState({
         harajCheckBoxEdit: true
@@ -869,7 +868,7 @@ class AdminProduct extends React.Component {
       desc_edit: row.desc,
       review_edit: row.review,
       specialReview_edit: row.specialReview,
-      price_edit: !this.state.SeveralShop ? row.price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "",
+      price_edit: (!this.state.SeveralShop && row.price) ? row.price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "",
       off_edit: !this.state.SeveralShop ? row.off : "",
       status_edit: !this.state.SeveralShop ? row.status : "",
       CategoryInProduct_edit: row.category_id,
@@ -1739,7 +1738,7 @@ class AdminProduct extends React.Component {
         SelectedSize_edit_0.push(res[0]?.SelectedSize[i]?.value)
       }
       that.setState({
-        price_edit: res[0].price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+        price_edit: res[0].price ? res[0].price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") :"0",
         off_edit: res[0].off,
         status_edit: res[0].status,
         number_edit: res[0].number,
@@ -1829,6 +1828,7 @@ class AdminProduct extends React.Component {
     })
   }
   onEditorValueChange(props, value, field) {
+    debugger;
     let updatedProducts = [...props.value];
     updatedProducts[props.rowIndex][props.field] = value;
 
@@ -1836,7 +1836,7 @@ class AdminProduct extends React.Component {
       return;
     if((props.field=="relativeLevel" ||  props.field=="off") && isNaN(value) && value != "")
       return;  */
-    this.TableLayoutGetSet(updatedProducts[props.rowIndex], updatedProducts, props.rowIndex);
+    this.TableLayoutGetSet(updatedProducts[props.rowIndex], updatedProducts, props.rowIndex,field);
     this.setState({
       grid: updatedProducts
     })
@@ -2031,7 +2031,7 @@ class AdminProduct extends React.Component {
 
 
   }
-  TableLayoutGetSet(Set, updatedProducts, rowIndex) {
+  TableLayoutGetSet(Set, updatedProducts, rowIndex,field) {
     let url = "";
     if (!Set)
       url = "AdminApi/GetTableProduct";
@@ -2039,6 +2039,8 @@ class AdminProduct extends React.Component {
       if (!Set.Opr && !Set.off && !Set.relativeLevel && Set.price.length > 0 && Set.price.length < 3)
         return;
       url = "AdminApi/SetTableProduct";
+      if(field == "number")
+      Set.changeNumber=true;
 
     }
     let that = this;
@@ -2092,10 +2094,16 @@ class AdminProduct extends React.Component {
             if (response.data.result[i].formul && !isNaN(response.data.result[i].formul))
               price = response.data.result[i].formul;
             else if (response.data.result[i].formul) {
-              let json = JSON.parse(response.data.result[i].formul)
-              formul.level = json.level;
-              formul.off = json.off;
-              formul.opr = json.opr;
+              try{
+                let json = JSON.parse(response.data.result[i].formul)
+                formul.level = json.level;
+                formul.off = json.off;
+                formul.opr = json.opr;
+              }catch(e){
+                console.log(e);
+                let fff=response.data.result[i].formul
+              }
+              
             }
             if (!isNaN(response.data.result[i].formul)) {
               initPrice = parseInt(response.data.result[i].formul);
@@ -2126,9 +2134,16 @@ class AdminProduct extends React.Component {
           grid: grid
         })
       } else {
-        let result = !isNaN(response.data.result) ? that.roundPrice(response.data.result) : response.data.result;
-        updatedProducts[rowIndex]["result"] = result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        debugger;
+        if(response.data.result=="numChanged"){
+          that.TableLayoutGetSet();
 
+        }else{
+
+          let result = !isNaN(response.data.result) ? that.roundPrice(response.data.result) : response.data.result;
+          updatedProducts[rowIndex]["result"] = result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  
+        }
         that.setState({
           grid: updatedProducts
         })
@@ -3048,7 +3063,7 @@ class AdminProduct extends React.Component {
                       <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="off" header="درصد تخفیف" editor={(props) => this.gridEditor('off', props)}></Column>
                       <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="opr" header="عمل" editor={(props) => this.gridEditor('opr', props)}></Column>
                       <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="result" header="قیمت نهایی" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="number" header="موجودی" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="number" header="موجودی" editor={(props) => this.gridEditor('number', props)} ></Column>
 
 
 

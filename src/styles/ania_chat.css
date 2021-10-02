@@ -1,0 +1,175 @@
+
+ @font-face {
+  font-family: 'ania-chat-font';
+  src: local('YekanBakhFaMedium'), url(https://fdn.fontcdn.ir/Fonts/Yekan/b45ac895ca2c026fe30f8a2a1f9fce5653392665b62dc9f3faa94a50caa5205b.woff) format('truetype');
+}
+.ania-chat-box{
+	position: fixed;
+	z-index: 1200000;
+  text-align: right;
+  cursor: pointer;
+}
+.ania-chat-box.top-right{
+  top: 10px;
+  right: 10px;
+}
+.ania-chat-box.top-left{
+  top: 10px;
+  left: 10px;
+}
+.ania-chat-box.bottom-right{
+  bottom: 10px;
+  right: 10px;
+}
+.ania-chat-box.bottom-left{
+  bottom: 10px;
+  left: 10px;
+}
+.ania-chat-footer button{
+	border:0;
+}
+
+
+.ania-chat-logo{
+	width:70px;
+  transition: width 2s;
+}
+
+.ania-chat-content{
+  z-index: 1200000;
+	width:400px;
+  max-width: 90%;
+  max-height: 80%;
+	height:600px;
+  background-color: #eee;
+  position: fixed;
+  
+  display: none;
+  flex-direction: column;
+  border: 1px solid #dedede;
+
+}
+.ania-chat-content.top-right{
+  top: 85px;
+  right: 10px;
+}
+.ania-chat-content.top-left{
+  top: 85px;
+  left: 10px;
+}
+.ania-chat-content.bottom-right{
+  bottom: 85px;
+  right: 10px;
+}
+.ania-chat-content.bottom-left{
+  bottom: 85px;
+  left: 10px;
+}
+.ania-chat-content textarea{
+  font-family: ania-chat-font , tahoma;
+  width:100%;
+  background: 0 0!important;
+  color: #191919!important;
+  border: 0!important;
+  border-bottom: 1px solid #EBF5FD!important;
+  outline-style: none!important;
+  font-size: 13px!important;
+  padding: 16px 0 16px 62px!important;
+  height:50px;
+}
+
+.ania-chat-content-show{
+  display: flex;
+}
+.ania-chat-header{
+  text-align: right;
+  background-color: #28A52D !important;
+  font-family: ania-chat-font , tahoma;
+  height: 80px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.ania-chat-header p{
+  font-family: ania-chat-font , tahoma;
+  color: #fff;
+}
+.ania-chat-center{
+  overflow-y: auto;
+  height: calc(100% - 130px);
+  text-align: right;
+  padding: 20px;
+}
+.ania-chat-center *{
+  font-family: ania-chat-font , tahoma;
+}
+.ania-chat-center img{
+  max-width:150px
+}
+.ania-chat-footer{
+  position: relative;
+  display: flex;
+  height: 50px;
+  padding:8px;
+  background-color: #fff;
+  align-items: center;
+  
+}
+
+.ania-chat-footer textarea{
+  border-color: #eee;
+  height:50px;
+
+}
+.ania-chat-footer textarea::-webkit-input-placeholder { /* Edge */
+  font-family: ania-chat-font , tahoma;
+}
+
+.ania-chat-footer textarea:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  font-family: ania-chat-font , tahoma;
+}
+
+.ania-chat-footer textarea::placeholder {
+  font-family: ania-chat-font , tahoma;
+}
+.ania-chat-footer span{
+  cursor:pointer;
+}
+
+
+.ania-chat-content textarea::-webkit-scrollbar {
+  width: 1px;
+}
+
+.ania-chat-content textarea::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #fff;
+}
+
+.ania-chat-content textarea::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  outline: 1px solid #fff;
+}
+
+
+
+
+.ania-chat-content ::-webkit-scrollbar {
+  width: 1px;
+}
+
+.ania-chat-content ::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #000;
+}
+
+.ania-chat-content ::-webkit-scrollbar-thumb {
+background-color: #000;
+outline: 1px solid #000;
+}
+
+.ania-chat-emoji{
+  flex-wrap: wrap;
+  width: 100%;
+  background-color: #fff;
+  padding:10px;
+  position: absolute;
+  top: -140px;}

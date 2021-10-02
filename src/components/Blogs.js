@@ -198,7 +198,7 @@ class Products extends React.Component {
     }
     return (
       <div ref={this.myRef}>  
-      {this.state.System=="shop" ?
+      {this.state.System=="shop"  ?
         <div>
             
         <Header1 /> 
@@ -206,7 +206,12 @@ class Products extends React.Component {
         </div>
         :
         <div>
-          <Header /> 
+            {this.state.System ?
+               <Header /> 
+
+            :
+                <div></div>
+            }
  
         </div>
         }
@@ -216,7 +221,7 @@ class Products extends React.Component {
 		<div className="container">
             <div className="row" >
                 {this.state.ProductBase && this.state.System=="shop" &&
-                <div className="col-md-3 col-12 order-md-1 order-2" style={{marginTop:50,opacity:'0.8'}} >
+                <div className="col-md-3 col-12 order-md-1 order-2" style={{marginTop:50,opacity:'0.8',display:'none'}} >
                 {this.state.Newproducts.map((item,index) => {
                     var img = this.state.absoluteUrl + item.fileUploaded.split("public")[1];
 
@@ -256,7 +261,7 @@ class Products extends React.Component {
                 }
                 </div>
                 }
-                <div className={(this.state.ProductBase && this.state.System=="shop") ? "col-md-9 col-12 order-md-2 order-1" : "col-md-12 col-12 order-md-2 order-1"} style={{marginTop:50}} >
+                <div className={(this.state.ProductBase && this.state.System=="shop") ? "col-md-12 col-12 order-md-2 order-1" : "col-md-12 col-12 order-md-2 order-1"} style={{marginTop:50}} >
                     {this.state.id && this.state.Blog[0] ? 
                     <div>
                         <div className="iranyekanwebblack" style={{textAlign:'center',fontSize:22}}>{this.state.Blog[0].title}</div>
@@ -267,7 +272,7 @@ class Products extends React.Component {
 
                     {this.state.Blog.map((item,index) => {
                         return(
-                            <div style={{marginTop:8,cursor:'pointer'}} >
+                            <div style={{marginTop:30,cursor:'pointer'}} >
                                 <div className="row">
                                         
                                         <div className="col-12" style={{backgroundColor:'#f1f1f1'}}>
@@ -275,7 +280,7 @@ class Products extends React.Component {
                                     
                                             <p className="iranyekanwebblack" style={{textAlign:'right',backgroundColor:'#2f2f2fb8',color:'#fff',padding:8,marginTop:10,borderRadius:5}}>{item.title}</p>
 
-                                            <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight" style={{textAlign:'right',height:150,overflow:'hidden'}} />
+                                            <div dangerouslySetInnerHTML={{ __html: item.content }} className="iranyekanweblight" style={{textAlign:'right',height:150,overflow:'hidden',paddingTop:20,paddingBottom:20}} />
                                       
                                 </NavLink >
                                 </div>

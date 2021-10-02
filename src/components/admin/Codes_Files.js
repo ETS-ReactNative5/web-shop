@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -262,7 +262,7 @@ class Codes_Files extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
 
             <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >ثبت و ویرایش کدفایلها</span></div>
             <div className="row" style={{marginTop: "20px", marginBottom: "20px"}} >
@@ -323,7 +323,7 @@ class Codes_Files extends React.Component {
 
               </div>
               <div className="col-lg-12" style={{ marginTop: 20, marginRight: 5,textAlign:'right' }}>
-                <button className="irsans" onClick={() => {
+                <button className="btn btn-secondary irsans" onClick={() => {
                   let Count = this.state.Count+1;
                   this.setState({
                     Count: Count

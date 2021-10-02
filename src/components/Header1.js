@@ -94,6 +94,7 @@ class Header1 extends React.Component {
 			token: localStorage.getItem("api_token")
 		})
 			.then(response => {
+				let levelOfUser = response.data.authData.levelOfUser;
 				this.setState({
 					userId: response.data.authData.userId,
 					name: response.data.authData.name,
@@ -106,6 +107,9 @@ class Header1 extends React.Component {
 						off: localStorage.getItem("off") == "undefined" ? 0 : localStorage.getItem("off"),
 						credit: (response.data.result[0] && response.data.result[0].credit) ? parseInt(response.data.result[0].credit) : 0
 					})
+					if(levelOfUser != response.data.result[0].levelOfUser){
+						this.logout();
+					}
 					this.setState({
 						credit: (response.data.result[0] && response.data.result[0].credit) ? parseInt(response.data.result[0].credit) : 0
 					})
@@ -232,10 +236,12 @@ class Header1 extends React.Component {
 		axios.post(this.state.url + 'getPics', {})
 			.then(response => {
 				response.data.result.map(function (item, index) {
-					if (item.name == "file12")
+					if (item.name == "file12" && item.fileUploaded){
 						that.setState({
 							top_image: that.state.absoluteUrl + item.fileUploaded?.split("public")[1]
 						})
+					}
+						
 				})
 
 			})

@@ -5,13 +5,13 @@ import Dashboard from './Dashboard.js'
 import './report.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import { io } from "socket.io-client";
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { AutoComplete } from 'primereact/autocomplete';
@@ -25,6 +25,7 @@ import { Fieldset } from 'primereact/fieldset';
 import DatePicker from 'react-datepicker2';
 import { ComponentToPrint } from '../ComponentToPrint.js';
 import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
+var socket;
 
 class Show_Reports extends React.Component {
   constructor(props) {
@@ -37,16 +38,16 @@ class Show_Reports extends React.Component {
       
 
     }
-    
+    socket = io(this.Server.getAbsoluteUrl());
+
     this.generateExcel = this.generateExcel.bind(this);
     this.showReports = this.showReports.bind(this);
     this.Clear = this.Clear.bind(this);
-
+    this.sortTable = this.sortTable.bind(this);
     
   }
   GetFilters() {
     let that = this;
-
     let param = {
       token: localStorage.getItem("api_token"),
       number:this.props.number
@@ -107,6 +108,76 @@ class Show_Reports extends React.Component {
       })
     }
     this.Server.send("AdminApi/GetFilters", param, SCallBack, ECallBack)
+  }
+  sortTable(event) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    let cellIndex = -1;
+    if(event.target.tagName == "TD" && event.target.className == "header-td")
+      cellIndex = event.target.cellIndex
+    if(cellIndex == -1)
+      return;
+      debugger;
+    table = x=event.target.parentElement.parentElement.parentElement;
+    let sort = 1;
+    if(!isNaN(parseInt(event.target.getAttribute("sort"))))
+      sort = parseInt(event.target.getAttribute("sort")) ? 0 : 1;
+    event.target.setAttribute("sort",sort);
+    if(event.target.parentElement.getElementsByTagName("i").length > 0){
+      for(let ii of event.target.parentElement.getElementsByTagName("i"))
+        ii.remove();
+    }
+    
+    if(sort){
+      event.target.innerHTML += '<i class="far fa-angle-double-up" style="color:#749047"></i>';
+
+    }else{
+      
+      event.target.innerHTML += '<i class="far fa-angle-double-down" style="color:#749047"></i>';
+    }
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+      //start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /*Loop through all table rows (except the
+      first, which contains table headers):*/
+      for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[cellIndex];
+        y = rows[i + 1].getElementsByTagName("TD")[cellIndex];
+        //check if the two rows should switch place:
+        if(!sort){
+          if (parseInt(x.innerHTML.replace(/,/g, "").toLowerCase()) > parseInt(y.innerHTML.replace(/,/g, "").toLowerCase())) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }else{
+          if (parseInt(x.innerHTML.replace(/,/g, "").toLowerCase()) < parseInt(y.innerHTML.replace(/,/g, "").toLowerCase())) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+        
+      }
+      if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+      
+    }
+    for(let i=1;i<rows.length;i++){
+      rows[i].cells[0].innerText=i;
+    }
+    debugger;
   }
   getCombo(){
     let that = this;
@@ -200,7 +271,31 @@ class Show_Reports extends React.Component {
     }
     this.Server.send("ReportApi/"+this.state.method, param, SCallBack, ECallBack)
   }
-  getSettings() {
+  getReportDetail(){
+    let that = this;
+    that.setState({
+      loading: 1
+    })
+    let condition = {condition:{"number":this.props.number.toString()}}
+    that.Server.send("AdminApi/GetReports", condition, function (response) {
+      that.setState({
+        loading: 0,
+        reportName:response.data.result[0] ? response.data.result[0].name : "",
+        legend:response.data.result[0] ? (" " + response.data.result[0].name + "(" + that.props.number + ")") : ""
+      })
+      that.GetFilters();
+
+
+    }, function (error) {
+
+      that.setState({
+        loading: 0
+      })
+
+    })
+  }
+  getSettings(){
+
     let that = this;
     that.setState({
       loading: 1
@@ -228,6 +323,9 @@ class Show_Reports extends React.Component {
 
   }
   componentDidMount() {
+    socket.on("autoPrint", (data) => {
+      this.handlePrint()
+    });
     this.getSettings();
   }
   generateExcel(){
@@ -277,7 +375,7 @@ class Show_Reports extends React.Component {
       that.setState({
         loading: 0
       })
-      that.GetFilters();
+      that.getReportDetail();
 
     };
     let ECallBack = function (error) {
@@ -365,10 +463,10 @@ itemTemplate(brand) {
         <div className="row justify-content-center">
               <div className="row">
                     <div className="col-12" style={{ display: "none" }}>
-                      <ComponentToPrint htmlParam={this.state.output} forUser="1" ref={el => (this.componentRef = el)} />
+                      <ComponentToPrint SeveralShop={this.state.SeveralShop} htmlParam={this.state.output} forUser="1" ref={el => (this.componentRef = el)} />
                     </div>
                   </div>
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
 
           <Fieldset legend={this.state.legend} toggleable collapsed={this.state.panelCollapsed} onToggle={(e) => this.setState({panelCollapsed: e.value})}>
           <div className="row" style={{alignItems:'baseline'}}>
@@ -460,7 +558,7 @@ itemTemplate(brand) {
 
                             <Button label="چاپ گزارش"  onClick={() => {
 
-                              setTimeout(function () {
+                              setTimeout(function () {  
                                 handlePrint();
 
                               }, 0)
@@ -471,8 +569,11 @@ itemTemplate(brand) {
               }
             </div>
             </Fieldset>
-            
-            <div className="report-container" dangerouslySetInnerHTML={{ __html: this.state.output}} > 
+            <div onClick={(e) => {this.sortTable(e)}}>
+
+            <div className="report-container"  dangerouslySetInnerHTML={{ __html: this.state.output}} > 
+
+            </div>
             </div>
             
           </div>

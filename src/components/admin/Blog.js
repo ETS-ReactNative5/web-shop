@@ -4,8 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -23,7 +23,17 @@ import { Alert } from 'rsuite';
 import { Link } from 'react-router-dom'
 
 const config = {
-  readonly: false // all options from https://xdsoft.net/jodit/doc/
+  readonly: false,
+  controls: {
+    font: {
+        list: {
+            'yekan': 'yekan',
+            'YekanBakhFaMedium':'YekanBakhFaMedium',
+            'YekanBakhFaLight':'YekanBakhFaLight',
+            'YekanBakhFaBold':'YekanBakhFaBold'
+        }
+    }
+    }
 }
 class Blog extends React.Component {
   constructor(props) {
@@ -41,6 +51,7 @@ class Blog extends React.Component {
       BlogId: null,
       address: null,
       FixPage: false,
+      draft:false,
       loading: 0,
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
@@ -78,6 +89,7 @@ class Blog extends React.Component {
             title: v.title,
             content: v.content,
             FixPage: v.FixPage,
+            draft:v.draft,
             address: "Blogs/?id=" + v._id
 
 
@@ -109,7 +121,8 @@ class Blog extends React.Component {
       address: e.address,
       title: e.title,
       content: e.content,
-      FixPage: e.FixPage
+      FixPage: e.FixPage,
+      draft:e.draft
     })
   }
   RemContent() {
@@ -143,7 +156,8 @@ class Blog extends React.Component {
       title: this.state.title,
       content: this.state.content,
       BlogId: this.state.BlogId,
-      FixPage: this.state.FixPage
+      FixPage: this.state.FixPage,
+      draft: this.state.draft
     };
     that.setState({
       loading: 1
@@ -177,7 +191,7 @@ class Blog extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
             <Panel header="ثبت مطلب جدید" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <form  >
                 <div className="row">
@@ -206,7 +220,8 @@ class Blog extends React.Component {
                         config={config}
                         tabIndex={1} // tabIndex of textarea
                         onChange={(value) => {
-                          this.setState({ content: value })
+                          if(value)
+                            this.setState({ content: value })
                         }}
                       />
 
@@ -215,11 +230,19 @@ class Blog extends React.Component {
 
                 </div>
                 <div className="row">
-                  <div className="col-lg-4" >
+                  <div className="col-lg-12" >
                     <div style={{ paddingRight: 8,display:'flex' }}>
 
                       <Checkbox inputId="laon" value={this.state.FixPage} checked={this.state.FixPage} onChange={e => this.setState({ FixPage: e.checked })}></Checkbox>
                       <label htmlFor="laon" className="p-checkbox-label" style={{ paddingRight: 5 }}>صفحه مستقل</label>
+
+                    </div>
+                  </div>
+                  <div className="col-lg-12" >
+                    <div style={{ paddingRight: 8,display:'flex' }}>
+
+                      <Checkbox inputId="laon" value={this.state.draft} checked={this.state.draft} onChange={e => this.setState({ draft: e.checked })}></Checkbox>
+                      <label htmlFor="laon" className="p-checkbox-label" style={{ paddingRight: 5 }}>پیش نویس</label>
 
                     </div>
                   </div>

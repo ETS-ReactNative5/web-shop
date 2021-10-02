@@ -5,8 +5,8 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -355,7 +355,8 @@ class Create_Off extends React.Component {
           ActiveSms: response.data.result ? resp.ActiveSms : "none",
           STitle: response.data.result ? resp.STitle : "",
           AccessAfterReg: response.data.result ? resp.AccessAfterReg : 0,
-          RegSmsText: response.data.result ? resp.RegSmsText : ''
+          RegSmsText: response.data.result ? resp.RegSmsText : '',
+          SeveralShop: response.data.result ? resp.SeveralShop : false
         })
       }
 
@@ -427,7 +428,7 @@ class Create_Off extends React.Component {
     return (
       <div style={{ direction: 'rtl' }}>
         <div style={{ display: "none" }}>
-          <ComponentToPrint param={this.state.printParam} ref={el => (this.componentRef = el)} />
+          <ComponentToPrint SeveralShop={this.state.SeveralShop} param={this.state.printParam} ref={el => (this.componentRef = el)} />
         </div>
 
         {this.state.loading == 1 &&

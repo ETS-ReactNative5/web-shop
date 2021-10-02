@@ -3,9 +3,9 @@ import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
-import ReactTable from "react-table";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+import { AutoComplete } from 'primereact/autocomplete';
+
+
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -204,7 +204,7 @@ class ShopInformation extends React.Component {
 
 
   }
-  getShopInformation() {
+  getShopInformation(_id) {
     let that = this;
     let param = {
       token: localStorage.getItem("api_token")
@@ -223,7 +223,7 @@ class ShopInformation extends React.Component {
       that.setState({
         loading: 1
       })
-      that.Server.send("AdminApi/ShopInformation", { ShopId: that.state.ShopId,getQrCode:1 }, function (response) {
+      that.Server.send("AdminApi/ShopInformation", { ShopId: _id || that.state.ShopId,getQrCode:1 }, function (response) {
         that.setState({
           loading: 0,
           barCode:response.data.svg
@@ -247,7 +247,7 @@ class ShopInformation extends React.Component {
         }
     
         that.setState({
-          ShopId: that.state.ShopId,
+          ShopId: _id || that.state.ShopId,
           address: response.data.result[0].address,
           latitude:response.data.result[0].latitude,
           longitude: response.data.result[0].longitude,
@@ -271,13 +271,14 @@ class ShopInformation extends React.Component {
           cash: response.data.result[0].cash,
           laon: response.data.result[0].laon,
           main: response.data.result[0].main,
+          originalShopMain: !_id ? response.data.result[0].main : that.state.originalShopMain,
           AllowCredit: response.data.result[0].AllowCredit,
           PrepareTime: response.data.result[0].PrepareTime,
           Opened: response.data.result[0].Opened,
           CreditCommission: response.data.result[0].CreditCommission,
-          logo: response.data.result[0].logo ? that.state.absoluteUrl + response.data.result[0].logo.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
-          logoCopyRight: response.data.result[0].logoCopyRight ? that.state.absoluteUrl + response.data.result[0].logoCopyRight.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
-          SpecialPic: response.data.result[0].SpecialPic ? that.state.absoluteUrl + response.data.result[0].SpecialPic.split("public")[1] : "http://www.youdial.in/ydlogo/nologo.png",
+          logo: response.data.result[0].logo ? that.state.absoluteUrl + response.data.result[0].logo.split("public")[1] : "http://siteapi.sarvapps.ir/nophoto.png",
+          logoCopyRight: response.data.result[0].logoCopyRight ? that.state.absoluteUrl + response.data.result[0].logoCopyRight.split("public")[1] : "http://siteapi.sarvapps.ir/nophoto.png",
+          SpecialPic: response.data.result[0].SpecialPic ? that.state.absoluteUrl + response.data.result[0].SpecialPic.split("public")[1] : "http://siteapi.sarvapps.ir/nophoto.png",
           ...Time
 
         })
@@ -318,6 +319,20 @@ class ShopInformation extends React.Component {
       })
 
     }
+  }
+  itemTemplate(brand) {
+    return (
+      <div className="p-clearfix" style={{ direction: 'rtl', maxWidth: '100%' }} >
+        <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
+          <div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>
+            <span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
+              <span style={{ whiteSpace: 'pre-wrap' }} _id={brand._id}>{brand.name} ({brand.username})</span><br />
+            </span>
+          </div>
+
+        </div>
+      </div>
+    );
   }
   EditShopInformation() {
     let that = this;
@@ -393,8 +408,37 @@ class ShopInformation extends React.Component {
     }
     this.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
   }
+  suggestBrands(event) {
+    let that = this;
+    this.setState({ brand: event.query, Count: 0 });
+    let param = {};
+    
+      param = {
+        title: event.query,
+        table: "shops",
+        name: ["name", "name"]
+      };
+
+    let SCallBack = function (response) {
+      let brandSuggestions = [];
+      response.data.result.reverse().map(function (v, i) {
+        brandSuggestions.push({ _id: v._id, name: v.name })
+      })
+      that.setState({ brandSuggestions: brandSuggestions });
+    };  
+
+    let ECallBack = function (error) {
+
+    }
+    that.Server.send("AdminApi/searchItems", param, SCallBack, ECallBack)
 
 
+  }
+  onSelect(event){
+    this.setState({ otherShop: event.value.name, otherShopId: event.value._id });
+    this.getShopInformation(event.value._id)
+
+  }
 
   render() {
 
@@ -407,14 +451,20 @@ class ShopInformation extends React.Component {
         }
         <div className="row justify-content-center">
 
-          <div className="col-12" style={{ marginTop: 20, background: '#fff' }}>
+          <div className="col-12" style={{ background: '#fff' }}>
           <div style={{ display: "none" }}>
           <ComponentToPrint param={this.state.printParam} printType={this.state.printType} ref={el => (this.componentRef = el)} />
           </div>
-            <Panel header="ویرایش اطلاعات شخصی" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+            <Panel header="ویرایش اطلاعات " style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <form  >
                 <div className="row">
-
+                {this.state.originalShopMain &&
+                  <div className="col-lg-7">
+                    <div className="group">
+                      <AutoComplete placeholder="جستجوی فروشگاههای دیگر"  style={{ width: '100%' }} onSelect={(e) => this.onSelect(e)} onChange={(event) => { this.setState({ otherShop: event.value,otherShopId:null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.otherShop}  suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                    </div>
+                  </div>
+               }
                   <div className="col-lg-7">
                     <div className="group">
                       <input className="form-control yekan" autoComplete="off" type="text" value={this.state.name} name="name" onChange={(event) => this.setState({ name: event.target.value })} required="true" />
@@ -431,14 +481,16 @@ class ShopInformation extends React.Component {
 
                     </div>
                   </div>
-                  <div className="col-lg-7">
-                    <div className="group">
+                  {this.state.System == "shop" &&
+                    <div className="col-lg-7">
+                      <div className="group">
 
-                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.mobile} name="mobile" onChange={(event) => this.setState({ mobile: event.target.value })} required="true" />
-                      <label className="yekan">شماره تلفن همراه - جهت دریافت پیامک های مربوط به سفارشات</label>
+                        <input className="form-control yekan" autoComplete="off" type="text" value={this.state.mobile} name="mobile" onChange={(event) => this.setState({ mobile: event.target.value })} required="true" />
+                        <label className="yekan">شماره تلفن همراه - جهت دریافت پیامک های مربوط به سفارشات</label>
 
+                      </div>
                     </div>
-                  </div>
+                  }
                   {this.state.Raymand &&
                     <div className="col-lg-7">
                       <div className="group">
@@ -449,6 +501,7 @@ class ShopInformation extends React.Component {
                       </div>
                     </div>
                   }
+                  {this.state.System == "shop" &&
                   <div className="col-lg-7">
                     <div className="group">
 
@@ -457,6 +510,7 @@ class ShopInformation extends React.Component {
 
                     </div>
                   </div>
+                  }
                   <div className="col-lg-7">
                     <div className="group">
 
@@ -880,7 +934,7 @@ class ShopInformation extends React.Component {
 
                     </div>
                   </div>
-                  {this.state.main &&
+                  {this.state.System =="shop" &&
                     <div className="col-6" style={{ marginTop: 20 }} >
                       <div className="group">
                         <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="SpecialPic" />
@@ -888,9 +942,11 @@ class ShopInformation extends React.Component {
                       </div>
                     </div>
                   }
+                  {this.state.System =="shop" &&
                     <div className="col-6" style={{ marginTop: 20 }}>
                       <img src={this.state.SpecialPic} style={{maxHeight:150}} />
                     </div>
+                  }
                   <div className="col-6" style={{ marginTop: 20 }} >
                     <div className="group">
                       <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file" />
@@ -900,7 +956,7 @@ class ShopInformation extends React.Component {
                   <div className="col-6" style={{ marginTop: 20 }}>
                     <img src={this.state.logo} style={{maxHeight:150}} />
                   </div>
-                  {this.state.main &&
+                  {this.state.main && this.state.System =="shop" &&
                     <div className="col-6" style={{ marginTop: 20 }} >
                       <div className="group">
                         <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="logoCopyRight" />

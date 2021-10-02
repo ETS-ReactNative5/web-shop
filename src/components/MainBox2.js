@@ -19,55 +19,7 @@ import './Header1.css'
 import Server from './Server.js'
 import moment from 'moment-jalaali';
 import { connect } from 'react-redux';
-const params6 = {
-  autoplay: {
-    delay: 4000,
-    disableOnInteraction: false
-  },
-  loop: 1,
-  slidesPerView: 1
-}
-const params5 = {
-  autoplay: {
-    delay: 5000,
-    disableOnInteraction: false
-  },
-  loop: 1,
-  centeredSlides: true,
-  slidesPerView: 'auto',
-  coverflowEffect: {
-    rotate: 50,
-    stretch: 0,
-    depth: 100,
-    modifier: 1,
-    slideShadows: true
-  },
-  pagination: {
-    el: '.swiper-pagination'
-  }
-}
 
-const params4 = {
-  autoplay: {
-    delay: 7000,
-    disableOnInteraction: false
-  },
-  navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
-  },
-  loop: 1,
-  coverflowEffect: {
-    rotate: 50,
-    stretch: 0,
-    depth: 100,
-    modifier: 1,
-    slideShadows: true
-  }/*,
-      pagination: {
-        el: '.swiper-pagination'
-      }*/
-}
 const params3 = {
   slidesPerView: 1,
   autoplay: {
@@ -275,6 +227,7 @@ class MainBox2 extends React.Component {
 
       })
   }
+  
   persianNumber(input) {
     var persian = { 0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹' };
     var string = (input + '').split('');
@@ -486,6 +439,14 @@ class MainBox2 extends React.Component {
             }
           }
           //this.getProducts(8,"bestselling");
+          this.getProducts(8, "special");
+
+
+        }
+        if (type == "special") {
+          this.setState({
+            products: response.data.result
+          })
 
         }
         this.setState({
@@ -697,7 +658,7 @@ class MainBox2 extends React.Component {
                 <div style={{ background: 'rgb(85 216 255)', marginTop: 50, borderTopRightRadius: 5, borderBottomRightRadius: 5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, marginRight: 20, marginBottom: 50 }} >
                   <div className=" backgroundsvg" style={{ direction: 'rtl', padding:40,display:'flex',alignItems:'center' }}>
                     <div style={{ maxWidth: 230}} className="d-sm-block d-none">
-                        <p className="YekanBakhFaBold" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',display:'none' }}>محصولات شگفت انگیز</p>
+                        <p className="iranyekanwebblack" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',display:'none' }}>محصولات شگفت انگیز</p>
                         {this.state.SpecialImage &&
                         <img src={this.state.SpecialImage}   />
                         }
@@ -709,7 +670,7 @@ class MainBox2 extends React.Component {
                         return (
 
                           <Link className="car-details" to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} style={{ padding: 22, textDecorationStyle: 'none', borderRadius: 10, background: '#fff', color: '#333', maxWidth: 250,minWidth:250 }}>
-                            <p className="YekanBakhFaBold d-sm-none d-block" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',position:'absolute',top:0,left:0,backgroundColor:'#72d006',padding:5,zIndex:2,borderRadius:5 }}>شگفت انگیز</p>
+                            <p className="iranyekanwebblack d-sm-none d-block" style={{ marginTop: 15, color: '#fff', marginLeft: 20, fontSize: 18,textAlign:'center',position:'absolute',top:0,left:0,backgroundColor:'#72d006',padding:5,zIndex:2,borderRadius:5 }}>شگفت انگیز</p>
 
                             <div className="p-grid p-nogutter" >
                               <div className="p-col-12 c-product-box__img" align="center" >
@@ -771,7 +732,7 @@ class MainBox2 extends React.Component {
               </div>
             }
             {this.state.cats.length >0 &&
-              <div className="col-lg-12 col-12" >
+              <div className="col-lg-12 col-12" style={{display:'none'}} >
               <div className="row" style={{ marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20, padding: 20, borderRadius: 20 }}>
               
                 {this.state.cats.map((item, index) => {
@@ -823,7 +784,7 @@ class MainBox2 extends React.Component {
                               </div>
                               <div className="col-lg-6  col-12" align="center" >
   
-                                <div className="car-title yekan  mt-md-5" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 22 }}>{item.title}</div>
+                                <div className="car-title IRANYekan  mt-md-5" style={{ textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 22 }}>{item.title}</div>
                                   
                                 {
                                   item.number > 0
@@ -833,20 +794,20 @@ class MainBox2 extends React.Component {
                                         <div>
                                           {
                                             ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" ?
-                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 25, color: '#8e7b7b' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
+                                              <div className="car-subtitle IRANYekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 25, color: '#8e7b7b' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
                                               :
-                                              <div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 25, color: '#8e7b7b', height: 16 }} ></div>
+                                              <div className="car-subtitle IRANYekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 25, color: '#8e7b7b', height: 16 }} ></div>
   
                                           }
-                                          <div className="car-subtitle yekan" style={{ maxWidth:260,display:'flex',justifyContent:'space-evenly',textAlign: 'center', marginBottom: 15 }} > <span className="iranyekanwebblack" style={{ fontSize: 40 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> <span className="yekan" style={{ float: 'left', fontSize: 22, marginTop: 10 }}>تومان</span> </div>
+                                          <div className="car-subtitle IRANYekan" style={{ maxWidth:260,display:'flex',justifyContent:'space-evenly',textAlign: 'center', marginBottom: 15 }} > <span className="iranyekanwebblack" style={{ fontSize: 40 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> <span className="IRANYekan" style={{ float: 'left', fontSize: 22, marginTop: 10 }}>تومان</span> </div>
                                         </div>
                                       }
                                     </div>
                                     : (this.state.UId || !item.ShowPriceAftLogin) &&
                                     <div>
-                                      <div className="car-subtitle yekan" style={{ height: 22 }} ></div>
+                                      <div className="car-subtitle IRANYekan" style={{ height: 22 }} ></div>
   
-                                      <div className="car-subtitle yekan" style={{ textAlign: 'center', marginBottom: 15 }} ><span className="yekan" style={{ fontSize: 22, marginTop: 10, color: 'red' }}>ناموجود</span> </div>
+                                      <div className="car-subtitle IRANYekan" style={{ textAlign: 'center', marginBottom: 15 }} ><span className="IRANYekan" style={{ fontSize: 22, marginTop: 10, color: 'red' }}>ناموجود</span> </div>
                                     </div>
                                 }
                                   <div  style={{ marginBottom: 30 }}>
@@ -854,41 +815,41 @@ class MainBox2 extends React.Component {
                                     {
                                       (item.off + (!item.NoOff ? parseInt(this.props.off) : 0)) > "0" &&
                                       <div style={{ position: 'relative' }}>
-                                        <div className="car-title yekan off" style={{ position: 'absolute', top: -30, left: 3 }} > <span>  {this.persianNumber((item.off + (!item.NoOff ? parseInt(this.props.off) : 0)))} %</span> </div>
+                                        <div className="car-title IRANYekan off" style={{ position: 'absolute', top: -30, left: 3 }} > <span>  {this.persianNumber((item.off + (!item.NoOff ? parseInt(this.props.off) : 0)))} %</span> </div>
                                       </div>
                                     }
   
                                     <div className="deals_timer d-flex flex-row align-items-center justify-content-center" style={{ marginTop: 0 }}>
   
                                       <div >
-                                        <span className="yekan" style={{fontSize:30}}>فرصت باقیمانده</span>
+                                        <span className="IRANYekan" style={{fontSize:30}}>فرصت باقیمانده</span>
                                         <div className="deals_timer_box clearfix" data-target-time="" >
                                         {this.state.days != "0" &&
-                                          <div id="deals_timer1_day" className="deals_timer_day yekan" style={{ marginLeft:10,fontSize: 25 }}>{this.state.days != "0" ? this.persianNumber(this.state.days) : ""}</div>
+                                          <div id="deals_timer1_day" className="deals_timer_day IRANYekan" style={{ marginLeft:10,fontSize: 25 }}>{this.state.days != "0" ? this.persianNumber(this.state.days) : ""}</div>
                                         }
                                         {this.state.days != "0" &&
                                             <div>:</div>
                                         }
                                           <div className="deals_timer_unit">
-                                            <div id="deals_timer1_hr" className="deals_timer_hr yekan" style={{ fontSize: 25 }}>{this.state.hours != "0" ?  this.persianNumber(this.state.hours) : ""}</div>
+                                            <div id="deals_timer1_hr" className="deals_timer_hr IRANYekan" style={{ fontSize: 25 }}>{this.state.hours != "0" ?  this.persianNumber(this.state.hours) : ""}</div>
                                             
                                           </div>
                                           {this.state.hours != "0" &&
                                             <div>:</div>
                                           }
                                           <div className="deals_timer_unit">
-                                            <div id="deals_timer1_min" className="deals_timer_min yekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.minutes)}  </div>
+                                            <div id="deals_timer1_min" className="deals_timer_min IRANYekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.minutes)}  </div>
                                           </div>
                                           <div>:</div>
                                           <div className="deals_timer_unit">
-                                            <div id="deals_timer1_sec" className="deals_timer_sec yekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.seconds)}</div>
+                                            <div id="deals_timer1_sec" className="deals_timer_sec IRANYekan" style={{ fontSize: 25 }}>{this.persianNumber(this.state.seconds)}</div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
                                   <div >
-                                    <Link to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} className="caption button-radius animated fadeInRight yekan" href="#" style={{ display: "inline-block", textDecoration: 'none',fontSize:22 }}><span className="icon fa fa-arrow-left"></span>خرید محصول</Link>
+                                    <Link to={`${process.env.PUBLIC_URL}/Products?name=${item.title}&id=` + ((item.product_detail && item.product_detail.length > 0) ? item.product_detail[0]._id : item._id)} className="caption button-radius animated fadeInRight IRANYekan" href="#" style={{ display: "inline-block", textDecoration: 'none',fontSize:22 }}><span className="icon fa fa-arrow-left"></span>خرید محصول</Link>
   
                                   </div>
   
@@ -995,22 +956,22 @@ class MainBox2 extends React.Component {
             }
 
             {
-              this.state.Theme != "1" && this.state.catsList[4] &&
+            this.state.catsList[4] &&
               <CatList _id={this.state.catsList[4]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[4].name} name={this.state.catsList[4].name} />
 
             }
             {
-              this.state.Theme != "1" && this.state.catsList[5] &&
+             this.state.catsList[5] &&
               <CatList _id={this.state.catsList[5]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[5].name} name={this.state.catsList[5].name} />
 
             }
             {
-              this.state.Theme != "1" && this.state.catsList[6] &&
+            this.state.catsList[6] &&
               <CatList _id={this.state.catsList[6]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[6].name} name={this.state.catsList[6].name} />
 
             }
             {
-              this.state.Theme != "1" && this.state.catsList[7] &&
+            this.state.catsList[7] &&
               <CatList _id={this.state.catsList[7]._id} UId={this.state.UId} ProductBase={this.state.ProductBase}  title={this.state.catsList[7].name} name={this.state.catsList[7].name} />
 
             }

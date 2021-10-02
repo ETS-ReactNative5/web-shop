@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
-import 'primereact/resources/themes/saga-blue/theme.css';
+
 import './Charts.css'
-import 'primereact/resources/primereact.min.css';
+
 import 'primeicons/primeicons.css';
 import Server from './Server.js'
 import { connect } from 'react-redux';
