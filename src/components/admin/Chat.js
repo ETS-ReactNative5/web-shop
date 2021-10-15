@@ -41,6 +41,8 @@ class Chat extends React.Component {
             NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
             ChatSelected: {},
             Filter: "1",
+            browser:{},
+            GridData:[],
             chosenEmoji:null,
             setChosenEmoji:null,
             EmojiData : ({ chosenEmoji }) => (
@@ -157,6 +159,7 @@ class Chat extends React.Component {
     getShop() {
         let that = this;
         that.Server.send("AdminApi/ShopInformation", { ShopId: this.state.shopId }, function (response) {
+            debugger;
             that.setState({
                 tokenId: response.data.result[0]?.tokenId
             })
@@ -199,10 +202,13 @@ class Chat extends React.Component {
                 loading: 1
             })
         let SCallBack = function (response) {
+
             if (_id) {
+                debugger;
+
                 that.setState({
                     loading: 0,
-                    ChatSelected: response.data.result[0]
+                    ChatSelected: response.data.result[0]||{}
                 })
                 that.myRef.current.scrollTo(0, that.myRef.current.scrollHeight); 
 
@@ -210,7 +216,8 @@ class Chat extends React.Component {
             } else {
                 that.setState({
                     loading: 0,
-                    GridData: response.data.result
+                    GridData: response.data.result,
+                    browser: response.data.result[0]?.browser||{}
                 })
             }
 
@@ -240,7 +247,7 @@ class Chat extends React.Component {
         let param = {
             token: localStorage.getItem("api_token"),
             _id: _id,
-            code: this.state.code
+            code: this.state.tokenId || this.state.code
         };
         let that = this;
         this.setState({
@@ -276,6 +283,7 @@ class Chat extends React.Component {
             );
 
         if (layout === 'list') {
+            debugger;
             return (
                 <div className="row" style={{border:0}}  >
                     <div className="col-lg-12 " >
@@ -284,12 +292,14 @@ class Chat extends React.Component {
                             <div className="col-lg-12 col-12 yekan" style={{ cursor: 'pointer', textAlign: "right", padding: 10, borderRadius: 10 }} onClick={() => { this.selectChat(car) }} >
                                 <div style={{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}} >
                                     <div style={{width:'30%'}}>
-                                        <i className="fas fa-user" style={{fontSize:40}} />
+                                        <i className="fas fa-user" style={{fontSize:40,color:'orange'}} />
                                         
                                     </div>
                                     <div style={{width:'70%'}}>
+                                        <div className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',fontSize:14 }}  dangerouslySetInnerHTML={{__html:car.text}}  />
+
                                         {car.chats_detail &&
-                                            <div className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}  dangerouslySetInnerHTML={{__html:car.chats_detail[car.chats_detail.length - 1]?.text}}  />
+                                            <div className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',fontSize:11 }}  dangerouslySetInnerHTML={{__html:car.chats_detail[car.chats_detail.length - 1]?.text}}  />
                                         }
                                     </div>
 
@@ -364,7 +374,7 @@ class Chat extends React.Component {
             _id: this.state.ChatSelected._id,
             value: this.state.answer,
             userSend: 0,
-            code: this.state.code
+            code: this.state.tokenId || this.state.code
         };
         let that = this;
         this.setState({
@@ -412,7 +422,7 @@ class Chat extends React.Component {
                 <div className="row justify-content-center" style={{height:'100%',background:'#eee',overflow:'hid_den'}}>
 
                     <div className="col-12" style={{height:'100%'}} >
-                        <div className="row" style={{ alignItems: 'flex-start',marginTop:20,background:'#eeeeee52',height:'100%',marginTop:25 }} >
+                        <div className="row" style={{ alignItems: 'flex-start',marginTop:20,background:'#eeeeee52',height:'97%',marginTop:25 }} >
                             <div className="col-9" style={{display:'none'}} >
                                 <div style={{ textAlign: 'right', marginBottom: 10 }}>
                                     <SelectButton value={this.state.Filter} options={FilterItems} style={{ fontFamily: 'Yekan' }} className="yekan" onChange={(e) => { this.setState({ Filter: e.value || "1" }); this.getChat(null, e.value || "1") }}></SelectButton>
@@ -429,9 +439,13 @@ class Chat extends React.Component {
                             </div>
                             <div className="col-3 ania-chat-column" style={{position:'relative'}}>
                                 <div style={{background:'#fff',paddingTop:80,borderRadius:5}}>
-                                <div style={{background:'#26c6da',padding:30,color:'#fff',textAlign:'center',width:'85%',zIndex:2,left:'26px',top:-20,position:'absolute',borderRadius:10}} className="yekan">گفتگوهای من </div>
+                                <div style={{background:'orange',padding:30,color:'#fff',textAlign:'center',width:'85%',zIndex:2,left:'26px',top:-20,position:'absolute',borderRadius:10}} className="yekan">گفتگوهای من </div>
                                 <div style={{height:'88vh',overflow:'auto'}}>
-                                <DataView value={this.state.GridData}  layout={this.state.layout} paginator={false} itemTemplate={this.itemTemplate}></DataView>
+                                {this.state.GridData.length > 0 ?
+                                    <DataView value={this.state.GridData}  layout={this.state.layout} paginator={false} itemTemplate={this.itemTemplate}></DataView>
+                                :
+                                    <div></div>
+                                }
 
                                 </div>
 
@@ -441,7 +455,7 @@ class Chat extends React.Component {
 
                             <div className="col-7 ania-chat" style={{height:'100%',background:'#fff',borderTopRightRadius:5,borderBottomRightRadius:5}}>
                                 {this.state.ChatSelected.text &&
-                                    <div className="yekan" style={{padding:10,textAlign:'right',width:'100%',background:'#fff',zIndex:1,position:'absolute'}}>کاربر 1</div>
+                                    <div className="yekan" style={{padding:10,textAlign:'right',width:'100%',background:'#fff',zIndex:1,position:'absolute'}}>{(this.state.ChatSelected && this.state.ChatSelected.user_detail && this.state.ChatSelected.user_detail[0]) ? (this.state.ChatSelected.user_detail[0].name||this.state.ChatSelected.user_detail[0].mobile||this.state.ChatSelected.user_detail[0].mail) : "کاربر مهمان"}</div>
 
                                 }
                                 {this.state.ChatSelected.text ?
@@ -460,7 +474,7 @@ class Chat extends React.Component {
 
                                     </div>
                                         {this.state.ChatSelected.chats_detail && this.state.ChatSelected.chats_detail.map((v, i) => {
-                                            let style = v.userSend ? { fontSize: 14, width: 'fit-content', padding: 6, borderRadius: 10,color:'#fff', background: '#7b7db9', marginBottom: 5, clear: 'both' } : { fontSize: 25, color: 'blue', width: 'fit-content', padding: 6, borderRadius: 10, background: '#fff', marginBottom: 5, float: 'left', clear: 'both' }
+                                            let style = v.userSend ? { fontSize: 14, width: 'fit-content', padding: 6, borderRadius: 10,color:'#fff', background: '#7b7db9', marginBottom: 5, clear: 'both' } : { fontSize: 25, color: 'blue', width: 'fit-content', padding: 6, borderRadius: 10, background: '#fff', marginBottom: 5, float: 'left', clear: 'both',marginLeft:10 }
                                             return (
                                                 <div style={style} className="ania-chat-text">
                                                     <div style={{display:'none'}} >
@@ -527,25 +541,25 @@ class Chat extends React.Component {
                                                 </div>
                                                 <div style={{width:80,padding:7}}>
                                                 {!this.state.answer ? 
-                                                  <div style={{display:'flex'}}>
+                                                  <div style={{display:'flex',justifyContent:'space-evenly',alignItems:'center',paddingTop:10}}>
                                                     <button   onClick={()=>{this.setState({showEmoji:!this.state.showEmoji})}} style={{ backgroundColor:'transparent'}}> 
-                                                        <img src="/emoji.png" style={{width:30}}  />
+                                                        <img src="/emoji.png" style={{width:20}}  />
                                                     </button>
                                                     <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload}  ref={this.fileUpladElem} type="file" name="file1" style={{display:'none'}} />
                                                     <button   onClick={()=>{
                                                         this.fileUpladElem.current.click();
                                                     }} style={{ backgroundColor:'transparent'}}> 
-                                                    <img src="/attach.png" style={{width:30}} />
+                                                    <img src="/attach.png" style={{width:20}} />
                                                     </button>
                                                  </div>
                                                     
                                                 :
-                                                <div style={{display:'flex'}}>
+                                                <div style={{display:'flex',justifyContent:'space-evenly',alignItems:'center',paddingTop:10}}>
                                                     <button   onClick={()=>{this.setState({showEmoji:!this.state.showEmoji})}} style={{ backgroundColor:'transparent'}}> 
-                                                        <img src="/emoji.png" style={{width:30}}  />
+                                                        <img src="/emoji.png" style={{width:20}}  />
                                                     </button>
                                                     <button onClick={this.SetAnswer} style={{ backgroundColor:'transparent'}}> 
-                                                    <img src="/send.png" style={{width:30,transform:'rotate(180deg)'}}  />
+                                                    <img src="/send.png" style={{width:20,transform:'rotate(180deg)'}}  />
                                                     </button>
                                                 </div>
                                                 }
@@ -578,8 +592,27 @@ class Chat extends React.Component {
                             }
 
                             </div>
-                            <div className="col-2"  style={{height:'100%',background:'#fff',borderRight:'1px solid #eee'}}>
+                            <div className="col-2"  style={{height:'100%',background:'#fff',borderRight:'1px solid #eee',textAlign:'right'}}>
+                            {this.state.ChatSelected.text &&
+
+
+                                <div>
+                                    <div style={{textAlign:'center',marginTop:50,marginBottom:40}} ><i class="fas fa-database" style={{fontSize:60,color:'orange'}}></i></div>
+                                    <hr />
+                                    {
+                                        this.state.ChatSelected.user_detail && this.state.ChatSelected.user_detail[0] &&
+                                        <div>
+                                            <div><span className="yekan">نام : </span><span className="yekan">{this.state.ChatSelected.user_detail[0].name}</span></div>
+                                            <div><span className="yekan">تلفن همراه : </span><span className="yekan">{this.state.ChatSelected.user_detail[0].mobile}</span></div>
+                                            <div><span className="yekan">ایمیل : </span><span className="yekan">{this.state.ChatSelected.user_detail[0].mail}</span></div>
+
+                                        </div>
+                                    }
+                                    <div><span className="yekan">مرورگر : </span><span className="yekan">{this.state.browser.name}</span></div>
+                                    <div><span className="yekan">سیستم : </span><span className="yekan">{this.state.browser.platform}</span></div>
+                                </div>
                                 
+                            }
 
                             </div>
                         </div>

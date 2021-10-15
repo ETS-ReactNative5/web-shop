@@ -127,7 +127,6 @@ class App extends Component {
     let that = this;
 
     that.Server.send("AdminApi/getSettings", {}, function (response) {
-
       if (response.data.result) {
         let chatId = response.data.result[0] ? response.data.result[0].ChatId : '';
         that.setState({
@@ -145,7 +144,6 @@ class App extends Component {
             })
           });
         }
-        debugger;
         if(chatId.indexOf("Ania-") == -1){
           (function () {
             var d = document;

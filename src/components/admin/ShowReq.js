@@ -45,6 +45,7 @@ class ShowReq extends React.Component {
       IntroducedPrice: "",
       creditAmount: "",
       debtorAmount: "",
+      users:[],
       CodeFile:[],
       type:'1',
       draft:false,
@@ -61,13 +62,16 @@ class ShowReq extends React.Component {
     })
     let that = this;
     let SCallBack = function (response) {
+      debugger;
+      //["مدیر سیستم","پشتیبان","پشتیبان ارشد","کارمند سیستم","مدیر پشتیبانی"]
       that.setState({
         user_Id: response.data.authData.userId,
         user: response.data.authData.name,
+        shopId:response.data.authData.shopId,
         username: response.data.authData.username,
         loading: 0
       })
-      that.GetReq();
+      that.GetMaps();
     };
     let ECallBack = function (error) {
       that.setState({
@@ -76,6 +80,33 @@ class ShowReq extends React.Component {
       console.log(error)
     }
     this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
+  }
+  GetMaps() {
+    let that = this;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      mobile: this.state.username,
+      Key:"username"
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      that.setState({
+        loading: 0,
+        map:response.data.result[0].map
+      })
+      debugger;
+      that.GetUserOfMaps();
+
+    };
+    let ECallBack = function (error) {
+      console.log(error)
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("MainApi/getUserData", param, SCallBack, ECallBack)
   }
  
   CreateForm() {
@@ -241,6 +272,49 @@ class ShowReq extends React.Component {
     this.Server.send("CompanyApi/SetAnswer", param, SCallBack, ECallBack)
 
   }
+  GetUserOfMaps() {
+    let that = this;
+    debugger;
+    let maps = [];
+    if(this.state.map == "مدیر سیستم"){
+      maps = ["کارمند","کارمند ارشد","کاربر","مدیر واحد"]
+    }else if(this.state.map == "مدیر واحد"){
+      maps = ["مدیر سیستم","کارمند","کارمند ارشد","کارمند سیستم"]
+    }else if(this.state.map == "کارمند ارشد"){
+      maps = ["کارمند"]
+    }
+    let param = {};
+    if(maps.length > 0 ){
+      param = {
+        token: localStorage.getItem("api_token"),
+        maps: maps,
+        shopId:this.state.shopId
+      };
+      this.setState({
+        loading: 1
+      })
+      let SCallBack = function (response) {
+        debugger;
+        that.setState({
+          users: response.data.result
+        })
+        that.setState({
+          loading: 0
+        })
+        that.GetReq();
+  
+      };
+      let ECallBack = function (error) {
+        console.log(error)
+        that.setState({
+          loading: 0
+        })
+      }
+      this.Server.send("AdminApi/GetUserOfMaps", param, SCallBack, ECallBack)
+
+    }
+    that.GetReq();
+  }
   itemTemplate(car, layout) {
     if (!car)
       return (
@@ -256,26 +330,26 @@ class ShowReq extends React.Component {
             <div className="row" style={{ margin: 20 }}>
               
               <div className="col-lg-7 col-12 yekan" style={{ textAlign: "right",backgroundColor:'#f5f5f54a',padding:10,borderRadius:10 }}>
-                <p className="yekan" style={{fontSize:15,color:'blue'}}>{car.request[0] ? car.request[0].title : car.title}</p>
-                <p className="yekan" style={{fontSize:18}}>{car.request[0] ? car.request[0].desc : car.desc}</p>
+                <p className="yekan" style={{fontSize:15,color:'blue'}}>{car.request ? car.request[0].title : car.title}</p>
+                <p className="yekan" style={{fontSize:18}}>{car.request ? car.request[0].desc : car.desc}</p>
 
               </div>
               <div className="col-lg-3 col-12 yekan" style={{ textAlign: "right" }}>
-                <div>شماره درخواست : {car.request[0] ? car.request[0].number : car.number}</div>
+                <div>شماره درخواست : {car.request ? car.request[0].number : car.number}</div>
 
                 <p className="yekan" >فرستنده : {car.User}</p>
                 <p className="yekan" style={{color:'#34d634',display:'none'}} >گیرنده : {car.RecieverName}</p>
 
-                <p className="yekan" >اولویت : {car.request[0] ? car.request[0].Priority : car.Priority}</p>
-                <p className="yekan" >{car.request[0] ? car.request[0].Time : car.Time} : {car.request[0] ? car.request[0].Date : car.Date}</p>
-                {((car.request[0] && car.request[0].status != 1) || (!car.request && car.status != 1) ) &&
+                <p className="yekan" >اولویت : {car.request ? car.request[0].Priority : car.Priority}</p>
+                <p className="yekan" >{car.request ? car.request[0].Time : car.Time} : {car.request ? car.request[0].Date : car.Date}</p>
+                {((car.request && car.request[0].status != 1) || (!car.request && car.status != 1) ) &&
 
                   <p className="yekan" style={{color:'red'}} >وضعیت : بایگانی</p>
 
                 }
-                {((car.request[0] && car.request[0].attach) || car.attach) &&
+                {((car.request && car.request[0].attach) || car.attach) &&
 
-                <a href={car.request[0] ? car.request[0].attach : car.attach} className="yekan" target="_blank"  >
+                <a href={car.request ? car.request[0].attach : car.attach} className="yekan" target="_blank"  >
                   <i className="fa fa-paperclip" style={{paddingLeft:5}} />
                   دانلود فایل ضمیمه
                 </a>
@@ -286,9 +360,9 @@ class ShowReq extends React.Component {
               </div>
               <div className="col-lg-2 col-12 yekan" style={{ textAlign: "center" }}>
                 {this.state.activeIndex == 1 ?
-                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request[0] ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>مشاهده</button>
+                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>مشاهده</button>
                 :
-                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request[0] ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>پاسخ</button>
+                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>پاسخ</button>
 
                 }
               </div>
@@ -425,40 +499,32 @@ class ShowReq extends React.Component {
                       <Checkbox inputId="draft" value={this.state.draft} checked={this.state.draft} onChange={e => this.setState({ draft: e.checked })}></Checkbox>
                       <label htmlFor="draft" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> پیشنویس</label>
                 </div>
-                <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'end',padding:0,marginRight:5 }}>
-                      <Checkbox inputId="changeSender" value={this.state.changeSender} checked={this.state.changeSender} onChange={e => this.setState({ changeSender: e.checked })}></Checkbox>
-                      <label htmlFor="changeSender" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> ارجاع به دیگران</label>
-                </div>
+                {this.state.users.length &&
+                  <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'end',padding:0,marginRight:5 }}>
+                  <Checkbox inputId="changeSender" value={this.state.changeSender} checked={this.state.changeSender} onChange={e => this.setState({ changeSender: e.checked })}></Checkbox>
+                  <label htmlFor="changeSender" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> ارجاع به دیگران</label>
+                  </div>
+                }
                 
-                {this.state.changeSender && this.state.CodeFile.map((v, i) => {
-                    //this.setState({ [v.Etitle]: v.values[0].value });
-                    return(
-                      <div className="col-lg-3" style={{ marginBottom: 20 }}>
-                        {v.MultiSelect ? 
-                        <div>
-
-                        <p className="yekan" style={{ textAlign: "right", marginTop: 20, paddingRight: 10 }}>{v.title}</p>
-                        <MultiSelect value={this.state[v.Etitle]} optionLabel="desc" style={{width:'100%'}} optionValue="value" options={v.values} onChange={(event) => { this.setState({ [v.Etitle]: event.value }) }} />
-                        </div>
-                        :
-                        <div>
-                          <label className="labelNoGroup irsans">{v.title}</label>
-                          <select className="custom-select irsans" value={this.state[v.Etitle]} onChange={(event) => {this.setState({ [v.Etitle]: event.target.value }) }} >
-                            {
-                            v.values.map(function(u,j){
-                              return(
-                                <option value={u.value}>{u.desc}</option>
-                              )
-                            })
-
-
-                            }
-                          </select>
-                        </div>
-                        }
-                      </div>
-                    )
-                })}
+                
+                {this.state.changeSender && 
+                   <div className="col-lg-4" style={{ marginBottom: 20 }}>
+                   <div>
+                     <label className="labelNoGroup irsans">ارجاع به</label>
+                     <select className="custom-select irsans" value={this.state.RequestReciever} onChange={(event) => {this.setState({ RequestReciever: event.target.value }) }} >
+                     <option value=""></option>
+   
+                       {this.state.users.map((v, i) => {
+                         return(
+                           
+                           <option value={v.username}>{v.name}</option>
+   
+                         )
+                       })}
+                   </select>
+                       </div>
+                  </div>
+                }
                 <div >
                     <div className="group" >
                       <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.attach} name="attach" onChange={(event) => this.setState({ attach: event.target.value })} required="true" />

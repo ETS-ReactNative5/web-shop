@@ -1,24 +1,26 @@
 var AniaChat_SendSmsTo=[];
 var AniaChat_SendSms=false;
+var AniaChat_forceRegister=false;
+var AniaChat_registerItems=[];
+
 
 window.AniaChatInit = function(ioParam,absoluteUrl){
     let  socket = ioParam(absoluteUrl);
     //let  socket = io("https://siteapi.sarvapps.ir/");
-
     socket.on("setChat", (data) => {
         getChat()
     });
     //const socket = io("https://siteapi.sarvapps.ir/");
     if(!window.AniaChatId)
         return;
-        var url='http://localhost:3000/ChatApi/chatSettings';
-        //var url='https://siteapi.sarvapps.ir/ChatApi/chatSettings';
-        var callback = function(response){
-            create(response);    
-        }
-        var error = function(err){
-            alert(2)
-        }
+    //var url='http://localhost:3000/ChatApi/chatSettings';
+    var url='https://siteapi.sarvapps.ir/ChatApi/chatSettings';
+    var callback = function(response){
+        create(response);    
+    }
+    var error = function(err){
+        alert(2)
+    }
     server(url,{AniaChatId:window.AniaChatId,User:1,get:1},callback,error);
     
 
@@ -40,17 +42,19 @@ function create(resp){
     let settings = (resp.result && resp.result[0])||{};
     AniaChat_SendSms = settings.SendSms;
     AniaChat_SendSmsTo = settings.SendSmsTo;
+    AniaChat_forceRegister = settings.forceRegister;
+    AniaChat_registerItems = settings.RegisterItem;
     let info = (resp.info && resp.info[0])||{};
     let helpers=[];
     let helpersHtml="";
     let count=0;
-    //let url = 'https://siteapi.sarvapps.ir/';
-    let url = 'http://localhost:3000/';
+    let url = 'https://siteapi.sarvapps.ir/';
+    //let url = 'http://localhost:3000/';
 
     let profilesWidth=40;
     if(info.userInfo && info.userInfo){
         for(var i=0;i<info.userInfo.length;i++){
-            if(info.userInfo[i].map=="پشتیبان"){
+            if(info.userInfo[i].map=="کارمند-پشتیبان"){
                 let profile = info.userInfo[i].profile ? url+info.userInfo[i].profile.replace(/\\/gi, "/").split("public")[1] : 'https://siteapi.sarvapps.ir/user.png'
                 helpers.push(info.userInfo[i]);
                 let right = count*25-8;
@@ -119,6 +123,8 @@ function create(resp){
     footerBox.className = "ania-chat-footer";
     var btnBox = document.createElement("div");
     btnBox.style.display="flex";
+    btnBox.style.justifyContent="space-between";
+    btnBox.style.width="68px";
     var emojiBox = document.createElement("div");
     emojiBox.className="ania-chat-emoji";
     emojiBox.style.display="none";
@@ -129,17 +135,17 @@ function create(resp){
     sendBtn.id= "ania-chat-sendBtn";
     sendBtn.style.backgroundColor="transparent";
     
-    sendBtn.innerHTML="<img src='https://sarvapps.ir/send.png' style='width:40px;transform:rotate(180deg)' />";
+    sendBtn.innerHTML="<img src='https://sarvapps.ir/send.png' style='width:25px;transform:rotate(180deg)' />";
     sendBtn.style.display = "none"
 
     var emojiBtn = document.createElement("button");
     emojiBtn.style.backgroundColor="transparent";
-    emojiBtn.innerHTML="<img src='https://sarvapps.ir/emoji.png' style='width:40px' />";
+    emojiBtn.innerHTML="<img src='https://sarvapps.ir/emoji.png' style='width:25px' />";
     emojiBtn.id= "ania-chat-emojiBtn";
 
     var attachBtn = document.createElement("button");
     attachBtn.style.backgroundColor="transparent";
-    attachBtn.innerHTML="<img src='https://sarvapps.ir/attach.png' style='width:40px' />";
+    attachBtn.innerHTML="<img src='https://sarvapps.ir/attach.png' style='width:25px' />";
     attachBtn.id= "ania-chat-attachBtn";
     var attachfileUpload = document.createElement("input");
     attachfileUpload.type="file";
@@ -156,7 +162,27 @@ function create(resp){
 
     footerBox.appendChild(textArea)
     footerBox.appendChild(btnBox)
+    var registerBtn = document.createElement("button");
+    var ania_chat_user_id = getCookie("ania_chat_user_id");
 
+    if(AniaChat_forceRegister && !ania_chat_user_id){
+        var registerBox = document.createElement("div");
+        registerBox.className = "ania-chat-reg-box";
+        registerBox.id = "ania-chat-reg-box";
+
+        var registerItems="<div><span style='color:orange;margin-top:30px'>برای ادامه گفتگو لطفا اطلاعات زیر را ثبت کنید</span></div>";
+        for(var i=0;i<AniaChat_registerItems.length;i++){
+            var name = AniaChat_registerItems[i];
+            var label = name == "name" ? "نام و نام خانوادگی" : (name == "mail" ? "پست الکترونیکی" : "تلفن همراه");
+            registerItems += "<div style='margin-top:30px'><label>"+label+"</label><input type='text' autocomplete='false' name='"+AniaChat_registerItems[i]+"' id='"+AniaChat_registerItems[i]+"' /></div>";
+        }
+        registerBtn.innerText="ثبت نام"
+        registerBox.innerHTML = registerItems;
+        registerBox.appendChild(registerBtn)
+        content.appendChild(registerBox);
+
+
+    }
     content.appendChild(headerBox);
     content.appendChild(centerBox);
 
@@ -164,14 +190,17 @@ function create(resp){
 
     parentOfImg.appendChild(img);
     body.appendChild(parentOfImg)
+
+    
     body.appendChild(content);
+
+   
 
 
 
 
     
     attachfileUpload.addEventListener("change",function(event){
-        debugger;
         var formData = new FormData();
         formData.append('name', event.target.files[0]?.name);
         formData.append('ExtraFile', "1");
@@ -182,7 +211,9 @@ function create(resp){
         }
         formData.append('myImage', event.target.files[0]);
         var callback = function(response){
-            let file = "http://localhost:3000/" + response.split("public")[1];
+            //let file = "http://localhost:3000/" + response.split("public")[1];
+            let file = "http://siteapi.sarvapps.ir/" + response.split("public")[1];
+
             if(file.indexOf(".png") > 0 ||  file.indexOf(".jpg") > 0 ||  file.indexOf(".gif") > 0){
                 document.getElementById("ania-chat-text").value = '<img src='+file+'  />'
                 setChat();
@@ -201,14 +232,40 @@ function create(resp){
         }
 
 
-        var url='http://localhost:3000/ChatApi/uploadFile';
+        //var url='http://localhost:3000/ChatApi/uploadFile';
+        var url='http://siteapi.sarvapps.ir/ChatApi/uploadFile';
 
-
+        
         fileUpload(url,formData,callback,error);
 
         return false;
 
     })
+    registerBtn.addEventListener("click",function(event){
+        alert(444);
+        var inputs = document.getElementById("ania-chat-reg-box").getElementsByTagName("input");
+        var param={};
+        for(let i=0;i<inputs.length;i++){
+            param[inputs[i].name]=inputs[i].value;
+        }
+        var ania_chat_id = getCookie("ania_chat_id");
+        param.code = window.AniaChatId;
+
+        //var url='http://localhost:3000/ChatApi/setUser';
+        var url='https://siteapi.sarvapps.ir/ChatApi/setChat';
+
+        var callback = function(response){
+            document.cookie = "ania_chat_user_id="+response.insertedId+"";
+            registerBox.style.display = "none";
+        }
+        var error = function(err){
+            alert(2)
+
+        }
+        server(url,param,callback,error);
+        return false;
+
+        })
 
 
 
@@ -277,8 +334,9 @@ function getCookie(cname) {
   }
   function getChat(){
     var ania_chat_id = getCookie("ania_chat_id");
-    var url='http://localhost:3000/ChatApi/getChat';
-    //var url='https://siteapi.sarvapps.ir/ChatApi/getChat';
+
+    //var url='http://localhost:3000/ChatApi/getChat';
+    var url='https://siteapi.sarvapps.ir/ChatApi/getChat';
 
     
     var centerBox = document.getElementById("ania-chat-center");
@@ -337,8 +395,10 @@ function getCookie(cname) {
     
     document.getElementById("ania-chat-text").value = "";
     var ania_chat_id = getCookie("ania_chat_id");
-    var url='http://localhost:3000/ChatApi/setChat';
-    //var url='https://siteapi.sarvapps.ir/ChatApi/setChat';
+    var ania_chat_user_id = getCookie("ania_chat_user_id");
+
+    //var url='http://localhost:3000/ChatApi/setChat';
+    var url='https://siteapi.sarvapps.ir/ChatApi/setChat';
 
     var callback = function(response){
         response = response.result;
@@ -352,7 +412,12 @@ function getCookie(cname) {
         alert(2)
 
     }
-    server(url,{_id:ania_chat_id ? ania_chat_id : null,value:value,userSend:1,code:window.AniaChatId,SendSmsTo: AniaChat_SendSms ? AniaChat_SendSmsTo : []},callback,error);
+    let browser = {};
+    if(!ania_chat_id){
+        browser.name = detectBrowser();
+        browser.platform = navigator.platform;
+    }
+    server(url,{_id:ania_chat_id ? ania_chat_id : null,UId:ania_chat_user_id ? ania_chat_user_id : null,value:value,userSend:1,code:window.AniaChatId,SendSmsTo: AniaChat_SendSms ? AniaChat_SendSmsTo : [],browser:browser},callback,error);
   }
   function server(url,param,callback,error){
 
@@ -399,5 +464,20 @@ function getCookie(cname) {
     }
     xhr.send(param);
   }
+  function detectBrowser() { 
+    if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) {
+        return 'Opera';
+    } else if(navigator.userAgent.indexOf("Chrome") != -1 ) {
+        return 'Chrome';
+    } else if(navigator.userAgent.indexOf("Safari") != -1) {
+        return 'Safari';
+    } else if(navigator.userAgent.indexOf("Firefox") != -1 ){
+        return 'Firefox';
+    } else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) {
+        return 'IE';//crap
+    } else {
+        return 'Unknown';
+    }
+} 
 
   

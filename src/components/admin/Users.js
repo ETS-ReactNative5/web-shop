@@ -785,7 +785,7 @@ class Users extends React.Component {
                     {
                       this.state.mapList && this.state.mapList.map((v, i) => {
                         if(this.state.main || !v.main)
-                        return (<option value={v._id} >{v._id}</option>)
+                        return (<option value={v._id} >{v.name||v._id}</option>)
                       })
                     }
                   </select>

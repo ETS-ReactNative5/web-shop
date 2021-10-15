@@ -1493,7 +1493,8 @@ p{
     top: -65px;
 }
 .ania-chat img{
-    max-width: 150px;
+    max-height: 200px;
+    max-width: 520px;
 }
 .ania-chat-column img {
     max-width: 50px ;

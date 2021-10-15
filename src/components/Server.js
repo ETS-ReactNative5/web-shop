@@ -11,13 +11,13 @@ class Server extends React.Component {
       'https://marketapi.sarvapps.ir/',
       'https://foodapi.sarvapps.ir/',
       'https://siteapi.sarvapps.ir/',
-      'https://api.aniabook.ir/',
-      'https://crmapi.sarvapps.ir/'     
+      'https://api.aniabook.ir/'/*,
+      'https://crmapi.sarvapps.ir/'*/     
 
      ]
      this.state={
         isLoading:false,
-        serverUrl: serverUrl[2]  
+        serverUrl: serverUrl[0]  
      };   
    }
    getUrl(admin){

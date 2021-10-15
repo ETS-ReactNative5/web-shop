@@ -172,4 +172,42 @@ outline: 1px solid #000;
   background-color: #fff;
   padding:10px;
   position: absolute;
-  top: -140px;}
+  top: -140px;
+}
+.ania-chat-reg-box{
+  background: rgba(0,0,0,0.6);
+  height: 87%;
+  position: absolute;
+  width: 400px;
+  z-index: 2;
+  margin-top: 20%;
+  text-align: center;
+}
+
+.ania-chat-reg-box > div{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-family: ania-chat-font , tahoma;
+
+}
+.ania-chat-reg-box * input{
+  width: 80%;
+  font-family: ania-chat-font , tahoma;
+
+}
+.ania-chat-reg-box * label{
+  color: #fff;
+  font-family: ania-chat-font , tahoma;
+
+}
+.ania-chat-reg-box  button{
+  padding: 10px;
+  border-radius: 10px;
+  font-family: ania-chat-font , tahoma;
+  margin-top:30px;
+}
+
+
+

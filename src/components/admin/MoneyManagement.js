@@ -76,19 +76,16 @@ class MoneyManagement extends React.Component {
      
 
       that.Server.send("AdminApi/ShopInformation", { ShopId: that.state.SellerId }, function (response) {
-        debugger;
         let  AccSystem= response.data.result[0].system;
         let ChatExpireDate=0,
             CrmExpireDate=0;
         if(AccSystem && AccSystem.length > 0){
-          debugger;
            ChatExpireDate =  AccSystem[0] ? (AccSystem[0].ExpireDate_C - new Date().setDate(new Date().getDate()))/86400000 : 0
            CrmExpireDate =  AccSystem[1] ? (AccSystem[1].ExpireDate_C - new Date().setDate(new Date().getDate()))/86400000 : 0
 
         }
         let chat=false;
         let crm=false;
-        debugger;
         if(AccSystem[0] && AccSystem[0].name=="chat")
           chat = true;
         if(AccSystem[1] && AccSystem[1].name=="crm")
@@ -204,10 +201,8 @@ class MoneyManagement extends React.Component {
                 this.setState({
                   loading:1
                 })
-                debugger;
                 axios.post(url, param)
                     .then(response => {
-                      debugger
                         that.setState({
                             loading:0
                         })
@@ -292,7 +287,7 @@ class MoneyManagement extends React.Component {
                     <div className="row" >
                               <div className="col-md-12 col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'end',height:32 }}>
 
-                                  <div style={{ textAlign: 'right', display: 'flex', alignItems: 'end' }}>
+                                  <div style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline' }}>
                                     <Checkbox inputId="chat" value={this.state.chat} checked={this.state.chat} onChange={e => this.setState({ chat: e.checked ,crm:!e.checked,mounth:"",Amount:0,AmountTemp:"0"})}></Checkbox>
                                     <label htmlFor="chat" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>چت آنلاین</label>
                                     </div>
@@ -300,7 +295,7 @@ class MoneyManagement extends React.Component {
                                   </div>
                                   
                                   
-                                  <div className="col-md-12 col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'end',height:32 }}>
+                                  <div className="col-md-12 col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',height:32 }}>
                                     <Checkbox inputId="crm" value={this.state.crm} checked={this.state.crm} onChange={e => this.setState({ crm: e.checked,hideChat:e.checked,chat:!e.checked,mounth:"",Amount:0,AmountTemp:"0" })}></Checkbox>
                                     <label htmlFor="crm" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>سامانه crm</label>
                                   </div>

@@ -116,6 +116,7 @@ class Users extends React.Component {
       })
       console.log(error)
     }
+    debugger;
     this.Server.send("AdminApi/GetMaps", param, SCallBack, ECallBack)
   }
   GetOffs() {

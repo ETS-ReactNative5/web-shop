@@ -195,7 +195,6 @@ class MehrCartClear extends React.Component {
     this.setState({
       showButton:false
     })
-    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       Amount: Amount,

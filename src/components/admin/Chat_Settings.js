@@ -6,6 +6,7 @@ import ReactTable from "react-table";
 import { Checkbox } from 'primereact/checkbox';
 import { MultiSelect } from 'primereact/multiselect';
 
+import { ListBox } from 'primereact/listbox';
 
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
@@ -95,6 +96,18 @@ class Chat_Settings extends React.Component {
       selectedId: null,
       statusDesc: null,
       UsersSelected:[],
+      RegisterItems:[{
+        label:"نام و نام خانوادگی",
+        value:"name"
+      },
+      {
+        label:"تلفن همراه",
+        value:"mobile"
+      },
+      {
+        label:"ایمیل",
+        value:"mail"
+      }],
       Users:[],
       SellerId: null,
       LastAmount: 0,
@@ -136,9 +149,9 @@ class Chat_Settings extends React.Component {
 
       that.Server.send("AdminApi/ShopInformation", { ShopId: that.state.SellerId }, function (response) {
         that.setState({
-          isMainShop: response.data.result[0].main,
-          tokenId: response.data.result[0].tokenId,
-          codeForHead:"<script src='https://sarvapps.ir/fgEmojiPicker.js'></script><script src='https://sarvapps.ir/socket.io.js'></script><script src='https://sarvapps.ir/ania_chat.js'></script><link rel='stylesheet' href='https://sarvapps.ir/animate.min' /><link rel='stylesheet' href='https://sarvapps.ir/ania_chat.css' /><script>(function () {window.AniaChatId='"+response.data.result[0].tokenId+"';window.AniaChatInit()})()</script>",
+          isMainShop: response.data.result[0]?.main,
+          tokenId: response.data.result[0]?.tokenId,
+          codeForHead:"<script src='https://sarvapps.ir/fgEmojiPicker.js'></script><script src='https://sarvapps.ir/socket.io.js'></script><script src='https://sarvapps.ir/ania_chat.js'></script><link rel='stylesheet' href='https://sarvapps.ir/animate.min' /><link rel='stylesheet' href='https://sarvapps.ir/ania_chat.css' /><script>(function () {window.AniaChatId='"+response.data.result[0]?.tokenId+"';window.AniaChatInit()})()</script>",
 
         })
         that.getSettings();
@@ -194,7 +207,7 @@ class Chat_Settings extends React.Component {
     that.setState({
       loading: 1
     })
-    that.Server.send("ChatApi/chatSettings", {AniaChatId:this.state.tokenId,placeFilter:this.state.placeFilter,picFilter:this.state.picFilter,picEffect:this.state.picEffect,topText:this.state.topText,placeHolder:this.state.placeHolder,SendSms:this.state.SendSms,SendSmsTo:this.state.UsersSelected}, function (response) {
+    that.Server.send("ChatApi/chatSettings", {AniaChatId:this.state.tokenId,placeFilter:this.state.placeFilter,picFilter:this.state.picFilter,picEffect:this.state.picEffect,topText:this.state.topText,placeHolder:this.state.placeHolder,SendSms:this.state.SendSms,SendSmsTo:this.state.UsersSelected,RegisterItem:this.state.RegisterItem,forceRegister:this.state.forceRegister}, function (response) {
       that.setState({
         loading: 0
       })
@@ -227,6 +240,8 @@ class Chat_Settings extends React.Component {
           picEffect:response.data.result[0].picEffect||'',
           placeFilter:response.data.result[0].placeFilter,
           UsersSelected:response.data.result[0].SendSmsTo,
+          forceRegister:response.data.result[0].forceRegister,
+          RegisterItem:response.data.result[0].RegisterItem,
           SendSms:response.data.result[0].SendSms
   
         })
@@ -370,7 +385,26 @@ class Chat_Settings extends React.Component {
                     <img src='https://sarvapps.ir/chatFiles/help.png' class={this.state.picEffect} style={{width:45,height:45,marginTop:40}} />
 
                   </div>
-                  
+                  <div className="col-lg-12" style={{marginTop:20}}>
+                    <div className="group">
+
+                      <div style={{ textAlign: 'right', display: 'flex', alignItems: 'normal' }}>
+                          <Checkbox inputId="forceRegister" value={this.state.forceRegister} checked={this.state.forceRegister} onChange={e => this.setState({ forceRegister: e.checked})}></Checkbox>
+                          <label className="yekan" style={{marginRight:10}}>قبل از شروع گفتگو ثبت نام از کاربر انجام شود</label>
+                      </div>
+  
+                    </div>
+                    {this.state.forceRegister && 
+                    <div className="col-lg-12">
+                    <div >
+                    <label className="yekan" style={{marginRight:10}}>فیلدهای ثبت نام</label>
+
+                      <ListBox value={this.state.RegisterItem} options={this.state.RegisterItems} multiple  onChange={(event) => this.setState({ RegisterItem: event.value })} />
+                     </div>
+                    </div>
+                  }
+
+                  </div>
 
                   <div className="col-lg-12" style={{marginTop:50}}>
                   <Button style={{ marginLeft: 5, marginTop: 10 }} color="primary" className="yekan" onClick={this.SetSetting}>ثبت اطلاعات</Button>
