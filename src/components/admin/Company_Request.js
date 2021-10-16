@@ -3,7 +3,7 @@ import axios from 'axios'
 import { BrowserRouter, Link, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
-import ReactTable from "react-table";
+import UpFile from './../UpFile';
 
 
 import 'primeicons/primeicons.css';
@@ -80,7 +80,6 @@ class Company_Request extends React.Component {
     let that = this;
 
 
-    debugger;
 
     let condition = {};
     this.Server.send("AdminApi/getUnitsList", { condition: condition }, function (response) {
@@ -140,7 +139,9 @@ class Company_Request extends React.Component {
   }
   SetReq() {
     let that = this;
-    if (!this.state.RequestReciever) {
+    debugger;
+
+    if (!this.state.RequestReciever && !this.state.SelectedUnit) {
       this.toast.current.show({ severity: 'warn', summary: <div>گیرنده درخواست را مشخص کنید</div>, life: 8000 });
       return;
     }
@@ -152,13 +153,25 @@ class Company_Request extends React.Component {
       this.toast.current.show({ severity: 'warn', summary: <div>توضیحی برای درخواست ثبت کنید</div>, life: 8000 });
       return;
     }
+    let RequestReciever = [];
+    if(this.state.SelectedUnit){
+      for(let unit of this.state.Units){
+        if(unit.lTitle == this.state.SelectedUnit){
+          for(let user of unit.usersList){
+            RequestReciever.push(user.username)
+          }
+        }
+      }
+    }else{
+      RequestReciever = this.state.RequestReciever;
+    }
     let param = {
       _id: this.state.selectedId,
       desc: this.state.desc,
       attach: this.state.attach,
       title: this.state.title,
       Priority: this.state.RequestPriority,
-      Reciever: this.state.RequestReciever,
+      Reciever: RequestReciever,
       Sender: this.state.username,
       Copy: this.state.RequestRecieverMulti,
       status: 1,
@@ -477,15 +490,14 @@ class Company_Request extends React.Component {
 
 
         <Dialog style={{ width: '60vw' }} header={this.state.selectedId ? "اصلاح" : "ثبت درخواست"} visible={this.state.visibleManageAction} footer={footer} onHide={this.onHideFormsDialog} maximizable={true} maximized={false}>
-          <form>
+          <div>
 
             <div className="row" style={{ alignItems: "center" }}>
               <div className="col-lg-4" style={{ marginBottom: 20 }}>
                 <label className="labelNoGroup irsans">واحد</label>
-                <select className="custom-select irsans" placeholder="" className="form-control iranyekanwebmedium" id={this.state.SelectedUnit} name="SelectedUnit" value={this.state.SelectedUnit} onChange={(event) => { this.setState({ SelectedUnit: event.target.value })}} >
+                <select className="custom-select irsans" placeholder="" disabled={this.state.RequestReciever} className="form-control iranyekanwebmedium" id={this.state.SelectedUnit} name="SelectedUnit" value={this.state.SelectedUnit} onChange={(event) => { this.setState({ SelectedUnit: event.target.value })}} >
                   <option value="" ></option>
                   {this.state.SendToArray && this.state.SendToArray.map((item, index) => {
-                    debugger;
                     return (
                       <option value={item.value} >{item.desc}</option>
 
@@ -496,7 +508,7 @@ class Company_Request extends React.Component {
               <div className="col-lg-4" style={{ marginBottom: 20 }}>
               <div>
                 <label className="labelNoGroup irsans">ارجاع به</label>
-                <select className="custom-select irsans" value={this.state.RequestReciever} onChange={(event) => { this.setState({ RequestReciever: event.target.value }) }} >
+                <select className="custom-select irsans" disabled={this.state.SelectedUnit} value={this.state.RequestReciever} onChange={(event) => { this.setState({ RequestReciever: event.target.value }) }} >
                   <option value=""></option>
 
                   {this.state.users.map((v, i) => {
@@ -554,14 +566,18 @@ class Company_Request extends React.Component {
                   <label>توضیح</label>
                 </div>
               </div>
-              <div className="col-lg-12" >
-                <div className="group" >
-                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.attach} name="attach" onChange={(event) => this.setState({ attach: event.target.value })} required="true" />
-                  <label className="yekan">لینک فایل ضمیمه</label>
-                </div>
-                <Link to={`${process.env.PUBLIC_URL}/admin/pics?uploadExtraImage=1`} className="yekan" target="_blank" >بارگزاری تصویر و فایل</Link>
+              <UpFile label={
+                <div style={{ textAlign: 'center' }}><div>فایل مورد نظر خود را انتخاب کنید
+                  </div>
+                  
 
-              </div>
+                </div>
+              } className="col-lg-12 col-12 mt-3" large={true} uploadImage={this.state.attach} buttonLabel="انتخاب فایل" callback={(v) => {
+                this.setState({
+                  attach: v.uploadImage
+                })
+              }
+              } />
 
 
 
@@ -570,7 +586,7 @@ class Company_Request extends React.Component {
 
 
             </div>
-          </form>
+          </div>
         </Dialog>
 
       </div>

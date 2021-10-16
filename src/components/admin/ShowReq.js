@@ -4,6 +4,7 @@ import { BrowserRouter, Route, withRouter, Link } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
+import UpFile from './../UpFile';
 
 
 import 'primeicons/primeicons.css';
@@ -62,7 +63,6 @@ class ShowReq extends React.Component {
     })
     let that = this;
     let SCallBack = function (response) {
-      debugger;
       //["مدیر سیستم","پشتیبان","پشتیبان ارشد","کارمند سیستم","مدیر پشتیبانی"]
       that.setState({
         user_Id: response.data.authData.userId,
@@ -96,7 +96,6 @@ class ShowReq extends React.Component {
         loading: 0,
         map:response.data.result[0].map
       })
-      debugger;
       that.GetUserOfMaps();
 
     };
@@ -165,6 +164,7 @@ class ShowReq extends React.Component {
         response.data.result[i].User = response.data.result[i].OriginalSender ? response.data.result[i].OriginalSender[0].name : response.data.result[i].user[0]?.name;
         response.data.result[i].SenderName = response.data.result[i].sender[0]?.name;
         response.data.result[i].RecieverName = response.data.result[i].reciever[0]?.name;
+        response.data.result[i].Reciever = response.data.result[i].reciever[0]?.username;
 
       }
       that.setState({
@@ -204,19 +204,52 @@ class ShowReq extends React.Component {
     }
     this.Server.send("AdminApi/GetCodes", { id: id }, SCallBack, ECallBack)
   }
+  getUnit(All) {
+    let that = this;
+
+
+
+    let condition = {};
+    this.Server.send("AdminApi/getUnitsList", { condition: condition }, function (response) {
+
+      let SendToArray = [];
+      for (let i = 0; i < response.data.result.length; i++) {
+        SendToArray.push({ value: response.data.result[i].lTitle, desc: response.data.result[i].fTitle })
+      }
+      that.setState({
+        Units: response.data.result,
+        SendToArray: SendToArray,
+        ShowLoading: false
+
+      })
+      that.GetReq();
+
+
+
+
+    }, function (error) {
+      that.setState({
+        ShowLoading: false
+      })
+    })
+    this.setState({
+      ShowLoading: true
+    })
+  }
   GetAnswer(item){
+    let item_1 = item.request ? item.request[0] : item;
     let that = this;
     this.setState({
         loading: 1,
         visibleManageAction: true,
-        selectedId: item._id,
-        Sender: item.Sender,
-        Reciever: item.Reciever,
+        selectedId: item_1._id,
+        Sender: item_1.Sender,
+        Reciever: item_1.Reciever,
         changeSender:false,
         desc:"",
         draft:false
       })
-    let SCallBack = function (response) {
+    let SCallBack = function (response) {    
       that.setState({
         request_details:response.data.result,
         loading: 0
@@ -237,7 +270,7 @@ class ShowReq extends React.Component {
       })
     }
     this.Server.send("CompanyApi/getRequestDetail", { 
-        selectedId: item._id,
+        selectedId: item_1._id,
         user:this.state.username }, SCallBack, ECallBack)
 
   }
@@ -263,10 +296,25 @@ class ShowReq extends React.Component {
       console.log(error)
     }
     let param = {};
-    if(this.state.changeSender && this.state.RequestReciever)
-      param = { id: this.state.selectedId,answer:this.state.desc,attach:this.state.attach,username:this.state.username,Sender:this.state.username,Reciever:this.state.RequestReciever,Priority:this.state.RequestPriority,changeSender:1,draft:this.state.draft };
+    if(this.state.changeSender && (this.state.RequestReciever || this.state.SelectedUnit)){
+      let RequestReciever = [];
+      if(this.state.SelectedUnit){
+        for(let unit of this.state.Units){
+          if(unit.lTitle == this.state.SelectedUnit){
+            for(let user of unit.usersList){
+              RequestReciever.push(user.username)
+            }
+          }
+        }
+      }else{
+        RequestReciever = this.state.RequestReciever;
+      }
+      param = { id: this.state.selectedId,answer:this.state.desc,attach:this.state.attach,username:this.state.username,Sender:this.state.username,Reciever:RequestReciever,Priority:this.state.RequestPriority,changeSender:1,draft:this.state.draft };
+
+
+    }
     else{
-      let Reciever = this.state.username == this.state.Reciever ? this.state.Sender : this.state.Reciever;
+      let Reciever = this.state.Reciever.indexOf(this.state.username) > -1 ? this.state.Sender : this.state.Reciever;
       param = { id: this.state.selectedId,answer:this.state.desc,attach:this.state.attach,username:this.state.username,Sender:this.state.username,Reciever:Reciever,draft:this.state.draft };
     }
     this.Server.send("CompanyApi/SetAnswer", param, SCallBack, ECallBack)
@@ -274,7 +322,6 @@ class ShowReq extends React.Component {
   }
   GetUserOfMaps() {
     let that = this;
-    debugger;
     let maps = [];
     if(this.state.map == "مدیر سیستم"){
       maps = ["کارمند","کارمند ارشد","کاربر","مدیر واحد"]
@@ -294,14 +341,13 @@ class ShowReq extends React.Component {
         loading: 1
       })
       let SCallBack = function (response) {
-        debugger;
         that.setState({
           users: response.data.result
         })
         that.setState({
           loading: 0
         })
-        that.GetReq();
+        that.getUnit();
   
       };
       let ECallBack = function (error) {
@@ -360,9 +406,9 @@ class ShowReq extends React.Component {
               </div>
               <div className="col-lg-2 col-12 yekan" style={{ textAlign: "center" }}>
                 {this.state.activeIndex == 1 ?
-                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>مشاهده</button>
+                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>مشاهده</button>
                 :
-                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car.request ? car.request[0] : car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>پاسخ</button>
+                <button className="btn btn-secondary yekan" onClick={() => {this.GetAnswer(car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>پاسخ</button>
 
                 }
               </div>
@@ -413,7 +459,7 @@ class ShowReq extends React.Component {
             <div className="row" style={{ alignItems: 'baseline' }} >
               <div className="col-lg-3 col-12">
               <div className="group">
-                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.reqNumber} name="reqNumber" onChange={(event) => this.setState({ reqNumber: event.target.value })} required="true" />
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.reqNumber} name="reqNumber" onChange={(event) => this.setState({ reqNumber: event.target.value })}  />
                   <label>شماره درخواست</label>
                 </div>
               </div>
@@ -443,8 +489,8 @@ class ShowReq extends React.Component {
         </div>
 
 
-        <Dialog style={{ width: '60vw' }}  header={this.state.activeIndex == 1 ? "مشاهده" : "اصلاح"}  visible={this.state.visibleManageAction} footer={footer}  onHide={this.onHideFormsDialog} maximizable={true} maximized={true}>
-          <form>
+        <Dialog style={{ width: '60vw' }}  header={this.state.activeIndex == 1 ? "مشاهده" : "مشاهده و پاسخ"}  visible={this.state.visibleManageAction} footer={footer}  onHide={this.onHideFormsDialog} maximizable={true} maximized={false}>
+          <div>
             { 
                 this.state.request_details && this.state.request_details.map((item,index) => {
                     let header = <div style={{display:'flex',justifyContent:'center'}}><span style={{paddingLeft:10}}>{item.userData[0].name}</span><span style={{paddingLeft:10}}>{item.Date}</span><span style={{paddingLeft:10}}>{item.Time}</span></div>
@@ -459,7 +505,7 @@ class ShowReq extends React.Component {
                             <p style={{textAlign:'right',fontSize:17,whiteSpace:'pre-wrap'}} className="yekan">{item.answer}</p>
                             {item.attach &&
 
-                              <a href={item.attach} className="yekan" target="_blank" style={{float:'right'}} >
+                              <a href={item.attach} className="yekan" target="_blank"  >
                                 <i className="fa fa-paperclip" style={{paddingLeft:5}} />
                                 دانلود فایل ضمیمه
                               </a>
@@ -473,7 +519,7 @@ class ShowReq extends React.Component {
                             <p style={{textAlign:'right',fontSize:17,backgroundColor:'#b9e4d93b',padding:20,whiteSpace:'pre-wrap'}} className="yekan">{item.answer}</p>
                             {item.attach &&
 
-                              <a href={item.attach} className="yekan" target="_blank" style={{float:'right'}} >
+                              <a href={item.attach} className="yekan" target="_blank"  >
                                 <i className="fa fa-paperclip" style={{paddingLeft:5}} />
                                 دانلود فایل ضمیمه
                               </a>
@@ -490,17 +536,19 @@ class ShowReq extends React.Component {
                 })
             }   
             {this.state.activeIndex == 0 &&    
-              <div>
-                <div className="group">
-                  <textarea className="form-control irsans" autoComplete="off" type="text" value={this.state.desc} name="desc" onChange={(event) => this.setState({ desc: event.target.value })} required="true" style={{height:200}} ></textarea>
+              <div className="row">
+                <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',padding:0,marginRight:5 }}>
+                <div className="group" style={{width:'100%'}} >
+                  <textarea className="form-control irsans" autoComplete="off" type="text" value={this.state.desc} name="desc" onChange={(event) => this.setState({ desc: event.target.value })}  style={{height:200}} ></textarea>
                   <label>پاسخ</label>
                 </div>
-                <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'end',padding:0,marginRight:5 }}>
+                </div>
+                <div className="col-12" style={{ textAlign: 'right'}}>
                       <Checkbox inputId="draft" value={this.state.draft} checked={this.state.draft} onChange={e => this.setState({ draft: e.checked })}></Checkbox>
                       <label htmlFor="draft" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> پیشنویس</label>
                 </div>
-                {this.state.users.length &&
-                  <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'end',padding:0,marginRight:5 }}>
+                {this.state.users.length > 0 &&
+                  <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',padding:0,marginRight:5 }}>
                   <Checkbox inputId="changeSender" value={this.state.changeSender} checked={this.state.changeSender} onChange={e => this.setState({ changeSender: e.checked })}></Checkbox>
                   <label htmlFor="changeSender" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> ارجاع به دیگران</label>
                   </div>
@@ -511,7 +559,7 @@ class ShowReq extends React.Component {
                    <div className="col-lg-4" style={{ marginBottom: 20 }}>
                    <div>
                      <label className="labelNoGroup irsans">ارجاع به</label>
-                     <select className="custom-select irsans" value={this.state.RequestReciever} onChange={(event) => {this.setState({ RequestReciever: event.target.value }) }} >
+                     <select className="custom-select irsans" value={this.state.RequestReciever} disabled={this.state.SelectedUnit} onChange={(event) => {this.setState({ RequestReciever: event.target.value }) }} >
                      <option value=""></option>
    
                        {this.state.users.map((v, i) => {
@@ -525,19 +573,39 @@ class ShowReq extends React.Component {
                        </div>
                   </div>
                 }
-                <div >
-                    <div className="group" >
-                      <input className="form-control yekan" autoComplete="off"  type="text" value={this.state.attach} name="attach" onChange={(event) => this.setState({ attach: event.target.value })} required="true" />
-                      <label className="yekan">لینک فایل ضمیمه</label>
-                    </div>
-                    <Link to={`${process.env.PUBLIC_URL}/admin/pics?uploadExtraImage=1`} className="yekan" target="_blank" >بارگزاری تصویر و فایل</Link>
+                {this.state.changeSender &&  this.state.map == "مدیر سیستم" &&
+
+                <div className="col-lg-4" style={{ marginBottom: 20 }}>
+                <label className="labelNoGroup irsans">واحد</label>
+                <select className="custom-select irsans" placeholder="" disabled={this.state.RequestReciever} className="form-control iranyekanwebmedium" id={this.state.SelectedUnit} name="SelectedUnit" value={this.state.SelectedUnit} onChange={(event) => { this.setState({ SelectedUnit: event.target.value })}} >
+                  <option value="" ></option>
+                  {this.state.SendToArray && this.state.SendToArray.map((item, index) => {
+                    return (
+                      <option value={item.value} >{item.desc}</option>
+
+                    )
+                  })}
+                </select>
+              </div>
+              }
+              <UpFile label={
+                <div style={{ textAlign: 'center' }}><div>فایل مورد نظر خود را انتخاب کنید
+                  </div>
+                  
 
                 </div>
+              } className="col-lg-12 col-12 mt-3" large={true} uploadImage={this.state.attach} buttonLabel="انتخاب فایل" callback={(v) => {
+                this.setState({
+                  attach: v.uploadImage
+                })
+              }
+              } />
+               
                 </div>
                 }
                 
 
-          </form>
+          </div>
         </Dialog>
       </div>
 
