@@ -71,7 +71,18 @@ class ShowReq extends React.Component {
         username: response.data.authData.username,
         loading: 0
       })
-      that.GetMaps();
+      that.Server.send("AdminApi/ShopInformation", { ShopId: response.data.authData.shopId }, function (response) {
+        that.setState({
+          isMainShop: response.data.result[0]?.main,
+          tokenId: response.data.result[0]?.tokenId
+        })
+        that.GetMaps();
+
+
+      }, function (error) {
+
+        that.GetMaps();
+      })
     };
     let ECallBack = function (error) {
       that.setState({
@@ -150,7 +161,9 @@ class ShowReq extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       username:this.state.username,
+      tokenId:this.state.tokenId,
       limit:10,
+      map:this.state.map,
       reqNumber:reqNumber,
       InShow:1,
       type:type
@@ -209,7 +222,7 @@ class ShowReq extends React.Component {
 
 
 
-    let condition = {};
+    let condition = {tokenId:this.state.tokenId};
     this.Server.send("AdminApi/getUnitsList", { condition: condition }, function (response) {
 
       let SendToArray = [];
@@ -245,6 +258,7 @@ class ShowReq extends React.Component {
         selectedId: item_1._id,
         Sender: item_1.Sender,
         Reciever: item_1.Reciever,
+        OriginalSender:item_1.OriginalSender,
         changeSender:false,
         desc:"",
         draft:false
@@ -271,6 +285,7 @@ class ShowReq extends React.Component {
     }
     this.Server.send("CompanyApi/getRequestDetail", { 
         selectedId: item_1._id,
+        tokenId:this.state.tokenId,
         user:this.state.username }, SCallBack, ECallBack)
 
   }
@@ -309,14 +324,17 @@ class ShowReq extends React.Component {
       }else{
         RequestReciever = this.state.RequestReciever;
       }
-      param = { id: this.state.selectedId,answer:this.state.desc,attach:this.state.attach,username:this.state.username,Sender:this.state.username,Reciever:RequestReciever,Priority:this.state.RequestPriority,changeSender:1,draft:this.state.draft };
+      param = { id: this.state.selectedId,tokenId:this.state.tokenId,answer:this.state.desc,attach:this.state.attach,username:this.state.username,Sender:this.state.username,Reciever:RequestReciever,Priority:this.state.RequestPriority,changeSender:1,draft:this.state.draft,firstReciever:!this.state.Reciever ? this.state.username : null };
 
 
     }
     else{
-      let Reciever = this.state.Reciever.indexOf(this.state.username) > -1 ? this.state.Sender : this.state.Reciever;
-      param = { id: this.state.selectedId,answer:this.state.desc,attach:this.state.attach,username:this.state.username,Sender:this.state.username,Reciever:Reciever,draft:this.state.draft };
+      let Reciever = (this.state.Reciever.indexOf(this.state.username) > -1 || !this.state.Reciever) ? this.state.Sender : this.state.Reciever;
+      param = { id: this.state.selectedId,tokenId:this.state.tokenId,answer:this.state.desc,attach:this.state.attach,username:this.state.username,Sender:this.state.username,Reciever:Reciever,draft:this.state.draft,firstReciever:!this.state.Reciever ? this.state.username : null };
     }
+    if(this.state.final)
+      param["Reciever"]=this.state.OriginalSender;
+    debugger;
     this.Server.send("CompanyApi/SetAnswer", param, SCallBack, ECallBack)
 
   }
@@ -335,6 +353,7 @@ class ShowReq extends React.Component {
       param = {
         token: localStorage.getItem("api_token"),
         maps: maps,
+        tokenId:this.state.tokenId,
         shopId:this.state.shopId
       };
       this.setState({
@@ -362,6 +381,7 @@ class ShowReq extends React.Component {
     that.GetReq();
   }
   itemTemplate(car, layout) {
+    debugger;
     if (!car)
       return (
         <div className="p-col-12 p-md-3">
@@ -376,26 +396,26 @@ class ShowReq extends React.Component {
             <div className="row" style={{ margin: 20 }}>
               
               <div className="col-lg-7 col-12 yekan" style={{ textAlign: "right",backgroundColor:'#f5f5f54a',padding:10,borderRadius:10 }}>
-                <p className="yekan" style={{fontSize:15,color:'blue'}}>{car.request ? car.request[0].title : car.title}</p>
-                <p className="yekan" style={{fontSize:18}}>{car.request ? car.request[0].desc : car.desc}</p>
+                <p className="yekan" style={{fontSize:15,color:'blue'}}>{(car.request && car.request[0]) ? car.request[0].title : car.title}</p>
+                <p className="yekan" style={{fontSize:18}}>{(car.request && car.request[0]) ? car.request[0].desc : car.desc}</p>
 
               </div>
               <div className="col-lg-3 col-12 yekan" style={{ textAlign: "right" }}>
-                <div>شماره درخواست : {car.request ? car.request[0].number : car.number}</div>
+                <div>شماره درخواست : {(car.request && car.request[0]) ? car.request[0].number : car.number}</div>
 
                 <p className="yekan" >فرستنده : {car.User}</p>
                 <p className="yekan" style={{color:'#34d634',display:'none'}} >گیرنده : {car.RecieverName}</p>
 
-                <p className="yekan" >اولویت : {car.request ? car.request[0].Priority : car.Priority}</p>
-                <p className="yekan" >{car.request ? car.request[0].Time : car.Time} : {car.request ? car.request[0].Date : car.Date}</p>
-                {((car.request && car.request[0].status != 1) || (!car.request && car.status != 1) ) &&
+                <p className="yekan" >اولویت : {(car.request && car.request[0]) ? car.request[0].Priority : car.Priority}</p>
+                <p className="yekan" >{(car.request && car.request[0]) ? car.request[0].Time : car.Time} : {(car.request && car.request[0]) ? car.request[0].Date : car.Date}</p>
+                {(((car.request && car.request[0]) && car.request[0].status != 1) || (!(car.request) && car.status != 1) ) &&
 
                   <p className="yekan" style={{color:'red'}} >وضعیت : بایگانی</p>
 
                 }
-                {((car.request && car.request[0].attach) || car.attach) &&
+                {(((car.request && car.request[0]) && car.request[0].attach) || car.attach) &&
 
-                <a href={car.request ? car.request[0].attach : car.attach} className="yekan" target="_blank"  >
+                <a href={(car.request && car.request[0]) ? car.request[0].attach : car.attach} className="yekan" target="_blank"  >
                   <i className="fa fa-paperclip" style={{paddingLeft:5}} />
                   دانلود فایل ضمیمه
                 </a>
@@ -543,16 +563,20 @@ class ShowReq extends React.Component {
                   <label>پاسخ</label>
                 </div>
                 </div>
-                <div className="col-12" style={{ textAlign: 'right'}}>
+                <div className="col-12" style={{ textAlign: 'right',display:'flex',alignItems:'flex-start'}}>
                       <Checkbox inputId="draft" value={this.state.draft} checked={this.state.draft} onChange={e => this.setState({ draft: e.checked })}></Checkbox>
                       <label htmlFor="draft" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> پیشنویس</label>
                 </div>
                 {this.state.users.length > 0 &&
-                  <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline',padding:0,marginRight:5 }}>
+                  <div className="col-12"  style={{ textAlign: 'right',display:'flex',alignItems:'flex-start' }}>
                   <Checkbox inputId="changeSender" value={this.state.changeSender} checked={this.state.changeSender} onChange={e => this.setState({ changeSender: e.checked })}></Checkbox>
                   <label htmlFor="changeSender" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> ارجاع به دیگران</label>
                   </div>
                 }
+                <div className="col-12" style={{ textAlign: 'right',display:'flex',alignItems:'flex-start'}}>
+                      <Checkbox inputId="final" value={this.state.final} checked={this.state.final} onChange={e => this.setState({ final: e.checked })}></Checkbox>
+                      <label htmlFor="final" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}> پاسخ نهایی به فرستنده اولیه</label>
+                </div>
                 
                 
                 {this.state.changeSender && 

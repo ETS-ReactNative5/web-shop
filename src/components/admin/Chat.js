@@ -159,7 +159,6 @@ class Chat extends React.Component {
     getShop() {
         let that = this;
         that.Server.send("AdminApi/ShopInformation", { ShopId: this.state.shopId }, function (response) {
-            debugger;
             that.setState({
                 tokenId: response.data.result[0]?.tokenId
             })
@@ -188,6 +187,7 @@ class Chat extends React.Component {
 
 
     getChat(_id, Filter) {
+        debugger;
         let param = {
             token: localStorage.getItem("api_token"),
             sort: { "_id": -1 },
@@ -204,8 +204,6 @@ class Chat extends React.Component {
         let SCallBack = function (response) {
 
             if (_id) {
-                debugger;
-
                 that.setState({
                     loading: 0,
                     ChatSelected: response.data.result[0]||{}
@@ -240,6 +238,12 @@ class Chat extends React.Component {
             visibleDialog: true,
             ChatSelected: itemSelected
         })
+        setTimeout(()=>{
+            if(this.myRef.current)
+                this.myRef.current.scrollTo(0, this.myRef.current.scrollHeight); 
+        },0)
+        
+
 
     }
     EndChat(itemSelected) {
@@ -283,7 +287,6 @@ class Chat extends React.Component {
             );
 
         if (layout === 'list') {
-            debugger;
             return (
                 <div className="row" style={{border:0}}  >
                     <div className="col-lg-12 " >
@@ -537,7 +540,7 @@ class Chat extends React.Component {
                                                         <textarea ref={this.Editor} onKeyDown={(event)=>this._handleKeyDown(event)} className="iranyekanweblight" autoComplete="off"  type="text" value={this.state.answer} name="answer" onChange={(event)=>{
                                                         this.setState({answer: event.target.value})
 
-                                                    }}  style={{textAlign:'right',height:40,border:0,width:'100%',padding:6}} required="true"/>
+                                                    }}  style={{textAlign:'right',height:36,border:0,width:'100%',padding:6}} required="true"/>
                                                 </div>
                                                 <div style={{width:80,padding:7}}>
                                                 {!this.state.answer ? 

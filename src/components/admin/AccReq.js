@@ -71,7 +71,7 @@ class AccReq extends React.Component {
       selectedAcc: value.number,
       SelectedCode: value.CodeMelli,
       SelectedCartPic: value.CartMelli_Pic,
-      SelectedShenasnamePic: value.Shenasname_Pic,
+      Authentication_Pic: value.Authentication_Pic,
       selectedUId: value.UId,
       SelectedId : value._id,
       SelectedStatus : value.status,
@@ -298,11 +298,11 @@ class AccReq extends React.Component {
                 <div className="row" style={{alignItems:'center',backgroundColor:"aliceblue"}}>
                     <div className="col-6">
                     <label> کپی کارت ملی : </label>
-                      <img src={this.state.SelectedCartPic} style={{width:"100%",height:200}} id="SelectedShenasnamePic" name="SelectedShenasnamePic" />
+                      <img src={this.state.SelectedCartPic} style={{width:"100%"}} id="Authentication_Pic" name="Authentication_Pic" />
                     </div>
                     <div className="col-6">
-                    <label> کپی شناسنامه : </label>
-                      <img src={this.state.SelectedShenasnamePic} style={{width:"100%",height:200}} id="SelectedShenasnamePic" name="SelectedShenasnamePic" />
+                    <label> تصویر اهراز هویت : </label>
+                      <img src={this.state.Authentication_Pic} style={{width:"100%"}} id="Authentication_Pic" name="Authentication_Pic" />
                     </div>
 
                 </div>

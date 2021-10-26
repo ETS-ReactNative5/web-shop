@@ -5,12 +5,12 @@ var AniaChat_registerItems=[];
 
 
 window.AniaChatInit = function(ioParam,absoluteUrl){
-    let  socket = ioParam(absoluteUrl);
-    //let  socket = io("https://siteapi.sarvapps.ir/");
+    //let  socket = ioParam(absoluteUrl);
+    //let  socket = ioParam("https://localhost:3000/");
+    let  socket = ioParam("https://siteapi.sarvapps.ir/");
     socket.on("setChat", (data) => {
         getChat()
     });
-    //const socket = io("https://siteapi.sarvapps.ir/");
     if(!window.AniaChatId)
         return;
     //var url='http://localhost:3000/ChatApi/chatSettings';
@@ -26,6 +26,8 @@ window.AniaChatInit = function(ioParam,absoluteUrl){
 
 }
 window.AniaChatSendBtn = function(box,content){
+    document.getElementById("ania-chat-attachBtn").style.display="block";
+    document.getElementById("ania-chat-sendBtn").style.display="none";
     setChat();
 }
 window.AniaChatClickBox = function(box,content){
@@ -212,7 +214,7 @@ function create(resp){
         formData.append('myImage', event.target.files[0]);
         var callback = function(response){
             //let file = "http://localhost:3000/" + response.split("public")[1];
-            let file = "http://siteapi.sarvapps.ir/" + response.split("public")[1];
+            let file = "https://siteapi.sarvapps.ir/" + response.split("public")[1];
 
             if(file.indexOf(".png") > 0 ||  file.indexOf(".jpg") > 0 ||  file.indexOf(".gif") > 0){
                 document.getElementById("ania-chat-text").value = '<img src='+file+'  />'
@@ -233,7 +235,7 @@ function create(resp){
 
 
         //var url='http://localhost:3000/ChatApi/uploadFile';
-        var url='http://siteapi.sarvapps.ir/ChatApi/uploadFile';
+        var url='https://siteapi.sarvapps.ir/ChatApi/uploadFile';
 
         
         fileUpload(url,formData,callback,error);

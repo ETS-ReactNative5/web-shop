@@ -64,7 +64,16 @@ class Company_Actions extends React.Component {
         username: response.data.authData.username,
         loading: 0
       })
+      that.Server.send("AdminApi/ShopInformation", { ShopId: response.data.authData.shopId }, function (response) {
+        that.setState({
+          isMainShop: response.data.result[0]?.main,
+          tokenId: response.data.result[0]?.tokenId
+        })
 
+
+      }, function (error) {
+
+      })
 
     };
     let ECallBack = function (error) {
@@ -88,6 +97,7 @@ class Company_Actions extends React.Component {
       System: this.state.System,
       username:this.state.username,
       name:this.state.user,
+      tokenId:this.state.tokenId,
       Date:this.state.Date.local("fa").format("jYYYY/jM/jD")
     };
     
@@ -168,7 +178,8 @@ class Company_Actions extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       Date: this.state.Date.local("fa").format("jYYYY/jM/jD"),
-      username:this.state.username
+      username:this.state.username,
+      tokenId:this.state.tokenId
     };
     this.setState({
       loading: 1,

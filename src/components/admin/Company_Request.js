@@ -66,7 +66,18 @@ class Company_Request extends React.Component {
         shopId: response.data.authData.shopId,
         loading: 0
       })
-      that.getCodes(['4']);
+      that.Server.send("AdminApi/ShopInformation", { ShopId: response.data.authData.shopId }, function (response) {
+        that.setState({
+          isMainShop: response.data.result[0]?.main,
+          tokenId: response.data.result[0]?.tokenId
+        })
+        that.getCodes(['4']);
+
+
+      }, function (error) {
+
+        that.getCodes(['4']);
+      })
     };
     let ECallBack = function (error) {
       that.setState({
@@ -141,7 +152,7 @@ class Company_Request extends React.Component {
     let that = this;
     debugger;
 
-    if (!this.state.RequestReciever && !this.state.SelectedUnit) {
+    if (!this.state.RequestReciever && !this.state.SelectedUnit && this.state.map != "مشتری") {
       this.toast.current.show({ severity: 'warn', summary: <div>گیرنده درخواست را مشخص کنید</div>, life: 8000 });
       return;
     }
@@ -174,6 +185,7 @@ class Company_Request extends React.Component {
       Reciever: RequestReciever,
       Sender: this.state.username,
       Copy: this.state.RequestRecieverMulti,
+      tokenId:this.state.tokenId,
       status: 1,
     };
     this.setState({
@@ -248,6 +260,7 @@ class Company_Request extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       username: this.state.username,
+      tokenId:this.state.tokenId,
       limit: 10,
       reqNumber: reqNumber
     };
@@ -365,7 +378,7 @@ class Company_Request extends React.Component {
         CodeFile: response.data.result,
         loading: 0
       })
-      that.GetUserOfMaps();
+      that.GetMaps();
     };
     let ECallBack = function (error) {
       that.setState({
@@ -416,7 +429,7 @@ class Company_Request extends React.Component {
                 }
               </div>
               <div className="col-lg-2 col-12 yekan" style={{ textAlign: "center" }}>
-                {car.Sender == this.state.username &&
+                {car.Sender == this.state.username && this.state.map != "مشتری" && 
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <button className="btn btn-secondary yekan" onClick={() => { this.selectedComponentChange(car) }} style={{ marginTop: "5px", marginBottom: "5px" }}>ویرایش درخواست</button>
                     <button className="btn btn-danger yekan" onClick={() => this.DelReq(car._id)} style={{ marginTop: "5px", marginBottom: "5px" }}  >حذف درخواست</button>
@@ -442,6 +455,32 @@ class Company_Request extends React.Component {
         </div>
       );
     }
+  }
+  GetMaps() {
+    let that = this;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      mobile: this.state.username,
+      Key:"username"
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      that.setState({
+        loading: 0,
+        map:response.data.result[0].map
+      })
+      that.GetUserOfMaps();
+
+    };
+    let ECallBack = function (error) {
+      console.log(error)
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("MainApi/getUserData", param, SCallBack, ECallBack)
   }
   render() {
     const footer = (
@@ -493,7 +532,8 @@ class Company_Request extends React.Component {
           <div>
 
             <div className="row" style={{ alignItems: "center" }}>
-              <div className="col-lg-4" style={{ marginBottom: 20 }}>
+              {this.state.map != "مشتری" &&
+                <div className="col-lg-4">
                 <label className="labelNoGroup irsans">واحد</label>
                 <select className="custom-select irsans" placeholder="" disabled={this.state.RequestReciever} className="form-control iranyekanwebmedium" id={this.state.SelectedUnit} name="SelectedUnit" value={this.state.SelectedUnit} onChange={(event) => { this.setState({ SelectedUnit: event.target.value })}} >
                   <option value="" ></option>
@@ -504,23 +544,26 @@ class Company_Request extends React.Component {
                     )
                   })}
                 </select>
+                </div>
+              }
+              {this.state.map != "مشتری" &&
+                <div className="col-lg-4">
+                <div>
+                  <label className="labelNoGroup irsans">ارجاع به</label>
+                  <select className="custom-select irsans" disabled={this.state.SelectedUnit} value={this.state.RequestReciever} onChange={(event) => { this.setState({ RequestReciever: event.target.value }) }} >
+                    <option value=""></option>
+
+                    {this.state.users.map((v, i) => {
+                      return (
+
+                        <option value={v.username}>{v.name}</option>
+
+                      )
+                    })}
+                  </select>
+                </div>
               </div>
-              <div className="col-lg-4" style={{ marginBottom: 20 }}>
-              <div>
-                <label className="labelNoGroup irsans">ارجاع به</label>
-                <select className="custom-select irsans" disabled={this.state.SelectedUnit} value={this.state.RequestReciever} onChange={(event) => { this.setState({ RequestReciever: event.target.value }) }} >
-                  <option value=""></option>
-
-                  {this.state.users.map((v, i) => {
-                    return (
-
-                      <option value={v.username}>{v.name}</option>
-
-                    )
-                  })}
-                </select>
-              </div>
-            </div>
+            }
             
               
 
@@ -528,7 +571,7 @@ class Company_Request extends React.Component {
               {this.state.CodeFile.map((v, i) => {
                 //this.setState({ [v.Etitle]: v.values[0].value });
                 return (
-                  <div className="col-lg-4" style={{ marginBottom: 20 }}>
+                  <div className="col-lg-4" >
                     {v.MultiSelect ?
                       <div>
 
@@ -538,7 +581,7 @@ class Company_Request extends React.Component {
                       :
                       <div>
                         <label className="labelNoGroup irsans">{v.title}</label>
-                        <select className="custom-select irsans" value={this.state[v.Etitle]} onChange={(event) => { this.setState({ [v.Etitle]: event.target.value }) }} >
+                        <select className="custom-select irsans" value={this.state.RequestPriority} onChange={(event) => { this.setState({ RequestPriority: event.target.value }) }} >
                           {
                             v.values.map(function (u, j) {
                               return (

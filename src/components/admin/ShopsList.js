@@ -563,14 +563,15 @@ class ShopsList extends React.Component {
                   <AutoComplete placeholder={`نام ${this.state.SystemTitle}`}  style={{ width: '100%' }} onChange={(event) => { this.setState({ selectedName: event.value, user: 0,selectedShopId:null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.selectedName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
                 </div>
               </div>
+              {this.state.System == "shop" &&
               <div className="col-lg-6">
                 <div className="group">
                   <AutoComplete placeholder="مدیر / کارمند" style={{ width: '100%' }} onChange={(event) => { this.setState({ selectedUser: event.value, user: 1,selectedUserId:null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.selectedUser} onSelect={(e) => this.onSelect2(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
                 </div>
               </div>
-            
-          <div className="col-lg-12" style={{marginTop:25,marginBottom:25}}>
-
+            }
+            {this.state.System == "shop" &&
+              <div className="col-lg-12" style={{marginTop:25,marginBottom:25}}>
                 <div >
                 <label className="yekan labelNoGroup">گروه فروشگاهی</label>
 
@@ -583,9 +584,10 @@ class ShopsList extends React.Component {
                   })
                   }
                 </select>
-
                 </div>
               </div>
+            }
+            
               <div className="col-lg-12">
                 <div className="group">
 
@@ -703,14 +705,16 @@ class ShopsList extends React.Component {
                   </div>
                 </div>
               }
-              <div className="col-lg-12" >
-                <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }}>
+              {this.state.System == "shop" &&
+                <div className="col-lg-12" >
+                  <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }}>
 
-                  <Checkbox inputId="laon" value={this.state.showInSite} checked={this.state.showInSite} onChange={e => this.setState({ showInSite: e.checked })}></Checkbox>
-                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>نمایش در صفحه اول سایت</label>
+                    <Checkbox inputId="laon" value={this.state.showInSite} checked={this.state.showInSite} onChange={e => this.setState({ showInSite: e.checked })}></Checkbox>
+                    <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>نمایش در صفحه اول سایت</label>
 
+                  </div>
                 </div>
-              </div>
+              }
               <div className="col-lg-12">
                 <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }}>
 
