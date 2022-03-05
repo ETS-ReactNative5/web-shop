@@ -184,11 +184,11 @@ class Category extends React.Component {
         }       
         
         if (layout === 'list' && car) {
-            let pic = car.fileUploaded.split("public")[1] ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
+            let pic = (car.fileUploaded && car.fileUploaded.split("public")[1]) ? this.state.absoluteUrl + car.fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
             let content = <div className="product-grid-item card" style={{ padding: 10, minHeight: 500 }} >
             <div className="product-grid-item-content YekanBakhFaMedium">
                 <img src={pic} alt={car.title} style={{ height: 150, borderRadius: 15 }} />
-                <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'center',fontSize:'x-large', marginTop: 10, height: 50,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{car.title}</div>
+                <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'center',fontSize:'large', marginTop: 10, height: 50,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{car.title}</div>
                 <div className="product-name YekanBakhFaMedium" style={{ textAlign: 'right', marginTop: 0, height: 50,whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' }}>
                 {car.subTitle && car.subTitle != "-" &&
                     car.subTitle

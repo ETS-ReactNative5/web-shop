@@ -91,7 +91,6 @@ class Create_Reports extends React.Component {
   SetReports() {
     let that = this;
     let Filters = []
-    debugger;
 
     this.state.FilterListForDropDown.map((v,index)=>{
       if(v.checked){
@@ -182,7 +181,6 @@ class Create_Reports extends React.Component {
     }
     FilterListForDropDown.sort((a,b) => ((a.order||-1) > (b.order||-1)) ? 1 : (((b.order||-1) > (a.order||-1)) ? -1 : 0))
 
-    debugger;
 
     this.setState({
       name: value.name,

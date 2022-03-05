@@ -143,6 +143,7 @@ class CatList extends React.Component {
 	}
 
 	getProductsPerCat(param) {
+
 		let that = this;
 		let SCallBack = function (response) {
 			let res = {
@@ -181,7 +182,6 @@ class CatList extends React.Component {
 		
 	}
 	render() {
-
 		if (this.state.id) {
 			return <Redirect to={"/products?id=" + this.state.id} push={true} />;
 		}
@@ -218,12 +218,13 @@ class CatList extends React.Component {
 																	{(this.state.UId || !item.ShowPriceAftLogin) &&
 																		<div>
 																			{
-																				((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" ?
+																				((!item.NoOff ? parseInt(this.props.off) : 0) + parseInt(item.off)) > "0" ?
 																					<div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#a09696' }} >{this.persianNumber(this.roundPrice(item.price.toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} </div>
 																					:
 																					<div className="car-subtitle yekan" style={{ textAlign: 'center', textDecoration: 'line-through', fontSize: 11, color: '#a09696', height: 16 }} ></div>
 																			}
-																			<div className="car-subtitle yekan" style={{ textAlign: 'center' }} ><span className="iranyekanweblight" style={{ float: 'left', fontSize: 11, marginTop: 10 }}>تومان</span> <span className="iranyekanweblight" style={{ fontSize: 20 }}>{this.persianNumber(this.roundPrice((item.price - ((item.price * (item.off + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100)).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> </div>
+																			<div className="car-subtitle yekan" style={{ textAlign: 'center' }} ><span className="iranyekanweblight" style={{ float: 'left', fontSize: 11, marginTop: 10 }}>تومان</span> <span className="iranyekanweblight" style={{ fontSize: 20 }}>
+																				{this.persianNumber(this.roundPrice((parseInt(item.price) - ((parseInt(item.price) * (parseInt(item.off) + (!item.NoOff ? parseInt(this.props.off) : 0))) / 100))).replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</span> </div>
 																		</div>
 																	}
 																</div>
@@ -238,8 +239,8 @@ class CatList extends React.Component {
 
 													</div>
 													{
-														item.number > 0 && ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off) > "0" &&
-														<div className="car-title yekan off" style={{ position: 'absolute', top: 0 }} >{this.persianNumber(((!item.NoOff ? parseInt(this.props.off) : 0) + item.off))} %</div>
+														item.number > 0 && ((!item.NoOff ? parseInt(this.props.off) : 0) + parseInt(item.off)) > "0" &&
+														<div className="car-title yekan off" style={{ position: 'absolute', top: 0 }} >{this.persianNumber(((!item.NoOff ? parseInt(this.props.off) : 0) + parseInt(item.off)))} %</div>
 
 													}
 
@@ -277,7 +278,7 @@ class CatList extends React.Component {
 						}
 						let price = 0;
 						if(item.number > 0)
-							price = this.persianNumber(this.roundPrice((item.price - (item.price * ((!item.NoOff ? parseInt(this.props.off) : 0) + item.off)) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+							price = this.persianNumber(this.roundPrice((parseInt(item.price) - (parseInt(item.price) * ((!item.NoOff ? parseInt(this.props.off) : 0) + parseInt(item.off))) / 100).toString()).replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 						let img = (Seller.logo && Seller.logo.split("public")[1]) ? this.state.absoluteUrl + Seller.logo.split("public")[1] : this.state.absoluteUrl + 'nophoto.png'
 						return(
 								<div className="col-lg-3 col-md-4 col-12" style={{textAlign:'center'}} >

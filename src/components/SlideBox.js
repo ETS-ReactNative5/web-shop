@@ -208,7 +208,7 @@ class SlideBox extends React.Component {
                       {this.state.text1 &&
                         <p className="iranyekanweblight  p-md-3 d-md-block d-none animate__animated animate__fadeInLeftBig " style={{ whiteSpace:'pre-wrap',overflow: 'hidden', maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text1}</p>
                       }
-                      <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text1} />
+                      <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text1} />
                     </Link>
                   }
                 </div>
@@ -219,7 +219,7 @@ class SlideBox extends React.Component {
                       {this.state.text2 &&
                         <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ whiteSpace:'pre-wrap',overflow: 'hidden', maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text2}</p>
                       }
-                      <img src={this.state.logo2} style={{borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text2} />
+                      <img src={this.state.logo2} style={{borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text2} />
 
                     </Link>
                     :
@@ -227,7 +227,7 @@ class SlideBox extends React.Component {
                       {this.state.text2 &&
                         <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ whiteSpace:'pre-wrap',overflow: 'hidden', maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text2}</p>
                       }
-                      <img src={this.state.logo2} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text2} />
+                      <img src={this.state.logo2} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text2} />
 
                     </Link>
                   }
@@ -239,14 +239,14 @@ class SlideBox extends React.Component {
                       {this.state.text3 &&
                         <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ whiteSpace:'pre-wrap',overflow: 'hidden', maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text3}</p>
                       }
-                      <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text3} />
+                      <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text3} />
                     </Link>
                     :
                     <Link to={`${process.env.PUBLIC_URL}/` + this.state.link3} className="" target="_blank" href="#" style={{ textDecoration: 'none' }}>
                       {this.state.text3 &&
                         <p className="iranyekanweblight  p-md-3 d-md-block d-none " style={{ whiteSpace:'pre-wrap',overflow: 'hidden', maxHeight: 300, borderRadius: 5, position: 'absolute', zIndex: 2, fontSize: 18, color: 'rgb(255, 255, 255)', backgroundColor: 'rgb(27 26 25 / 58%)', width: 350, textAlign: 'center', boxShadow: 'rgb(62 36 36) 10px 10px 15px', top: 30, left: 50 }}>{this.state.text3}</p>
                       }
-                      <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text3} />
+                      <img src={this.state.logo3} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text3} />
                     </Link>
                   }
                 </div>
@@ -254,7 +254,7 @@ class SlideBox extends React.Component {
               :
               this.state.logo1 ?
               <div>
-                <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150 }} title={this.state.text3} />
+                <img src={this.state.logo1} style={{ borderRadius: 12, whiteSpace: 'pre-wrap',minHeight:150,width:'100%' }} title={this.state.text3} />
               </div>
               :
               <div>

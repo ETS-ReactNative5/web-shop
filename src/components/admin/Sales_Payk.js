@@ -163,7 +163,6 @@ class Sales_Payk extends React.Component {
           ShowRout:true,
           Routs:routs
         })
-        debugger;
 
         console.log(data)
 
@@ -595,7 +594,6 @@ class Sales_Payk extends React.Component {
         </div>
         <Sidebar header="مسیر دسترسی" visible={this.state.ShowRout} style={{ fontFamily: 'YekanBakhFaBold' }} onHide={() => this.onHide2()}>
         {this.state.Routs && this.state.Routs.map((v,i) => {
-          debugger;
           return(
             <div className="col-12" style={{textAlign:'right'}}>
               <i className="far fa-arrow-from-top" /><label style={{ fontFamily: 'YekanBakhFaBold' }} >{v.title}</label>

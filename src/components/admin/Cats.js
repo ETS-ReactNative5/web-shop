@@ -61,7 +61,6 @@ class AdminProduct extends React.Component {
       url: this.Server.getUrl(1)
 
     }
-    debugger;
     this.DeleteCategory = this.DeleteCategory.bind(this);
 
     this.ChangeSpecsCheckBoxs = this.ChangeSpecsCheckBoxs.bind(this);
@@ -240,7 +239,6 @@ class AdminProduct extends React.Component {
     })
     let that = this;
     let SCallBack = function (response) {
-      debugger;
       that.setState({
         loading: 0,
         SellerId: response.data.authData.shopId
@@ -686,7 +684,6 @@ class AdminProduct extends React.Component {
       } else {
         Cats = response.data.result;
       }
-      debugger;
       for (let i = 0; i < response.data.result.length; i++) {
         if (response.data.result[i].Special) {
           SpecialCats.push(response.data.result[i]._id);
@@ -939,7 +936,6 @@ class AdminProduct extends React.Component {
                     
                     <MultiSelect filter value={this.state.SpecialCats} optionLabel="name" style={{width:'100%'}} optionValue="_id" options={this.state.CategoryList} onChange={(event) => { 
                           
-                          debugger;
                           this.setState({ SpecialCats:event.value }) 
                           
                         }} />

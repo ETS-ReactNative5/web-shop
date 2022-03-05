@@ -18,6 +18,7 @@ import { Button } from 'reactstrap';
 import { Fieldset } from 'primereact/fieldset';
 import { SelectButton } from 'primereact/selectbutton';
 import { Toast } from 'primereact/toast';
+import { ProgressBar } from 'primereact/progressbar';
 
 const placeFilters = [
   { label: 'بالا - راست', value: 'top-right' },
@@ -313,8 +314,8 @@ class Chat_Settings extends React.Component {
 
         {this.state.loading == 1 &&
           <div style={{ position: 'fixed', zIndex: 2000, top: 10, left: 15, backgroundColor: '#e89f31', padding: '2px 20px' }}>
-            <Loader content="لطفا صبر کنید ..." className="yekan" />
-          </div>
+          <Loader content="لطفا صبر کنید ..." className="yekan" />
+        </div>
         }
         <div className="row justify-content-center">
         <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
@@ -326,6 +327,7 @@ class Chat_Settings extends React.Component {
               <div>
 
               <Fieldset legend="شخصی سازی" style={{ marginTop: 20, textAlign: 'right', fontFamily: 'yekan',width:'100%' }}>
+
                 <div className="row">
                   <div className="col-lg-12">
                     <div >

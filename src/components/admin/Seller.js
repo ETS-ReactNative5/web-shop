@@ -33,7 +33,6 @@ class Seller extends React.Component {
 		
     }
     componentDidMount(){
-      debugger;
       let param={ //9132248532
         token: localStorage.getItem("api_token"),
       };

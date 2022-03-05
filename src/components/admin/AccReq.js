@@ -64,14 +64,22 @@ class AccReq extends React.Component {
 
   }
   selectedLaonChange(value) {
-    debugger;
     this.setState({
       selectedName: value.name,
       SelectedMobile: value.mobile,
+      selectedPhone: value.phone,
       selectedAcc: value.number,
       SelectedCode: value.CodeMelli,
       SelectedCartPic: value.CartMelli_Pic,
+      SelectedSign: value.sign,
       Authentication_Pic: value.Authentication_Pic,
+      SelectedShenasnameCode : value.ShenasnameCode,
+      SelectedFatherName : value.fatherName,
+      SelectedAddress: value.address,
+      SelectedBirthDay: value.BirthDay,
+      SelectedJob : value.job,
+      SelectedCity : value.city,
+      SelectedJobCity : value.jobCity,
       selectedUId: value.UId,
       SelectedId : value._id,
       SelectedStatus : value.status,
@@ -162,6 +170,14 @@ class AccReq extends React.Component {
       desc: this.state.selectedDescription||"",
       status: parseInt(this.state.SelectedStatus),
       CodeMelli: this.state.SelectedCode,
+      phone: this.state.selectedPhone,
+      ShenasnameCode : this.state.SelectedShenasnameCode,
+      fatherName : this.state.SelectedFatherName,
+      address: this.state.SelectedAddress,
+      BirthDay: this.state.SelectedBirthDay,
+      job : this.state.SelectedJob,
+      city : this.state.SelectedCity,
+      jobCity : this.state.SelectedJobCity,
       OldStatus: parseInt(this.state.OldStatus),
       msg:msg,
       EditByAdmin:true
@@ -200,6 +216,7 @@ class AccReq extends React.Component {
         }
 
         <Toast ref={this.toast} position="bottom-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
+        <p className="mt-5" style={{textAlign:'center',fontSize:30}}>درخواست های افتتاح حساب</p>
 
         <div style={{ textAlign: 'right', marginBottom: 10,marginTop:20 }}>
               <SelectButton value={this.state.Filter} options={FilterItems} style={{ fontFamily: 'Yekan' }} className="yekan" onChange={(e) => { 
@@ -218,6 +235,8 @@ class AccReq extends React.Component {
             <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.selectedLaon} onSelectionChange={e => { this.selectedLaonChange(e.value) }} >
               <Column field="name" header="نام" className="irsans" style={{ textAlign: "center" }} />
               <Column field="mobile" header="تلفن همراه" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="CodeMelli" header="کد ملی" className="irsans" style={{ textAlign: "center" }} />
+              <Column field="fatherName" header="نام پدر" className="irsans" style={{ textAlign: "center" }} />
 
               <Column field="number" header="شماره حساب" className="irsans" style={{ textAlign: "center" }} />
               <Column field="RegDate" header="تاریخ ثبت" className="irsans" style={{ textAlign: "center" }} />
@@ -232,7 +251,7 @@ class AccReq extends React.Component {
           this.setState({
             SelectedId:null
           })
-        }} maximizable={true}>
+        }} maximizable={true} maximized={true}>
           <div style={{ overflowY: 'auto', overflowX: 'hidden', minHeight: 400 }}>
             
           <div className="row" style={{ background: '#fff', borderRadius: 10, padding: 20, textAlign: 'right',alignItems:'baseline' }}>
@@ -252,27 +271,81 @@ class AccReq extends React.Component {
                       <label>شماره حساب صندوق</label>
                     </div>
                   </div>
-                  <div className="col-lg-12">
+                  <div className="col-lg-6">
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.selectedName} name="selectedName" onChange={(event)=>this.setState({ selectedName: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>نام و نام خانوادگی</label>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
                     <div className="group">
                       <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedCode} name="SelectedCode" onChange={(event)=>this.setState({ SelectedCode: event.target.value })} style={{ textAlign: 'right' }} required="true" />
                       <label>کد ملی</label>
                     </div>
                   </div>
                   
-                  <div className="col-lg-12">
+                  
+                  <div className="col-lg-6">
                     <div className="group">
-                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.selectedName} name="selectedName" onChange={(event)=>this.setState({ selectedName: event.target.value })} style={{ textAlign: 'right' }} required="true" />
-                      <label>نام و نام خانوادگی</label>
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.selectedPhone} name="selectedPhone" onChange={(event)=>this.setState({ selectedPhone: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>تلفن ثابت</label>
                     </div>
                   </div>
 
                   
-                  <div className="col-lg-12" >
+                  <div className="col-lg-6" >
                     <div className="group">
                       <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedMobile} name="SelectedMobile" onChange={(event)=>this.setState({ SelectedMobile: event.target.value })} style={{ textAlign: 'right' }} required="true" />
                       <label>موبایل</label>
                     </div>
                   </div>
+                  
+                  <div className="col-lg-6" >
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedShenasnameCode} name="SelectedShenasnameCode" onChange={(event)=>this.setState({ SelectedShenasnameCode: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>شماره شناسنامه</label>
+                    </div>
+                  </div>
+                  <div className="col-lg-6" >
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedFatherName} name="SelectedFatherName" onChange={(event)=>this.setState({ SelectedFatherName: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>نام پدر</label>
+                    </div>
+                  </div>
+                  <div className="col-lg-6" >
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedBirthDay} name="SelectedBirthDay" onChange={(event)=>this.setState({ SelectedBirthDay: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>تاریخ تولد</label>
+                    </div>
+                  </div>
+
+                  
+                  <div className="col-lg-6" >
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedJob} name="SelectedJob" onChange={(event)=>this.setState({ SelectedJob: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>شغل</label>
+                    </div>
+                  </div>
+                  <div className="col-lg-6" >
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedJobCity} name="SelectedJobCity" onChange={(event)=>this.setState({ SelectedJobCity: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>شهر محل کار</label>
+                    </div>
+                  </div>
+                  <div className="col-lg-6" >
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedCity} name="SelectedCity" onChange={(event)=>this.setState({ SelectedCity: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>شهر محل سکونت</label>
+                    </div>
+                  </div>
+                  <div className="col-lg-12" >
+                    <div className="group">
+                      <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.SelectedAddress} name="SelectedAddress" onChange={(event)=>this.setState({ SelectedAddress: event.target.value })} style={{ textAlign: 'right' }} required="true" />
+                      <label>آدرس</label>
+                    </div>
+                  </div>
+
+
                   <div className="col-lg-12" >
                     <div className="group">
                       <input className="form-control YekanBakhFaBold" autoComplete="off" type="text" value={this.state.selectedDescription} name="selectedDescription" onChange={(event)=>this.setState({ selectedDescription: event.target.value })} style={{ textAlign: 'right' }} required="true" />
@@ -295,15 +368,20 @@ class AccReq extends React.Component {
 
                       <div>
 
-                <div className="row" style={{alignItems:'center',backgroundColor:"aliceblue"}}>
-                    <div className="col-6">
+                <div className="row" style={{alignItems:'baseline',backgroundColor:"aliceblue"}}>
+                    <div className="col-4">
                     <label> کپی کارت ملی : </label>
                       <img src={this.state.SelectedCartPic} style={{width:"100%"}} id="Authentication_Pic" name="Authentication_Pic" />
                     </div>
-                    <div className="col-6">
+                    <div className="col-4">
                     <label> تصویر اهراز هویت : </label>
                       <img src={this.state.Authentication_Pic} style={{width:"100%"}} id="Authentication_Pic" name="Authentication_Pic" />
                     </div>
+                    <div className="col-4">
+                    <label> نمونه امضا : </label>
+                      <img src={this.state.SelectedSign} style={{width:"100%"}} id="Authentication_Pic" name="Authentication_Pic" />
+                    </div>
+                    
 
                 </div>
                 </div>

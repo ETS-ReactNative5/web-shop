@@ -99,6 +99,7 @@ class FirstPageLayout extends React.Component {
             pic1: this.Server.getAbsoluteUrl() + "/nophoto.png",
             pic2: this.Server.getAbsoluteUrl() + "/nophoto.png",
             pic3: this.Server.getAbsoluteUrl() + "/nophoto.png",
+            pageNameList:[],
             absoluteUrl: this.Server.getAbsoluteUrl(),
             url: this.Server.getUrl(1)
         }
@@ -214,320 +215,381 @@ class FirstPageLayout extends React.Component {
         this.getPage()
     }
     init() {
+        const items = this.state.page == "first" ? [{
+            id: "1",
+            content: <div>
+                <div>
+                    <div className="group" style={{display:'flex',alignItems:'center'}}>
+                      <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden1:!this.state.hidden1});
+                        setTimeout(()=>{
+                            this.init();
+                        },0)
+                        }} checked={this.state.hidden1} value={this.state.hidden1}    style={{ marginBottom: 10,width:50,height:25 }} />
+                      <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
+                </div>
+               </div>
+                <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg1})` }} >
+                <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
+                    <div style={{ textAlign: 'left' }}>
+                        <label>تصویر پس زمینه</label>
+                        <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file1-bg" />
+
+                    </div>
+                </div>
+                <div className="col-12" >
+                    <p className=" yekan">عنوان</p>
+
+                    <JoditEditor
+                        value={this.state.content1_1}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content1_1: value })
+                        }}
+
+                    />
+                </div>
+                <div className="col-3" >
+                    <p className=" yekan">تصویر</p>
+                    <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file1" />
+                    <img src={this.state.pic1} />
+                </div>
+                <div className="col-9" >
+                    <p className=" yekan">متن</p>
+                    <JoditEditor
+                        value={this.state.content1_2}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content1_2: value })
+                        }}
+                    /></div>
+
+            </div>
+            <div className="row">
+               <div className="col-12">
+               <div className="group">
+                <input className="form-control irsans" style={{direction:'ltr'}} value={this.state.link1} onChange={(event)=>{this.setState({link1:event.target.value});setTimeout(()=>{
+                            this.init();
+                        },0)}} />
+                <label>لینک</label>
+                </div>
+               </div>    
+
+
+            </div>
+            </div>
+        },
+        {
+            id: "2",
+            content: <div>
+                <div>
+                    <div className="group" style={{display:'flex',alignItems:'center'}}>
+                      <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden2:!this.state.hidden2});
+                        setTimeout(()=>{
+                            this.init();
+                
+                        },0)
+                        }} checked={this.state.hidden2} value={this.state.hidden2}    style={{ marginBottom: 10,width:50,height:25 }} />
+                      <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
+                </div>
+               </div>
+                <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg2})` }} >
+                <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
+                    <div style={{ textAlign: 'left' }}>
+                        <label>تصویر پس زمینه</label>
+                        <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file2-bg" />
+
+                    </div>
+                </div>
+                <div className="col-12" >
+                    <p className=" yekan">عنوان</p>
+
+                    <JoditEditor
+                        value={this.state.content2_1}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content2_1: value })
+                        }}
+
+                    />
+                </div>
+                <div className="col-9" >
+                    <p className=" yekan">متن</p>
+                    <JoditEditor
+                        value={this.state.content2_2}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content2_2: value })
+                        }}
+                    /></div>
+                <div className="col-3" >
+                    <p className=" yekan">تصویر</p>
+                    <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file2" />
+                    <img src={this.state.pic2} />
+                </div>
+                
+
+            </div>
+            <div className="row">
+               <div className="col-12">
+               <div className="group">
+               <input className="form-control irsans" style={{direction:'ltr'}} value={this.state.link3} onChange={(event)=>{this.setState({link3:event.target.value});setTimeout(()=>{
+                            this.init();
+                        },0)}} />
+                <label>لینک</label>
+                </div>
+               </div>    
+
+
+            </div>
+            </div>
+        },
+        {
+            id: "3",
+            content: <div>
+                <div>
+                    <div className="group" style={{display:'flex',alignItems:'center'}}>
+                      <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden3:!this.state.hidden3});
+                        setTimeout(()=>{
+                            this.init();
+                
+                        },0)
+                        }} checked={this.state.hidden3} value={this.state.hidden3}    style={{ marginBottom: 10,width:50,height:25 }} />
+                      <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
+                </div>
+               </div>
+                <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg3})` }} >
+                <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
+                    <div style={{ textAlign: 'left' }}>
+                        <label>تصویر پس زمینه</label>
+                        <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file3-bg" />
+
+                    </div>
+                </div>
+                <div className="col-12" >
+                    <p className=" yekan">عنوان</p>
+
+                    <JoditEditor
+                        value={this.state.content3_1}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content3_1: value })
+                        }}
+
+                    />
+                </div>
+                <div className="col-3" >
+                    <p className=" yekan">تصویر</p>
+                    <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file3" />
+                    <img src={this.state.pic3} />
+                </div>
+                <div className="col-9" >
+                    <p className=" yekan">متن</p>
+                    <JoditEditor
+                        value={this.state.content3_2}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content3_2: value })
+                        }}
+                    /></div>
+
+            </div>
+            <div className="row">
+               <div className="col-12">
+               <div className="group">
+               <input className="form-control irsans" style={{direction:'ltr'}} value={this.state.link2} onChange={(event)=>{this.setState({link2:event.target.value});setTimeout(()=>{
+                            this.init();
+                        },0)}} />
+                <label>لینک</label>
+                </div>
+               </div>    
+
+
+            </div>
+            </div>
+        },
+        {
+            id: "4",
+            content: <div>
+                <div>
+                    <div className="group" style={{display:'flex',alignItems:'center'}}>
+                      <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden4:!this.state.hidden4});
+                        setTimeout(()=>{
+                            this.init();
+                
+                        },0)
+                        }} checked={this.state.hidden4} value={this.state.hidden4}    style={{ marginBottom: 10,width:50,height:25 }} />
+                      <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
+                </div>
+               </div>
+               <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg4})` }} >
+                <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
+                    <div style={{ textAlign: 'left' }}>
+                        <label>تصویر پس زمینه</label>
+                        <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file4-bg" />
+
+                    </div>
+                </div>
+                <div className="col-3" >
+                    <p className=" yekan">تصویر</p>
+                    <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file4" />
+                    <img src={this.state.pic4} style={{height:400}} />
+                </div>
+                
+                <div className="col-9" >
+                    <p className=" yekan">متن</p>
+                    <JoditEditor
+                        value={this.state.content4_2}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content4_2: value })
+                        }}
+                    /></div>
+                   
+
+            </div>
+            <div className="row">
+               <div className="col-12">
+               <div className="group">
+               <input className="form-control irsans" style={{direction:'ltr'}} value={this.state.link4} onChange={(event)=>{this.setState({link4:event.target.value});setTimeout(()=>{
+                            this.init();
+                        },0)}} />
+                <label>لینک</label>
+                </div>
+               </div>    
+
+
+            </div>
+            </div>
+        },
+        {
+            id: "5",
+            content: <div>
+                <div>
+                    <div className="group" style={{display:'flex',alignItems:'center'}}>
+                      <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden5:!this.state.hidden5});
+                        setTimeout(()=>{
+                            this.init();
+                
+                        },0)
+                        }} checked={this.state.hidden5} value={this.state.hidden5}    style={{ marginBottom: 10,width:50,height:25 }} />
+                      <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
+                </div>
+               </div>
+               <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg5})` }} >
+                <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
+                    <div style={{ textAlign: 'left' }}>
+                        <label>تصویر پس زمینه</label>
+                        <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file5-bg" />
+
+                    </div>
+                </div>
+                
+                <div className="col-9" >
+                    <p className=" yekan">متن</p>
+                    <JoditEditor
+                        value={this.state.content5_2}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content5_2: value })
+                        }}
+                    /></div>
+                <div className="col-3" >
+                    <p className=" yekan">تصویر</p>
+                    <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file5" />
+                    <img src={this.state.pic5} style={{height:400}} />
+                </div>
+                
+                
+
+            </div>
+            <div className="row">
+               <div className="col-12">
+               <div className="group">
+               <input className="form-control irsans" style={{direction:'ltr'}} value={this.state.link5} onChange={(event)=>{this.setState({link5:event.target.value});setTimeout(()=>{
+                            this.init();
+                        },0)}} />
+                <label>لینک</label>
+                </div>
+               </div>    
+
+
+            </div>
+            </div>
+        }] :
+        [{
+            id: "1",
+            content: <div>
+                <div>
+                    <div className="group" style={{display:'flex',alignItems:'center'}}>
+                      <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden1:!this.state.hidden1});
+                        setTimeout(()=>{
+                            this.init();
+                        },0)
+                        }} checked={this.state.hidden1} value={this.state.hidden1}    style={{ marginBottom: 10,width:50,height:25 }} />
+                      <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
+                </div>
+               </div>
+                <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg1})` }} >
+                <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
+                    <div style={{ textAlign: 'left' }}>
+                        <label>تصویر پس زمینه</label>
+                        <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file1-bg" />
+
+                    </div>
+                </div>
+                <div className="col-12" >
+                    <p className=" yekan">عنوان</p>
+
+                    <JoditEditor
+                        value={this.state.content1_1}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content1_1: value })
+                        }}
+
+                    />
+                </div>
+                <div className="col-3" >
+                    <p className=" yekan">تصویر</p>
+                    <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file1" />
+                    <img src={this.state.pic1} />
+                </div>
+                <div className="col-9" >
+                    <p className=" yekan">متن</p>
+                    <JoditEditor
+                        value={this.state.content1_2}
+                        config={config}
+                        tabIndex={1} // tabIndex of textarea
+                        onChange={(value) => {
+                            if (value)
+                                this.setState({ content1_2: value })
+                        }}
+                    /></div>
+
+            </div>
+            
+            </div>
+        }];
         this.setState({
-            items: [{
-                id: "1",
-                content: <div>
-                    <div>
-                        <div className="group" style={{display:'flex',alignItems:'center'}}>
-                          <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden1:!this.state.hidden1});
-                            setTimeout(()=>{
-                                debugger;
-                                this.init();
-                    
-                            },0)
-                            }} checked={this.state.hidden1} value={this.state.hidden1}    style={{ marginBottom: 10,width:50,height:25 }} />
-                          <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
-                    </div>
-                   </div>
-                    <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg1})` }} >
-                    <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
-                        <div style={{ textAlign: 'left' }}>
-                            <label>تصویر پس زمینه</label>
-                            <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file1-bg" />
-
-                        </div>
-                    </div>
-                    <div className="col-12" >
-                        <p className=" yekan">عنوان</p>
-
-                        <JoditEditor
-                            value={this.state.content1_1}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content1_1: value })
-                            }}
-
-                        />
-                    </div>
-                    <div className="col-3" >
-                        <p className=" yekan">تصویر</p>
-                        <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file1" />
-                        <img src={this.state.pic1} />
-                    </div>
-                    <div className="col-9" >
-                        <p className=" yekan">متن</p>
-                        <JoditEditor
-                            value={this.state.content1_2}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content1_2: value })
-                            }}
-                        /></div>
-
-                </div>
-                <div className="row">
-                   <div className="col-12">
-                   <div className="group">
-                    <input className="form-control irsans" style={{direction:'ltr'}} autoComplete="off" type="text" value={this.state.link1} name="link1" onChange={(event)=>this.setState({link1:event.target.value})} required="true" />
-                    <label>لینک</label>
-                    </div>
-                   </div>    
-
-
-                </div>
-                </div>
-            },
-            {
-                id: "2",
-                content: <div>
-                    <div>
-                        <div className="group" style={{display:'flex',alignItems:'center'}}>
-                          <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden2:!this.state.hidden2});
-                            setTimeout(()=>{
-                                debugger;
-                                this.init();
-                    
-                            },0)
-                            }} checked={this.state.hidden2} value={this.state.hidden2}    style={{ marginBottom: 10,width:50,height:25 }} />
-                          <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
-                    </div>
-                   </div>
-                    <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg2})` }} >
-                    <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
-                        <div style={{ textAlign: 'left' }}>
-                            <label>تصویر پس زمینه</label>
-                            <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file2-bg" />
-
-                        </div>
-                    </div>
-                    <div className="col-12" >
-                        <p className=" yekan">عنوان</p>
-
-                        <JoditEditor
-                            value={this.state.content2_1}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content2_1: value })
-                            }}
-
-                        />
-                    </div>
-                    <div className="col-9" >
-                        <p className=" yekan">متن</p>
-                        <JoditEditor
-                            value={this.state.content2_2}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content2_2: value })
-                            }}
-                        /></div>
-                    <div className="col-3" >
-                        <p className=" yekan">تصویر</p>
-                        <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file2" />
-                        <img src={this.state.pic2} />
-                    </div>
-                    
-
-                </div>
-                <div className="row">
-                   <div className="col-12">
-                   <div className="group">
-                    <input className="form-control irsans" autoComplete="off" style={{direction:'ltr'}} type="text" value={this.state.link3} name="link3" onChange={(event)=>this.setState({link3:event.target.value})} required="true" />
-                    <label>لینک</label>
-                    </div>
-                   </div>    
-
-
-                </div>
-                </div>
-            },
-            {
-                id: "3",
-                content: <div>
-                    <div>
-                        <div className="group" style={{display:'flex',alignItems:'center'}}>
-                          <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden3:!this.state.hidden3});
-                            setTimeout(()=>{
-                                debugger;
-                                this.init();
-                    
-                            },0)
-                            }} checked={this.state.hidden3} value={this.state.hidden3}    style={{ marginBottom: 10,width:50,height:25 }} />
-                          <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
-                    </div>
-                   </div>
-                    <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg3})` }} >
-                    <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
-                        <div style={{ textAlign: 'left' }}>
-                            <label>تصویر پس زمینه</label>
-                            <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file3-bg" />
-
-                        </div>
-                    </div>
-                    <div className="col-12" >
-                        <p className=" yekan">عنوان</p>
-
-                        <JoditEditor
-                            value={this.state.content3_1}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content3_1: value })
-                            }}
-
-                        />
-                    </div>
-                    <div className="col-3" >
-                        <p className=" yekan">تصویر</p>
-                        <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file3" />
-                        <img src={this.state.pic3} />
-                    </div>
-                    <div className="col-9" >
-                        <p className=" yekan">متن</p>
-                        <JoditEditor
-                            value={this.state.content3_2}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content3_2: value })
-                            }}
-                        /></div>
-
-                </div>
-                <div className="row">
-                   <div className="col-12">
-                   <div className="group">
-                    <input className="form-control irsans" autoComplete="off" style={{direction:'ltr'}} type="text" value={this.state.link2} name="link2" onChange={(event)=>this.setState({link2:event.target.value})} required="true" />
-                    <label>لینک</label>
-                    </div>
-                   </div>    
-
-
-                </div>
-                </div>
-            },
-            {
-                id: "4",
-                content: <div>
-                    <div>
-                        <div className="group" style={{display:'flex',alignItems:'center'}}>
-                          <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden4:!this.state.hidden4});
-                            setTimeout(()=>{
-                                debugger;
-                                this.init();
-                    
-                            },0)
-                            }} checked={this.state.hidden4} value={this.state.hidden4}    style={{ marginBottom: 10,width:50,height:25 }} />
-                          <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
-                    </div>
-                   </div>
-                   <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg4})` }} >
-                    <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
-                        <div style={{ textAlign: 'left' }}>
-                            <label>تصویر پس زمینه</label>
-                            <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file4-bg" />
-
-                        </div>
-                    </div>
-                    <div className="col-3" >
-                        <p className=" yekan">تصویر</p>
-                        <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file4" />
-                        <img src={this.state.pic4} style={{height:400}} />
-                    </div>
-                    
-                    <div className="col-9" >
-                        <p className=" yekan">متن</p>
-                        <JoditEditor
-                            value={this.state.content4_2}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content4_2: value })
-                            }}
-                        /></div>
-                       
-
-                </div>
-                <div className="row">
-                   <div className="col-12">
-                   <div className="group">
-                    <input className="form-control irsans" autoComplete="off" style={{direction:'ltr'}} type="text" value={this.state.link4} name="link4" onChange={(event)=>this.setState({link4:event.target.value})} required="true" />
-                    <label>لینک</label>
-                    </div>
-                   </div>    
-
-
-                </div>
-                </div>
-            },
-            {
-                id: "5",
-                content: <div>
-                    <div>
-                        <div className="group" style={{display:'flex',alignItems:'center'}}>
-                          <input inputId="IsTitle" type="checkbox" onChange={e => {this.setState({hidden5:!this.state.hidden5});
-                            setTimeout(()=>{
-                                debugger;
-                                this.init();
-                    
-                            },0)
-                            }} checked={this.state.hidden5} value={this.state.hidden5}    style={{ marginBottom: 10,width:50,height:25 }} />
-                          <label htmlFor="IsTitle" className="p-checkbox-label yekan" style={{ paddingRight: 50 }}>عدم نمایش</label>
-                    </div>
-                   </div>
-                   <div className="row" style={{ position: 'relative', backgroundImage: `url(${this.state.bg5})` }} >
-                    <div className="col-12" style={{backgroundColor:'#000',color:'#fff'}}>
-                        <div style={{ textAlign: 'left' }}>
-                            <label>تصویر پس زمینه</label>
-                            <input className=" yekan" placeholder="background" autoComplete="off" onChange={this.FileUpload} type="file" name="file5-bg" />
-
-                        </div>
-                    </div>
-                    
-                    <div className="col-9" >
-                        <p className=" yekan">متن</p>
-                        <JoditEditor
-                            value={this.state.content5_2}
-                            config={config}
-                            tabIndex={1} // tabIndex of textarea
-                            onChange={(value) => {
-                                if (value)
-                                    this.setState({ content5_2: value })
-                            }}
-                        /></div>
-                    <div className="col-3" >
-                        <p className=" yekan">تصویر</p>
-                        <input className=" yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file5" />
-                        <img src={this.state.pic5} style={{height:400}} />
-                    </div>
-                    
-                    
-
-                </div>
-                <div className="row">
-                   <div className="col-12">
-                   <div className="group">
-                    <input className="form-control irsans" style={{direction:'ltr'}} autoComplete="off" type="text" value={this.state.link5} name="link5" onChange={(event)=>this.setState({link5:event.target.value})} required="true" />
-                    <label>لینک</label>
-                    </div>
-                   </div>    
-
-
-                </div>
-                </div>
-            }]
+            items: items
         })
     }
     SetChange() {
@@ -548,7 +610,7 @@ class FirstPageLayout extends React.Component {
                 
                 req.push({
                     id:count,
-                    content:`<div class='row' style="background-image:url(${this.state.bg1})"><div class='col-12' style='margin-bottom:50px'><p>${this.state.content1_1}</p></div><div class='col-md-1 col-0' ></div><div class='col-md-3 col-12' style='padding:15px' ><img src='${this.state.pic1}' style='width:100%' /></div><div class='col-md-7 col-12' style='padding:15px' >${this.state.content1_2}</div><div class='col-md-1 col-0' ></div></div></div>`
+                    content:`<div class='row sarv-content' style="justify-content:center;background-image:url(${this.state.bg1})"><div class='col-md-0 col-0' ></div><div class='col-md-3 col-12' style='padding:15px' ><img src='${this.state.pic1}' style='width:100%' /></div><div class='col-md-7 col-12' style='padding:15px' ><h1>${this.state.content1_1}</h1><br/>${this.state.content1_2}</div><div class='col-md-0 col-0' ></div></div></div>`
                 })
 
             }
@@ -556,33 +618,32 @@ class FirstPageLayout extends React.Component {
                 
                 req.push({
                     id:count,
-                    content:`<div class='row' style="background-image:url(${this.state.bg2})"><div class='col-12' style='margin-bottom:50px'><p>${this.state.content2_1}</p></div><div class='col-md-1 col-0' ></div><div class='col-md-7 col-12' style='padding:15px' >${this.state.content2_2}</div><div class='col-md-3 col-12' style='padding:15px' ><img src='${this.state.pic2}' style='width:100%' ></div><div class='col-md-1 col-0' ></div></div></div>`
+                    content:`<div class='row sarv-content' style="justify-content:center;background-image:url(${this.state.bg2})"><div class='col-md-0 col-0' ></div><div class='col-md-7 col-12' style='padding:15px' ><h1>${this.state.content2_1}</h1><br/>${this.state.content2_2}</div><div class='col-md-3 col-12' style='padding:15px' ><img src='${this.state.pic2}' style='width:100%' ></div><div class='col-md-0 col-0' ></div></div></div>`
                 })
             }
             if (this.state.items[i].id == "3") {
                 
                 req.push({
                     id:count,
-                    content:`<div class='row' style="background-image:url(${this.state.bg3})"><div class='col-12' style='margin-bottom:50px'><p>${this.state.content3_1}</p></div><div class='col-md-1 col-0' ></div><div class='col-md-3 col-12' style='padding:15px' ><img src='${this.state.pic3}' style='width:100%' /></div><div class='col-md-7 col-12' style='padding:15px' >${this.state.content3_2}</div><div class='col-md-1 col-0' ></div></div></div>`
+                    content:`<div class='row sarv-content' style="justify-content:center;background-image:url(${this.state.bg3})"><div class='col-md-0 col-0' ></div><div class='col-md-3 col-12' style='padding:15px' ><img src='${this.state.pic3}' style='width:100%' /></div><div class='col-md-7 col-12' style='padding:15px' ><h1>${this.state.content3_1}</h1><br/>${this.state.content3_2}</div><div class='col-md-0 col-0' ></div></div></div>`
                 })
             }
             if (this.state.items[i].id == "4") {
                 
                 req.push({
                     id:count,
-                    content:`<div class='row' style="background-image:url(${this.state.bg4})"><div class='col-md-1 col-0' ></div><div class='col-md-4 col-12' ><img src='${this.state.pic4}' style='width:100%' /></div><div class='col-md-6 col-12'  >${this.state.content4_2}</div><div class='col-md-1 col-0' ></div></div></div>`
+                    content:`<div class='row sarv-content' style="justify-content:center;background-image:url(${this.state.bg4})"><div class='col-md-0 col-0' ></div><div class='col-md-4 col-12' ><img src='${this.state.pic4}' style='width:100%' /></div><div class='col-md-6 col-12'  >${this.state.content4_2}</div><div class='col-md-0 col-0' ></div></div></div>`
                 })
             }
             if (this.state.items[i].id == "5") {
                 
                 req.push({
                     id:count,
-                    content:`<div class='row' style="background-image:url(${this.state.bg5})"><div class='col-md-1 col-0' ></div><div class='col-md-6 col-12'  >${this.state.content5_2}</div><div class='col-md-4 col-12' ><img src='${this.state.pic5}' style='width:100%' /></div><div class='col-md-1 col-0' ></div></div></div>`
+                    content:`<div class='row sarv-content' style="justify-content:center;background-image:url(${this.state.bg5})"><div class='col-md-0 col-0' ></div><div class='col-md-6 col-12'  >${this.state.content5_2}</div><div class='col-md-4 col-12' ><img src='${this.state.pic5}' style='width:100%' /></div><div class='col-md-0 col-0' ></div></div></div>`
                 })
             }
 
         }
-        debugger;
         let param = {
             token: localStorage.getItem("api_token"),
             page:that.state.page,
@@ -647,7 +708,6 @@ class FirstPageLayout extends React.Component {
         this.Server.send("AdminApi/getPageLayout", param, SCallBack, ECallBack)
       }
       Layout(resp){
-        debugger;
 
         this.setState({
             
@@ -729,10 +789,10 @@ class FirstPageLayout extends React.Component {
                         <Loader content="لطفا صبر کنید ..." className="yekan" />
                     </div>
                 }
-                <div className="row justify-content-center">
+                <div className="row justify-content-center mt-5">
 
                     <div className="col-12" style={{ background: '#fff' }}>
-                        <Panel header="ایجاد صفحه جدید" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+                        <Panel header="ایجاد صفحه جدید" style={{  textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
                         <div className="row">
                             <div className="col-12">
                             <div className="group">

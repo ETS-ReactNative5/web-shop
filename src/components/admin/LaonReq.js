@@ -65,7 +65,6 @@ class LaonReq extends React.Component {
 
   }
   selectedLaonChange(value) {
-    debugger;
     this.setState({
       selectedName: value.LaonName,
       selectedAcc: value.LaonAcc,
@@ -141,7 +140,6 @@ class LaonReq extends React.Component {
     this.Server.send("AdminApi/GetLaon", param, SCallBack, ECallBack)
   }
   EditLaon(){
-    debugger;
     let that = this;
     
     that.setState({
@@ -156,7 +154,6 @@ class LaonReq extends React.Component {
       extra += "درخواست شما به اصلاح نیاز دارد"+"\n";  
     if(this.state.selectedDescription)
       extra += this.state.selectedDescription+"\n";  
-      debugger;
     if(this.state.SelectedStatus != this.state.OldStatus)
       msg = "درخواست وام شما در وضعیت "+statusTitle[parseInt(this.state.SelectedStatus)+1]+" قرار گرفت" + "\n" + extra ;
     else
@@ -210,6 +207,7 @@ class LaonReq extends React.Component {
         }
 
         <Toast ref={this.toast} position="bottom-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
+        <p className="mt-5" style={{textAlign:'center',fontSize:30}}>درخواست های وام</p>
 
         <div style={{ textAlign: 'right', marginBottom: 10,marginTop:20 }}>
               <SelectButton value={this.state.Filter} options={FilterItems} style={{ fontFamily: 'Yekan' }} className="yekan" onChange={(e) => { 

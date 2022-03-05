@@ -172,7 +172,6 @@ class Forms_Details extends React.Component {
     }
     GetComponents() {
         let that = this;
-        debugger;
         let param = {
             token: localStorage.getItem("api_token"),
             GetAll: 1

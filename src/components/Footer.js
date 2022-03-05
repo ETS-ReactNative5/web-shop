@@ -95,26 +95,26 @@ class Footer extends React.Component {
 							
 						</div>
 						<div className="col-md-3 col-12 order-md-2 order-2" style={{borderLeft:'1px solid #e2e2e2'}}>
-							{
-								this.state.GridBlogs && this.state.GridBlogs.length > 0 &&
-							<div>
-
-							<p  className="YekanBakhFaBold" style={{textAlign:'right'}}><i className="fal fa-link"></i> آخرین مقالات</p>
-							{
-								this.state.GridBlogs.map(function(item,index){
-									if(!item.FixPage){
-										return (
-											<Link  to={`${process.env.PUBLIC_URL}/Blogs?id=`+item._id} className="" target="_blank" href="#" style={{textDecoration:'none'}}>
-												<p className="YekanBakhFaBold" style={{color:'#333',textAlign:'right',fontSize:12}}  >{item.title}</p>
-											</Link>
-										)
-									}
-									
-								})
-							}
-							</div>
+							{this.state.GridBlogs && this.state.GridBlogs.length > 0 &&
+								<div>
+								{this.state.GridBlogs.length > 0 &&
+									<p  className="YekanBakhFaBold" style={{textAlign:'right'}}><i className="fal fa-link"></i> آخرین مقالات</p>
+								}	
+								{
+									this.state.GridBlogs.map(function(item,index){
+										if(!item.FixPage){
+											return (
+												<Link  to={`${process.env.PUBLIC_URL}/Blogs?id=`+item._id} className="" target="_blank" href="#" style={{textDecoration:'none'}}>
+													<p className="YekanBakhFaBold" style={{color:'#333',textAlign:'right',fontSize:12}}  >{item.title}</p>
+												</Link>
+											)
+										}
+										
+									})
+								}
+								</div>
 							
-						}
+							}
 
 							  
 						</div>

@@ -62,9 +62,11 @@ class Set extends React.Component {
       ShowProductsInTable: false,
       RegisterByMob:false,
       AlarmIfExistProduct:false,
+      orderConfirmation:false,
       AllowSubSystem:false,
       AllowRegister:false,
       Raymand:false,
+      Disabled:false,
       SeveralShop: false,
       System:"",
       SaleFromMultiShops:false,
@@ -203,9 +205,11 @@ class Set extends React.Component {
           ShowProductsInTable: response.data.result[0].ShowProductsInTable,
           RegisterByMob: response.data.result[0].RegisterByMob,
           AlarmIfExistProduct: response.data.result[0].AlarmIfExistProduct,
+          orderConfirmation: response.data.result[0].orderConfirmation,
           AllowSubSystem:response.data.result[0].AllowSubSystem,
           AllowRegister:response.data.result[0].AllowRegister,
           Raymand: response.data.result[0].Raymand,
+          Disabled: response.data.result[0].Disabled,
           SeveralShop: response.data.result[0].SeveralShop,
           System:response.data.result[0].System,
           SaleFromMultiShops:response.data.result[0].SaleFromMultiShops,
@@ -271,9 +275,11 @@ class Set extends React.Component {
           ShowProductsInTable: this.state.ShowProductsInTable,
           RegisterByMob: this.state.RegisterByMob,
           AlarmIfExistProduct: this.state.AlarmIfExistProduct,
+          orderConfirmation: this.state.orderConfirmation,
           AllowSubSystem: this.state.AllowSubSystem,
           AllowRegister: this.state.AllowRegister,
           Raymand: this.state.Raymand,
+          Disabled: this.state.Disabled,
           SeveralShop: this.state.SeveralShop,
           System: this.state.System,
           SaleFromMultiShops:this.state.SaleFromMultiShops,
@@ -330,10 +336,10 @@ class Set extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center  mt-5">
 
           <div className=" col-12" style={{ background: '#fff' }}>
-            <Panel header="تنظیمات سیستم" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+            <Panel header="تنظیمات سیستم" style={{ textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <div className="row" >
                 <div className="col-12" style={{display:'none'}} >
                   <div className="row">
@@ -448,6 +454,13 @@ class Set extends React.Component {
 
                 </div>
                 }
+                {this.state.System == "shop" &&
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ orderConfirmation: e.checked })} checked={this.state.orderConfirmation}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>تایید سفارش توسط فروشنده الزامی است</label>
+
+                </div>
+                }
                 {this.state.System == "company" &&
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ AllowRegister: e.checked })} checked={this.state.AllowRegister}></Checkbox>
@@ -465,6 +478,11 @@ class Set extends React.Component {
                 <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
                   <Checkbox onChange={e => this.setState({ Raymand: e.checked })} checked={this.state.Raymand}></Checkbox>
                   <label style={{ paddingRight: 5, marginTop: 5 }}>به سیستم رایمند متصل است</label>
+
+                </div>
+                <div className="col-12" style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <Checkbox onChange={e => this.setState({ Disabled: e.checked })} checked={this.state.Disabled}></Checkbox>
+                  <label style={{ paddingRight: 5, marginTop: 5 }}>غیر فعال شدن سیستم (در صورت فعال بودن این گزینه بخشهایی از سیستم مثل گزارشات غیر فعال می شوند)</label>
 
                 </div>
                 <div className="col-12" >
@@ -502,7 +520,7 @@ class Set extends React.Component {
                 <div className="col-12" >
                   <div className="group">
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.ChatId} name="ChatId" onChange={(event) => this.setState({ ChatId: event.target.value })} required="true" />
-                    <label className="yekan">شناسه کاربری سیستم چت (CRISP_WEBSITE_ID)</label>
+                    <label className="yekan">شناسه کاربری سیستم چت </label>
                   </div>
                 </div>
               </div>

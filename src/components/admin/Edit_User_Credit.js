@@ -4,6 +4,7 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import ReactTable from "react-table";
+import {Panel} from 'primereact/panel';
 
 
 import 'primeicons/primeicons.css';
@@ -33,8 +34,8 @@ class Edit_User_Credit extends React.Component {
       dashList: (this.props && this.props.location && this.props.location.state && this.props.location.state.list) ? this.props.location.state.list : [],
       NewFactors: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewFactors) ? this.props.location.state.NewFactors : null,
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
-      payType:1,
-      selectedWallet:{},
+      payType: 1,
+      selectedWallet: {},
       GridDataUsers: [],
       GridDataFactors: [],
       visibleCreateUser: false,
@@ -59,7 +60,7 @@ class Edit_User_Credit extends React.Component {
       levelOfUserArray: [],
       ShowNewLevelOfUser: 0,
       levelOfUser2: -1,
-      userType:0,
+      userType: 0,
       Offs: [],
       PriceOfLevels: [],
       formuls: [],
@@ -68,7 +69,8 @@ class Edit_User_Credit extends React.Component {
       formul_off: '',
       formul_opr: '',
       PriceOfLevel: null,
-      loading: 0
+      loading: 0,
+      mySystem:{subSystem:false}
 
     }
     this.CreateUser = this.CreateUser.bind(this);
@@ -88,12 +90,12 @@ class Edit_User_Credit extends React.Component {
     this.handleChangeNewCredit = this.handleChangeNewCredit.bind(this);
     this.handleChangeDesc = this.handleChangeDesc.bind(this);
 
-    
+
 
     this.handleChangeRaymandAcc = this.handleChangeRaymandAcc.bind(this);
     this.handleChangeRaymandUser = this.handleChangeRaymandUser.bind(this);
 
-    
+
     this.EditCredit = this.EditCredit.bind(this);
     this.handleChangeStatus = this.handleChangeStatus.bind(this);
     this.handleChangeMap = this.handleChangeMap.bind(this);
@@ -115,7 +117,8 @@ class Edit_User_Credit extends React.Component {
           Raymand: response.data.result[0].Raymand,
         })
       }
-      that.GetWallets();
+      that.getManagerSystemInfo()
+
 
 
 
@@ -131,68 +134,67 @@ class Edit_User_Credit extends React.Component {
   }
   getShop(id) {
     let that = this;
-   
-      let param = {
-        token: localStorage.getItem("api_token"),
-        ShopId:id
-      };
-      this.setState({
-        loading: 1
-      })
-      let SCallBack = function (response) {
-        response.data.result[0].status = response.data.result[0].AllowCredit ? "متصل به مهرکارت" : "مهرکارت ندارد"
-        let AllCredit=0;
-        debugger;
-        for(let i=0;i<response.data.result.length;i++){
 
-          if(that.state.wallet == "mehr"){
-            response.data.result[i].realCredit = response.data.result[i].credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  
-          }
-          else{
-            for(let item of response.data.result[i].wallet){
-              if(item.name == that.state.wallet){
-                response.data.result[i].realCredit = item.credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-              }
-  
-            }
-          }
-          AllCredit+=response.data.result[i].credit;
-          for(let item of response.data.result[i].wallet){
-              AllCredit+=item.credit||0;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      ShopId: id
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      response.data.result[0].status = response.data.result[0].AllowCredit ? "متصل به خرید اقساطی" : "خرید اقساطی ندارد"
+      let AllCredit = 0;
+      for (let i = 0; i < response.data.result.length; i++) {
 
-          }
+        if (that.state.wallet == "mehr") {
+          response.data.result[i].realCredit = response.data.result[i].credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-          if(!response.data.result[i].realCredit)
-            response.data.result[i].realCredit = "0".replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-          response.data.result[i].AllCredit = AllCredit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-  
         }
-        
-        that.setState({
-          GridDataUsers: response.data.result,
-          loading: 0
-        })
-       
+        else {
+          for (let item of response.data.result[i].wallet) {
+            if (item.name == that.state.wallet) {
+              response.data.result[i].realCredit = item.credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
 
-        
-      };
-      let ECallBack = function (error) {
-        that.setState({
-          loading: 0
-        })
+          }
+        }
+        AllCredit += response.data.result[i].credit;
+        for (let item of response.data.result[i].wallet) {
+          AllCredit += item.credit || 0;
+
+        }
+
+        if (!response.data.result[i].realCredit)
+          response.data.result[i].realCredit = "0".replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        response.data.result[i].AllCredit = AllCredit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+
       }
-      this.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
-    
+
+      that.setState({
+        GridDataUsers: response.data.result,
+        loading: 0
+      })
+
+
+
+    };
+    let ECallBack = function (error) {
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
+
   }
   EditCredit(id) {
     let that = this;
 
-    if(!this.state.newCredit)
+    if (!this.state.newCredit)
       return;
     let Amount = this.state.newCredit.toString().replace(/,/g, "");
-    if(isNaN(Amount)){
+    if (isNaN(Amount)) {
       Alert.warning('مبلغ نمیتواند غیر عددی باشد', 5000);
       return;
     }
@@ -209,22 +211,32 @@ class Edit_User_Credit extends React.Component {
       payType: this.state.payType,
       Amount: Amount,
       desc: this.state.desc,
-      ShopId:this.state.userType == 1 ? this.state.GridDataUsers[0]._id : null,
-      Step:2,
-      wallet:this.state.wallet,
-      userOfSite: this.state.userOfSite
+      ShopId: this.state.userType == 1 ? this.state.GridDataUsers[0]._id : null,
+      Step: 2,
+      wallet: this.state.wallet,
+      userOfSite: this.state.userOfSite,
+      system:this.state.system,
+      isMainSystem: this.state.mySystem._id == this.state.system ? true : false
+
     };
     let SCallBack = function (response) {
       that.setState({
         loading: 0
       })
-      Alert.success('عملیات با موفقیت انجام شد', 5000);
-      if(that.state.userType == 0)
+      if(response.data.error){
+        Alert.error(response.data.message, 5000);
+        
+      }else{
+        Alert.success('عملیات با موفقیت انجام شد', 5000);
+
+      }
+      if (that.state.userType == 0)
         that.GetUsers(that.state.searchId);
       else
         that.getShop(that.state.searchId);
       that.setState({
-        visibleCreateUser: false
+        visibleCreateUser: false,
+        payType:1
       })
     };
     let ECallBack = function (error) {
@@ -268,15 +280,15 @@ class Edit_User_Credit extends React.Component {
   handleChangeNewCredit(event) {
     this.setState({ newCredit: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") });
   }
-  handleChangeDesc(event){
+  handleChangeDesc(event) {
     this.setState({ desc: event.target.value });
 
   }
-  handleChangeRaymandAcc(event){
+  handleChangeRaymandAcc(event) {
     this.setState({ RaymandAcc: event.target.value });
 
   }
-  handleChangeRaymandUser(event){
+  handleChangeRaymandUser(event) {
     this.setState({ RaymandUser: event.target.value });
 
   }
@@ -295,9 +307,9 @@ class Edit_User_Credit extends React.Component {
       name: "",
       username: "",
       credit: 0,
-      newCredit:'',
-      desc:'',
-      payType:1
+      newCredit: '',
+      desc: '',
+      payType: 1
     });
 
   }
@@ -311,26 +323,25 @@ class Edit_User_Credit extends React.Component {
   selectedUserChange(value) {
     let that = this;
     var p = [];
-    let wallet={};
-    for(let w of this.state.wallets){
-      if(w.value == this.state.wallet)
+    let wallet = {};
+    for (let w of this.state.wallets) {
+      if (w.value == this.state.wallet)
         wallet = w;
     }
-    let walletCredit=0;
-    if(value.wallet){
-      for(let w of value.wallet){
-        if(w.name == this.state.wallet)
+    let walletCredit = 0;
+    if (value.wallet) {
+      for (let w of value.wallet) {
+        if (w.name == this.state.wallet)
           walletCredit = w.credit;
       }
     }
-    
-    debugger;
+
     value.wallet = value.wallet || {};
     this.setState({
       selectedId: value._id,
-      selectedWallet:wallet,
-      walletName:wallet.label,
-      newCredit:'',
+      selectedWallet: wallet,
+      walletName: wallet.label,
+      newCredit: '',
       name: value.name,
       mail: value.mail,
       company: value.company,
@@ -339,10 +350,10 @@ class Edit_User_Credit extends React.Component {
       pass: value.password,
       pass2: value.password,
       address: value.address,
-      credit: wallet.value == "mehr" ? (value.credit ? value.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value.credit) : 
-              (walletCredit ? walletCredit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : (walletCredit||0)),
-      RaymandAcc:value.RaymandAcc,
-      RaymandUser:value.RaymandUser,
+      credit: wallet.value == "mehr" ? (value.credit ? value.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value.credit) :
+        (walletCredit ? walletCredit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : (walletCredit || 0)),
+      RaymandAcc: value.RaymandAcc,
+      RaymandUser: value.RaymandUser,
       ShopId: value.shopId,
       selectedUser: value.products,
       status: value.status == "فعال" ? "1" : "0",
@@ -360,7 +371,8 @@ class Edit_User_Credit extends React.Component {
     }, function (response) {
       that.setState({
         ShopId: response.data.authData.shopId,
-        userOfSite: response.data.authData.username
+        userOfSite: response.data.authData.username,
+        userId:response.data.authData.userId
       })
       that.getSettings();
     }, function (error) {
@@ -372,100 +384,104 @@ class Edit_User_Credit extends React.Component {
 
   }
 
-  
-   onSelect(event) {
-    this.setState({searchName:event.value.name,searchId:event.value._id});
-    if(this.state.userType == 0)
+
+  onSelect(event) {
+    this.setState({ searchName: event.value.name, searchId: event.value._id });
+    if (this.state.userType == 0)
       this.GetUsers(event.value._id);
     else
-      this.getShop(event.value._id);  
+      this.getShop(event.value._id);
   }
-  
-  
+
+
   suggestBrands(event) {
-      let that = this;
-      this.setState({ brand: event.query, Count: 0 });
-      let param = {};
-      if(this.state.userType == 0 ){
-         param = {
-          title: event.query,
-          table:"users",
-          name:["name","username","RaymandAcc","RaymandUser"]
-        };
-      }else{
-        let shops=[];
-        for(let w of this.state.wallets){
-          if(w.value == this.state.wallet)
-            shops = w.shops;
-        }
-         param = {
-          title: event.query,
-          table:"shops",
-          condition:{convertToObject:1,key:"_id",value:shops},
-          name:"name"/*["name","name"]*/
-        };
-      }
-      
-      let SCallBack = function (response) {
-        let brandSuggestions = [];
-        response.data.result.reverse().map(function (v, i) {
-          brandSuggestions.push({ _id: v._id,name:v.name})
-        })
-        that.setState({ brandSuggestions: brandSuggestions });
+    let that = this;
+    this.setState({ brand: event.query, Count: 0 });
+    let param = {};
+    if (this.state.userType == 0) {
+      param = {
+        system:this.state.system ? this.state.system : null,
+        isMainSystem: this.state.mySystem._id == this.state.system ? true : false,
+        title: event.query,
+        table: "users",
+        name: ["name", "username", "RaymandAcc", "RaymandUser"]
       };
-  
-      let ECallBack = function (error) {
-  
+    } else {
+      let shops = [];
+      for (let w of this.state.wallets) {
+        if (w.value == this.state.wallet)
+          shops = w.shops;
       }
-      that.Server.send("AdminApi/searchItems", param, SCallBack, ECallBack)
-  
-  
+      param = {
+        title: event.query,
+        table: "shops",
+        condition: { convertToObject: 1, key: "_id", value: shops },
+        name: "name"/*["name","name"]*/
+      };
+    }
+
+    let SCallBack = function (response) {
+      let brandSuggestions = [];
+      response.data.result.reverse().map(function (v, i) {
+        brandSuggestions.push({ _id: v._id, name: v.name })
+      })
+      that.setState({ brandSuggestions: brandSuggestions });
+    };
+
+    let ECallBack = function (error) {
+
+    }
+    that.Server.send("AdminApi/searchItems", param, SCallBack, ECallBack)
+
+
   }
   itemTemplate(brand) {
-      return (
-        <div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
-          <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
-            <div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>
-              <span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
-                <span style={{whiteSpace:'pre-wrap'}} _id={brand._id}>{brand.name}</span><br />
-              </span>
-            </div>
-            
+    return (
+      <div className="p-clearfix" style={{ direction: 'rtl', maxWidth: '100%' }} >
+        <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
+          <div className="col-8" _id={brand._id} style={{ textAlign: 'right' }}>
+            <span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} _id={brand._id} >
+              <span style={{ whiteSpace: 'pre-wrap' }} _id={brand._id}>{brand.name}</span><br />
+            </span>
           </div>
+
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
 
-    GetWallets() {
-      let that = this;
-      let param = {
-        token: localStorage.getItem("api_token")
-      };
-      this.setState({
-        loading: 1
-      })
-      let SCallBack = function (response) {
-        let wallets = [];
-        for(let resp of response.data.result){
-          wallets.push({label:resp.name,value:resp.latinName,shops:resp.shops});
-        }
-        that.setState({
-          wallet:wallets[0]?.value,
-          wallets: wallets
-        })
-        that.setState({
-          loading: 0
-        })
-      };
-      let ECallBack = function (error) {
-        console.log(error)
-        that.setState({
-          loading: 0
-        })
+  GetWallets(system) {
+    let that = this;
+    debugger;
+    let param = {
+      token: localStorage.getItem("api_token"),
+      systemId : system || this.state.system
+    };
+    this.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      let wallets = [];
+      for (let resp of response.data.result) {
+        wallets.push({ label: resp.name, value: resp.latinName, shops: resp.shops });
       }
-      this.Server.send("AdminApi/GetWallets", param, SCallBack, ECallBack)
+      that.setState({
+        wallet: wallets[0]?.value,
+        wallets: wallets
+      })
+      that.setState({
+        loading: 0
+      })
+    };
+    let ECallBack = function (error) {
+      console.log(error)
+      that.setState({
+        loading: 0
+      })
     }
+    this.Server.send("AdminApi/GetWallets", param, SCallBack, ECallBack)
+  }
   GetUsers(id) {
     let that = this;
     this.setState({
@@ -476,20 +492,18 @@ class Edit_User_Credit extends React.Component {
       userId: id
     };
     let SCallBack = function (response) {
+      debugger;
       that.setState({
         loading: 0
       })
-      debugger;
-      for(let i=0;i<response.data.result.length;i++){
-        if(that.state.wallet == "mehr"){
-          debugger;
+      for (let i = 0; i < response.data.result.length; i++) {
+        if (that.state.wallet == "mehr") {
           response.data.result[i].realCredit = response.data.result[i].credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
         }
-        else{
-          for(let item of response.data.result[i].wallet){
-            if(item.name == that.state.wallet){
-              debugger;
+        else {
+          for (let item of response.data.result[i].wallet) {
+            if (item.name == that.state.wallet) {
               response.data.result[i].realCredit = item.credit?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
             }
@@ -510,12 +524,65 @@ class Edit_User_Credit extends React.Component {
     }
     this.Server.send("AdminApi/getuser", param, SCallBack, ECallBack)
   }
+  getManagerSystemInfo(){
+    let that = this;
+    let param = {
+      user_id:this.state.userId
+    };
+    that.setState({
+      loading: 1
+    })
+    let SCallBack = function (response) {
+      debugger;
+      that.setState({
+        loading: 0,
+        mySystem: (response.data.result[0] && response.data.result[0].system[0]) ? response.data.result[0].system[0] : {subSystem:false}
+      })
+      that.getSystems();
+
+
+
+
+    };
+    let ECallBack = function (error) {
+      that.setState({
+        loading: 0
+      })
+      that.getSystems();
+
+
+    }
+    this.Server.send("MainApi/getManagerSystemInfo", param, SCallBack, ECallBack)
+  }
+  getSystems() {
+    let that = this;
+    debugger;
+    let SCallBack = function (response) {
+      let systems = [];
+      for (let resp of response.data.result) {
+        systems.push({ label: resp.name, value: resp._id });
+      }
+      that.setState({
+        system: that.state.mySystem._id ? that.state.mySystem._id : systems[0]?.value,
+        systems: systems
+      })
+      that.GetWallets();
+
+      
+
+    };
+    let ECallBack = function (error) {
+      that.GetWallets();
+
+    }
+    this.Server.send("MainApi/getSystems", {}, SCallBack, ECallBack)
+  }
   rowClass(data) {
-    if(data.credit)
+    if (data.credit)
       data.credit = data.credit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
     return {
-      'row-highlight1':0
+      'row-highlight1': 0
     }
   }
   render() {
@@ -529,7 +596,7 @@ class Edit_User_Credit extends React.Component {
       value={this.state.levelFilter} options={level} className="irsans" onChange={this.onLevelChange} />
     const footer = (
       <div>
-        <button className="btn btn-primary irsans" onClick={()=>this.EditCredit()} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> اعمال </button>
+        <button className="btn btn-primary irsans" onClick={() => this.EditCredit()} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> اعمال </button>
 
       </div>
     );
@@ -541,73 +608,99 @@ class Edit_User_Credit extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
-        <div className="col-lg-12" style={{textAlign:'right',marginTop:60}}>
-                  <div style={{marginRight: 10,border: "1px solid #eee",borderRadius: 10,padding: 10}}>
-                  <label className="IRANYekan">نوع کیف پول را انتخاب کنید</label>
+        <div className="row justify-content-center mt-5">
+        <div className="col-lg-12" >
+        <Panel header="ویرایش موجودی" style={{ textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+          <div className="row" >
+          {this.state.systems && this.state.systems.length > 1 && !this.state.mySystem.subSystem && this.state.mySystem._id &&
+            <div className="col-lg-12" style={{ textAlign: 'right' }}>
+              <div style={{ marginRight: 10, borderRadius: 10 }}>
+                <label className="IRANYekan">سیسستم</label>
 
-                  <SelectButton value={this.state.wallet} options={this.state.wallets} onChange={(e) => {
-                    this.setState({wallet:e.value === null ? this.state.wallet : e.value,searchName:'',GridDataUsers:[]})
-                  
-                  }}></SelectButton>
-                  </div>
-          </div>
-        <div className="col-lg-12" style={{textAlign:'right',marginTop:20}}>
-                  <div style={{marginRight:10}}>
-                  <label className="IRANYekan">وضعیت کاربری را انتخاب کنید</label>
+                <SelectButton value={this.state.system} options={this.state.systems} onChange={(e) => {
+                  this.setState({ system: e.value === null ? this.state.system : e.value, searchName: '', GridDataUsers: [] })
+                  this.GetWallets(e.value === null ? this.state.system : e.value)
 
-                  <SelectButton value={this.state.userType} options={[{label:'کاربران',value:0},{label:'پذیرندگان',value:1}]} onChange={(e) => {
-                    this.setState({userType:e.value === null ? this.state.userType : e.value,searchName:'',GridDataUsers:[]})
-                  
-                  }}></SelectButton>
-                  </div>
-          </div>
-          {this.state.userType == 0 &&
-          <div className="col-12" style={{ background: '#fff' }}>
-          <AutoComplete placeholder="بخشی از نام / شماره موبایل / شناسه کاربری / شماره حساب  را وارد کنید"  style={{ width: '100%' }} onChange={(event)=>{this.setState({searchName:event.value})}} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
-
-
-            <div className="section-title " style={{ textAlign: 'right',display:'flex',justifyContent:'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >نتیجه جستجو</span>
-            
-            
+                }}></SelectButton>
+              </div>
             </div>
-            
-            <DataTable rowClassName={this.rowClass} rows={15} paginator={true} responsive ref={(el) => this.dt = el} value={this.state.GridDataUsers} selectionMode="single" selection={this.state.selectedUser} onSelectionChange={e => this.selectedUserChange(e.value)}>
-              
-              <Column field="username"  header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="name"  header="نام" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="realCredit" header="موجودی کیف پول" className="irsans" style={{ textAlign: "center" }} />
+          }
+          {this.state.wallets && this.state.wallets.length > 0 &&
+            <div className="col-lg-12" style={{ textAlign: 'right', marginTop: 20 }}>
+              <div style={{ marginRight: 10, borderRadius: 10 }}>
+                <label className="IRANYekan">نوع کیف پول را انتخاب کنید</label>
 
-              
-            </DataTable>
-          </div>
+                <SelectButton value={this.state.wallet} options={this.state.wallets} onChange={(e) => {
+                  this.setState({ wallet: e.value === null ? this.state.wallet : e.value, searchName: '', GridDataUsers: [] })
+
+                }}></SelectButton>
+              </div>
+            </div>
+          }
+            <div className="col-lg-12" style={{ textAlign: 'right', marginTop: 20 }}>
+              <div style={{ marginRight: 10 }}>
+                <label className="IRANYekan">وضعیت کاربری را انتخاب کنید</label>
+
+                <SelectButton value={this.state.userType} options={[{ label: 'کاربران', value: 0 }, { label: 'پذیرندگان', value: 1 }]} onChange={(e) => {
+                  this.setState({ userType: e.value === null ? this.state.userType : e.value, searchName: '', GridDataUsers: [] })
+
+                }}></SelectButton>
+              </div>
+            </div>
+          {this.state.userType == 0 &&
+            <div className="col-12" style={{ background: '#fff', textAlign: 'right', marginTop: 20 }}>
+              <AutoComplete disabled={!this.state.wallet} placeholder="بخشی از نام / شماره موبایل / شناسه کاربری / شماره حساب  را وارد کنید" style={{ maxWidth: 400, minWidth: 320 }} onChange={(event) => { this.setState({ searchName: event.value }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+
+
+              <div className="section-title " style={{ textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >نتیجه جستجو</span>
+
+
+              </div>
+
+              <DataTable rowClassName={this.rowClass} rows={15} paginator={true} responsive ref={(el) => this.dt = el} value={this.state.GridDataUsers} selectionMode="single" selection={this.state.selectedUser} onSelectionChange={e => this.selectedUserChange(e.value)}>
+
+                <Column field="username" header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="name" header="نام" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="realCredit" header="موجودی کیف پول" className="irsans" style={{ textAlign: "center" }} />
+
+
+              </DataTable>
+            </div>
           }
           {this.state.userType == 1 &&
-          <div className="col-12" style={{ background: '#fff' }}>
-          <AutoComplete placeholder="بخشی از نام فروشگاه / شماره موبایل   را وارد کنید"  style={{ width: '100%' }} onChange={(event)=>{this.setState({searchName:event.value})}} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+            <div className="col-12" style={{ background: '#fff', textAlign: 'right', marginTop: 20 }}>
+              <AutoComplete disabled={!this.state.wallet} placeholder="بخشی از نام فروشگاه / شماره موبایل   را وارد کنید" style={{ maxWidth: 400, minWidth: 320 }} onChange={(event) => { this.setState({ searchName: event.value }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
 
 
-            <div className="section-title " style={{ textAlign: 'right',display:'flex',justifyContent:'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >نتیجه جستجو</span>
-            
-            
+              <div className="section-title " style={{ textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >نتیجه جستجو</span>
+
+
+              </div>
+
+              <DataTable rowClassName={this.rowClass} rows={15} paginator={true} responsive ref={(el) => this.dt = el} value={this.state.GridDataUsers} selectionMode="single" selection={this.state.selectedUser} onSelectionChange={e => this.selectedUserChange(e.value)}>
+
+                <Column field="username" header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="name" header="نام" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
+                {this.state.mySystem && (!this.state.mySystem.subSystem || !this.state.mySystem._id) && 
+                <Column field="realCredit" header="موجودی کیف پول" className="irsans" style={{ textAlign: "center" }} />
+                }
+                {this.state.mySystem && (!this.state.mySystem.subSystem || !this.state.mySystem._id) && 
+                <Column field="AllCredit" header="مجموع موجودی کیفها" className="irsans" style={{ textAlign: "center" }} />
+                }
+                
+
+              </DataTable>
             </div>
-            
-            <DataTable rowClassName={this.rowClass} rows={15} paginator={true} responsive ref={(el) => this.dt = el} value={this.state.GridDataUsers} selectionMode="single" selection={this.state.selectedUser} onSelectionChange={e => this.selectedUserChange(e.value)}>
-              
-              <Column field="username"  header="نام کاربری" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="name"  header="نام" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="realCredit" header="موجودی کیف پول" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="AllCredit" header="مجموع موجودی کیفها" className="irsans" style={{ textAlign: "center" }} />
-
-            </DataTable>
-          </div>
           }
+          </div>
+          </Panel>
+          </div>
 
         </div>
         <Dialog header={"اصلاح"} visible={this.state.visibleCreateUser} width="800px" footer={footer} minY={70} maxY={400} onHide={this.onHide} maximizable={true}>
-          <p style={{textAlign:'right',fontSize:22,fontFamily:'YekanBakhFaBold',marginBottom:'20px !important'}}>کیف پول جاری : {this.state.selectedWallet.label}</p>
+          <p style={{ textAlign: 'right', fontSize: 22, fontFamily: 'YekanBakhFaBold', marginBottom: '20px !important' }}>کیف پول جاری : {this.state.selectedWallet.label}</p>
           <form style={{ maxWidth: 800, maxHeight: 450, marginBottom: 10, maxWidth: 1000 }}  >
             <div className="row">
               <div className="col-lg-6 col-12">
@@ -624,8 +717,8 @@ class Edit_User_Credit extends React.Component {
                   <label>نام و نام خانوادگی</label>
                 </div>
               </div>
-              
-              {this.state.CreditSupport &&
+
+              {this.state.CreditSupport && this.state.mySystem && (!this.state.mySystem.subSystem || !this.state.mySystem._id) &&
                 <div className="col-lg-6">
                   <div className="group">
                     <input className="form-control irsans" disabled={true} autoComplete="off" type="text" value={this.state.credit} name="credit" onChange={this.handleChangeCredit} required="true" />
@@ -633,27 +726,39 @@ class Edit_User_Credit extends React.Component {
                   </div>
                 </div>
               }
-                <div className="col-lg-12" style={{textAlign:'right'}}>
-                  <div style={{marginRight:10}}>
+              {this.state.mySystem && (!this.state.mySystem.subSystem || !this.state.mySystem._id) ?
+
+              <div className="col-lg-12" style={{ textAlign: 'right' }}>
+                <div style={{ marginRight: 10 }}>
                   <label className="IRANYekan">نوع تراکنش</label>
 
-                  <SelectButton value={this.state.payType} options={[{label:'واریز',value:1},{label:'برداشت',value:0}]} onChange={(e) => {this.setState({payType:e.value === null ? this.state.payType : e.value})}}></SelectButton>
-                  </div>
+                  <SelectButton value={this.state.payType} options={[{ label: 'واریز', value: 1 }, { label: 'برداشت', value: 0 }]} onChange={(e) => { this.setState({ payType: e.value === null ? this.state.payType : e.value }) }}></SelectButton>
                 </div>
-                <div className="col-lg-6" style={{marginTop:10}}>
-                  <div className="group">
-                    <input className="form-control irsans"  autoComplete="off" type="text" value={this.state.newCredit} name="newCredit" onChange={this.handleChangeNewCredit} required="true" />
-                    <label>مبلغ(ریال)</label>
-                  </div>
-                </div>
-                <div className="col-lg-12" style={{marginTop:10}}>
-                  <div className="group">
-                    <input className="form-control irsans"  autoComplete="off" type="text" value={this.state.desc} name="desc" onChange={this.handleChangeDesc} required="true" />
-                    <label>توضیح</label>
-                  </div>
-                </div>
+              </div>
+              :
+              <div className="col-lg-12" style={{ textAlign: 'right' }}>
+                <div style={{ marginRight: 10 }}>
+                  <label className="IRANYekan">نوع تراکنش</label>
 
-              
+                  <SelectButton value={this.state.payType} options={[{ label: 'واریز', value: 1 }]} onChange={(e) => { this.setState({ payType: e.value === null ? this.state.payType : e.value }) }}></SelectButton>
+                </div>
+              </div>
+            }
+
+              <div className="col-lg-6" style={{ marginTop: 10 }}>
+                <div className="group">
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.newCredit} name="newCredit" onChange={this.handleChangeNewCredit} required="true" />
+                  <label>مبلغ(ریال)</label>
+                </div>
+              </div>
+              <div className="col-lg-12" style={{ marginTop: 10 }}>
+                <div className="group">
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.desc} name="desc" onChange={this.handleChangeDesc} required="true" />
+                  <label>توضیح</label>
+                </div>
+              </div>
+
+
 
             </div>
           </form>

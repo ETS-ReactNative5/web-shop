@@ -151,7 +151,6 @@ class SaleSystem extends React.Component {
 
     }
     componentDidMount() {
-        debugger;
         let param = {
           token: localStorage.getItem("api_token"),
         };

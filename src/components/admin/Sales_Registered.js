@@ -194,7 +194,7 @@ class Sales_Registered extends React.Component {
       value.products[i].UnitPrice = value.products[i].UnitPrice ? value.products[i].UnitPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
 
       value.products[i].detail = "";
-      value.products[i].edit = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(value._id, value.products[i]._id, value.products[i].title, "del")}></i>
+      value.products[i].edit = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(value._id, value.products[i]._id, value.products[i].title, "del",value.products[i])}></i>
       if (value.products[i].color)
         value.products[i].detail += "رنگ : " + value.products[i].color + "\n";
       if (value.products[i].size)
@@ -210,7 +210,7 @@ class Sales_Registered extends React.Component {
     })
 
   }
-  EditFactor(FactorId, ProductId, title, type, product) {
+  EditFactor(FactorId, ProductId, title, type, product,oldValue) {
     let that = this;
     if (type == "edit") {
       let param = {
@@ -218,7 +218,8 @@ class Sales_Registered extends React.Component {
         FactorId: FactorId,
         ProductId: ProductId,
         type: type,
-        product: product
+        product: product,
+        oldValue:oldValue
       };
 
       let SCallBack = function (response) {
@@ -238,11 +239,28 @@ class Sales_Registered extends React.Component {
         {
           label: <span className="yekan">بله </span>,
           onClick: () => {
+            console.log(product)
+            let products = [];
+            if(!ProductId){
+              for(let pp of product){
+                products.push({
+                  _id:pp._id,
+                  number:pp.number
+                })
+              }
+            }else{
+              products={
+                _id:product._id,
+                number:product.number
+              }
+            }
+
             let param = {
               token: localStorage.getItem("api_token"),
               FactorId: FactorId,
               ProductId: ProductId,
-              type: type
+              type: type,
+              products:products
             };
             let SCallBack = function (response) {
               if (type == "del" && !ProductId) {
@@ -317,7 +335,7 @@ class Sales_Registered extends React.Component {
         }
         v.radif = i+1;
 
-        v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del")}></i>
+        v.delete = <i className="fa fa-times" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => that.EditFactor(v._id, null, null, "del",v.products)}></i>
         v.print =
           <ReactToPrint
             content={() => that.componentRef}
@@ -354,8 +372,7 @@ class Sales_Registered extends React.Component {
     this.Server.send("AdminApi/getFactors", param, SCallBack, ECallBack)
   }
   inputTextEditor(field, props) {
-
-    return <InputText type="text" value={props.rowData[field]} onChange={(e) => this.onEditorValueChange(props, e.target.value, field)} />;
+    return <InputText type="text" value={props.rowData[field]} onChange={(e) => {this.onEditorValueChange(props, e.target.value, field,e.target.defaultValue)}} />;
   }
   gridEditor(field, props) {
     return this.inputTextEditor(field, props);
@@ -397,7 +414,7 @@ class Sales_Registered extends React.Component {
 
   }
 
-  onEditorValueChange(props, value, field) {
+  onEditorValueChange(props, value, field,oldValue) {
     let updatedProducts = [...props.value];
     updatedProducts[props.rowIndex][props.field] = value;
 
@@ -409,8 +426,7 @@ class Sales_Registered extends React.Component {
     this.setState({
       selectedFactor: updatedProducts
     })
-
-    this.EditFactor(this.state.selectedId, updatedProducts[props.rowIndex]._id, updatedProducts[props.rowIndex].title, "edit", updatedProducts[props.rowIndex])
+    this.EditFactor(this.state.selectedId, updatedProducts[props.rowIndex]._id, updatedProducts[props.rowIndex].title, "edit", updatedProducts[props.rowIndex],oldValue)
 
   }
   

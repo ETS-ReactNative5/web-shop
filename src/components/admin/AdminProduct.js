@@ -8,6 +8,7 @@ import ReactTable from "react-table";
 import { Dialog } from 'primereact/dialog';
 import JoditEditor from "jodit-react";
 
+import { FileUpload } from 'primereact/fileupload';
 
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
@@ -32,6 +33,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import { MultiSelect } from 'primereact/multiselect';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Chip } from 'primereact/chip';
+
 const config = {
   readonly: false // all options from https://xdsoft.net/jodit/doc/
 }
@@ -155,6 +157,8 @@ class AdminProduct extends React.Component {
         [{ value: 5, expr: '1 + 4' }, { value: 5, expr: '1 + 4' }, { value: "qqqqqqqqqqqq" }]
 
       ],
+      skip:0,
+      limit:10,
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
 
@@ -163,6 +167,9 @@ class AdminProduct extends React.Component {
     this.ColorsRef_edit = React.createRef();
     this.SizeRef = React.createRef();
     this.SizeRef_edit = React.createRef();
+    this.updateFromExcel = this.updateFromExcel.bind(this);
+    this.exportXLS = this.exportXLS.bind(this);
+    this.importExcel = this.importExcel.bind(this);
 
     let RangeView = ({ cell, getValue }) => (
       <input
@@ -242,7 +249,7 @@ class AdminProduct extends React.Component {
     this.DeleteCategory = this.DeleteCategory.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.FileUpload = this.FileUpload.bind(this);
+    this.FileUploadServer = this.FileUploadServer.bind(this);
     this.picToggle = this.picToggle.bind(this);
     this.offToggle = this.offToggle.bind(this);
 
@@ -870,7 +877,7 @@ class AdminProduct extends React.Component {
       specialReview_edit: row.specialReview,
       price_edit: (!this.state.SeveralShop && row.price) ? row.price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "",
       off_edit: !this.state.SeveralShop ? row.off : "",
-      status_edit: !this.state.SeveralShop ? row.status : "",
+      status_edit: row.status || "",
       CategoryInProduct_edit: row.category_id,
       number_edit: !this.state.SeveralShop ? row.number : "",
       ShowPriceAftLogin_edit: !this.state.SeveralShop ? row.ShowPriceAftLogin : "",
@@ -1167,7 +1174,7 @@ class AdminProduct extends React.Component {
 
     
   }
-  FileUpload(e) {
+  FileUploadServer(e) {
     e.preventDefault();
     const formData = new FormData();
     let name = e.target.name;
@@ -1588,7 +1595,9 @@ class AdminProduct extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       id: catId,
-      sortAsc:1
+      sortAsc:1,
+      skip:this.state.skip,
+      limit:this.state.limit
     };
     this.setState({
       loading: 1
@@ -1624,7 +1633,9 @@ class AdminProduct extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       tag: _tagId,
-      sortAsc:1
+      sortAsc:1,
+      offset:'0',
+      limit:'10'
     };
     this.setState({
       loading: 1
@@ -1828,7 +1839,6 @@ class AdminProduct extends React.Component {
     })
   }
   onEditorValueChange(props, value, field) {
-    debugger;
     let updatedProducts = [...props.value];
     updatedProducts[props.rowIndex][props.field] = value;
 
@@ -1836,6 +1846,7 @@ class AdminProduct extends React.Component {
       return;
     if((props.field=="relativeLevel" ||  props.field=="off") && isNaN(value) && value != "")
       return;  */
+    debugger;  
     this.TableLayoutGetSet(updatedProducts[props.rowIndex], updatedProducts, props.rowIndex,field);
     this.setState({
       grid: updatedProducts
@@ -1948,7 +1959,8 @@ class AdminProduct extends React.Component {
     let param = {
       title: event.query,
       SellerId: this.state.SellerId,
-      Main: this.state.SellerId == this.state.MainShopId
+      Main: this.state.SellerId == this.state.MainShopId,
+      super:true
 
     };
 
@@ -2134,7 +2146,6 @@ class AdminProduct extends React.Component {
           grid: grid
         })
       } else {
-        debugger;
         if(response.data.result=="numChanged"){
           that.TableLayoutGetSet();
 
@@ -2163,6 +2174,7 @@ class AdminProduct extends React.Component {
         loading: 0
       })
     }
+    debugger;
     this.Server.send(url, Set, SCallBack, ECallBack)
   }
 
@@ -2270,6 +2282,147 @@ class AdminProduct extends React.Component {
       </div>
     );
   }
+  updateFromExcel(){
+    let that = this;
+    this.setState({
+      loading:true
+    })
+    let param = {
+      modifiedCol: this.state.modifiedCol
+
+    };
+    debugger;
+
+
+
+    let SCallBack = function (response) {
+      if(response.data.result){
+        that.setState({
+          loading:false
+        })
+        Alert.success('عملیات با موفقیت انجام شد', 5000);
+
+      }else{
+        that.setState({
+          loading:false
+        })
+      }
+      
+    };
+    let ECallBack = function (error) {
+      console.log(error)
+
+
+    }
+    this.Server.send("AdminApi/updateFromExcel", param, SCallBack, ECallBack)
+  }
+  exportXLS(selectionOnly) {
+    import('xlsx').then(xlsx => {
+      const worksheet = xlsx.utils.json_to_sheet(this.state.grid);
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, 'products');
+  });
+  }
+  saveAsExcelFile(buffer, fileName) {
+    import('file-saver').then(FileSaver => {
+        let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        let EXCEL_EXTENSION = '.xlsx';
+        const data = new Blob([buffer], {
+            type: EXCEL_TYPE
+        });
+        FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+    });
+}
+toCapitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+  importExcel(e) {
+    const file = e.files[0];
+    this.setState({
+      loading:true
+    })
+    import('xlsx').then(xlsx => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const wb = xlsx.read(e.target.result, { type: 'array' });
+            const wsname = wb.SheetNames[0];
+            const ws = wb.Sheets[wsname];
+            const data = xlsx.utils.sheet_to_json(ws, { header: 1 });
+
+            // Prepare DataTable
+            const cols = data[0];
+            data.shift();
+            debugger;
+            let importedCols = cols.map(col => ({ field: col, header: this.toCapitalize(col) }));
+            let importedData = data.map(d => {
+                return cols.reduce((obj, c, i) => {
+                    obj[c] = d[i];
+                    return obj;
+                }, {});
+            });
+            let modifiedCol = []
+            for(let i=0;i<importedData.length;i++){
+              if (importedData[i].price)
+              importedData[i]["formul"] =  importedData[i].price
+              else
+              importedData[i]["formul"] ={"off":importedData[i].off ,"level":importedData[i].relativeLevel,"opr":importedData[i].opr}
+
+              if(this.state.grid[i].price != importedData[i].price || this.state.grid[i].relativeLevel != importedData[i].relativeLevel || this.state.grid[i].opr != importedData[i].opr ||  this.state.grid[i].off != importedData[i].off  ||  this.state.grid[i].number != importedData[i].number  ){
+                modifiedCol.push({
+                  _id:importedData[i]._id,
+                  product_id:importedData[i].product_id,
+                  opr:importedData[i].opr,
+                  relativeLevel:importedData[i].relativeLevel,
+                  price:importedData[i].price,
+                  off:importedData[i].off,
+                  formul:importedData[i].formul,
+                  number:importedData[i].number,
+                  result:importedData[i].result
+                })
+              }
+                importedData[i].changed = true;
+            }
+            this.setState({
+                grid:importedData,
+                modifiedCol:modifiedCol,
+                loading:false
+            });
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
+}
+  importCSV(e) {
+    debugger;
+    const file = e.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        debugger;
+        const csv = e.target.result;
+        const data = csv.split('\n');
+
+        // Prepare DataTable
+        const cols = data[0].split(',');
+        data.shift();
+
+        let importedCols = cols.map(col => ({ field: col, header: this.toCapitalize(col.replace(/['"]+/g, '')) }));
+        let importedData = data.map(d => {
+            d = d.split(',');
+            return cols.reduce((obj, c, i) => {
+                obj[c] = d[i].replace(/['"]+/g, '');
+                return obj;
+            }, {});
+        });
+
+        this.setState({
+            importedCols,
+            importedData
+        });
+    };
+
+    reader.readAsText(file, 'UTF-8');
+}
   render() {
     const footer = (
       <div style={{ textAlign: 'center' }}>
@@ -2429,7 +2582,7 @@ class AdminProduct extends React.Component {
                     <div className="col-12" style={{ display: 'flex',alignItems:'baseline' }}>
 
                       <div className="group" style={{ width: "80%" }}>
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file" />
+                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUploadServer} type="file" name="file" />
                         <label>آپلود عکس اصلی</label>
                       </div>
                       {this.state.fileUploaded &&
@@ -2441,7 +2594,7 @@ class AdminProduct extends React.Component {
                     <div className="col-12" style={{ display: 'flex',alignItems:'baseline' }}>
 
                       <div className="group" style={{ width: "80%" }}>
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file1" />
+                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUploadServer} type="file" name="file1" />
                         <label>1 آپلود عکس</label>
                       </div>
                       {this.state.fileUploaded1 &&
@@ -2453,7 +2606,7 @@ class AdminProduct extends React.Component {
                     <div className="col-12" style={{ display: 'flex',alignItems:'baseline' }}>
 
                       <div className="group" style={{ width: "80%" }}>
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file2" />
+                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUploadServer} type="file" name="file2" />
                         <label>2 آپلود عکس</label>
                       </div>
                       {this.state.fileUploaded2 &&
@@ -2465,7 +2618,7 @@ class AdminProduct extends React.Component {
                     <div className="col-12" style={{ display: 'flex',alignItems:'baseline' }}>
 
                       <div className="group" style={{ width: "80%" }}>
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file3" />
+                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUploadServer} type="file" name="file3" />
                         <label>3 آپلود عکس</label>
                       </div>
                       {this.state.fileUploaded3 &&
@@ -2477,7 +2630,7 @@ class AdminProduct extends React.Component {
                     <div className="col-12" style={{ display: 'flex',alignItems:'baseline' }}>
 
                       <div className="group" style={{ width: "80%" }}>
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="file4" />
+                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUploadServer} type="file" name="file4" />
                         <label>4 آپلود عکس</label>
                       </div>
                       {this.state.fileUploaded4 &&
@@ -2636,7 +2789,7 @@ class AdminProduct extends React.Component {
             <TabView activeIndex={this.state.activeIndex} onTabChange={(e) => { this.setState({ activeIndex: e.index }); if (e.index == 1) { this.GetProductsOfCategory(this.state.ShopCats) } }}>
               <TabPanel header="محصولات شما">
                 {this.state.GridData && this.state.GridData.length > 0 ?
-                                <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} sortOrder={this.state.sortOrder} sortField={this.state.sortField} rows={10} itemTemplate={this.itemTemplate}></DataView>
+                    <DataView value={this.state.GridData} layout={this.state.layout} paginator={true} sortOrder={this.state.sortOrder} sortField={this.state.sortField} rows={10} rowsPerPageOptions={[10,25,50,100]} itemTemplate={this.itemTemplate} ></DataView>
                   :
                   <p style={{fontFamily: 'iranyekanwebregular', textAlign: 'right'}} >برای نمایش محصول بخشی از نام ، دسته بندی یا برچسب آن را جستجو کنید</p>
               
@@ -2650,7 +2803,7 @@ class AdminProduct extends React.Component {
                 <hr />
                 {this.state.GridAllData && this.state.GridAllData.length > 0 ?
 
-                <DataView value={this.state.GridAllData} layout={this.state.layout} paginator={true} sortOrder={this.state.sortOrder} sortField={this.state.sortField} rows={10} itemTemplate={this.itemTemplate}></DataView>
+                <DataView rowsPerPageOptions={[10,25,50,100]} value={this.state.GridAllData} layout={this.state.layout} paginator={true} sortOrder={this.state.sortOrder} sortField={this.state.sortField} rows={10} itemTemplate={this.itemTemplate}></DataView>
                 :
                 <p style={{fontFamily: 'iranyekanwebregular', textAlign: 'right'}} >برای نمایش محصول بخشی از نام ، دسته بندی یا برچسب آن را جستجو کنید</p>
                 }
@@ -2925,7 +3078,7 @@ class AdminProduct extends React.Component {
 
         <Dialog header="تصاویر" visible={this.state.visibleModalPic} onHide={this.onHide} maximizable={true}>
 
-          <input className="form-control yekan" style={{ visibility: 'hidden' }} autoComplete="off" onChange={this.FileUpload} type="file" name="picFile" id="picFile" />
+          <input className="form-control yekan" style={{ visibility: 'hidden' }} autoComplete="off" onChange={this.FileUploadServer} type="file" name="picFile" id="picFile" />
           <div className="row" >
             <div className="col-6" >
               <img src={this.state.pic1} name="pic1" onClick={this.Changepic} style={{ width: "300px", height: "300px" }} alt="Picture" />
@@ -3053,17 +3206,29 @@ class AdminProduct extends React.Component {
                 <div className="datatable-editing-demo">
 
                   <div className="card" style={{ maxHeight: '400px' }} >
-                    <DataTable value={this.state.grid} editMode="cell" className="editable-cells-table" paginator={true} rows={14}  >
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="title" header={this.state.TitlesMap[0]} ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="subTitle" header={this.state.TitlesMap["productSubTitle"]}  ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="level" header="کد درجه کاربری"></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="levelName" header="درجه کاربری" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="price" header="قیمت خرید" editor={(props) => this.gridEditor('price', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="relativeLevel" header="نسبت به" editor={(props) => this.gridEditor('relativeLevel', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="off" header="درصد تخفیف" editor={(props) => this.gridEditor('off', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="opr" header="عمل" editor={(props) => this.gridEditor('opr', props)}></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="result" header="قیمت نهایی" ></Column>
-                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="number" header="موجودی" editor={(props) => this.gridEditor('number', props)} ></Column>
+                  <div style={{display:'flex',justifyContent:'space-between'}} >
+                      <div style={{display:'flex',width:300,justifyContent:'space-between',margin:5}} >
+                      <button type="button"  onClick={() => this.exportXLS(false)} className="btn btn-primary yekan" data-pr-tooltip="XLS" >دریافت خروجی اکسل</button>
+
+                      <FileUpload chooseOptions={{ label: 'آپلود فایل اکسل', icon: 'pi pi-file-excel', className: 'p-button-success' }} mode="basic" name="demo[]" auto url={this.state.url + 'uploadFileFake'}
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" className="p-mr-2" onUpload={this.importExcel} />
+
+                      </div>
+                      <button type="button"  onClick={() => this.updateFromExcel()} className="btn btn-danger yekan" style={{margin:5}}  >ذخیره</button>
+                      </div>
+
+
+                    <DataTable value={this.state.grid} editMode="cell" ref={(el) => { this.dt = el; }}  paginator={true} rows={14}  >
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="title" header="title" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="subTitle" header="subTitle"  ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="level" header="level"></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="levelName" header="levelName" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="price" header="price" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="relativeLevel" header="relativeLevel" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} filter={true} filterMatchMode="contains" field="off" header="off" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="opr" header="opr" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="result" header="result" ></Column>
+                      <Column headerStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center' }} bodyStyle={{ fontFamily: 'iranyekanweblight', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} field="number" header="number" editor={(props) => this.gridEditor('number', props)} ></Column>
 
 
 

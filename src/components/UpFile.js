@@ -24,7 +24,6 @@ class UpFile extends React.Component {
     }
   }
   FileUpload(e) {
-    debugger;
     e.preventDefault();
 
     const formData = new FormData();
@@ -54,7 +53,6 @@ class UpFile extends React.Component {
           uploadImage: this.state.absoluteUrl + response.data.split("public")[1]
 
         })
-        debugger;
         this.props.callback({uploadImage:this.state.absoluteUrl + response.data.split("public")[1]});
         //Alert.success('عملیات با موفقیت انجام شد', 5000);
         this.setState({

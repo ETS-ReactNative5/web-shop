@@ -43,6 +43,13 @@ import Sales_ReadyToSend from './components/admin/Sales_ReadyToSend.js'
 import Sales_Posted from './components/admin/Sales_Posted.js'
 import Sales_Ended from './components/admin/Sales_Ended.js'
 import Sales_Cleared from './components/admin/Sales_Cleared.js'
+import Sales_Waiting from './components/admin/Sales_Waiting.js'
+import Sales_Confirmed from './components/admin/Sales_Confirmed.js'
+import Systems from './components/admin/Systems.js'
+
+import ManageReq from './components/admin/ManageReq.js'
+import SetSale from './components/admin/SetSale.js'
+
 import Create_Tags from './components/admin/Create_Tags.js'
 import Codes_Files from './components/admin/Codes_Files.js'
 import Cancel_Products from './components/admin/Cancel_Products.js'
@@ -81,6 +88,8 @@ import Unit_List from './components/admin/Unit_List.js'
 import Chat_Settings from './components/admin/Chat_Settings.js'
 import FirstPageLayout from './components/admin/FirstPageLayout.js'
 import TransferReqs from './components/admin/TransferReqs.js'
+import TalaVam from './components/admin/TalaVam.js'
+import SekeVam from './components/admin/SekeVam.js'
 
 
 import ChangeInformation from './components/admin/ChangeInformation.js'
@@ -117,9 +126,7 @@ class App extends Component {
     // Include the Crisp code here, without the <script></script> tags
     window.$crisp = [];
     ReactGA.initialize('G-TWHDY0YJDL');
-    
-    
-    
+    console.log(this.context);
     this.getSettings();
 
   };
@@ -127,6 +134,7 @@ class App extends Component {
     let that = this;
 
     that.Server.send("AdminApi/getSettings", {}, function (response) {
+
       if (response.data.result) {
         let chatId = response.data.result[0] ? response.data.result[0].ChatId : '';
         that.setState({
@@ -215,6 +223,14 @@ class App extends Component {
                   {this.state.System == "shop" &&
                     <Route path="/admin/Sales_Cleared" component={Sales_Cleared} />
                   }
+                  {this.state.System == "shop" &&
+                    <Route path="/admin/Sales_Confirmed" component={Sales_Confirmed} />
+                  }
+                  {this.state.System == "shop" &&
+                    <Route path="/admin/Sales_Waiting" component={Sales_Waiting} />
+                  }
+
+
                   {this.state.System == "shop" &&
                     <Route path="/admin/Cancel_Products" component={Cancel_Products} />
                   }
@@ -321,6 +337,11 @@ class App extends Component {
                   <Route path="/admin/FirstPageLayout" component={FirstPageLayout} />
 
                   <Route path="/admin/TransferReqs" component={TransferReqs} />
+                  <Route path="/admin/TalaVam" component={TalaVam} />
+                  <Route path="/admin/SekeVam" component={SekeVam} />
+                  <Route path="/admin/Systems" component={Systems} />
+                  <Route path="/admin/ManageReq" component={ManageReq} />
+                  <Route path="/admin/SetSale" component={SetSale} />
 
                   
                   

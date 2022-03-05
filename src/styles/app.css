@@ -1,7 +1,5 @@
 .header , .main , .footer{
     display: flex;
-    padding:20px;
-    margin:20px;
 }
 .footer{
     background:#eee;

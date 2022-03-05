@@ -1,14 +1,23 @@
 import React, { Component, useState } from 'react';
-import axios from 'axios'
-import { Link, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import Server from '.././Server.js'
-import { Sidenav, Nav, Dropdown, Icon, FlexboxGrid } from 'rsuite';
 import { Alert } from 'rsuite';
-import { Badge, Button } from 'rsuite';
-import { Sidebar } from 'primereact/sidebar';
 import { io } from "socket.io-client";
+import { Sidenav } from 'rsuite';
+import { Sidebar } from 'primereact/sidebar';
 import { PanelMenu } from 'primereact/panelmenu';
+
 import { Toast } from 'primereact/toast';
+import {
+  ProSidebar,
+  Menu,
+  MenuItem,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarContent,
+  SubMenu
+} from "react-pro-sidebar";
+import "react-pro-sidebar/dist/css/styles.css";
 
 import './Dashboard.css'
 const styles = {
@@ -31,15 +40,19 @@ class Dashboard extends React.Component {
       NewFactors: this.props.NewFactors || null,
       isOpen: false,
       setIsOpen: true,
-      SideVisible:false,
+      SideVisible: false,
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1),
+      menuCollapse: false,
       ShopId: (this.props.data && this.props.data.length > 0) ? this.props.data[0]._id : null,
       user_id: (this.props.data && this.props.data.length > 0) ? this.props.data[0].UserId : null,
       name: (this.props.data && this.props.data.length > 0) ? this.props.data[0].name : null,
       logo: (this.props.data && this.props.data.length > 0 && this.props.data[0].logo) ? this.Server.getAbsoluteUrl() + this.props.data[0].logo.split("public")[1] : "http://siteapi.sarvapps.ir/nophoto.png",
     }
     socket = io(this.Server.getAbsoluteUrl());
+    socket.on("connect", (data) => {
+
+    })
     this.toast = React.createRef();
 
     this.logout = this.logout.bind(this);
@@ -54,41 +67,45 @@ class Dashboard extends React.Component {
   }
   componentDidMount() {
     socket.on("factorCreated", (data) => {
-        var product= "";
-        var warningNumber= "";
-        var errorNumber= "";
-        if(data.products_id){
-          for(let i=0;i<data.products_id.length;i++){
-            product+=""+data.products_id[i].title+" \n ("+data.products_id[i].number+") عدد";
-            if(data.products_id[i].RemainedNumber == 0){
+      var product = "";
+      var warningNumber = "";
+      var errorNumber = "";
+      if (data.products_id) {
+        for (let i = 0; i < data.products_id.length; i++) {
+          product += "" + data.products_id[i].title + " \n (" + data.products_id[i].number + ") عدد";
+          if (data.products_id[i].RemainedNumber == 0) {
 
-              errorNumber+=""+data.products_id[i].title+"\n ";
-            }
-            else if(data.products_id[i].RemainedNumber < 3){
-
-              warningNumber+=""+data.products_id[i].title+"\n ";
-            }
+            errorNumber += "" + data.products_id[i].title + "\n ";
           }
-        }   
-  
-        let msg = <div>
-                    <div>سفارش جدیدی ثبت شد</div>
-                    <div style={{whiteSpace:'pre-wrap'}}>{product}</div>
-                  </div>
-        this.toast.current.show({ sticky: true,severity: 'success', summary: msg,position:'bottom-left'});
-        if(warningNumber){
-          this.toast.current.show({ sticky: true,severity: 'warn', summary: <div>
-          <div>موجودی محصولات زیر رو به پایان است</div>
-            <div style={{whiteSpace:'pre-wrap'}}>{warningNumber}</div>
-          </div> ,position:'bottom-left'});
+          else if (data.products_id[i].RemainedNumber < 3) {
+
+            warningNumber += "" + data.products_id[i].title + "\n ";
+          }
         }
-        if(errorNumber){
-          this.toast.current.show({ sticky: true,severity: 'error', summary: <div>
-          <div>موجودی محصولات زیر  به پایان رسیده است</div>
-            <div style={{whiteSpace:'pre-wrap'}}>{errorNumber}</div>
-          </div> ,position:'bottom-left'});
-        }
-         
+      }
+
+      let msg = <div>
+        <div>سفارش جدیدی ثبت شد</div>
+        <div style={{ whiteSpace: 'pre-wrap' }}>{product}</div>
+      </div>
+      this.toast.current.show({ sticky: true, severity: 'success', summary: msg, position: 'bottom-left' });
+      if (warningNumber) {
+        this.toast.current.show({
+          sticky: true, severity: 'warn', summary: <div>
+            <div>موجودی محصولات زیر رو به پایان است</div>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{warningNumber}</div>
+          </div>, position: 'bottom-left'
+        });
+      }
+      if (errorNumber) {
+        this.toast.current.show({
+          sticky: true, severity: 'error', summary: <div>
+            <div>موجودی محصولات زیر  به پایان رسیده است</div>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{errorNumber}</div>
+          </div>, position: 'bottom-left'
+        });
+      }
+
 
     });
 
@@ -192,38 +209,33 @@ class Dashboard extends React.Component {
     let SCallBack = function (response) {
       let res = [];
       let result = response.data.result;
-      //onClick={() => this.GoToForm(u.CId,u.IsReport)}
       for (let i = 0; i < result.length; i++) {
         result[i].items = [];
 
         for (let j = 0; j < result.length; j++) {
-          result[j].icon = result[j].Icon;
+          result[j].icon_1 = result[j].Icon;
           result[j].label = result[j].FName;
-          
+
           if (result[i].CId == result[j].Parent && result[i].IsTitle) {
             result[i].items.push(result[j]);
             result[j].remove = 1;
           }
           result[j].command = (event) => {
-            /*for(let i=0;i<document.getElementsByClassName("p-menuitem-link").length;i++)
-              document.getElementsByClassName("p-menuitem-link")[i].classList.remove("alert-success")
-            event.originalEvent.currentTarget.className=event.originalEvent.currentTarget.className+" alert-success";*/
             let u = event.item;
-            if(u.items && u.items.length > 0);
-            else{
-              that.GoToForm(u.CId,u.IsReport,u.help)  
+            if (u.items && u.items.length > 0);
+            else {
+              that.GoToForm(u.CId, u.IsReport, u.help)
 
             }
           }
         }
       }
       for (let i = 0; i < result.length; i++) {
-        if(result[i].items.length == 0)
+        if (result[i].items.length == 0)
           delete result[i].items
-        if(!result[i].remove)
+        if (!result[i].remove)
           res.push(result[i])
       }
-
       that.setState({
         list: res,
         username: response.data.user
@@ -298,87 +310,120 @@ class Dashboard extends React.Component {
       logout: true
     })
   }
+  goToHome(e) {
+    this.setState({
+      goToHome: true
+    })
+  }
   toggle() {
     this.setState({
       isOpen: !this.state.isOpen
     })
   }
-  GoToForm(CId,IsReport,help) {
+  GoToForm(CId, IsReport, help) {
 
     this.setState({
-      SideVisible:false
+      SideVisible: false
     })
-    this.props.callback({ CId: CId , IsReport: IsReport,help:help });
+    this.props.callback({ CId: CId, IsReport: IsReport, help: help });
     window.scrollTo(0, 0);
   }
   render() {
     if (this.state.logout) {
       return <Redirect to={"/"} push={true} />;
     }
+    if (this.state.goToHome) {
+      return <Redirect to={"/"} push={true} />;
+    }
+    
     if (this.state.list.length > 0)
       return (
-        <div>
+        <div id="menu-dashboard">
 
           <div style={{ textAlign: 'center', margin: 5 }}>
-          <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
+            <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
 
-            <div style={styles}>
-            
-             <div  className="d-md-none d-block">
-               <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end'}}>
-               <a href="/" style={{ textDecoration: 'none' }}>
-                    <img src={this.state.logo} style={{ marginTop: 20,maxHeight:100 }}  />
-                  </a>
-             <i className="fas fa-bars" style={{fontSize:30,color:'#a7a7a7'}}  onClick={(e) => this.setState({
-              SideVisible:true
-            })}></i>
-
-               </div>
-            
-            
-               </div>   
-            <div className="d-md-block d-none" style={{position:'inherit',height:'auto',overflowY:'auto'}}  >
-               <Sidenav defaultOpenKeys={['0', '2']} appearance="default" expanded={true} >
-                <Sidenav.Header>
-                  <a href="/" style={{ textDecoration: 'none' }}>
-                    <img src={this.state.logo} style={{ marginTop: 20,maxWidth:150 }}  />
-                    <p className="yekan" style={{ marginTop: 20, padding: 4,display:'flex',justifyContent:'space-around',fontSize:25,alignItems:'center' }}>
-                      <span>{this.state.name}</span>
-                    </p>
-                    
-
-
-                    
-                    
-                  </a>
-
-                </Sidenav.Header>
-                <Sidenav.Body style={{ overflow: 'auto', direction: 'ltr' }}>
-                <PanelMenu model={this.state.list} style={{direction:'rtl'}}  className="iranyekanweblight"/>
-                <p className="yekan" onClick={this.logout} style={{ marginTop: 20, background: '#eee', color: '#fff',cursor:'pointer', padding: 4,display:'flex',justifyContent:'space-around',fontSize:20,alignItems:'center' }}>
-                    <i className="fas fa-sign-out-alt" style={{color:'red'}}  /><span style={{color:'red'}}>خروج</span>
-
-                    </p>
-                </Sidenav.Body>
-              </Sidenav>
+            <div>
+              <div className="closemenu d-md-none d-block" onClick={() => { this.setState({ SideVisible: !this.state.SideVisible }) }}>
+                <i className="far fa-align-justify" style={{ color: 'red' }} />
               </div>
-            <Sidebar position="right" visible={this.state.SideVisible} onHide={()  => this.setState({
-              SideVisible:false
-            })}>
-              <Sidenav defaultOpenKeys={['0', '2']} appearance="default" expanded={true}  >
-                <Sidenav.Header>
-                  <a href="/" style={{ textDecoration: 'none' }}>
-                    <img src={this.state.logo} style={{ marginTop: 20 }} className="d-none d-sm-inline-block" />
-                    <p className="yekan" style={{ marginTop: 20, padding: 4 }}>{this.state.name}</p>
-                  </a>
 
-                </Sidenav.Header>
-                <Sidenav.Body style={{ overflow: 'auto', direction: 'ltr' }}>
-                <PanelMenu model={this.state.list} style={{direction:'rtl'}}  className="yekan"/>
+             
 
-                </Sidenav.Body>
-              </Sidenav>
-              </Sidebar>
+            <div style={{ position: 'inherit', height: 'auto', overflowY: 'auto', fontFamily: 'IRANYekan' }}  >
+
+                <ProSidebar collapsed={this.state.menuCollapse} className="d-md-block d-none">
+
+                  <SidebarHeader>
+
+                    <div className="logotext" style={{textAlign:'center'}}>
+                      {this.state.menuCollapse ?
+                        <span href="#" onClick={()=>{this.setState({ menuCollapse: !this.state.menuCollapse }); return false;}} style={{ textDecoration: 'none',cursor:'pointer' }}>
+                          <img src={this.state.logo} style={{ marginTop: 20,maxHeight:50 }} />
+
+                        </span>
+                        :
+                        <span onClick={()=>{this.setState({ menuCollapse: !this.state.menuCollapse }); return false;}} style={{ textDecoration: 'none' }}>
+                          <img src={this.state.logo} style={{ marginTop: 20, maxWidth: 150,maxHeight:82 }} />
+                          <p className="yekan" style={{ marginTop: 20, padding: 4, display: 'flex', justifyContent: 'space-around', fontSize: 16, alignItems: 'center',cursor:'pointer' }}>
+                            <span>{this.state.name}</span>
+                          </p>
+                        </span>
+                      }
+                    </div>
+
+                  </SidebarHeader>
+                  <SidebarContent>
+                    <Menu iconShape="square">
+                      <MenuItem icon={<i className="fal fa-home" style={{ color: '#fff',fontSize:28,marginLeft:8 }} />}  onClick={()=>{this.goToHome()}}>خانه</MenuItem>
+                      {this.state.list.map((item, index) => {
+                        if (item.items) {
+                          return (
+                            <SubMenu title={item.FName} icon={<i className={item.icon_1} style={{ color: '#fff',fontSize:28,marginLeft:8 }} />}>
+
+                              {item.items.map((subMenu, index2) => {
+                                return (
+                                  <MenuItem  onClick={() => { this.GoToForm(subMenu.CId, subMenu.IsReport, subMenu.help) }} className="main">{subMenu.FName}</MenuItem>
+                                )
+                              })}
+                            </SubMenu>
+                          )
+
+                        } else {
+                          return (
+                            <MenuItem icon={<i className={item.icon_1} style={{ color: '#fff',fontSize:28,marginLeft:8 }} />} className="exit" onClick={() => { this.GoToForm(item.CId, item.IsReport, item.help) }}>{item.FName}</MenuItem>
+                          )
+                        }
+
+
+                      })}
+                       <MenuItem icon={<i className="fas fa-sign-out-alt" style={{ color: 'red',fontSize:28,marginLeft:8 }} />}  onClick={this.logout}>خروج</MenuItem>
+
+                    </Menu>
+                  </SidebarContent>
+                  
+                </ProSidebar>
+                <Sidebar position="right" visible={this.state.SideVisible} onHide={() => this.setState({
+                  SideVisible: false
+                })}>
+                  <Sidenav defaultOpenKeys={['0', '2']} appearance="default" expanded={true}  >
+                    <Sidenav.Header>
+                      <a href="/" style={{ textDecoration: 'none' }}>
+                        <img src={this.state.logo} style={{ marginTop: 20 }} className="d-none d-sm-inline-block" />
+                        <p className="yekan" style={{ marginTop: 20, padding: 4 }}>{this.state.name}</p>
+                      </a>
+
+                    </Sidenav.Header>
+                    <Sidenav.Body style={{ overflow: 'auto', direction: 'ltr' }}>
+                      <PanelMenu model={this.state.list} style={{ direction: 'rtl' }} className="yekan" />
+
+                    </Sidenav.Body>
+                  </Sidenav>
+                </Sidebar>
+
+
+              </div>
+
 
 
 
@@ -398,11 +443,5 @@ class Dashboard extends React.Component {
 
   }
 }
-const headerStyles = {
-  padding: 20,
-  fontSize: 16,
-  background: '#34c3ff',
-  color: ' #fff',
-  textAlign: 'right'
-};
+
 export default Dashboard;

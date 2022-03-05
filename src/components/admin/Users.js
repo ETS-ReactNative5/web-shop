@@ -3,7 +3,7 @@ import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
-import ReactTable from "react-table";
+import { Panel } from 'primereact/panel';
 
 
 import 'primeicons/primeicons.css';
@@ -21,6 +21,7 @@ import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import {Multiselect} from 'multiselect-react-dropdown';
 
 class Users extends React.Component {
   constructor(props) {
@@ -39,7 +40,7 @@ class Users extends React.Component {
       selectedId: null,
       selectedUser: null,
       levelFilter: null,
-      level: "1",
+      level: "0",
       name: null,
       username: null,
       pass: null,
@@ -65,9 +66,13 @@ class Users extends React.Component {
       formul_off: '',
       formul_opr: '',
       PriceOfLevel: null,
-      LevelOption:[],
-      main:false,
-      loading: 0
+      LevelOption: [],
+      main: false,
+      loading: 0,
+      selectedSystem:[],
+      mySystem:{
+        subSystem:false
+      }
 
     }
     this.onLevelChange = this.onLevelChange.bind(this);
@@ -85,17 +90,16 @@ class Users extends React.Component {
     this.handleChangePass = this.handleChangePass.bind(this);
     this.handleChangePass2 = this.handleChangePass2.bind(this);
     this.handleChangeAddress = this.handleChangeAddress.bind(this);
-    this.handleChangeCredit = this.handleChangeCredit.bind(this);
     this.handleChangeRaymandAcc = this.handleChangeRaymandAcc.bind(this);
     this.handleChangeRaymandUser = this.handleChangeRaymandUser.bind(this);
 
-    
+
     this.SetOrEditUser = this.SetOrEditUser.bind(this);
     this.handleChangeStatus = this.handleChangeStatus.bind(this);
     this.handleChangeMap = this.handleChangeMap.bind(this);
 
   }
-  
+
   GetMaps() {
     let that = this;
     this.setState({
@@ -173,7 +177,7 @@ class Users extends React.Component {
       loading: 1
     })
     that.Server.send("AdminApi/getSettings", {}, function (response) {
-      that.GetUsers();
+      that.getSystems();
       that.setState({
         loading: 0
       })
@@ -182,7 +186,7 @@ class Users extends React.Component {
           CreditSupport: response.data.result[0].CreditSupport,
           Raymand: response.data.result[0].Raymand,
           System: response.data.result[0] ? response.data.result[0].System : "shop",
-          SystemTitle: response.data.result[0]?.System =="shop" ? "فروشگاه" : "زیر سیستم"
+          SystemTitle: (response.data.result[0]?.System == "shop" || response.data.result[0].CreditSupport) ? "فروشگاه" : "زیر سیستم"
         })
       }
 
@@ -190,7 +194,8 @@ class Users extends React.Component {
 
 
     }, function (error) {
-      that.GetUsers();
+      
+      that.getSystems();
       that.setState({
         loading: 0
       })
@@ -199,10 +204,33 @@ class Users extends React.Component {
 
 
   }
+  getSystems() {
+    let that = this;
+    let SCallBack = function (response) {
+      let systemId = [];
+      if(response.data.result){
+        
+        for(let i=0;i<response.data.result.length;i++){
+          systemId.push({value:response.data.result[i]._id,name:response.data.result[i].name})
+        }
+      }  
+      debugger;
+
+      that.setState({
+        systems: systemId,
+        managerSystem: (that.state.mySystem && that.state.mySystem._id) ? that.state.mySystem._id : (response.data.result[0] ? response.data.result[0]._id : null)
+      })
+      that.GetUsers();
+    };
+    let ECallBack = function (error) {
+      that.GetUsers();
+    }
+    this.Server.send("MainApi/getSystems", {}, SCallBack, ECallBack)
+  }
   SetOff() {
     let that = this;
     if (this.state.off != "" && (this.state.formul_level != "" || this.state.formul_off != "" || this.state.formul_opr != "")) {
-      this.toast.current.show({severity: 'warn', summary: 'هشدار', detail: <div><span>تخفیف و آیتم های دیگر نمیتوانند همزمان پر باشند</span></div>, life: 8000});
+      this.toast.current.show({ severity: 'warn', summary: 'هشدار', detail: <div><span>تخفیف و آیتم های دیگر نمیتوانند همزمان پر باشند</span></div>, life: 8000 });
 
       return;
     }
@@ -227,21 +255,20 @@ class Users extends React.Component {
       that.setState({
         visibleOffDialog: false
       })
-      that.toast.current.show({severity: 'success', summary: 'پیغام موفقیت', detail: <div><span>عملیات با موفقیت انجام شد</span></div>, life: 8000});
+      that.toast.current.show({ severity: 'success', summary: 'پیغام موفقیت', detail: <div><span>عملیات با موفقیت انجام شد</span></div>, life: 8000 });
 
     };
     let ECallBack = function (error) {
       that.setState({
         loading: 0
       })
-      that.toast.current.show({severity: 'error', summary: 'خطا', detail: <div><span>عملیات انجام نشد</span></div>, life: 8000});
+      that.toast.current.show({ severity: 'error', summary: 'خطا', detail: <div><span>عملیات انجام نشد</span></div>, life: 8000 });
 
     }
     this.Server.send("AdminApi/SetOffForLevel", param, SCallBack, ECallBack)
   }
   SetOrEditUser(del, id) {
     let that = this;
-   
     if (del) {
       this.setState({
         loading: 1
@@ -262,28 +289,43 @@ class Users extends React.Component {
       return;
 
     }
+    debugger;
+    if (this.state.systems && this.state.systems.length > 0 && this.state.selectedSystem.length == 0) {
+      that.toast.current.show({ severity: 'warn', summary: 'هشدار', detail: <div><span>سیستم را انتخاب کنید</span></div>, life: 8000 });
+
+      return;
+    }
     if (!this.state.username && !del) {
-      that.toast.current.show({severity: 'warn', summary: 'هشدار', detail: <div><span>نام کاربری را وارد کنید</span></div>, life: 8000});
+      that.toast.current.show({ severity: 'warn', summary: 'هشدار', detail: <div><span>نام کاربری را وارد کنید</span></div>, life: 8000 });
 
       return;
     }
     if (!del && (this.state.pass != this.state.pass2 || !this.state.pass2 || !this.state.pass)) {
-      that.toast.current.show({severity: 'warn', summary: 'هشدار', detail: <div><span>کلمه عبور و تکرار آن متفاوت اند</span></div>, life: 8000});
+      that.toast.current.show({ severity: 'warn', summary: 'هشدار', detail: <div><span>کلمه عبور و تکرار آن متفاوت اند</span></div>, life: 8000 });
 
       return;
     }
     this.setState({
       HasError: null
     })
-    
+
     if (this.state.level == "1" && !this.state.ShopId) {
-      that.toast.current.show({severity: 'warn', summary: 'هشدار', detail: <div><span>را انتخاب کنید {this.state.SystemTitle}</span></div>, life: 8000});
+      that.toast.current.show({ severity: 'warn', summary: 'هشدار', detail: <div><span>را انتخاب کنید {this.state.SystemTitle}</span></div>, life: 8000 });
 
       return;
     }
+
+    if (this.state.level == "1" && !this.state.managerSystem) {
+      that.toast.current.show({ severity: 'warn', summary: 'هشدار', detail: <div><span>سیستم را انتخاب کنید</span></div>, life: 8000 });
+
+      return;
+    }
+
+    
     this.setState({
       loading: 1
     })
+    
     let param = {
       token: localStorage.getItem("api_token"),
       name: this.state.name,
@@ -294,35 +336,36 @@ class Users extends React.Component {
       status: this.state.status,
       pass: this.state.pass,
       address: this.state.address,
-      RaymandAcc:this.state.RaymandAcc,
-      RaymandUser:this.state.RaymandUser,
-      credit: this.state.credit ? this.state.credit.replace(/,/g, "") : 0,
+      RaymandAcc: this.state.RaymandAcc,
+      RaymandUser: this.state.RaymandUser,
       map: this.state.map,
       levelOfUser: this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0 ? this.state.levelOfUser : null,
       ShopId: this.state.ShopId,
-      insert: (!this.state.selectedId && !del)
+      managerSystem:this.state.managerSystem,
+      insert: (!this.state.selectedId && !del),
+      systemId:that.state.selectedSystem
     };
     let SCallBack = function (response) {
       that.setState({
         loading: 0
       })
-      if(response.data.error)
-        that.toast.current.show({severity: 'error', summary: 'خطا', detail: <div><span>{response.data.result}</span></div>, life: 8000});
-      else{
-        that.toast.current.show({severity: 'success', summary: 'پیغام موفقیت', detail: <div><span>عملیات با موفقیت انجام شد</span></div>, life: 8000});
+      if (response.data.error)
+        that.toast.current.show({ severity: 'error', summary: 'خطا', detail: <div><span>{response.data.result}</span></div>, life: 8000 });
+      else {
+        that.toast.current.show({ severity: 'success', summary: 'پیغام موفقیت', detail: <div><span>عملیات با موفقیت انجام شد</span></div>, life: 8000 });
 
         that.GetUsers();
         that.setState({
           visibleCreateUser: false
         })
-      }    
-      
+      }
+
     };
     let ECallBack = function (error) {
       that.setState({
         loading: 0
       })
-      that.toast.current.show({severity: 'error', summary: 'خطا', detail: <div><span>عملیات انجام نشد</span></div>, life: 8000});
+      that.toast.current.show({ severity: 'error', summary: 'خطا', detail: <div><span>عملیات انجام نشد</span></div>, life: 8000 });
 
     }
     this.Server.send("AdminApi/ManageUsers", param, SCallBack, ECallBack)
@@ -351,20 +394,17 @@ class Users extends React.Component {
   handleChangeAddress(event) {
     this.setState({ address: event.target.value });
   }
-  handleChangeCredit(event) {
-    this.setState({ credit: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") });
-
-
-  }
-  handleChangeRaymandAcc(event){
+  
+  handleChangeRaymandAcc(event) {
     this.setState({ RaymandAcc: event.target.value });
 
   }
-  handleChangeRaymandUser(event){
+  handleChangeRaymandUser(event) {
     this.setState({ RaymandUser: event.target.value });
 
   }
   handleChangeStatus(event) {
+    debugger;
     this.setState({ status: event.target.value });
 
   }
@@ -380,18 +420,18 @@ class Users extends React.Component {
       name: "",
       mail: "",
       company: "",
-      level: "1",
+      level: "0",
       username: "",
       pass: "",
       pass2: "",
       address: "",
-      credit: 0,
-      RaymandAcc:'',
-      RaymandUser:'',
+      RaymandAcc: '',
+      RaymandUser: '',
       HasError: null,
       ShopId: this.state.main ? null : this.state.ShopId,
-      map:null,
-      status:"1"
+      map: null,
+      status: "1",
+      managerSystem:null
     });
 
   }
@@ -400,7 +440,10 @@ class Users extends React.Component {
       visibleCreateUser: true,
       selectedId: null,
       selectedUser: null,
-      map:this.state.mapList[0]?._id,
+      map: this.state.mapList[0]?._id,
+      selectedSystem: this.state.mySystem._id ? [{name: this.state.mySystem.name,value:this.state.mySystem._id}] : (this.state.systems ? [{name: this.state.systems[0].name,value:this.state.systems[0]._id}] : []),
+      managerSystem: this.state.mySystem._id ? this.state.mySystem._id : (this.state.systems ? this.state.systems[0]._id : null)
+
 
     })
   }
@@ -410,7 +453,14 @@ class Users extends React.Component {
   }
   selectedUserChange(value) {
     let that = this;
-    var p = [];
+    var selectedSystem = [];
+    debugger;
+    if(value.systemId){
+      for (let i = 0; i < value.systemId.length; i++) {
+        selectedSystem.push({ name: that.state.systems.filter((item)=>{return item.value == value.systemId[i]._id})[0].name, value: value.systemId[i]._id })
+      }
+    }
+    
     this.setState({
       selectedId: value._id,
       name: value.name,
@@ -421,16 +471,17 @@ class Users extends React.Component {
       pass: value.password,
       pass2: value.password,
       address: value.address,
-      credit: value.credit ? value.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value.credit,
-      RaymandAcc:value.RaymandAcc,
-      RaymandUser:value.RaymandUser,
+      RaymandAcc: value.RaymandAcc,
+      RaymandUser: value.RaymandUser,
       ShopId: value.shopId,
       selectedUser: value.products,
       status: value.status == "فعال" ? "1" : "0",
       map: value.map,
       visibleCreateUser: true,
       levelOfUser: value.levelOfUser,
-      NewLevelOfUser: value.levelOfUser
+      NewLevelOfUser: value.levelOfUser,
+      selectedSystem:selectedSystem,
+      managerSystem:value.managerSystem||(this.state.systems ? this.state.systems[0]._id : null)
     })
 
   }
@@ -442,14 +493,41 @@ class Users extends React.Component {
       that.setState({
         ShopUserId: response.data.authData.shopId
       })
-      that.GetShopList();
+      that.getManagerSystemInfo(response.data.authData.userId);
     }, function (error) {
       console.log(error)
-      that.GetShopList();
+
     })
 
 
 
+  }
+  getManagerSystemInfo(user_id){
+    let that = this;
+    let param = {
+      user_id:user_id
+    };
+    that.setState({
+      loading: 1
+    })
+    debugger;
+    let SCallBack = function (response) {
+      that.setState({
+        loading: 0,
+        mySystem: (response.data.result[0] && response.data.result[0].system[0]) ? response.data.result[0].system[0] : {subSystem:false}
+      })
+      that.GetShopList();
+
+
+    };
+    let ECallBack = function (error) {
+      that.setState({
+        loading: 0
+      })
+      that.GetShopList();
+
+    }
+    this.Server.send("MainApi/getManagerSystemInfo", param, SCallBack, ECallBack)
   }
   GetShopList() {
     let that = this;
@@ -462,18 +540,18 @@ class Users extends React.Component {
     let SCallBack = function (response) {
       let ShopArray = [],
         ShopArrayName = [];
-      let main=false;  
+      let main = false;
       for (let i = 0; i < response.data.result.length; i++) {
         ShopArray[i] = response.data.result[i]._id;
         ShopArrayName[i] = response.data.result[i].name;
-        if(that.state.ShopUserId ==  response.data.result[i]._id && response.data.result[i].main)
-          main=true;
+        if (that.state.ShopUserId == response.data.result[i]._id && response.data.result[i].main)
+          main = true;
       }
       that.setState({
         ShopArray: ShopArray,
         ShopArrayName: ShopArrayName,
         ShopId: main ? ShopArray[0] : that.state.ShopUserId,
-        main:main,
+        main: main,
         loading: 0
       })
       that.getSettings();
@@ -493,12 +571,12 @@ class Users extends React.Component {
     this.setState({
       loading: 1
     })
-    debugger;
 
     let param = {
       token: localStorage.getItem("api_token"),
-      ShopId:this.state.ShopUserId,
-      GetAll: this.state.main ? 1 : 0
+      ShopId: this.state.ShopUserId,
+      GetAll: this.state.main ? 1 : 0,
+      systemId: (this.state.mySystem && this.state.mySystem.subSystem) ? this.state.mySystem._id : null
     };
     let SCallBack = function (response) {
       that.setState({
@@ -507,30 +585,30 @@ class Users extends React.Component {
       that.GetMaps();
       let NewUsers = 0;
       let managers = 0;
-      let SiteUsers = 0 ;
+      let SiteUsers = 0;
       let ActiveUsers = 0;
       let NotActiveUsers = 0;
       response.data.result.map(function (v, i) {
         if (v.level == "0" && (v.levelOfUser == -1 || v.levelOfUser == null))
           NewUsers++;
-        if (v.level == "0"){
+        if (v.level == "0") {
           v.level = "کاربر";
           SiteUsers++;
         }
-        else{
+        else {
           v.level = "مدیر / کارمند";
           managers++;
         }
-        if (v.status == "1"){
+        if (v.status == "1") {
           ActiveUsers++;
           v.status = "فعال"
 
         }
-        else{
+        else {
           NotActiveUsers++;
           v.status = "غیر فعال";
         }
-        v.Radif = i+1;
+        v.Radif = i + 1;
         v.delete = <button className="btn btn-primary irsans" onClick={() => that.DelUser(v._id, v.name)}>حذف</button>
       })
       that.setState({
@@ -538,7 +616,7 @@ class Users extends React.Component {
         NewUsers: NewUsers,
         managers: managers,
         SiteUsers: SiteUsers,
-        ActiveUsers:ActiveUsers,
+        ActiveUsers: ActiveUsers,
         NotActiveUsers: NotActiveUsers
       })
       that.getLevel();
@@ -571,7 +649,7 @@ class Users extends React.Component {
 
 
   }
- 
+
   rowClass(data) {
     return {
       'row-highlight1': ((data.levelOfUser == '-1' || !data.levelOfUser) && data.level != "مدیر / کارمند")
@@ -583,19 +661,19 @@ class Users extends React.Component {
       loading: 1
     })
 
-       
+
     let SCallBack = function (response) {
       let levelOfUserArray = [],
         levelOfUserArrayName = [];
-      if(response.data.result[0].values){
-        for(let i=0; i< response.data.result[0].values.length ; i++ ){
+      if (response.data.result[0].values) {
+        for (let i = 0; i < response.data.result[0].values.length; i++) {
           levelOfUserArray[i] = response.data.result[0].values[i].value;
           levelOfUserArrayName[i] = response.data.result[0].values[i].desc;
         }
-      }   
+      }
       that.setState({
-        levelOfUserArray:levelOfUserArray,
-        levelOfUserArrayName:levelOfUserArrayName,
+        levelOfUserArray: levelOfUserArray,
+        levelOfUserArrayName: levelOfUserArrayName,
         loading: 0
       })
     };
@@ -618,7 +696,7 @@ class Users extends React.Component {
       value={this.state.levelFilter} options={level} className="irsans" onChange={this.onLevelChange} />
     const footer = (
       <div>
-        <button className="btn btn-primary irsans" onClick={()=>this.SetOrEditUser()} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> اعمال </button>
+        <button className="btn btn-primary irsans" onClick={() => this.SetOrEditUser()} style={{ width: "200px", marginTop: "5px", marginBottom: "5px" }}> اعمال </button>
 
       </div>
     );
@@ -636,16 +714,18 @@ class Users extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
-        <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
+        <div className="row justify-content-center mt-5">
+          <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
 
           <div className="col-12" style={{ background: '#fff' }}>
+          <Panel header="مدیریت کاربران" style={{  textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+
             <div className="row" >
-                <div className="col-6" style={{ textAlign: 'center' }}>
-                  <button className="btn btn-info irsans" onClick={this.CreateUser} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> ساخت کاربر جدید </button>
-                </div>
-              {(this.state.System=="shop" && this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0) &&
-                <div className="col-6" style={{ textAlign: 'center' }}>
+              <div className="col-6" style={{ textAlign: 'right' }}>
+                <button className="btn btn-info irsans" onClick={this.CreateUser} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> ساخت کاربر جدید </button>
+              </div>
+              {(this.state.System == "shop" && this.state.levelOfUserArray && this.state.levelOfUserArray.length > 0) &&
+                <div className="col-6" style={{ textAlign: 'right' }}>
                   <button className="btn btn-warning irsans" onClick={() => {
                     this.setState({
                       visibleOffDialog: true
@@ -656,21 +736,21 @@ class Users extends React.Component {
               }
             </div>
 
-            <div className="section-title " style={{ textAlign: 'right',display:'flex',justifyContent:'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >‍‍‍‍‍‍‍لیست اعضا</span>
-            {this.state.main &&
-              <div style={{display:'flex',justifyContent:'space-around',width:'calc(100% - 200px)'}}>
-                <div><span className="IRANYekan">کاربران عادی : </span><span className="IRANYekan">{this.state.SiteUsers}</span></div>
-                <div><span className="IRANYekan">مدیران : </span><span className="IRANYekan">{this.state.managers}</span></div>
-                <div><span className="IRANYekan">فعال : </span><span className="IRANYekan">{this.state.ActiveUsers}</span></div>
-                <div><span className="IRANYekan">غیر فعال : </span><span className="IRANYekan">{this.state.NotActiveUsers}</span></div>
+            <div className="section-title " style={{ textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >‍‍‍‍‍‍‍لیست اعضا</span>
+              {this.state.main &&
+                <div style={{ display: 'flex', justifyContent: 'space-around', width: 'calc(100% - 200px)' }}>
+                  <div><span className="IRANYekan">کاربران عادی : </span><span className="IRANYekan">{this.state.SiteUsers}</span></div>
+                  <div><span className="IRANYekan">مدیران : </span><span className="IRANYekan">{this.state.managers}</span></div>
+                  <div><span className="IRANYekan">فعال : </span><span className="IRANYekan">{this.state.ActiveUsers}</span></div>
+                  <div><span className="IRANYekan">غیر فعال : </span><span className="IRANYekan">{this.state.NotActiveUsers}</span></div>
 
-              </div>
-            }
+                </div>
+              }
             </div>
-            
+
             <DataTable rowClassName={this.rowClass} rows={15} paginator={true} responsive ref={(el) => this.dt = el} value={this.state.GridDataUsers} selectionMode="single" selection={this.state.selectedUser} onSelectionChange={e => this.selectedUserChange(e.value)}>
-              
-              <Column field="Radif" header="ردیف" className="irsans" style={{ textAlign: "center" }} /> 
+
+              <Column field="Radif" header="ردیف" className="irsans" style={{ textAlign: "center" }} />
               <Column field="username" filter={true} header="نام کاربری" className="irsans" style={{ textAlign: "center" }} filterMatchMode="contains" />
               <Column field="name" filter={true} header="نام" className="irsans" style={{ textAlign: "center" }} filterMatchMode="contains" />
               <Column field="status" header="وضعیت" className="irsans" style={{ textAlign: "center" }} />
@@ -679,11 +759,12 @@ class Users extends React.Component {
                 <Column field="levelOfUser" header="سطح کاربری" className="irsans" style={{ textAlign: "center" }} />
               }
               {this.state.main &&
-              <Column field="map" header="دسترسی" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="map" header="دسترسی" className="irsans" style={{ textAlign: "center" }} />
               }
               <Column field="delete" header="حذف" className="irsans" style={{ textAlign: "center" }} />
 
             </DataTable>
+            </Panel>
           </div>
 
         </div>
@@ -691,6 +772,31 @@ class Users extends React.Component {
 
           <form style={{ maxWidth: 800, maxHeight: 450, marginBottom: 10, maxWidth: 1000 }}  >
             <div className="row">
+              {this.state.mySystem && !this.state.mySystem.subSystem &&
+                <div className="col-lg-12">
+                    <div className="group">
+                      <Multiselect
+                        options={this.state.systems} // Options to display in the dropdown
+                        displayValue="name" // Property name to display in the dropdown options
+                        selectedValues={this.state.selectedSystem}
+                        placeholder="سیستم"
+                        onSelect={(selectedList, selectedItem)=>{
+                          debugger;
+                          this.setState({
+                            selectedSystem:selectedList
+                          })
+                        }}
+                        onRemove={(selectedList, selectedItem)=>{
+                          debugger;
+                          this.setState({
+                            selectedSystem:selectedList
+                          })
+                        }}
+                      />
+                    </div>
+                </div>
+              }
+
               <div className="col-lg-6 col-12">
 
                 <div className="group">
@@ -708,14 +814,14 @@ class Users extends React.Component {
               {!this.state.Raymand &&
                 <div className="col-lg-12 col-12">
                   <div className="group">
-                    <input className="form-control irsans" style={{direction:'ltr'}} autoComplete="off" type="text" value={this.state.mail} name="mail" onChange={this.handleChangeMail} required="true" />
+                    <input className="form-control irsans" style={{ direction: 'ltr' }} autoComplete="off" type="text" value={this.state.mail} name="mail" onChange={this.handleChangeMail} required="true" />
                     <label>پست الکترونیکی</label>
                   </div>
                 </div>
               }
-              
-             
-              
+
+
+
               <div className="col-lg-6">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="password" value={this.state.pass} name="pass" onChange={this.handleChangePass} required="true" />
@@ -735,9 +841,9 @@ class Users extends React.Component {
                     <input className="form-control irsans" autoComplete="off" type="text" value={this.state.company} name="company" onChange={this.handleChangeCompany} required="true" />
                     <label>نام شرکت</label>
                   </div>
-                  }
-                </div>
-              {this.state.System == "shop" && this.state.level == "0" && !this.state.Raymand && 
+                }
+              </div>
+              {this.state.System == "shop" && this.state.level == "0" && !this.state.Raymand &&
                 <div className="col-lg-6" style={{ textAlign: 'center' }}>
 
                   <div >
@@ -757,9 +863,9 @@ class Users extends React.Component {
 
                 </div>
               }
-              
 
-              <div className="col-lg-6" style={{marginBottom:10}}>
+
+              <div className="col-lg-6" style={{ marginBottom: 10 }}>
                 <label className="labelNoGroup irsans">وضعیت</label>
 
                 <select className="custom-select irsans" value={this.state.status} name="status" onChange={this.handleChangeStatus} >
@@ -767,32 +873,53 @@ class Users extends React.Component {
                   <option value="0">غیر فعال</option>
                 </select>
               </div>
-              {this.state.main &&
-              <div className="col-lg-6" style={{marginBottom:10}}>
-                <label className="labelNoGroup irsans">سطح</label>
+              {this.state.main && this.state.mySystem && (!this.state.mySystem.subSystem || !this.state.mySystem._id) && 
+                <div className="col-lg-6" style={{ marginBottom: 10 }}>
+                  <label className="labelNoGroup irsans">سطح</label>
 
-                <select className="custom-select irsans" value={this.state.level} name="level" onChange={this.handleChangeLevel}  >
-                  <option value="1">مدیر / کارمند</option>
-                  <option value="0">کاربر</option>
-                </select>
-              </div>
+                  <select className="custom-select irsans" value={this.state.level} name="level" onChange={this.handleChangeLevel}  >
+                    <option value="0">کاربر</option>
+                    <option value="1">مدیر / کارمند</option>
+
+                  </select>
+                </div>
               }
-              {this.state.level == "1" && 
+              
+              {this.state.level == "1" && this.state.main && this.state.mySystem && (!this.state.mySystem.subSystem || !this.state.mySystem._id) && 
                 <div className="col-lg-6">
                   <label className="labelNoGroup irsans">دسترسی</label>
 
                   <select className="custom-select irsans" value={this.state.map} name="map" onChange={this.handleChangeMap} >
                     {
                       this.state.mapList && this.state.mapList.map((v, i) => {
-                        if(this.state.main || !v.main)
-                        return (<option value={v._id} >{v.name||v._id}</option>)
+                        if (this.state.main || !v.main)
+                          return (<option value={v._id} >{v.name || v._id}</option>)
                       })
                     }
-                  </select>
+                  </select>  
                 </div>
               }
+              {this.state.level == "1" && this.state.main && this.state.mySystem && (!this.state.mySystem.subSystem || !this.state.mySystem._id) && 
+                <div className="col-lg-6" style={{ textAlign: 'center' }}>
 
-              {this.state.level == "1" && this.state.main &&
+                  <div >
+                    <label className="labelNoGroup irsans">سیستم</label>
+                    <select className="custom-select irsans" value={this.state.managerSystem} name="managerSystem" onChange={(event) => {debugger;
+                      this.setState({
+                        managerSystem: event.target.value
+                      })}} >
+                      <option value="null" > سیستم مربوط به مدیر را انتخاب کنید</option>
+                      {
+                        this.state.systems && this.state.systems.map((v, i) => {
+                          return (<option value={v.value} >{v.name}</option>)
+                        })
+                      }
+                    </select> 
+                  </div>
+
+                </div>
+              }
+              {this.state.level == "1" && this.state.main && this.state.mySystem && !this.state.mySystem.subSystem &&
                 <div className="col-lg-6" style={{ textAlign: 'center' }}>
 
                   <div >
@@ -811,14 +938,7 @@ class Users extends React.Component {
 
                 </div>
               }
-              {this.state.CreditSupport && 
-                <div className="col-lg-6">
-                  <div className="group">
-                    <input className="form-control irsans" disabled={this.state.Raymand} autoComplete="off" type="text" value={this.state.credit} name="credit" onChange={this.handleChangeCredit} required="true" />
-                    <label>موجودی کیف پول</label>
-                  </div>
-                </div>
-              }
+              
               {this.state.Raymand &&
                 <div className="col-lg-6">
                   <div className="group">
@@ -835,13 +955,16 @@ class Users extends React.Component {
                   </div>
                 </div>
               }
-              
+
               <div className="col-lg-12">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.address} name="address" onChange={this.handleChangeAddress} required="true" />
                   <label>آدرس کامل پستی</label>
                 </div>
               </div>
+              
+
+             
 
             </div>
           </form>

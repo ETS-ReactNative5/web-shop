@@ -6,6 +6,7 @@ import { Sidebar } from 'primereact/sidebar';
 import { connect } from 'react-redux';
 import Server from './Server.js'
 import { Loader } from 'rsuite';
+import ReactMegaMenu from "react-mega-menu"
 
 
 class Header2 extends React.Component {
@@ -216,11 +217,16 @@ class Header2 extends React.Component {
 					<div>
 						<div style={{ backgroundColor: '#fff' }}  >
 							<div style={{ width: 250 }}>
-								<Sidebar visible={this.state.OpenSideBar} position="right" onHide={() => this.setState({ OpenSideBar: false })} style={{ padding: 0, maxheight: 200, overflowY: 'auto' }}>
+								<ReactMegaMenu 
+								tolerance={50}      // optional, defaults to 100
+								direction={"LEFT"}  // optional, defaults to "RIGHT", takes in "RIGHT" || "LEFT"
+								data={this.state.Cat}       // array of data to be rendered
+								/>
+								<Sidebar visible={this.state.OpenSideBar} position="right" onHide={() => this.setState({ OpenSideBar: false })} style={{ padding: 0, overflowY: 'auto' }}>
 									<Sidenav
 										activeKey={this.state.activeKey}
 										onSelect={this.handleSelect}
-										style={{ position: 'absolute', zIndex: 2, marginTop: 25 }}
+										style={{  zIndex: 2, marginTop: 25 }}
 										appearance="subtle"
 									>
 										<Sidenav.Header>

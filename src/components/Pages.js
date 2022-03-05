@@ -25,7 +25,6 @@ class Pages extends React.Component {
             absoluteUrl:this.Server.getAbsoluteUrl(),
             url:this.Server.getUrl()
         }
-        debugger;
         this.getSettings();
 
                
@@ -46,7 +45,6 @@ class Pages extends React.Component {
         }; 
         
         let SCallBack = function(response){
-            debugger;
             that.setState({
                 Layout:response.data.result[0].content,
                 LayoutItems:response.data.result[0].items,

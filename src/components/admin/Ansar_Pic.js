@@ -82,7 +82,7 @@ class Pics extends React.Component {
 
 
   }
-  deletePic(_id,OldImage){
+  deletePic(_id, OldImage) {
     let that = this;
     let param = {
       token: localStorage.getItem("api_token")
@@ -95,7 +95,7 @@ class Pics extends React.Component {
         _id: _id
       }
         , function (response) {
-          let state={loading:0};
+          let state = { loading: 0 };
           state[OldImage] = '';
           that.setState({
             ...state
@@ -119,7 +119,7 @@ class Pics extends React.Component {
       console.log(error)
     }
     this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
-    
+
   }
   LinkChange(e) {
     let that = this;
@@ -225,21 +225,21 @@ class Pics extends React.Component {
 
           if (item.name == "extra-file1")
             that.setState({
-              logo1: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
+              logo1: that.state.absoluteUrl + item?.fileUploaded?.split("public")[1],
               link1: item.link,
-              id1:item._id
+              id1: item._id
             })
           if (item.name == "extra-file2")
             that.setState({
-              logo2: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
+              logo2: that.state.absoluteUrl + item?.fileUploaded?.split("public")[1],
               link2: item.link,
-              id2:item._id
+              id2: item._id
             })
           if (item.name == "extra-file3")
             that.setState({
-              logo3: that.state.absoluteUrl +  item?.fileUploaded?.split("public")[1],
+              logo3: that.state.absoluteUrl + item?.fileUploaded?.split("public")[1],
               link3: item.link,
-              id3:item._id
+              id3: item._id
             })
         })
         that.setState({
@@ -275,80 +275,80 @@ class Pics extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
 
           <div className="col-12" style={{ background: '#fff' }}>
-              <div> <Panel header="تصاویر اسلایدر نرم افزار" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
-                  <div className="row">
+            <div> <Panel header="تصاویر اسلایدر نرم افزار" style={{  textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+              <div className="row">
 
-                    <div className="col-2" >
-                      <div className="group">
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="extra-file1" />
-                        <label>تصویر اول اسلایدر</label>
-                      </div>
-
-                    </div>
-                    <div className="col-4">
-                      <div className="group">
-                        <input className="form-control yekan" autoComplete="off" type="text" value={this.state.link1} name="link1" onChange={(e) => this.setState({ link1: e.value })} onBlur={(e) => this.LinkChange(e)}   />
-                        <label>لینک</label>
-                      </div>
-                    </div>
-                    <div className="col-6" style={{ textAlign: 'center', marginTop: 10 }} >
-                      <img src={this.state.logo1} style={{ width: 200 }} />
-                      <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id1,'logo1')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
-
-                    </div>
-                    <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
-                    <div className="col-2" >
-                      <div className="group">
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="extra-file2" />
-                        <label>تصویر دوم اسلایدر</label>
-                      </div>
-                    </div>
-                    <div className="col-4">
-                      <div className="group">
-                        <input className="form-control yekan" autoComplete="off" type="text" value={this.state.link2} name="link2" onChange={(e) => this.setState({ link2: e.value })} onBlur={(e) => this.LinkChange(e)}   />
-                        <label>لینک</label>
-                      </div>
-                    </div>
-                    <div className="col-6" style={{ textAlign: 'center', marginTop: 10 }} >
-                      <img src={this.state.logo2} style={{ width: 200 }} />
-                      <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id2,'logo2')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
-
-                    </div>
-                    <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
-
-                    <div className="col-2" >
-                      <div className="group">
-                        <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="extra-file3" />
-                        <label>تصویر سوم اسلایدر</label>
-                      </div>
-                    </div>
-                    <div className="col-4">
-                      <div className="group">
-                        <input className="form-control yekan" autoComplete="off" type="text" value={this.state.link3} name="link3" onChange={(e) => this.setState({ link3: e.value })} onBlur={(e) => this.LinkChange(e)}   />
-                        <label>لینک</label>
-                      </div>
-                    </div>
-                    <div className="col-6" style={{ textAlign: 'center', marginTop: 10 }} >
-                      <img src={this.state.logo3} style={{ width: 200 }} />
-                      <br/><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id3,'logo3')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
-
-                    </div>
-                    
-
-
+                <div className="col-2" >
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="extra-file1" />
+                    <label>تصویر اول اسلایدر</label>
                   </div>
 
-              </Panel>
+                </div>
+                <div className="col-4">
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.link1} name="link1" onChange={(e) => this.setState({ link1: e.value })} onBlur={(e) => this.LinkChange(e)} />
+                    <label>لینک</label>
+                  </div>
+                </div>
+                <div className="col-6" style={{ textAlign: 'center', marginTop: 10 }} >
+                  <img src={this.state.logo1} style={{ width: 200 }} />
+                  <br /><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id1, 'logo1')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
 
-               
+                </div>
+                <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+                <div className="col-2" >
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="extra-file2" />
+                    <label>تصویر دوم اسلایدر</label>
+                  </div>
+                </div>
+                <div className="col-4">
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.link2} name="link2" onChange={(e) => this.setState({ link2: e.value })} onBlur={(e) => this.LinkChange(e)} />
+                    <label>لینک</label>
+                  </div>
+                </div>
+                <div className="col-6" style={{ textAlign: 'center', marginTop: 10 }} >
+                  <img src={this.state.logo2} style={{ width: 200 }} />
+                  <br /><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id2, 'logo2')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
+
+                </div>
+                <div className="col-12" style={{ borderTop: '1px solid #c3c3c3' }}><hr /></div>
+
+                <div className="col-2" >
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="extra-file3" />
+                    <label>تصویر سوم اسلایدر</label>
+                  </div>
+                </div>
+                <div className="col-4">
+                  <div className="group">
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.link3} name="link3" onChange={(e) => this.setState({ link3: e.value })} onBlur={(e) => this.LinkChange(e)} />
+                    <label>لینک</label>
+                  </div>
+                </div>
+                <div className="col-6" style={{ textAlign: 'center', marginTop: 10 }} >
+                  <img src={this.state.logo3} style={{ width: 200 }} />
+                  <br /><button className="btn btn-primary yekan" onClick={() => this.deletePic(this.state.id3, 'logo3')} style={{ width: "100px", marginTop: "5px", marginBottom: "5px" }}  >حذف</button>
+
+                </div>
 
 
 
               </div>
-              
+
+            </Panel>
+
+
+
+
+
+            </div>
+
           </div>
 
         </div>

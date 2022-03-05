@@ -257,7 +257,9 @@ class Cart extends React.Component {
                         products_id: products_id,
                         SaleFromMultiShops:this.state.SaleFromMultiShops,
                         SeveralShop:this.state.SeveralShop,
-                        needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace" || that.state.ActiveBank == "Cheque") ? 0 : 1
+                        needPay: (that.state.ActiveBank == "none" || that.state.ActiveBank == "inPlace" || that.state.ActiveBank == "Cheque" || (that.state.orderConfirmation)) ? 0 : 1,
+                        orderConfirmation:that.state.orderConfirmation,
+                        factorId:that.state.factorId
                     }
 
                     if(this.state.ActiveBank == "Cheque"){
@@ -281,7 +283,7 @@ class Cart extends React.Component {
                             that.setState({
                                 loading:0
                             })
-                            if (that.state.ActiveBank != "none" && that.state.ActiveBank != "inPlace" && that.state.ActiveBank != "Cheque") {
+                            if (that.state.ActiveBank != "none" && that.state.ActiveBank != "inPlace" && that.state.ActiveBank != "Cheque" && !that.state.orderConfirmation) {
                                 let res;
                                 if (that.state.ActiveBank == "p") {
                                     res = response.data.result ? response.data.result.SalePaymentRequestResult : {};
@@ -295,6 +297,7 @@ class Cart extends React.Component {
                                     window.location = res;
                                 }
                             } else {
+                                const EndMessage = that.state.orderConfirmation ? <div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId)} <br /><br /><p className="YekanBakhFaMedium" style={{ fontSize: 25 }}>سفارش شما ثبت شد و در مرحله منتظر تایید قرار گرفت . پس از تایید سفارش توسط فروشنده برای ادامه مراحل ثبت نام اطلاع رسانی خواهد شد<br /> </p> </div> : <div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId)} <br /><br /><p className="YekanBakhFaMedium" style={{ fontSize: 25 }}>سفارش شما ثبت شد <br /> </p> </div>
                                 that.props.dispatch({
                                     type: 'LoginTrueUser',
                                     CartNumber: 0,
@@ -305,7 +308,7 @@ class Cart extends React.Component {
                                 that.setState({
                                     GridData: [],
                                     refId: response.data.refId,
-                                    EndMessage: <div className="YekanBakhFaMedium"> کد رهگیری سفارش : {that.persianNumber(response.data.refId)} <br /><br /><p className="YekanBakhFaMedium" style={{ fontSize: 25 }}>سفارش شما ثبت شد <br /> </p> </div>
+                                    EndMessage: EndMessage
     
                                 })
                                 if (this.state.ActiveSms != "none") {
@@ -393,6 +396,7 @@ class Cart extends React.Component {
                             InRaymand:response.data.result ? response.data.result.Raymand : false,
                             credit:(response.data.result.Raymand && that.state.credit) ? parseInt(that.state.credit.toString().substr(0,that.state.credit.toString().length-1)) : parseInt(that.state.credit),
                             Theme:response.data.result ? response.data.result.Theme : "1",
+                            orderConfirmation:response.data.result ? response.data.result.orderConfirmation : false,
 
                             
                         })
@@ -450,7 +454,22 @@ class Cart extends React.Component {
                 PrepareTime = [],
                 forceChangeItem = [];
             response.data.result.map((res) => {
-                
+                let notConfirmed = false;
+                if(res.factor && res.factor[0] ){
+                    that.setState({
+                        orderConfirmation:false,
+                        confirmStep : res.factor[0].status == "6" ? "1" : "2",
+                        factorId:res.factor[0]._id
+                    })
+                    res.factor[0].products.map((pItem) =>{
+                        if(pItem._id == res.product_id && (pItem.status == "-1" || pItem.status == "0")){
+                            notConfirmed=true;
+                            res.notConfirmed = true;
+                        }
+
+                    })
+                }
+                if(!notConfirmed){
                 if (res.price)
                     lastPrice += res.number * parseInt(that.roundPrice(res.price));
                 PrepareTime.push(that.state.ProductBase ? res.products[0].PrepareTime : (res.Seller[0].PreparTime || "30"));
@@ -495,8 +514,9 @@ class Cart extends React.Component {
                     forceChangeItem.push(res);
                 }
 
-
+            }
             })
+            response.data.result = response.data.result.filter((value)=>{return value.notConfirmed != true})
             let MargablePaykAmount = [],
                 NotMargablePaykAmount = [];
             for (let i = 0; i < paykAmount.length; i++) {
@@ -623,7 +643,7 @@ class Cart extends React.Component {
     }
     itemTemplate(car, layout) {
         if (layout === 'list' && car && car.products[0]) {
-            let pic = car.products[0].fileUploaded.split("public")[1] ? this.state.absoluteUrl + car.products[0].fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
+            let pic = (car.products[0].fileUploaded && car.products[0].fileUploaded.split("public")[1]) ? this.state.absoluteUrl + car.products[0].fileUploaded.split("public")[1] : this.state.absoluteUrl + 'nophoto.png';
             let rowPrice = car.price//car.products[0].getFromCredit ? car.products[0].price : (car.products[0].price - (car.products[0].price * ((!car.products[0].NoOff ? parseInt(this.props.off) : 0)+car.products[0].off))/100);
 
             //let pic = car.products[0].fileUploaded.split("public")[1] ? 'http://localhost:3000/'+car.products[0].fileUploaded.split("public")[1] : 'http://localhost:3000/'+'nophoto.png';

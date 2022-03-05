@@ -375,10 +375,8 @@ class Sales_Registered extends React.Component {
   shareAddress(p){
     let that = this;
     let address = p.userData[0].city + "،" + p.userData[0].subCity+"،"+p.userData[0].address;
-    debugger;
     this.Server.send("AdminApi/getuserInformation", {map:'payk'}, function (response) {
       
-      debugger;
       let sellername = "";
       if(!that.state.SaleFromMultiShops){
         sellername += p.products[0].SellerName;
@@ -592,7 +590,7 @@ class Sales_Registered extends React.Component {
                 <Column field="share_address" filter={false} header="اشتراک آدرس"  className="yekan"  />
 
                 {this.state.isMainShop == 1 &&
-                  <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "center",width:60 }} />
+                  <Column field="delete" filter={false} header="حذف"  className="yekan" style={{ textAlign: "center",width:60,display:"none" }} />
                 }
                 {this.state.isMainShop == 1 &&
                   <Column field="print" filter={false} header="چاپ"  className="yekan" style={{ textAlign: "center",width:60 }} />
@@ -693,7 +691,7 @@ class Sales_Registered extends React.Component {
               <Column field="desc" header="شرح" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }} />
               }
               {this.state.isMainShop == 1 ?
-              <Column field="number" body={ProductBodyTemplate} editor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
+              <Column field="number" body={ProductBodyTemplate} edi_tor={(props) => this.gridEditor('number', props)} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
                 :
                 <Column field="number" body={ProductBodyTemplate} header="تعداد" className="yekan" style={{ textAlign: "right" }} />
             }
@@ -705,7 +703,7 @@ class Sales_Registered extends React.Component {
               }
               <Column field="detail" header="جزئیات" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
               {this.state.isMainShop == 1 &&
-                <Column field="edit" header="حذف" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right" }} />
+                <Column field="edit" header="حذف" body={ProductBodyTemplate} className="yekan" style={{ textAlign: "right",display:"none" }} />
               }
 
             </DataTable>

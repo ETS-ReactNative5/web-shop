@@ -4,7 +4,8 @@ import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import ReactTable from "react-table";
+import { Panel } from 'primereact/panel';
+
 
 
 import 'primeicons/primeicons.css';
@@ -35,10 +36,10 @@ class ShopsList extends React.Component {
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
       CategoryListForDropDown: [],
       GridDataUsers: [],
-      shop_groups:[],
+      shop_groups: [],
       GridDataFactors: [],
       selectedCommission: null,
-      selectedUserId:null,
+      selectedUserId: null,
       categories: null,
       selectedMainShop: null,
       selectedRegistrable: null,
@@ -105,14 +106,14 @@ class ShopsList extends React.Component {
 
   onSelect(event) {
     this.setState({ selectedName: event.value.name, selectedShopId: event.value._id });
-    setTimeout(()=>{
+    setTimeout(() => {
       this.onHide();
-    },0)
+    }, 0)
   }
   onSelect2(event) {
     this.setState({ selectedUser: event.value.name, selectedUserId: event.value._id });
   }
-  onSelect3(event){
+  onSelect3(event) {
     this.setState({ parent: event.value.name, parentId: event.value._id });
   }
   suggestBrands(event) {
@@ -136,7 +137,7 @@ class ShopsList extends React.Component {
     let SCallBack = function (response) {
       let brandSuggestions = [];
       response.data.result.reverse().map(function (v, i) {
-        brandSuggestions.push({ _id: v._id, name: v.name,username:v.username })
+        brandSuggestions.push({ _id: v._id, name: v.name, username: v.username })
       })
       that.setState({ brandSuggestions: brandSuggestions });
     };
@@ -217,8 +218,8 @@ class ShopsList extends React.Component {
       selectedSheba: null,
       selectedRaymandAcc: null,
       selectedCommission: null,
-      selectedUserId:null,
-      selectedUser:null,
+      selectedUserId: null,
+      selectedUser: null,
       selectedMainShop: null,
       selectedRegistrable: null,
       categories: null,
@@ -284,13 +285,12 @@ class ShopsList extends React.Component {
 
       }
     }
-    debugger;
     this.setState({
       visibleDialog: true,
       selectedId: value._id,
       selectedCommission: value.commission,
-      selectedUserId:value.UserId,
-      selectedUser:value.users[0] ? value.users[0].name : null,
+      selectedUserId: value.UserId,
+      selectedUser: value.users[0] ? value.users[0].name : null,
       categories: value.cats,
       selectedMainShop: value.main,
       selectedRegistrable: value.Registerable,
@@ -298,7 +298,7 @@ class ShopsList extends React.Component {
       showInSite: value.showInSite,
       CreditCommission: value.CreditCommission,
       paymentType: value.paymentType,
-      shopGroup:value.shopGroup,
+      shopGroup: value.shopGroup,
       credit: value.credit,
       MehrCommission: value.MehrCommission,
       selectedName: value.name,
@@ -324,7 +324,8 @@ class ShopsList extends React.Component {
           SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false,
           Raymand: response.data.result[0] ? response.data.result[0].Raymand : false,
           System: response.data.result[0] ? response.data.result[0].System : "shop",
-          SystemTitle: response.data.result[0]?.System =="shop" ? "فروشگاه" : "زیر سیستم"
+          CreditSupport: response.data.result[0] ? response.data.result[0].CreditSupport : "shop",
+          SystemTitle: (response.data.result[0]?.System == "shop" || response.data.result[0].CreditSupport) ? "فروشگاه" : "زیر سیستم"
 
         })
       }
@@ -348,7 +349,7 @@ class ShopsList extends React.Component {
         GridDataFactors: response.data.result,
         loading: 0
       })
-      
+
       that.GetCategory();
     };
     let ECallBack = function (error) {
@@ -363,7 +364,7 @@ class ShopsList extends React.Component {
   EditShopSelected() {
     let that = this;
     let Time = [];
-    if(!this.state.selectedUserId && this.state.selectedUser && !this.state.selectedMobile){
+    if (!this.state.selectedUserId && this.state.selectedUser && !this.state.selectedMobile) {
       Alert.error('شماره تلفن همراه را وارد کنید', 5000);
       return;
     }
@@ -390,7 +391,6 @@ class ShopsList extends React.Component {
         Time[6] = { day7: [this.state["Time7_1"], this.state["Time7_2"], this.state["Time7_3"], this.state["Time7_4"]] };
       }
     }
-    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       address: this.state.selectedAddress,
@@ -408,11 +408,11 @@ class ShopsList extends React.Component {
       commission: this.state.selectedCommission,
       UserId: this.state.selectedUserId,
       main: this.state.selectedMainShop,
-      Registerable:this.state.selectedRegistrable,
+      Registerable: this.state.selectedRegistrable,
       AllowCredit: this.state.AllowCredit,
       CreditCommission: this.state.CreditCommission,
       paymentType: this.state.paymentType,
-      shopGroup:this.state.shopGroup,
+      shopGroup: this.state.shopGroup,
       credit: this.state.credit,
       MehrCommission: parseInt(this.state.MehrCommission),
       PrepareTime: this.state.PrepareTime,
@@ -484,10 +484,10 @@ class ShopsList extends React.Component {
     })
     let SCallBack = function (response) {
 
-      
+
       that.setState({
         shop_groups: response.data.result,
-        shopGroup:response.data.result[0] ? response.data.result[0]?._id : null,
+        shopGroup: response.data.result[0] ? response.data.result[0]?._id : null,
         loading: 0
       })
 
@@ -504,14 +504,29 @@ class ShopsList extends React.Component {
 
   }
   rowClass(data) {
-    if(data.users[0])
+    if (data.users[0])
       data.Seller = data.users[0].name
-    if(data.AllowCredit)  
+    if (data.AllowCredit)
       data.InMehrCart = <i className="fas fa-check"></i>
 
     return {
-      'row-highlight1':0
+      'row-highlight1': 0
     }
+  }
+  selectedTemplate = (option, props) => {
+    if (option) {
+      return (
+        <div className="country-item country-item-value">
+          <div>{option.name}</div>
+        </div>
+      );
+    }
+
+    return (
+      <span>
+        {props.placeholder}
+      </span>
+    );
   }
   render() {
 
@@ -522,36 +537,41 @@ class ShopsList extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
+        <div className=" col-12" style={{ background: '#fff' }}>
+            <Panel header="مدیریت فروشگاهها" style={{ textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+              <div className="row">
           <div className="col-12">
-            <button className="btn btn-info irsans" onClick={() => this.setState({ visibleDialog: true })} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> ایجاد /جستجوی {this.state.SystemTitle}  </button>
+            <button className="btn btn-info irsans" onClick={() => this.setState({ visibleDialog: true })} style={{ width: "200px", marginBottom: "20px" }}> ایجاد /جستجوی {this.state.SystemTitle}  </button>
           </div>
           <div className="col-12">
 
- <i className="fas fa-sync" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => {
-  this.setState({
-    selectedShopId:null
-  })
-  this.GetShopList(1)
-  
-  }
-   
- }></i>
-           </div>
+            <i className="fas fa-sync" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => {
+              this.setState({
+                selectedShopId: null
+              })
+              this.GetShopList(1)
+
+            }
+
+            }></i>
+          </div>
           <div className="col-12" style={{ background: '#fff' }}>
             <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >‍‍‍‍‍‍‍لیست {this.state.SystemTitle}ها</span></div>
 
             <DataTable responsive resizableColumns={true} rowClassName={this.rowClass} paginator={true} rows={10} value={this.state.GridDataFactors} selectionMode="single" selection={this.state.selectedId} onSelectionChange={e => this.selectedListChange(e.value)} >
               <Column field="name" header={`نام ${this.state.SystemTitle}`} className="yekan" style={{ textAlign: "center" }} />
               <Column field="Seller" header={`مدیر ${this.state.SystemTitle}`} className="yekan" style={{ textAlign: "center" }} />
-              <Column field="address" header="آدرس" className="yekan" style={{ textAlign: "center",whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' }} />
-              {this.state.System == "shop" &&
+              <Column field="address" header="آدرس" className="yekan" style={{ textAlign: "center", whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }} />
+              {(this.state.System == "shop" || this.state.CreditSupport) &&
                 <Column field="InMehrCart" header="متصل به فروش اقساطی" className="yekan" style={{ textAlign: "center" }} />
               }
 
             </DataTable>
           </div>
-
+              </div>
+        </Panel>
+        </div>
         </div>
 
         <Dialog header={`مشخصات ${this.state.SystemTitle}`} visible={this.state.visibleDialog} style={{ width: '60vw' }} minY={70} onHide={this.onHide} maximizable={true}>
@@ -560,34 +580,29 @@ class ShopsList extends React.Component {
 
               <div className="col-lg-6">
                 <div className="group">
-                  <AutoComplete placeholder={`نام ${this.state.SystemTitle}`}  style={{ width: '100%' }} onChange={(event) => { this.setState({ selectedName: event.value, user: 0,selectedShopId:null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.selectedName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                  <AutoComplete placeholder={`نام ${this.state.SystemTitle}`} style={{ width: '100%' }} onChange={(event) => { this.setState({ selectedName: event.value, user: 0, selectedShopId: null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.selectedName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
                 </div>
               </div>
-              {this.state.System == "shop" &&
-              <div className="col-lg-6">
-                <div className="group">
-                  <AutoComplete placeholder="مدیر / کارمند" style={{ width: '100%' }} onChange={(event) => { this.setState({ selectedUser: event.value, user: 1,selectedUserId:null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.selectedUser} onSelect={(e) => this.onSelect2(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+              {(this.state.System == "shop" || this.state.CreditSupport) &&
+                <div className="col-lg-6">
+                  <div className="group">
+                    <AutoComplete placeholder="مدیر / کارمند" style={{ width: '100%' }} onChange={(event) => { this.setState({ selectedUser: event.value, user: 1, selectedUserId: null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.selectedUser} onSelect={(e) => this.onSelect2(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                  </div>
                 </div>
-              </div>
-            }
-            {this.state.System == "shop" &&
-              <div className="col-lg-12" style={{marginTop:25,marginBottom:25}}>
-                <div >
-                <label className="yekan labelNoGroup">گروه فروشگاهی</label>
+              }
+              {(this.state.System == "shop" || this.state.CreditSupport) &&
+                <div className="col-lg-12" style={{ marginTop: 10 }}>
+                  <div >
+                    <label className="yekan labelNoGroup">گروه فروشگاهی</label>
+                    <Dropdown value={this.state.shopGroup} panelStyle={{ textAlign: 'right' }} style={{ fontFamily: 'iranyekanwebregular', width: '99.5%', textAlign: 'right' }} options={this.state.shop_groups} onChange={(event) => this.setState({
+                      shopGroup: event.target.value
+                    })} optionLabel="name" optionValue="_id" placeholder="فروشگاه را انتخاب کنید"
+                      valueTemplate={this.selectedTemplate} filter filterBy="name" itemTemplate={this.ShopOptionTemplate} />
+                   
+                  </div>
+                </div>
+              }
 
-                <select style={{width:'100%'}} onChange={(event)=>this.setState({ shopGroup: event.target.value })} value={this.state.shopGroup}>
-                  <option value='' ></option>
-                  {this.state.shop_groups.map(function(item,index){
-                      return(
-                        <option value={item._id} >{item.name}</option>
-                      )
-                  })
-                  }
-                </select>
-                </div>
-              </div>
-            }
-            
               <div className="col-lg-12">
                 <div className="group">
 
@@ -612,22 +627,22 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
-              {this.state.System == "shop" &&
+              {(this.state.System == "shop" || this.state.CreditSupport) &&
                 <div className="col-lg-6">
                   <div className="group">
-                    <AutoComplete placeholder={`${this.state.SystemTitle} اصلی`}  style={{ width: '100%' }} onSelect={(e) => this.onSelect3(e)} onChange={(event) => { this.setState({ parent: event.value,parentId:null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.parent}  suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                    <AutoComplete placeholder={`${this.state.SystemTitle} اصلی`} style={{ width: '100%' }} onSelect={(e) => this.onSelect3(e)} onChange={(event) => { this.setState({ parent: event.value, parentId: null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.parent} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
                   </div>
                 </div>
               }
-              {this.state.System == "shop" &&
-              <div className="col-lg-6">
-                <div className="group">
+              {(this.state.System == "shop" || this.state.CreditSupport) &&
+                <div className="col-lg-6">
+                  <div className="group">
 
-                  <input className="form-control yekan" autoComplete="off" type="text" value={this.state.selectedSheba} name="selectedSheba" onChange={(event) => this.setState({ selectedSheba: event.target.value })} required="true" />
-                  <label className="yekan">شماره شبا</label>
+                    <input className="form-control yekan" autoComplete="off" type="text" value={this.state.selectedSheba} name="selectedSheba" onChange={(event) => this.setState({ selectedSheba: event.target.value })} required="true" />
+                    <label className="yekan">شماره شبا</label>
 
+                  </div>
                 </div>
-              </div>
               }
               {this.state.Raymand &&
                 <div className="col-lg-12">
@@ -654,23 +669,23 @@ class ShopsList extends React.Component {
                 </div>
               }
 
-              {this.state.System == "shop" &&
-              <div className="col-lg-12" >
-                <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }}>
+              {(this.state.System == "shop" || this.state.CreditSupport) &&
+                <div className="col-lg-12" >
+                  <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }}>
 
-                  <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
-                  <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>متصل به کیف پول {this.state.Raymand ? '/ مهرکارت' : ''} </label>
+                    <Checkbox inputId="laon" value={this.state.AllowCredit} checked={this.state.AllowCredit} onChange={e => this.setState({ AllowCredit: e.checked })}></Checkbox>
+                    <label htmlFor="laon" className="p-checkbox-label yekan" style={{ paddingRight: 5 }}>متصل به کیف پول  </label>
 
+                  </div>
                 </div>
-              </div>
               }
 
-              {this.state.AllowCredit && this.state.System == "shop" &&
+              {this.state.AllowCredit &&
                 <div className="col-lg-3">
                   <div className="group">
 
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.MehrCommission} name="MehrCommission" onChange={(event) => this.setState({ MehrCommission: event.target.value })} required="true" />
-                    <label className="yekan">کارمزد مهرکارت</label>
+                    <label className="yekan">کارمزد خرید اقساطی</label>
 
                   </div>
                 </div>
@@ -685,17 +700,17 @@ class ShopsList extends React.Component {
                   </div>
                 </div>
               }
-              {this.state.AllowCredit && this.state.System == "shop" &&
+              {this.state.AllowCredit &&
                 <div className="col-lg-6" >
                   <div className="group">
 
                     <input className="form-control yekan" autoComplete="off" type="text" value={this.state.credit} name="credit" onChange={(event) => this.setState({ credit: event.target.value })} required="true" />
-                    <label className="yekan">موجودی مهر کارت  {this.state.selectedName}(تومان)</label>
+                    <label className="yekan">موجودی خرید اقساطی  {this.state.selectedName}(تومان)</label>
 
                   </div>
                 </div>
               }
-              {this.state.AllowCredit && this.state.System == "shop" &&
+              {this.state.AllowCredit &&
                 <div className="col-lg-12" >
                   <div className="group">
 
@@ -723,7 +738,7 @@ class ShopsList extends React.Component {
 
                 </div>
               </div>
-              {this.state.System == "company" &&
+              {this.state.System == "company" && !this.state.CreditSupport &&
                 <div className="col-lg-12">
                   <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }}>
 
@@ -734,20 +749,20 @@ class ShopsList extends React.Component {
                 </div>
               }
               {this.state.System == "shop" &&
-              <div className="col-lg-12">
-                <label className="labelNoGroup yekan">دسته بندی های مرتبط با {this.state.SystemTitle}</label>
-                <MultiSelect value={this.state.categories} optionLabel="name" style={{ width: '100%' }} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => {
+                <div className="col-lg-12">
+                  <label className="labelNoGroup yekan">دسته بندی های مرتبط با {this.state.SystemTitle}</label>
+                  <MultiSelect value={this.state.categories} optionLabel="name" style={{ width: '100%' }} optionValue="value" options={this.state.CategoryListForDropDown} onChange={(event) => {
 
 
-                  this.setState({ categories: event.value })
+                    this.setState({ categories: event.value })
 
-                }} />
+                  }} />
 
 
 
-              </div>
+                </div>
               }
-              {!this.state.ProductBase &&
+              {!this.state.ProductBase && this.state.System == "shop" &&
                 <div className="col-lg-12 col-12">
                   <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex', display: 'flex' }} >
                     <Checkbox inputId="Opened" value={this.state.Opened} checked={this.state.Opened} onChange={e => this.setState({ Opened: e.checked })}></Checkbox>
@@ -756,7 +771,7 @@ class ShopsList extends React.Component {
 
                 </div>
               }
-              {this.state.Opened && !this.state.ProductBase &&
+              {this.state.Opened && !this.state.ProductBase && this.state.System == "shop" &&
                 <div className="col-lg-12">
                   <div className="row">
                     <div className="col-lg-2 col-12">

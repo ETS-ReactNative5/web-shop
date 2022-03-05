@@ -3,7 +3,7 @@ import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
 import Dashboard from './Dashboard.js'
 import './Dashboard.css'
-import ReactTable from "react-table";
+import { Panel } from 'primereact/panel';
 
 
 import 'primeicons/primeicons.css';
@@ -15,13 +15,13 @@ import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Checkbox } from 'primereact/checkbox';
 import { confirmAlert } from 'react-confirm-alert';
-import { MultiSelect } from 'primereact/multiselect';
+import {Multiselect} from 'multiselect-react-dropdown';
 
 import { connect } from 'react-redux';
 import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 
-class Score_List extends React.Component {
+class Systems extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
@@ -29,12 +29,12 @@ class Score_List extends React.Component {
 
     this.CreateForm = this.CreateForm.bind(this);
     this.onHideFormsDialog = this.onHideFormsDialog.bind(this);
-    this.SetScores = this.SetScores.bind(this);
+    this.SetSystem = this.SetSystem.bind(this);
 
     this.state = {
       layout: 'list',
       name: "",
-      ShopsList:[],
+      ShopsList: [],
       type: "1",
       FId: "",
       DbTableName: "",
@@ -58,7 +58,7 @@ class Score_List extends React.Component {
         user_Id: response.data.authData.userId,
         loading: 0
       })
-      that.getScoreList();
+      that.getSystems();
 
     };
     let ECallBack = function (error) {
@@ -69,15 +69,16 @@ class Score_List extends React.Component {
     }
     this.Server.send("MainApi/checktoken", param, SCallBack, ECallBack)
   }
-  SetScores() {
+  SetSystem() {
     let that = this;
+    
     let param = {
       token: localStorage.getItem("api_token"),
       _id: this.state.selectedId,
-      fTitle: this.state.fTitle,
-      lTitle: this.state.lTitle,
-      for: this.state.for,
-      score: this.state.score,
+      code: this.state.code,
+      credit: this.state.credit.toString().replace(/,/g, ""),
+      name: this.state.name,
+      subSystem: this.state.subSystem
     };
     this.setState({
       HasErrorForMaps: null,
@@ -85,7 +86,7 @@ class Score_List extends React.Component {
     })
     let SCallBack = function (response) {
       that.onHideFormsDialog();
-      that.getScoreList();
+      that.getSystems();
       that.setState({
         loading: 0
       })
@@ -98,16 +99,16 @@ class Score_List extends React.Component {
       })
       Alert.error('عملیات انجام نشد', 5000);
     }
-    this.Server.send("AdminApi/setScoreList", param, SCallBack, ECallBack)
+    this.Server.send("AdminApi/SetSystem", param, SCallBack, ECallBack)
   }
   CreateForm() {
     this.setState({
       visibleManageField: true,
-      fTitle: "",
-      lTitle: "",
-      for: "",
-      score: "",
-      selectedId: null
+      name: "",
+      code: "",
+      credit:0,
+      selectedId: null,
+      subSystem:true
     })
 
   }
@@ -126,50 +127,22 @@ class Score_List extends React.Component {
 
   }
   selectedComponentChange(value) {
-    let that = this;
-    var p = [];
+    
+    
     this.setState({
-      fTitle: value.fTitle,
-      lTitle: value.lTitle,
-      for: value.for,
-      score: value.score,
+      name: value.name,
+      code: value.code,
+      credit: value.credit ? value.credit.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0,
+      subSystem: value.subSystem,
       selectedId: value._id,
-      visibleManageField: true
-
-
+      visibleManageField:true
 
     })
 
-  }
-  getScoreList() {
-    let that = this;
-    let param = {
-      token: localStorage.getItem("api_token"),
-      GetAll: 1
-    };
-    this.setState({
-      loading: 1
-    })
-    let SCallBack = function (response) {
-
-      that.setState({
-        GridDataFields: response.data.result
-      })
-      that.setState({
-        loading: 0
-      })
-    };
-    let ECallBack = function (error) {
-      console.log(error)
-      that.setState({
-        loading: 0
-      })
-    }
-    this.Server.send("AdminApi/getScoreList", param, SCallBack, ECallBack)
   }
   delField(rowData) {
     this.setState({
-      visibleManageField:false
+      visibleManageField: false
     })
     confirmAlert({
       title: <span className="yekan">حذف کاربر</span>,
@@ -182,13 +155,13 @@ class Score_List extends React.Component {
             let param = {
               token: localStorage.getItem("api_token"),
               _id: rowData._id,
-              del:1
+              del: 1
             };
             let SCallBack = function (response) {
               that.setState({
                 loading: 0
               })
-              that.getScoreList();
+              that.getSystems();
               Alert.success('عملیات با موفقیت انجام شد', 5000);
             };
             let ECallBack = function (error) {
@@ -208,11 +181,22 @@ class Score_List extends React.Component {
     });
 
   }
+  getSystems() {
+    let that = this;
+    let SCallBack = function (response) {
+      that.setState({
+        systems: response.data.result
+      })
+    };
+    let ECallBack = function (error) {
+    }
+    this.Server.send("MainApi/getSystems", {}, SCallBack, ECallBack)
+  }
 
   render() {
     const footer = (
       <div>
-        <button className="btn btn-primary irsans" onClick={this.SetScores} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> اعمال </button>
+        <button className="btn btn-primary irsans" onClick={this.SetSystem} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}> اعمال </button>
 
       </div>
     );
@@ -228,60 +212,67 @@ class Score_List extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
 
           <div className="col-12" style={{ background: '#fff' }}>
-            <div className="row" >
-              <div className="col-6" style={{ textAlign: 'center' }}>
-                <button className="btn btn-primary irsans" onClick={this.CreateForm} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>ساخت ردیف جدید</button>
+            <Panel header="لیست سیستم ها" style={{ textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+
+              <div className="row" >
+                <div className="col-6" style={{ textAlign: 'right' }}>
+                  <button className="btn btn-primary irsans" onClick={this.CreateForm} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>ساخت سیستم جدید</button>
+                </div>
+
               </div>
 
-            </div>
-            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست امتیازات</span></div>
-
-            <DataTable responsive value={this.state.GridDataFields} selectionMode="single" selection={this.state.selectedComponent} onSelectionChange={e => this.selectedComponentChange(e.value)}>
-              <Column field="fTitle" header="شماره" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="lTitle" header="نام" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="score" header="امتیاز" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="for" header="به ازای" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="del" body={delTemplate} header="حذف" className="irsans" style={{ textAlign: "center" }} />
-            </DataTable>
+              <DataTable responsive value={this.state.systems} selectionMode="single" selection={this.state.selectedComponent} onSelectionChange={e => this.selectedComponentChange(e.value)}>
+                <Column field="code" header="شماره" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="name" header="نام" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="subSystem" header="زیر سیستم" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="credit" header="موجودی" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="del" body={delTemplate} header="حذف" className="irsans" style={{ textAlign: "center" }} />
+              </DataTable>
+            </Panel>
           </div>
 
         </div>
 
 
-        <Dialog header={this.state.selectedId ? "اصلاح" : "ساخت ردیف جدید"} visible={this.state.visibleManageField}  footer={footer} minY={70} onHide={this.onHideFormsDialog} maximizable={false} maximized={true}>
+        <Dialog header={this.state.selectedId ? "اصلاح" : "ساخت سیستم جدید"} visible={this.state.visibleManageField} footer={footer} minY={70} onHide={this.onHideFormsDialog} maximizable={false} maximized={true}>
           <form>
 
-            <div className="row" style={{alignItems:'baseline'}}>
+            <div className="row" style={{ alignItems: 'baseline' }}>
               <div className="col-lg-6">
                 <div className="group">
-                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.fTitle} name="fTitle" onChange={(event) => this.setState({ fTitle: event.target.value })} required="true" />
-                  <label>نام فارسی</label>
-                </div>  
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.code} name="code" onChange={(event) => this.setState({ code: event.target.value })} required="true" />
+                  <label>شماره</label>
+                </div>
               </div>
               <div className="col-lg-12">
 
                 <div className="group">
-                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.lTitle} name="lTitle" onChange={(event) => this.setState({ lTitle: event.target.value })} required="true" />
-                  <label >نام لاتین</label>
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.name} name="name" onChange={(event) => this.setState({ name: event.target.value })} required="true" />
+                  <label >عنوان فارسی</label>
 
                 </div>
               </div>
+
               <div className="col-lg-12">
+
                 <div className="group">
-                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.score} name="score" onChange={(event) => this.setState({ score: event.target.value })} required="true" />
-                  <label>امتیاز</label>
-                </div>
-              </div>
-              <div className="col-lg-12">
-                <div className="group">
-                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.for} name="for" onChange={(event) => this.setState({ for: event.target.value })} required="true" />
-                  <label>به ازای</label>
+                  <input className="form-control irsans" autoComplete="off" type="text" value={this.state.credit} name="credit" onChange={(event) => this.setState({ credit: event.target.value.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") })} required="true" />
+                  <label >اعتبار سیستم</label>
+
                 </div>
               </div>
               
+              <div className="col-12" style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline', padding: 0 }}>
+                <div class="group" style={{width:300,marginRight:20}} >
+                  <Checkbox inputId="subSystem" value={this.state.subSystem} checked={this.state.subSystem} onChange={e => this.setState({ subSystem: e.checked })}></Checkbox>
+                  <label htmlFor="subSystem" className="p-checkbox-label yekan" style={{ paddingRight:30 }}>زیر سیستم</label>
+                </div>
+                    
+              </div>
+
 
 
             </div>
@@ -303,5 +294,5 @@ const mapStateToProps = (state) => {
   }
 }
 export default withRouter(
-  connect(mapStateToProps)(Score_List)
+  connect(mapStateToProps)(Systems)
 );

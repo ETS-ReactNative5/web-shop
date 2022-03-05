@@ -22,8 +22,31 @@
   font-size: large;
 }
 
+.p-selectable-row td{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+body .ui-progressbar .ui-progressbar-value {
+  height: 0! important;
+}
+
+.repDetail{
+  top: 33px;
+    position: absolute;
+    flex-direction: column;
+    background: #efefef;
+    width: 400px;
+    left: 0px;
+    z-index: 2;
+    height: 150px;
+    overflow: auto;
+    font-size: 15px;
+    line-height: 35px;
 }
 

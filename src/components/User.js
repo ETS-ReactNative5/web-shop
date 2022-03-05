@@ -55,7 +55,6 @@ class User extends React.Component {
     this.FileUpload = this.FileUpload.bind(this);
     this.reverseFunction = this.reverseFunction.bind(this);
     this.EditMap = this.EditMap.bind(this);
-    debugger;
     this.onHide = this.onHide.bind(this);
     this.state = {
       id: null,
@@ -163,7 +162,6 @@ class User extends React.Component {
     this.Server.send("AdminApi/ManageUsers", param, SCallBack, ECallBack)
   }
   reverseFunction(map, e) {
-    debugger;
     let that = this;
 
 
@@ -802,7 +800,6 @@ class User extends React.Component {
         return;
       }
     }
-    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       username: this.state.username,
@@ -881,7 +878,6 @@ class User extends React.Component {
   }
   GetLaons() {
     let that = this;
-    debugger;
     that.setState({
       loading: 1
     })
@@ -901,7 +897,6 @@ class User extends React.Component {
 
   }
   SetLaon() {
-    debugger;
     let that = this;
     if (!this.state.LaonName) {
       Alert.warning('نام را وارد کنید', 2500);
@@ -930,7 +925,6 @@ class User extends React.Component {
       that.setState({
         loading: 0
       })
-      debugger;
       Alert.success('عملیات با موفقیت انجام شد', 2500);
     };
     let ECallBack = function (error) {
@@ -998,7 +992,6 @@ class User extends React.Component {
     e.preventDefault();
     const formData = new FormData();
     let name = e.target.name;
-    debugger;
     formData.append('myImage', e.target.files[0]);
     formData.append('ExtraFile', 1);
 

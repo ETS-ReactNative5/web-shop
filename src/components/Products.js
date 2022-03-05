@@ -278,7 +278,6 @@ class Products extends React.Component {
             }
 
             res.map((v, i) => {
-                debugger;
                 that.setState({
                     id: v._id,
                     IsSeveralShop: response.data.extra ? response.data.extra.IsSeveralShop : 0,
@@ -354,7 +353,6 @@ class Products extends React.Component {
             token: localStorage.getItem("api_token")
         })
             .then(response => {
-                debugger;
                 this.setState({
                     UId: response.data.authData.userId,
                     levelOfUser: response.data.authData.levelOfUser
@@ -469,7 +467,6 @@ class Products extends React.Component {
     }
     SendComment() {
         let that = this;
-        debugger;
         if (!this.state.CommentText) {
             that.setState({
                 HasError: {
@@ -635,6 +632,11 @@ class Products extends React.Component {
                     IsSeveralShop: this.state.IsSeveralShop
                 };
                 let SCallBack = function (response) {
+                    if(response.data.error){
+                        that.toast.current.show({ severity: 'error', summary: 'عدم امکان خرید', detail: response.data.error, life: 8000 });
+                        return;
+                    }
+                    
                     let res = response.data.result;
                     let { history } = that.props;
 

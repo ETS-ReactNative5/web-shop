@@ -9,8 +9,6 @@ import ReactTable from "react-table";
 
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
-import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
-import { DataTable } from 'primereact/datatable';
 import { io } from "socket.io-client";
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -33,8 +31,10 @@ class Show_Reports extends React.Component {
     this.Server = new Server();
     this.state = {
       loading: 0,
+      Filters:[],
       output:'',
-      legend: " فیلتر گزارش شماره " + this.props.number
+      legend: " فیلتر گزارش شماره " + this.props.number,
+      MainShopInfo:{}
       
 
     }
@@ -42,12 +42,15 @@ class Show_Reports extends React.Component {
 
     this.generateExcel = this.generateExcel.bind(this);
     this.showReports = this.showReports.bind(this);
+    this.showReportsDetail = this.showReportsDetail.bind(this);    
     this.Clear = this.Clear.bind(this);
     this.sortTable = this.sortTable.bind(this);
     
   }
   GetFilters() {
     let that = this;
+    debugger;
+
     let param = {
       token: localStorage.getItem("api_token"),
       number:this.props.number
@@ -56,6 +59,7 @@ class Show_Reports extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
+
       let FilterIds=[];
       that.setState({
         method:response.data.result[0].method,
@@ -65,7 +69,6 @@ class Show_Reports extends React.Component {
         FilterIds.push(item.id);
       }
       that.Server.send("AdminApi/GetFilters", {_id:FilterIds}, function (response) {
-        debugger;
 
         let ShowParam=[];
         let ComboParam = [];
@@ -116,7 +119,6 @@ class Show_Reports extends React.Component {
       cellIndex = event.target.cellIndex
     if(cellIndex == -1)
       return;
-      debugger;
     table = x=event.target.parentElement.parentElement.parentElement;
     let sort = 1;
     if(!isNaN(parseInt(event.target.getAttribute("sort"))))
@@ -177,7 +179,6 @@ class Show_Reports extends React.Component {
     for(let i=1;i<rows.length;i++){
       rows[i].cells[0].innerText=i;
     }
-    debugger;
   }
   getCombo(){
     let that = this;
@@ -232,10 +233,12 @@ class Show_Reports extends React.Component {
     this.setState({
       output:''
     })
+    debugger;
     let param = {
       token: localStorage.getItem("api_token"),
       number:this.state.number,
-      SeveralShop:this.state.SeveralShop
+      SeveralShop:this.state.SeveralShop,
+      mainShop:this.state.mainShop
     };
     for(let item of this.state.ShowParam){
       if(item.type == "5" && this.state[item.name]){
@@ -254,7 +257,19 @@ class Show_Reports extends React.Component {
     })
 
     let SCallBack = function (response) {
+      let Date = "<div style='display:flex'>";
+      for(let i=0;i<that.state.Filters.length;i++){
+        if(that.state.Filters[i].latinName == "fromDate" && that.state[that.state.Filters[i].latinName])
+          Date+= "<div style='text-align:right;font-size:28px'> تاریخ : </div><div style='text-align:right;font-size:28px'><span style='text-align:right;font-size:28px'> از </span><span>"+that.state[that.state.Filters[i].latinName].local('fa').format('jYYYY/jM/jD')+"</span></div>"
+        if(that.state.Filters[i].latinName == "UntilDate"  && that.state[that.state.Filters[i].latinName])
+          Date+= "<div style='text-align:right;font-size:28px'><span style='text-align:right;font-size:28px'> تا </span><span>"+that.state[that.state.Filters[i].latinName].local('fa').format('jYYYY/jM/jD')+"</span></div>"
+
+      }
+
+      Date+="</div><br />";
+      let printOutput= Date + response.data.result;
       that.setState({
+        printOutput:printOutput,
         output:response.data.result,
         ExcelRep:response.data.ExcelRep,
         loading: 0
@@ -270,6 +285,50 @@ class Show_Reports extends React.Component {
       })
     }
     this.Server.send("ReportApi/"+this.state.method, param, SCallBack, ECallBack)
+  }
+  showReportsDetail(detailId) {
+    let that = this;
+   
+    let param = {
+      token: localStorage.getItem("api_token"),
+      number:this.state.number,
+      SeveralShop:this.state.SeveralShop,
+      mainShop:this.state.mainShop
+    };
+    for(let item of this.state.ShowParam){
+      if(item.type == "5" && this.state[item.name]){
+        param[item.name]=this.state[item.name].local("fa").format("jYYYY/jM/jD");
+
+      }else if(item.type == "4"){
+        param[item.name.split("_")[0]]=this.state[item.name+"_val"];
+      }else{
+        param[item.name]=this.state[item.name];
+      }
+    }
+    param["detailId"]=detailId;
+
+
+    this.setState({
+      loading: 1
+    })
+
+    let SCallBack = function (response) {
+      
+      that.setState({
+        outputDetail:response.data.result,
+        VisibleDialog:true,
+        loading: 0
+      })
+      
+
+    };
+    let ECallBack = function (error) {
+      Alert.error('عملیات انجام نشد', 5000);
+      that.setState({
+        loading: 0
+      })
+    }
+    this.Server.send("ReportApi/"+this.state.method+"_detail", param, SCallBack, ECallBack)
   }
   getReportDetail(){
     let that = this;
@@ -306,14 +365,15 @@ class Show_Reports extends React.Component {
       })
       if (response.data.result) {
         that.setState({
-          SeveralShop: response.data.result[0].SeveralShop
+          SeveralShop: response.data.result[0].SeveralShop,
+          Disabled: response.data.result[0].Disabled || false
         })
       }
-      that.init();
+      that.getMainShopInfo();
 
     }, function (error) {
+      that.getMainShopInfo();
 
-      that.init();
       that.setState({
         loading: 0
       })
@@ -371,9 +431,10 @@ class Show_Reports extends React.Component {
       loading: 1
     })
     let SCallBack = function (response) {
-      
       that.setState({
-        loading: 0
+        loading: 0,
+        ShopName_name: response.data.authData.shopId,
+        mainShop: response.data.authData.shopId == that.state.MainShopInfo._id
       })
       that.getReportDetail();
 
@@ -394,12 +455,14 @@ class Show_Reports extends React.Component {
     
     let SCallBack = function (response) {
         that.setState({
-            MainShopInfo:response.data.result
+            MainShopInfo:response.data.result[0]||{}
         })
-
+        that.init();
     };
 
     let ECallBack = function (error) {
+        that.init();
+
 
     }
     that.Server.send("AdminApi/ShopInformation", param, SCallBack, ECallBack)
@@ -454,16 +517,17 @@ itemTemplate(brand) {
   render() {
 
     return (
-      <div style={{ direction: 'rtl' }}>
+      !this.state.Disabled ?
+        <div style={{ direction: 'rtl' }}>
         {this.state.loading == 1 &&
           <div style={{ position: 'fixed', zIndex: 2000, top: 10, left: 15, backgroundColor: '#e89f31', padding: '2px 20px' }}>
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
               <div className="row">
                     <div className="col-12" style={{ display: "none" }}>
-                      <ComponentToPrint SeveralShop={this.state.SeveralShop} htmlParam={this.state.output} forUser="1" ref={el => (this.componentRef = el)} />
+                      <ComponentToPrint SeveralShop={this.state.SeveralShop} htmlParam={this.state.printOutput} forUser="1" ref={el => (this.componentRef = el)} />
                     </div>
                   </div>
           <div className="col-12" style={{ background: '#fff' }}>
@@ -471,11 +535,13 @@ itemTemplate(brand) {
           <Fieldset legend={this.state.legend} toggleable collapsed={this.state.panelCollapsed} onToggle={(e) => this.setState({panelCollapsed: e.value})}>
           <div className="row" style={{alignItems:'baseline'}}>
               {this.state.Filters && this.state.Filters.map((item, index)=>{
+
                 if(item.type=="1"){
                   return(
+                    
                     <div className="col-12 col-lg-3">
                       <div className="group" >
-                          <input className="form-control YekanBakhFaBold" style={{textAlign:'center'}} type="text" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}}   required  />
+                          <input className="form-control YekanBakhFaBold"  style={{textAlign:'center'}} type="text" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}}   required  />
                           <label className="YekanBakhFaBold">{item.name}</label>
                       </div>
                     </div>
@@ -493,22 +559,32 @@ itemTemplate(brand) {
                   )
                 }
                 if(item.type=="3"){
-                  return(
-                    <div className="col-12 col-lg-3" style={{textAlign:'right',marginBottom:20,marginTop:20}}>
-                      <select style={{width:'100%'}} placeholder={item.name} className="form-control YekanBakhFaBold" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}} >
-                      return(
-                        <option value="" >{item.name}</option>
-                      )
-                      {item.Combo && item.Combo.map(function(item,index){
-                          return(
-                            <option className="YekanBakhFaBold" value={item.DBTableFieldValue} >{item.DBTableFieldLabel}</option>
-                          )
-                      })
-                      }
-                      </select>
+                  if(item.DbTableName =="shops" &&  !this.state.mainShop){
+                    
+                    return(
+                      <div className="col-12 col-lg-3" style={{display:'none'}}>
+                        <div className="group" >
+                            <input className="form-control YekanBakhFaBold"  style={{textAlign:'center'}} type="hidden" id={item.latinName} name={item.latinName} value={this.state[item.latinName]}  onChange={(event)=>{this.setState({[item.latinName]:event.target.value})}}   required  />
+                            <label className="YekanBakhFaBold">{item.name}</label>
+                        </div>
+                      </div>
+                    )
+
+                  }else{
+                    return(
+                      <div className="col-12 col-lg-3" style={{textAlign:'right',marginBottom:20,marginTop:20,direction:'ltr'}}>
+                        <Dropdown showClear  filter id={item.latinName} name={item.latinName} placeholder={item.name} value={this.state[item.latinName]} optionLabel="DBTableFieldLabel" style={{ width: '100%' }} optionValue="DBTableFieldValue" options={item.Combo} onChange={(event)=>{
+                          this.setState({[item.latinName]:event.target.value})}
+                          
+                          } />
+                        
+                       
+                      </div>
+                    )
+                    
+
+                  }
                      
-                    </div>
-                  )   
                 }
                 if(item.type=="4"){
                   return(
@@ -571,7 +647,12 @@ itemTemplate(brand) {
             </Fieldset>
             <div onClick={(e) => {this.sortTable(e)}}>
 
-            <div className="report-container"  dangerouslySetInnerHTML={{ __html: this.state.output}} > 
+            <div className="report-container" onClick={(event)=>{
+              if(event.target.closest("TR") && event.target.closest("TR").getAttribute("_id")){
+                this.showReportsDetail(event.target.closest("TR").getAttribute("_id"))
+
+              }
+            }}  dangerouslySetInnerHTML={{ __html: this.state.output}} > 
 
             </div>
             </div>
@@ -579,8 +660,19 @@ itemTemplate(brand) {
           </div>
 
         </div>
+        <Dialog visible={this.state.VisibleDialog} onHide={()=>{this.setState({VisibleDialog:false})}} style={{ width: '60vw' }} maximizable={true} maximized={false}>
+          <div className="report-container" dangerouslySetInnerHTML={{ __html: this.state.outputDetail}} > 
+          </div>
+        </Dialog>
 
       </div>
+      :
+      <div style={{display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column',height:300}}>
+        <h3 style={{color:'red'}}>دسترسی به این بخش از سامانه غیر فعال شده است . برای اطلاع از جزئیات با مسئول فنی تماس بگیرید ...</h3>
+      </div>
+      
+      
+      
     )
   }
 }

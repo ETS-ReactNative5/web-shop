@@ -61,7 +61,7 @@ class Header extends React.Component {
 
 					axios.post(this.state.absoluteUrl + 'AdminApi/ShopInformation', { main: true }).then(response => {
 						this.setState({
-							logo: response.data.result[0].logo
+							logo: response.data.result[0]?.logo
 						})
 						this.getPics();
 					}).catch(error => {
@@ -76,7 +76,7 @@ class Header extends React.Component {
 			.catch(error => {
 				axios.post(this.state.absoluteUrl + 'AdminApi/ShopInformation', { main: true }).then(response => {
 					this.setState({
-						logo: response.data.result[0].logo
+						logo: response.data.result[0]?.logo
 					})
 					this.getPics();
 				}).catch(error => {
@@ -242,7 +242,6 @@ class Header extends React.Component {
 	}
 	getPics(l, type) {
 		let that = this;
-	
 		axios.post(this.state.url + 'getPics', {})
 		  .then(response => {
 			response.data.result.map(function (item, index) {
@@ -251,23 +250,25 @@ class Header extends React.Component {
 					top_image: that.state.absoluteUrl + item.fileUploaded?.split("public")[1]
 				  })
 			  }
-			
-			that.getSettings();	  
 			})
+			that.getSettings();
 		  })
 		  .catch(error => {
+			that.getSettings();
 		  })
 	
 	  }
 	  getSettings() {
 		let that = this;
-	
+
 		that.Server.send("AdminApi/getSettings", {}, function (response) {
-	
 		  if (response.data.result) {
 			that.setState({
 			  RegisterByMob: response.data.result[0] ? response.data.result[0].RegisterByMob : false,
 			  ProductBase: response.data.result[0] ? response.data.result[0].ProductBase : false,
+			  AllowRegister: response.data.result[0] ? response.data.result[0].AllowRegister : false,
+
+			  
 			})
 			window.CRISP_WEBSITE_ID = response.data.result[0] ? response.data.result[0].ChatId : '';
 	
@@ -353,15 +354,20 @@ class Header extends React.Component {
 						</div>
 						:
 						<div className="col-lg-3 col-12 order-lg-1 order-2 text-lg-left text-right">
-						{this.props.Company &&
-                          <div style={{width:'100%',textAlign:'center',display:'flex',justifyContent:'space-evenly'}}>
-                           <button className="btn btn-warning YekanBakhFaMedium" style={{marginTop:10,width:180}} onClick={()=>{this.setState({
-                             VisibleDialog:true
-                           })}}>
+						{this.props.Company && 
+                          <div style={{width:'100%',textAlign:'center',display:'flex',justifyContent:'space-between'}}>
+							  
+							<Link to={`${process.env.PUBLIC_URL}/Login`} style={{ marginTop:10,width:180,textDecoration: 'none', fontSize: 16,fontStyle:'normal' }} className="btn btn-success YekanBakhFaMedium">ورود</Link>
 
-                             <span >عضویت رایگان !</span>
-                           </button>
-						   <Link to={`${process.env.PUBLIC_URL}/Login`} style={{ marginTop:10,width:180,textDecoration: 'none', fontSize: 16,fontStyle:'normal' }} className="btn btn-success YekanBakhFaMedium">ورود</Link>
+                           {this.state.AllowRegister &&
+							<button className="btn btn-warning YekanBakhFaMedium" style={{marginTop:10,width:180}} onClick={()=>{this.setState({
+								VisibleDialog:true
+							})}}>
+
+								<span >عضویت رایگان !</span>
+							</button>
+						   }
+						   
 
                           </div>
                         }

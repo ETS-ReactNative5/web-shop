@@ -22,7 +22,7 @@ import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
 import { Panel } from 'primereact/panel';
 
-class ShowReq extends React.Component {
+class ManageReq extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
@@ -493,7 +493,7 @@ class ShowReq extends React.Component {
           <Toast ref={this.toast} position="top-left" style={{ fontFamily: 'YekanBakhFaBold', textAlign: 'right' }} />
 
           <div className="col-12" style={{ background: '#fff' }}>
-            <Panel header="مشاهده درخواست" style={{  textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+            <Panel header="مدیریت درخواست ها" style={{  textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
 
             <div className="row" style={{ alignItems: 'baseline' }} >
               <div className="col-lg-3 col-12">
@@ -673,5 +673,5 @@ const mapStateToProps = (state) => {
   }
 }
 export default withRouter(
-  connect(mapStateToProps)(ShowReq)
+  connect(mapStateToProps)(ManageReq)
 );

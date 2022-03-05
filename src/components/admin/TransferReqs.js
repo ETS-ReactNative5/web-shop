@@ -141,7 +141,6 @@ class TransferReqs extends React.Component {
     this.Server.send("AdminApi/getTransferReq", param, SCallBack, ECallBack)
   }
   EditRecord(){
-    debugger;
     let that = this;
     
     that.setState({

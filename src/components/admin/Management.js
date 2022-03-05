@@ -22,6 +22,12 @@ import Sales_ReadyToSend from './Sales_ReadyToSend.js'
 import Sales_Posted from './Sales_Posted.js'
 import Sales_Ended from './Sales_Ended.js'
 import Sales_Cleared from './Sales_Cleared.js'
+import Sales_Confirmed from './Sales_Confirmed.js'
+import Systems from './Systems.js'
+import ManageReq from './ManageReq.js'
+import SetSale from './SetSale.js'
+
+import Sales_Waiting from './Sales_Waiting.js'
 import Sales from './Sales.js'
 import Create_Off from './Create_Off.js'
 import Create_Tags from './Create_Tags.js'
@@ -80,6 +86,8 @@ import LaonReq from './LaonReq.js';
 import AccReq from './AccReq.js';
 import ShopGroups from './ShopGroups.js';
 import SaleSystem from './SaleSystem.js';
+import TalaVam from './TalaVam.js';
+import SekeVam from './SekeVam.js';
 
 
 import Chat_Settings from './Chat_Settings.js';
@@ -166,12 +174,12 @@ class Management extends React.Component {
 
       <div style={{ direction: 'rtl',height:'100%' }} >
 
-        <div className="row justify-content-center" style={{height:'100%'}}>
-          <div className="col-12 col-md-3 col-lg-3 ">
+        <div  style={{height:'100%',display:'flex'}}>
+          <div >
 
             <Dashboard callback={this.getResponse.bind(this)} list={this.state.dashList} data={this.state.dashData} NewUsers={this.state.NewUsers} NewFactors={this.state.NewFactors} />
           </div>
-          <div className="col-lg-9 col-md-9 col-12" style={{ background: '#fff',height:'100%' }}>
+          <div  style={{ background: '#fff',height:'100%',width:'100%' }}>
             {this.state.help &&
               <p style={{position:'absolute',top:5,right:20,color:'darkred',fontSize:18,cursor:'pointer',zIndex:2,alignItems:'center'}}  onClick={()=>{this.setState({VisibleDialog:true})}}>
                 <i class="fas fa-question-circle" ></i>
@@ -348,6 +356,7 @@ class Management extends React.Component {
             {this.state.CId == "182" && !this.state.IsReport &&
               <SaleSystem permition={this.state.permitions[this.state.CId]} />
             }
+
             {this.state.CId == "183" && !this.state.IsReport &&
               <Chat permition={this.state.permitions[this.state.CId]} />
             }
@@ -368,8 +377,27 @@ class Management extends React.Component {
             {this.state.CId == "188" && !this.state.IsReport &&
               <TransferReqs permition={this.state.permitions[this.state.CId]} />
             }
-
-
+            {this.state.CId == "189" && !this.state.IsReport &&
+              <TalaVam permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "190" && !this.state.IsReport &&
+              <SekeVam permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "191" && !this.state.IsReport &&
+              <Sales_Waiting permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "192" && !this.state.IsReport &&
+              <Sales_Confirmed permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "193" && !this.state.IsReport &&
+              <Systems permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "194" && !this.state.IsReport &&
+              <ManageReq permition={this.state.permitions[this.state.CId]} />
+            }
+            {this.state.CId == "195" && !this.state.IsReport &&
+              <SetSale permition={this.state.permitions[this.state.CId]} />
+            }
 
 
 

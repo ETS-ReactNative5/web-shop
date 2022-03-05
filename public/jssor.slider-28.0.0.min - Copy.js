@@ -65,5 +65,4 @@
      $Jssor$.$AddEvent(window, "orientationchange", ScaleSlider);
      /*#endregion responsive code end*/
    };
-   debugger;
    jssor_1_slider_init();

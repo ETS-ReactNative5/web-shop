@@ -168,7 +168,6 @@ class AppSettings extends React.Component {
     that.setState({
       loading: 1
     })
-    debugger;
     that.Server.send("AdminApi/getAppSettings", {}, function (response) {
       if(response.data.result[0]){
         
@@ -229,7 +228,6 @@ class AppSettings extends React.Component {
   }
   GetCategory() {
     let that = this;
-    debugger;
     let param = {
       token: localStorage.getItem("api_token")
     };

@@ -4,7 +4,7 @@ import './Dashboard.css'
 import { io } from "socket.io-client";
 import axios from 'axios'
 
-import { Editor } from '@tinymce/tinymce-react';
+import { Sidebar } from 'primereact/sidebar';
 
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
@@ -73,6 +73,7 @@ class Chat extends React.Component {
 
     componentDidMount() {
         socket.on("setChat", (data) => {
+            debugger;
             this.getChat(this.state.visibleDialog ? data._id : null, this.state.Filter)
         });
 
@@ -187,7 +188,6 @@ class Chat extends React.Component {
 
 
     getChat(_id, Filter) {
-        debugger;
         let param = {
             token: localStorage.getItem("api_token"),
             sort: { "_id": -1 },
@@ -204,9 +204,16 @@ class Chat extends React.Component {
         let SCallBack = function (response) {
 
             if (_id) {
+                debugger;
+                for(let i=0;i<that.state.GridData.length;i++){
+                    if(that.state.GridData[i]._id == response.data.result[0]._id)
+                        that.state.GridData[i] = response.data.result[0];
+                }
                 that.setState({
                     loading: 0,
-                    ChatSelected: response.data.result[0]||{}
+                    ChatSelected: response.data.result[0]||{},
+                    GridData:that.state.GridData,
+                    browser: response.data.result[0]?.browser||{}
                 })
                 that.myRef.current.scrollTo(0, that.myRef.current.scrollHeight); 
 
@@ -390,7 +397,7 @@ class Chat extends React.Component {
                 answer:''
             })
             //that.toast.current.show({ severity: 'success', summary: <div>پاسخ با موفقیت ارسال شد</div>, life: 8000 });
-            that.getChat();
+            that.getChat(that.state.ChatSelected._id);
             //that.onHideDialog();
 
 
@@ -401,10 +408,14 @@ class Chat extends React.Component {
             })
             console.log(error)
         }
+        debugger;
         this.Server.send("ChatApi/setChat", param, SCallBack, ECallBack)
     }
     _handleKeyDown(e) {
         if (e.key === 'Enter') {
+          this.setState({
+            answer:''
+          })   
           this.SetAnswer();
         }
       }
@@ -443,6 +454,11 @@ class Chat extends React.Component {
                             <div className="col-3 ania-chat-column" style={{position:'relative'}}>
                                 <div style={{background:'#fff',paddingTop:80,borderRadius:5}}>
                                 <div style={{background:'orange',padding:30,color:'#fff',textAlign:'center',width:'85%',zIndex:2,left:'26px',top:-20,position:'absolute',borderRadius:10}} className="yekan">گفتگوهای من </div>
+                                <div style={{padding:'0px 20px'}} >
+                                    <button className="btn btn-outline-info yekan" style={{width:'100%'}} onClick={()=>{
+                                        this.setState({ShowContact:true})
+                                    }} >گفتگوی جدید </button>
+                                </div>
                                 <div style={{height:'88vh',overflow:'auto'}}>
                                 {this.state.GridData.length > 0 ?
                                     <DataView value={this.state.GridData}  layout={this.state.layout} paginator={false} itemTemplate={this.itemTemplate}></DataView>
@@ -626,7 +642,10 @@ class Chat extends React.Component {
 
 
                 </div>
-                
+                <Sidebar visible={this.state.ShowContact} onHide={() => this.setState({
+                    ShowContact:false
+                })}>
+                </Sidebar>
 
             </div>
         )

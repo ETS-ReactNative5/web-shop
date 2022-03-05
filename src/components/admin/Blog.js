@@ -189,10 +189,10 @@ class Blog extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
 
           <div className="col-12" style={{ background: '#fff' }}>
-            <Panel header="ثبت مطلب جدید" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+            <Panel header="ثبت مطلب جدید" style={{  textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <form  >
                 <div className="row">
 

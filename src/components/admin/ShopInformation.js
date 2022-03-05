@@ -10,7 +10,7 @@ import 'primeicons/primeicons.css';
 import Server from './../Server.js'
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { DataTable } from 'primereact/datatable';
-import ReactToPrint,{PrintContextConsumer } from 'react-to-print';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import { ComponentToPrint } from './../ComponentToPrint.js';
 
 import { Dropdown } from 'primereact/dropdown';
@@ -55,9 +55,9 @@ class ShopInformation extends React.Component {
       NewUsers: (this.props && this.props.location && this.props.location.state && this.props.location.state.NewUsers) ? this.props.location.state.NewUsers : null,
       address: null,
       call: null,
-      mobile:null,
-      Sheba:null,
-      RaymandAcc:null,
+      mobile: null,
+      Sheba: null,
+      RaymandAcc: null,
       about: null,
       user_id: null,
       ShopId: null,
@@ -65,7 +65,7 @@ class ShopInformation extends React.Component {
       bankAcc: null,
       laon: true,
       lat: '32.777403',
-      lon : '51.649219',
+      lon: '51.649219',
       cash: true,
       Message: null,
       pic1: '',
@@ -73,34 +73,34 @@ class ShopInformation extends React.Component {
       SubCities: [],
       SelectedSubCities: [],
       loading: 0,
-      Time1_1:"",
-      Time1_2:"",
-      Time1_3:"",
-      Time1_4:"",
-      Time2_1:"",
-      Time2_2:"",
-      Time2_3:"",
-      Time2_4:"",
-      Time3_1:"",
-      Time3_2:"",
-      Time3_3:"",
-      Time3_4:"",
-      Time4_1:"",
-      Time4_2:"",
-      Time4_3:"",
-      Time4_4:"",
-      Time5_1:"",
-      Time5_2:"",
-      Time5_3:"",
-      Time5_4:"",
-      Time6_1:"",
-      Time6_2:"",
-      Time6_3:"",
-      Time6_4:"",
-      Time7_1:"",
-      Time7_2:"",
-      Time7_3:"",
-      Time7_4:"",
+      Time1_1: "",
+      Time1_2: "",
+      Time1_3: "",
+      Time1_4: "",
+      Time2_1: "",
+      Time2_2: "",
+      Time2_3: "",
+      Time2_4: "",
+      Time3_1: "",
+      Time3_2: "",
+      Time3_3: "",
+      Time3_4: "",
+      Time4_1: "",
+      Time4_2: "",
+      Time4_3: "",
+      Time4_4: "",
+      Time5_1: "",
+      Time5_2: "",
+      Time5_3: "",
+      Time5_4: "",
+      Time6_1: "",
+      Time6_2: "",
+      Time6_3: "",
+      Time6_4: "",
+      Time7_1: "",
+      Time7_2: "",
+      Time7_3: "",
+      Time7_4: "",
       absoluteUrl: this.Server.getAbsoluteUrl(),
       url: this.Server.getUrl(1)
     }
@@ -126,7 +126,7 @@ class ShopInformation extends React.Component {
       .then(data => {
         this.setState({
           address: data.address,
-          latitude:e.lngLat.lat,
+          latitude: e.lngLat.lat,
           longitude: e.lngLat.lng
         })
 
@@ -191,7 +191,7 @@ class ShopInformation extends React.Component {
           SaleFromMultiShops: response.data.result[0] ? response.data.result[0].SaleFromMultiShops : false,
           Raymand: response.data.result[0] ? response.data.result[0].Raymand : false,
           System: response.data.result[0] ? response.data.result[0].System : "shop",
-          SystemTitle: response.data.result[0]?.System =="shop" ? "فروشگاه" : "سایت"
+          SystemTitle: (response.data.result[0]?.System == "shop" || response.data.result[0]?.CreditSupport) ? "فروشگاه" : "سایت"
 
 
 
@@ -223,33 +223,33 @@ class ShopInformation extends React.Component {
       that.setState({
         loading: 1
       })
-      that.Server.send("AdminApi/ShopInformation", { ShopId: _id || that.state.ShopId,getQrCode:1 }, function (response) {
+      that.Server.send("AdminApi/ShopInformation", { ShopId: _id || that.state.ShopId, getQrCode: 1 }, function (response) {
         that.setState({
           loading: 0,
-          barCode:response.data.svg
+          barCode: response.data.svg
         })
         let Time = {};
         if (response.data.result[0].OpenedTime) {
-          let Count=0;
+          let Count = 0;
           for (let i = 0; i < 7; i++) {
-            if(response.data.result[0] && response.data.result[0].OpenedTime[Count]){
-              if(response.data.result[0].OpenedTime[Count]["day" + (i+1)]){
+            if (response.data.result[0] && response.data.result[0].OpenedTime[Count]) {
+              if (response.data.result[0].OpenedTime[Count]["day" + (i + 1)]) {
 
-                for (let j = 0; j < response.data.result[0].OpenedTime[Count]["day" + (i+1)]?.length; j++) {
-                  Time["Time" + (i+1) + "_" + (j + 1)] = response.data.result[0]?.OpenedTime[Count]["day" + (i+1)][j];
+                for (let j = 0; j < response.data.result[0].OpenedTime[Count]["day" + (i + 1)]?.length; j++) {
+                  Time["Time" + (i + 1) + "_" + (j + 1)] = response.data.result[0]?.OpenedTime[Count]["day" + (i + 1)][j];
                 }
-                Count++;             
+                Count++;
               }
-              
+
             }
-            
+
           }
         }
-    
+
         that.setState({
           ShopId: _id || that.state.ShopId,
           address: response.data.result[0].address,
-          latitude:response.data.result[0].latitude,
+          latitude: response.data.result[0].latitude,
           longitude: response.data.result[0].longitude,
           SelectedCity: response.data.result[0].city,
           SelectedSubCity: response.data.result[0].subCity,
@@ -363,7 +363,7 @@ class ShopInformation extends React.Component {
     let param = {
       token: localStorage.getItem("api_token"),
       address: this.state.address,
-      latitude:this.state.latitude,
+      latitude: this.state.latitude,
       longitude: this.state.longitude,
       city: this.state.SelectedCity,
       subCity: this.state.SelectedSubCity,
@@ -412,12 +412,12 @@ class ShopInformation extends React.Component {
     let that = this;
     this.setState({ brand: event.query, Count: 0 });
     let param = {};
-    
-      param = {
-        title: event.query,
-        table: "shops",
-        name: ["name", "name"]
-      };
+
+    param = {
+      title: event.query,
+      table: "shops",
+      name: ["name", "name"]
+    };
 
     let SCallBack = function (response) {
       let brandSuggestions = [];
@@ -425,7 +425,7 @@ class ShopInformation extends React.Component {
         brandSuggestions.push({ _id: v._id, name: v.name })
       })
       that.setState({ brandSuggestions: brandSuggestions });
-    };  
+    };
 
     let ECallBack = function (error) {
 
@@ -434,7 +434,7 @@ class ShopInformation extends React.Component {
 
 
   }
-  onSelect(event){
+  onSelect(event) {
     this.setState({ otherShop: event.value.name, otherShopId: event.value._id });
     this.getShopInformation(event.value._id)
 
@@ -449,29 +449,29 @@ class ShopInformation extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
 
           <div className="col-12" style={{ background: '#fff' }}>
-          <div style={{ display: "none" }}>
-          <ComponentToPrint param={this.state.printParam} printType={this.state.printType} ref={el => (this.componentRef = el)} />
-          </div>
-            <Panel header="ویرایش اطلاعات " style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+            <div style={{ display: "none" }}>
+              <ComponentToPrint param={this.state.printParam} printType={this.state.printType} ref={el => (this.componentRef = el)} />
+            </div>
+            <Panel header="ویرایش اطلاعات " style={{ textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <form  >
                 <div className="row">
-                {this.state.originalShopMain &&
-                  <div className="col-lg-7">
-                    <div className="group">
-                      <AutoComplete placeholder="جستجوی فروشگاههای دیگر"  style={{ width: '100%' }} onSelect={(e) => this.onSelect(e)} onChange={(event) => { this.setState({ otherShop: event.value,otherShopId:null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.otherShop}  suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                  {this.state.originalShopMain &&
+                    <div className="col-lg-7">
+                      <div className="group">
+                        <AutoComplete placeholder="جستجوی فروشگاههای دیگر" style={{ width: '100%' }} onSelect={(e) => this.onSelect(e)} onChange={(event) => { this.setState({ otherShop: event.value, otherShopId: null }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.otherShop} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                      </div>
                     </div>
-                  </div>
-               }
+                  }
                   <div className="col-lg-7">
                     <div className="group">
                       <input className="form-control yekan" autoComplete="off" type="text" value={this.state.name} name="name" onChange={(event) => this.setState({ name: event.target.value })} required="true" />
                       <label className="yekan">نام {this.state.SystemTitle}</label>
                     </div>
                   </div>
-                  
+
 
                   <div className="col-lg-7">
                     <div className="group">
@@ -502,14 +502,14 @@ class ShopInformation extends React.Component {
                     </div>
                   }
                   {this.state.System == "shop" &&
-                  <div className="col-lg-7">
-                    <div className="group">
+                    <div className="col-lg-7">
+                      <div className="group">
 
-                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Sheba} name="Sheba" onChange={(event) => this.setState({ Sheba: event.target.value })} required="true" />
-                      <label className="yekan">شماره شبا</label>
+                        <input className="form-control yekan" autoComplete="off" type="text" value={this.state.Sheba} name="Sheba" onChange={(event) => this.setState({ Sheba: event.target.value })} required="true" />
+                        <label className="yekan">شماره شبا</label>
 
+                      </div>
                     </div>
-                  </div>
                   }
                   <div className="col-lg-7">
                     <div className="group">
@@ -520,44 +520,42 @@ class ShopInformation extends React.Component {
                     </div>
                   </div>
                   {this.state.System == "shop" &&
-                  <div className="col-12">
-                    <div style={{textAlign:'left'}} >
-                      <img src={this.state.barCode} style={{width:300,marginBottom:30}} />
-                      <ReactToPrint
+                    <div className="col-12">
+                      <div style={{ textAlign: 'left' }} >
+                        <img src={this.state.barCode} style={{ width: 300, marginBottom: 30 }} />
+                        <ReactToPrint
                           content={() => this.componentRef}
                         >
                           <PrintContextConsumer>
                             {({ handlePrint }) => (
-                              <i className="far fa-print d-md-block d-none"   onClick={()=>{
+                              <i className="far fa-print d-md-block d-none" onClick={() => {
                                 this.setState({
                                   printParam: this.state.barCode,
-                                  printType:'QrCode'
+                                  printType: 'QrCode'
                                 })
-                                setTimeout(function(){
+                                setTimeout(function () {
                                   handlePrint();
 
-                                },0)
+                                }, 0)
                               }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
                             )}
                           </PrintContextConsumer>
                         </ReactToPrint>
-                    </div>
+                      </div>
 
-                  </div>
-                  }
-                  <div className="col-12" style={{ marginTop: 50 }}>
-                    <hr />
-                  </div>
-                  {!this.state.ProductBase &&
-                  <div className="col-lg-12 col-12">
-                    <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }} >
-                      <Checkbox inputId="Opened" value={this.state.Opened} checked={this.state.Opened} onChange={e => this.setState({ Opened: e.checked })}></Checkbox>
-                      <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>فروشگاه باز است</label>
                     </div>
-
-                  </div>
                   }
-                  {this.state.Opened && !this.state.ProductBase && this.state.System =="shop" &&
+
+                  {!this.state.ProductBase && this.state.System == "shop" &&
+                    <div className="col-lg-12 col-12">
+                      <div style={{ paddingRight: 8, textAlign: 'right', display: 'flex' }} >
+                        <Checkbox inputId="Opened" value={this.state.Opened} checked={this.state.Opened} onChange={e => this.setState({ Opened: e.checked })}></Checkbox>
+                        <label className="yekan" style={{ paddingRight: 5, marginBottom: 0 }}>فروشگاه باز است</label>
+                      </div>
+
+                    </div>
+                  }
+                  {this.state.Opened && !this.state.ProductBase && this.state.System == "shop" &&
                     <div className="col-lg-12">
                       <div className="row">
                         <div className="col-lg-2 col-12">
@@ -855,20 +853,20 @@ class ShopInformation extends React.Component {
 
                     </div>
                   }
-                  {!this.state.ProductBase &&
-                  <div className="col-12" style={{ marginTop: 50 }}>
-                    <hr />
-                  </div>
-                  }
-                  {!this.state.ProductBase && this.state.System =="shop" &&
-                  <div className="col-7">
-                    <div className="group">
-
-                      <input className="form-control yekan" autoComplete="off" type="text" value={this.state.PrepareTime} name="PrepareTime" onChange={(event) => this.setState({ PrepareTime: event.target.value })} required="true" />
-                      <label className="yekan">زمان تقریبی آماده سازی محصولات (دقیقه) </label>
-
+                  {!this.state.ProductBase && this.state.System == "shop" &&
+                    <div className="col-12" style={{ marginTop: 50 }}>
+                      <hr />
                     </div>
-                  </div>
+                  }
+                  {!this.state.ProductBase && this.state.System == "shop" &&
+                    <div className="col-7">
+                      <div className="group">
+
+                        <input className="form-control yekan" autoComplete="off" type="text" value={this.state.PrepareTime} name="PrepareTime" onChange={(event) => this.setState({ PrepareTime: event.target.value })} required="true" />
+                        <label className="yekan">زمان تقریبی آماده سازی محصولات (دقیقه) </label>
+
+                      </div>
+                    </div>
                   }
                   {this.state.System == "shop" &&
                     <div className="col-lg-7" style={{ marginTop: 10 }}>
@@ -878,7 +876,7 @@ class ShopInformation extends React.Component {
                       </div>
                     </div>
                   }
-                  {this.state.AllowCredit && this.state.System =="shop" &&
+                  {this.state.AllowCredit && this.state.System == "shop" &&
                     <div className="col-lg-6" >
                       <div className="row">
                         <div className="col-12">
@@ -893,9 +891,7 @@ class ShopInformation extends React.Component {
 
                     </div>
                   }
-                  <div className="col-12" style={{ marginTop: 50 }}>
-                    <hr />
-                  </div>
+
                   <div className="col-lg-6" style={{ display: 'none' }}>
                     <div style={{ paddingRight: 8 }}>
 
@@ -934,7 +930,7 @@ class ShopInformation extends React.Component {
 
                     </div>
                   </div>
-                  {this.state.System =="shop" &&
+                  {this.state.System == "shop" &&
                     <div className="col-6" style={{ marginTop: 20 }} >
                       <div className="group">
                         <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="SpecialPic" />
@@ -942,9 +938,9 @@ class ShopInformation extends React.Component {
                       </div>
                     </div>
                   }
-                  {this.state.System =="shop" &&
+                  {this.state.System == "shop" &&
                     <div className="col-6" style={{ marginTop: 20 }}>
-                      <img src={this.state.SpecialPic} style={{maxHeight:150}} />
+                      <img src={this.state.SpecialPic} style={{ maxHeight: 150 }} />
                     </div>
                   }
                   <div className="col-6" style={{ marginTop: 20 }} >
@@ -954,9 +950,9 @@ class ShopInformation extends React.Component {
                     </div>
                   </div>
                   <div className="col-6" style={{ marginTop: 20 }}>
-                    <img src={this.state.logo} style={{maxHeight:150}} />
+                    <img src={this.state.logo} style={{ maxHeight: 150 }} />
                   </div>
-                  {this.state.main && this.state.System =="shop" &&
+                  {this.state.main && this.state.System == "shop" &&
                     <div className="col-6" style={{ marginTop: 20 }} >
                       <div className="group">
                         <input className="form-control yekan" autoComplete="off" onChange={this.FileUpload} type="file" name="logoCopyRight" />
@@ -964,78 +960,78 @@ class ShopInformation extends React.Component {
                       </div>
                     </div>
                   }
-                  {this.state.main &&
+                  {this.state.main && this.state.System == "shop" &&
                     <div className="col-6" style={{ marginTop: 20 }}>
-                      <img src={this.state.logoCopyRight} style={{maxHeight:150}} />
+                      <img src={this.state.logoCopyRight} style={{ maxHeight: 150 }} />
                     </div>
                   }
-                  { this.state.System =="shop" &&
-                  <div className="col-12" style={{ marginTop: 20 }}>
+                  {this.state.System == "shop" &&
+                    <div className="col-12" style={{ marginTop: 20 }}>
 
-                    <Fieldset legend="تنظیمات ارسال کالا" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
-                      <div className="row">
-                        <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
-                          <Checkbox onChange={e => this.setState({ SendToCity: e.checked })} checked={this.state.SendToCity}></Checkbox>
-                          <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال درون شهری</label>
-                        </div>
-                        <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
-                          <Checkbox onChange={e => this.setState({ SendToNearCity: e.checked })} checked={this.state.SendToNearCity}></Checkbox>
-                          <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال به شهرهای مجاور</label>
-                        </div>
-                        <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
-                          <Checkbox onChange={e => this.setState({ SendToState: e.checked })} checked={this.state.SendToState}></Checkbox>
-                          <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال درون استانی</label>
-                        </div>
-                        <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
-                          <Checkbox onChange={e => this.setState({ SendToCountry: e.checked })} checked={this.state.SendToCountry}></Checkbox>
-                          <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال سزاسری</label>
-                        </div>
-                        {this.state.SendToNearCity &&
-                          <div className="col-12" style={{ marginTop: 20, marginBottom: 20 }}>
-                            <p className="yekan">
-                              شهرهای مجاور شهر خود را انتخاب کنید
-                            </p>
-                            <MultiSelect optionLabel="label" style={{ width: '100%' }} value={this.state.SelectedSubCities} options={this.state.SubCities} onChange={(e) => this.setState({ SelectedSubCities: e.value })} />
-
+                      <Fieldset legend="تنظیمات ارسال کالا" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+                        <div className="row">
+                          <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox onChange={e => this.setState({ SendToCity: e.checked })} checked={this.state.SendToCity}></Checkbox>
+                            <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال درون شهری</label>
                           </div>
-                        }
+                          <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox onChange={e => this.setState({ SendToNearCity: e.checked })} checked={this.state.SendToNearCity}></Checkbox>
+                            <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال به شهرهای مجاور</label>
+                          </div>
+                          <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox onChange={e => this.setState({ SendToState: e.checked })} checked={this.state.SendToState}></Checkbox>
+                            <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال درون استانی</label>
+                          </div>
+                          <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox onChange={e => this.setState({ SendToCountry: e.checked })} checked={this.state.SendToCountry}></Checkbox>
+                            <label style={{ paddingRight: 5, marginTop: 5 }}>ارسال سزاسری</label>
+                          </div>
+                          {this.state.SendToNearCity &&
+                            <div className="col-12" style={{ marginTop: 20, marginBottom: 20 }}>
+                              <p className="yekan">
+                                شهرهای مجاور شهر خود را انتخاب کنید
+                            </p>
+                              <MultiSelect optionLabel="label" style={{ width: '100%' }} value={this.state.SelectedSubCities} options={this.state.SubCities} onChange={(e) => this.setState({ SelectedSubCities: e.value })} />
 
-                        <div className="col-lg-12 col-12" style={{ display: 'flex', alignItems: 'center' }}>
-                          <Checkbox onChange={e => this.setState({ FreeInExpensive: e.checked })} checked={this.state.FreeInExpensive}></Checkbox>
-                          <label style={{ paddingRight: 5, marginTop: 5 }}>برای خریدهای با مبلغ زیاد هزینه پیک رایگان شود</label>
+                            </div>
+                          }
+
+                          <div className="col-lg-12 col-12" style={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox onChange={e => this.setState({ FreeInExpensive: e.checked })} checked={this.state.FreeInExpensive}></Checkbox>
+                            <label style={{ paddingRight: 5, marginTop: 5 }}>برای خریدهای با مبلغ زیاد هزینه پیک رایگان شود</label>
+                          </div>
+                          <div className="col-lg-7">
+                            <div className="group">
+
+                              <Cities callback={this.getResponse.bind(this)} callback={this.getResponse.bind(this)} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
+
+
+                            </div>
+                          </div>
+                          <div className="col-lg-12">
+                            <div style={{ marginTop: 30, overflow: 'hidden' }}>
+                              <label className="yekan" style={{ margin: 20 }}>آدرس {this.state.SystemTitle} : {this.state.address}</label>
+                              <Mapir
+                                center={[this.state.longitude || this.state.lon, this.state.latitude || this.state.lat]}
+                                onClick={this.reverseFunction}
+                                Map={Maps}
+                                userLocation
+
+                              >
+                                {this.state.markerArray}
+                              </Mapir>
+                            </div>
+                            <div className="group" style={{ display: 'none' }}>
+
+                              <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.address} name="address" onChange={(event) => this.setState({ address: event.target.value })} required="true" />
+                              <label className="yekan">آدرس {this.state.SystemTitle}</label>
+
+                            </div>
+                          </div>
+
                         </div>
-                        <div className="col-lg-7">
-                    <div className="group">
-
-                      <Cities callback={this.getResponse.bind(this)} callback={this.getResponse.bind(this)} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
-
-
+                      </Fieldset>
                     </div>
-                  </div>
-                  <div className="col-lg-12">
-                    <div style={{ marginTop: 30, overflow: 'hidden' }}>
-                      <label className="yekan" style={{margin:20}}>آدرس {this.state.SystemTitle} : {this.state.address}</label>
-                      <Mapir
-                      center={[this.state.longitude || this.state.lon,  this.state.latitude  || this.state.lat]}
-                      onClick={this.reverseFunction}
-                      Map={Maps}
-                      userLocation
-
-                    >
-                      {this.state.markerArray}
-                    </Mapir>
-                    </div>
-                    <div className="group" style={{display:'none'}}>
-
-                      <textarea className="form-control yekan" autoComplete="off" type="text" value={this.state.address} name="address" onChange={(event) => this.setState({ address: event.target.value })} required="true" />
-                      <label className="yekan">آدرس {this.state.SystemTitle}</label>
-
-                    </div>
-                  </div>
-
-                      </div>
-                    </Fieldset>
-                  </div>
                   }
 
                   <div className="col-lg-12">

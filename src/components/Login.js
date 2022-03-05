@@ -65,7 +65,6 @@ class Login extends React.Component {
   }
   getSetting(){
     let that = this;
-    debugger;
     axios.post(this.state.url+'getSettings', {
       token: localStorage.getItem("api_token")
     })
@@ -637,7 +636,7 @@ class Login extends React.Component {
           <div>
           </div>
           }
-          {!this.props.noFooter &&
+          {!this.props.noFooter && this.state.Theme != null &&
             <Footer /> 
           }
           </div>

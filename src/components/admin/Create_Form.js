@@ -73,7 +73,6 @@ class Create_Forms extends React.Component {
   SetForms() {
     let that = this;
     let Filters = []
-    debugger;
     this.state.FilterListForDropDown.map((v,index)=>{
       if(v.checked){
         Filters.push({
@@ -83,7 +82,6 @@ class Create_Forms extends React.Component {
       }
         
     })
-    debugger;
 
     let param = {
       token: localStorage.getItem("api_token"),

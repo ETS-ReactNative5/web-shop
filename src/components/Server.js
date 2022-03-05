@@ -4,21 +4,38 @@ import {ProgressSpinner} from 'primereact/progressspinner';
 
 class Server extends React.Component {   
    constructor(props){
+      
      super(props);
+     const type=2;
      let serverUrl=[
       'http://localhost:3000/',
       'https://api.emdcctv.com/',
       'https://marketapi.sarvapps.ir/',
       'https://foodapi.sarvapps.ir/',
       'https://siteapi.sarvapps.ir/',
-      'https://api.aniabook.ir/'/*,
-      'https://crmapi.sarvapps.ir/'*/     
-
+      'https://api.aniabook.ir/',
+      'http://sad.samentour.ir:3000/'    
+     ]
+     let addressUrl=[
+      'http://localhost:3000/',
+      'https://emdcctv.com/',
+      'https://aniashop.ir/',
+      '',
+      '',
+      'https://aniabook.ir/',
+      'http://sad.samentour.ir:3000/'    
      ]
      this.state={
         isLoading:false,
-        serverUrl: serverUrl[2]  
+        serverUrl: serverUrl[type],
+        addressUrl:addressUrl[type]  
      };   
+   }
+   getAddress(){
+      return this.state.addressUrl
+   }
+   getUrl(admin){
+      return admin ? this.state.serverUrl+"AdminApi/" : this.state.serverUrl+"MainApi/" 
    }
    getUrl(admin){
       return admin ? this.state.serverUrl+"AdminApi/" : this.state.serverUrl+"MainApi/" 

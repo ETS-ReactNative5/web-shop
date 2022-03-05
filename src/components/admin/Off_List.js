@@ -81,7 +81,6 @@ class Off_List extends React.Component {
         username:""
       })
     }
-    debugger;   
 
     let param = {
       token: localStorage.getItem("api_token"),

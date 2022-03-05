@@ -124,8 +124,8 @@ class Products extends React.Component {
                 Blog:response.data.result,
                 loading:0
             })
-            if(that.state.System == "shop")
-                that.getProducts();
+            /*if(that.state.System == "shop")
+                that.getProducts();*/
             that.myRef.current.scrollTo(0,0)
 
         };
@@ -197,7 +197,7 @@ class Products extends React.Component {
         return <Redirect to={"/login"}/>;
     }
     return (
-      <div ref={this.myRef}>  
+      <div ref={this.myRef} style={{height:'100%'}}>  
       {this.state.System=="shop"  ?
         <div>
             
@@ -216,7 +216,7 @@ class Products extends React.Component {
         </div>
         }
         {!this.state.loading ? 
-        <div className="single_product firstInPage blogs" style={{direction:'rtl'}} >
+        <div className="single_product firstInPage blogs" style={{direction:'rtl',minHeight:'100%'}} >
         
 		<div className="container">
             <div className="row" >

@@ -644,7 +644,7 @@ class MainBox2 extends React.Component {
 
                     </div>
              
-             <div className="col-lg-12 col-12"  style={{background:'#007bff',marginTop:20}} > 
+             <div className="col-lg-12 col-12"  style={{marginTop:20}} > 
              <div >
              <div className=" backgroundsvg" style={{direction:'rtl',paddingRight:0}}>
              {this.state.products.length > 0 && 

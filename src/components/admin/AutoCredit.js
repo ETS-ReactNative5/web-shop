@@ -128,7 +128,6 @@ class AutoCredit extends React.Component {
       })
       console.log(error)
     }
-    debugger;
     let levelTitle = '';
     for(let v of this.state.LevelOption){
       if(v.value == this.state.levelOfUser)

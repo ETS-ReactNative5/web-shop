@@ -1,24 +1,17 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 import { BrowserRouter, Route, withRouter, Redirect } from 'react-router-dom'
-import Dashboard from './Dashboard.js'
 import './Dashboard.css'
-import ReactTable from "react-table";
-
-
+import { Panel } from 'primereact/panel';
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
-import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Checkbox } from 'primereact/checkbox';
 import { confirmAlert } from 'react-confirm-alert';
-import { MultiSelect } from 'primereact/multiselect';
 import { AutoComplete } from 'primereact/autocomplete';
 import { Chip } from 'primereact/chip';
-
 import { connect } from 'react-redux';
 import { Loader } from 'rsuite';
 import { Alert } from 'rsuite';
@@ -36,11 +29,11 @@ class Unit_List extends React.Component {
     this.state = {
       layout: 'list',
       name: "",
-      ShopsList:[],
+      ShopsList: [],
       type: "1",
       FId: "",
       DbTableName: "",
-      usersList:[],
+      usersList: [],
       DBTableField: "",
       latinName: ""
 
@@ -75,7 +68,7 @@ class Unit_List extends React.Component {
   SetUnit() {
     let that = this;
     let usersList = this.state.usersList.filter(e => e.remove != "1");
-    
+
 
     let param = {
       token: localStorage.getItem("api_token"),
@@ -110,7 +103,7 @@ class Unit_List extends React.Component {
     this.setState({
       visibleManageField: true,
       fTitle: "",
-      enable:true,
+      enable: true,
       lTitle: "",
       usersList: [],
       selectedId: null
@@ -175,7 +168,7 @@ class Unit_List extends React.Component {
   }
   delField(rowData) {
     this.setState({
-      visibleManageField:false
+      visibleManageField: false
     })
     confirmAlert({
       title: <span className="yekan">حذف کاربر</span>,
@@ -188,7 +181,7 @@ class Unit_List extends React.Component {
             let param = {
               token: localStorage.getItem("api_token"),
               _id: rowData._id,
-              del:1
+              del: 1
             };
             let SCallBack = function (response) {
               that.setState({
@@ -217,10 +210,10 @@ class Unit_List extends React.Component {
   onSelect(event) {
     let List = this.state.usersList.filter(e => e.remove != "1");
     List.push({
-        title: event.value.name,
-        username: event.value.username
-      })
-      var flags = [], output = [], l = List.length, i;
+      title: event.value.name,
+      username: event.value.username
+    })
+    var flags = [], output = [], l = List.length, i;
     for (i = 0; i < l; i++) {
       if (flags[List[i].title]) continue;
       flags[List[i].title] = true;
@@ -239,17 +232,17 @@ class Unit_List extends React.Component {
     let that = this;
     this.setState({ brand: event.query, Count: 0 });
     let param = {};
-       param = {
-        title: event.query,
-        table:"users",
-        name:["name","username","RaymandAcc","RaymandUser"]
-      };
-    
-    
+    param = {
+      title: event.query,
+      table: "users",
+      name: ["name", "username", "RaymandAcc", "RaymandUser"]
+    };
+
+
     let SCallBack = function (response) {
       let brandSuggestions = [];
       response.data.result.reverse().map(function (v, i) {
-        brandSuggestions.push({ _id: v._id,name:v.name,username:v.username})
+        brandSuggestions.push({ _id: v._id, name: v.name, username: v.username })
       })
       that.setState({ brandSuggestions: brandSuggestions });
     };
@@ -260,17 +253,17 @@ class Unit_List extends React.Component {
     that.Server.send("AdminApi/searchItems", param, SCallBack, ECallBack)
 
 
-}
-itemTemplate(brand) {
+  }
+  itemTemplate(brand) {
     return (
-      <div className="p-clearfix" style={{ direction: 'rtl',maxWidth:'100%' }} >
+      <div className="p-clearfix" style={{ direction: 'rtl', maxWidth: '100%' }} >
         <div style={{ margin: '10px 10px 0 0' }} className="row" username={brand.username} >
           <div className="col-8" username={brand.username} style={{ textAlign: 'right' }}>
             <span className="iranyekanwebregular" style={{ textAlign: 'right', overflow: 'hidden' }} username={brand.username} >
-              <span style={{whiteSpace:'pre-wrap'}} username={brand.username}>{brand.name}</span><br />
+              <span style={{ whiteSpace: 'pre-wrap' }} username={brand.username}>{brand.name}</span><br />
             </span>
           </div>
-          
+
         </div>
       </div>
     );
@@ -294,36 +287,37 @@ itemTemplate(brand) {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
 
           <div className="col-12" style={{ background: '#fff' }}>
-            <div className="row" >
-              <div className="col-6" style={{ textAlign: 'center' }}>
-                <button className="btn btn-primary irsans" onClick={this.CreateForm} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>ساخت ردیف جدید</button>
+            <Panel header="لیست واحدها" style={{ textAlign: 'right', fontFamily: 'yekan' }}>
+              <div className="row" >
+                <div className="col-6" style={{ textAlign: 'right' }}>
+                  <button className="btn btn-primary irsans" onClick={this.CreateForm} style={{ width: "200px", marginTop: "20px", marginBottom: "20px" }}>ساخت ردیف جدید</button>
+                </div>
+
               </div>
 
-            </div>
-            <div className="section-title " style={{ textAlign: 'right' }}><span className="title IRANYekan" style={{ fontSize: 17, color: 'gray' }} >لیست واحدها</span></div>
-
-            <DataTable responsive value={this.state.GridDataFields} selectionMode="single" selection={this.state.selectedComponent} onSelectionChange={e => this.selectedComponentChange(e.value)}>
-              <Column field="fTitle" header="شماره" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="lTitle" header="نام" className="irsans" style={{ textAlign: "center" }} />
-              <Column field="del" body={delTemplate} header="حذف" className="irsans" style={{ textAlign: "center" }} />
-            </DataTable>
+              <DataTable responsive value={this.state.GridDataFields} selectionMode="single" selection={this.state.selectedComponent} onSelectionChange={e => this.selectedComponentChange(e.value)}>
+                <Column field="fTitle" header="شماره" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="lTitle" header="نام" className="irsans" style={{ textAlign: "center" }} />
+                <Column field="del" body={delTemplate} header="حذف" className="irsans" style={{ textAlign: "center" }} />
+              </DataTable>
+            </Panel>
           </div>
 
         </div>
 
 
-        <Dialog header={this.state.selectedId ? "اصلاح" : "ساخت ردیف جدید"} visible={this.state.visibleManageField}  footer={footer} minY={70} onHide={this.onHideFormsDialog} maximizable={false} maximized={true}>
+        <Dialog header={this.state.selectedId ? "اصلاح" : "ساخت ردیف جدید"} visible={this.state.visibleManageField} footer={footer} minY={70} onHide={this.onHideFormsDialog} maximizable={false} maximized={true}>
           <form>
 
-            <div className="row" style={{alignItems:'baseline'}}>
+            <div className="row" style={{ alignItems: 'baseline' }}>
               <div className="col-lg-6">
                 <div className="group">
                   <input className="form-control irsans" autoComplete="off" type="text" value={this.state.fTitle} name="fTitle" onChange={(event) => this.setState({ fTitle: event.target.value })} required="true" />
                   <label>نام فارسی</label>
-                </div>  
+                </div>
               </div>
               <div className="col-lg-12">
 
@@ -333,48 +327,48 @@ itemTemplate(brand) {
 
                 </div>
               </div>
-              
-                
-                    <div className="col-lg-12">
-                    <div className="group">
 
-                    <AutoComplete disabled={this.state.all} placeholder="بخشی از نام / شماره موبایل / شناسه کاربری / شماره حساب  را وارد کنید"  style={{ width: '100%' }} onChange={(event)=>{this.setState({searchName:event.value})}} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
-                        <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
-                        {typeof this.state.usersList == "object" && this.state.usersList.map((v, i) => {
-                            if ((v.title || v.username) && !v.remove) {
-                            return (<Chip label={v.title||v.username} _id={v._id} style={{ marginLeft: 5 }} removable={true} onRemove={(event) => {
-                                let title = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
-                                let List = this.state.usersList;
-                                for (let i = 0; i < List.length; i++) {
-                                if (List[i].title == title || List[i].username == title) {
-                                    List[i].remove = 1;
-                                }
-                                }
 
-                            }} />)
+              <div className="col-lg-12">
+                <div className="group">
+
+                  <AutoComplete disabled={this.state.all} placeholder="بخشی از نام / شماره موبایل / شناسه کاربری / شماره حساب  را وارد کنید" style={{ width: '100%' }} onChange={(event) => { this.setState({ searchName: event.value }) }} itemTemplate={this.itemTemplate.bind(this)} value={this.state.searchName} onSelect={(e) => this.onSelect(e)} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                  <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
+                    {typeof this.state.usersList == "object" && this.state.usersList.map((v, i) => {
+                      if ((v.title || v.username) && !v.remove) {
+                        return (<Chip label={v.title || v.username} _id={v._id} style={{ marginLeft: 5 }} removable={true} onRemove={(event) => {
+                          let title = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
+                          let List = this.state.usersList;
+                          for (let i = 0; i < List.length; i++) {
+                            if (List[i].title == title || List[i].username == title) {
+                              List[i].remove = 1;
                             }
+                          }
 
-                        })
-                        }
-                        </div>
-                    
-                    
-                    
-                    </div>
+                        }} />)
+                      }
+
+                    })
+                    }
+                  </div>
+
+
+
                 </div>
-                
-              
+              </div>
+
+
               <div className="col-lg-12">
 
-              <div className="group" >
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Checkbox inputId="active" value={this.state.enable} checked={this.state.enable} onChange={e => this.setState({ enable: e.checked })}></Checkbox>
-                        <label htmlFor="active" className="p-checkbox-label yekan" style={{ paddingRight: 5,marginBottom:0 }}>فعال</label>
-                      </div>
+                <div className="group" >
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Checkbox inputId="active" value={this.state.enable} checked={this.state.enable} onChange={e => this.setState({ enable: e.checked })}></Checkbox>
+                    <label htmlFor="active" className="p-checkbox-label yekan" style={{ paddingRight: 5, marginBottom: 0 }}>فعال</label>
+                  </div>
+                </div>
               </div>
-              </div>
-             
-              
+
+
 
 
             </div>

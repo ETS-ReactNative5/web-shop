@@ -174,10 +174,10 @@ class Brands extends React.Component {
             <Loader content="لطفا صبر کنید ..." className="yekan" />
           </div>
         }
-        <div className="row justify-content-center">
+        <div className="row justify-content-center mt-5">
 
           <div className="col-12" style={{ background: '#fff' }}>
-            <Panel header="ثبت برند جدید" style={{ marginTop: 20, textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
+            <Panel header="ثبت برند جدید" style={{textAlign: 'right', marginBottom: 50, fontFamily: 'yekan' }}>
               <form  >
                 <div className="row">
 
@@ -196,7 +196,7 @@ class Brands extends React.Component {
                     </div>
                   </div>
                   <div className="col-lg-12">
-                    <div style={{ paddingRight: 8 }}>
+                    <div style={{ paddingRight: 8,display: 'flex',marginTop:25 }}>
 
                       <Checkbox inputId="laon" value={this.state.showInSite} checked={this.state.showInSite} onChange={e => this.setState({ showInSite: e.checked })}></Checkbox>
                       <label htmlFor="laon" className="p-checkbox-label" style={{ paddingRight: 5 }}>نمایش در صفحه اول سایت</label>

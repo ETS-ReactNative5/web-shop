@@ -2,25 +2,21 @@ var AniaChat_SendSmsTo=[];
 var AniaChat_SendSms=false;
 var AniaChat_forceRegister=false;
 var AniaChat_registerItems=[];
-
-
-window.AniaChatInit = function(ioParam,absoluteUrl){
-    //let  socket = ioParam(absoluteUrl);
-    //let  socket = ioParam("https://localhost:3000/");
-    let  socket = ioParam("https://siteapi.sarvapps.ir/");
+var absoluteUrl=""
+window.AniaChatInit = function(ioParam,urlParam){
+    let  socket = ioParam(urlParam);
+    debugger;
     socket.on("setChat", (data) => {
+        debugger;
         getChat()
     });
-    if(!window.AniaChatId)
-        return;
-    //var url='http://localhost:3000/ChatApi/chatSettings';
-    var url='https://siteapi.sarvapps.ir/ChatApi/chatSettings';
+    var url=`${urlParam}ChatApi/chatSettings`;
     var callback = function(response){
         create(response);    
     }
     var error = function(err){
-        alert(2)
     }
+    absoluteUrl=urlParam;    
     server(url,{AniaChatId:window.AniaChatId,User:1,get:1},callback,error);
     
 
@@ -50,7 +46,7 @@ function create(resp){
     let helpers=[];
     let helpersHtml="";
     let count=0;
-    let url = 'https://siteapi.sarvapps.ir/';
+    let url = absoluteUrl;
     //let url = 'http://localhost:3000/';
 
     let profilesWidth=40;
@@ -90,7 +86,6 @@ function create(resp){
     textArea.id = "ania-chat-text";
     textArea.onkeypress=function(){
         var key = window.event.keyCode;
-        
         // If the user has pressed enter
         if (key === 13) {
             setChat();
@@ -214,7 +209,7 @@ function create(resp){
         formData.append('myImage', event.target.files[0]);
         var callback = function(response){
             //let file = "http://localhost:3000/" + response.split("public")[1];
-            let file = "https://siteapi.sarvapps.ir/" + response.split("public")[1];
+            let file = absoluteUrl + response.split("public")[1];
 
             if(file.indexOf(".png") > 0 ||  file.indexOf(".jpg") > 0 ||  file.indexOf(".gif") > 0){
                 document.getElementById("ania-chat-text").value = '<img src='+file+'  />'
@@ -229,13 +224,11 @@ function create(resp){
            
         }
         var error = function(err){
-            alert(2)
     
         }
 
 
-        //var url='http://localhost:3000/ChatApi/uploadFile';
-        var url='https://siteapi.sarvapps.ir/ChatApi/uploadFile';
+        var url=`${absoluteUrl}ChatApi/uploadFile`;
 
         
         fileUpload(url,formData,callback,error);
@@ -244,7 +237,6 @@ function create(resp){
 
     })
     registerBtn.addEventListener("click",function(event){
-        alert(444);
         var inputs = document.getElementById("ania-chat-reg-box").getElementsByTagName("input");
         var param={};
         for(let i=0;i<inputs.length;i++){
@@ -252,16 +244,14 @@ function create(resp){
         }
         var ania_chat_id = getCookie("ania_chat_id");
         param.code = window.AniaChatId;
-
-        //var url='http://localhost:3000/ChatApi/setUser';
-        var url='https://siteapi.sarvapps.ir/ChatApi/setChat';
+        debugger;
+        var url=`${absoluteUrl}ChatApi/setChat`;
 
         var callback = function(response){
             document.cookie = "ania_chat_user_id="+response.insertedId+"";
             registerBox.style.display = "none";
         }
         var error = function(err){
-            alert(2)
 
         }
         server(url,param,callback,error);
@@ -338,7 +328,7 @@ function getCookie(cname) {
     var ania_chat_id = getCookie("ania_chat_id");
 
     //var url='http://localhost:3000/ChatApi/getChat';
-    var url='https://siteapi.sarvapps.ir/ChatApi/getChat';
+    var url=`${absoluteUrl}ChatApi/getChat`;
 
     
     var centerBox = document.getElementById("ania-chat-center");
@@ -360,7 +350,7 @@ function getCookie(cname) {
                     span = span.innerHTML;
                     if(resp.chats_detail[i].userSend){
                         var icon = resp.chats_detail[i].read ? "<img src='https://sarvapps.ir/read.png' style='width:16px' />" :  "<img src='https://sarvapps.ir/unread.png' style='width:16px;opacity:0.3' />"
-                        details+="<p style='float:right;clear:both;white-space:pre-wrap;background:"+color+";margin-top:5px !important;border-radius:10px;padding:8px;color:#000;font-size:13px'><span>"+span+"</span><br/><sapn>"+icon+"</span><sapn style='font-size:10px;color:#b9b9b9;padding-right:3px'>"+resp.chats_detail[i].TodayTime+"</span></p>"
+                        details+="<p style='float:right;clear:both;white-space:pre-wrap;background:"+color+";margin-top:5px !important;border-radius:10px;padding:8px;color:#000;font-size:13px;max-width:100%;overflow:hidden'><span>"+span+"</span><br/><sapn>"+icon+"</span><sapn style='font-size:10px;color:#b9b9b9;padding-right:3px'>"+resp.chats_detail[i].TodayTime+"</span></p>"
 
                     }
                     else
@@ -372,7 +362,7 @@ function getCookie(cname) {
                 span = span.innerHTML;
                 var icon = resp.read ? "<img src='https://sarvapps.ir/read.png' style='width:16px' />" :  "<img src='https://sarvapps.ir/unread.png' style='width:16px;opacity:0.3' />"
 
-                centerBox.innerHTML = "<p style='float:right;clear:both;white-space:pre-wrap;background:#c2ff94ba;border-radius:10px;padding:8px;color:#000;font-size:13px'><span>"+span+"</span><br/><sapn>"+icon+"</span><sapn style='font-size:10px;color:#b9b9b9;padding-right:3px'>"+resp.TodayTime+"</span></p>"+details;
+                centerBox.innerHTML = "<p style='float:right;clear:both;white-space:pre-wrap;background:#c2ff94ba;border-radius:10px;padding:8px;color:#000;font-size:13px;max-width:100%;overflow:hidden'><span>"+span+"</span><br/><sapn>"+icon+"</span><sapn style='font-size:10px;color:#b9b9b9;padding-right:3px'>"+resp.TodayTime+"</span></p>"+details;
                 centerBox.scrollTop = centerBox.scrollHeight;
             }
             
@@ -380,7 +370,6 @@ function getCookie(cname) {
         
     }
     var error = function(err){
-        alert(2)
 
     }
     if(ania_chat_id){
@@ -400,7 +389,7 @@ function getCookie(cname) {
     var ania_chat_user_id = getCookie("ania_chat_user_id");
 
     //var url='http://localhost:3000/ChatApi/setChat';
-    var url='https://siteapi.sarvapps.ir/ChatApi/setChat';
+    var url=`${absoluteUrl}ChatApi/setChat`;
 
     var callback = function(response){
         response = response.result;
@@ -411,7 +400,6 @@ function getCookie(cname) {
         getChat();
     }
     var error = function(err){
-        alert(2)
 
     }
     let browser = {};

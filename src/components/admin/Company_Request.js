@@ -5,6 +5,7 @@ import Dashboard from './Dashboard.js'
 import './Dashboard.css'
 import UpFile from './../UpFile';
 
+import { Sidebar } from 'primereact/sidebar';
 
 import 'primeicons/primeicons.css';
 import Server from './../Server.js'
@@ -150,7 +151,6 @@ class Company_Request extends React.Component {
   }
   SetReq() {
     let that = this;
-    debugger;
 
     if (!this.state.RequestReciever && !this.state.SelectedUnit && this.state.map != "مشتری") {
       this.toast.current.show({ severity: 'warn', summary: <div>گیرنده درخواست را مشخص کنید</div>, life: 8000 });
@@ -403,8 +403,8 @@ class Company_Request extends React.Component {
             <div className="row" style={{ margin: 20 }}>
 
               <div className="col-lg-7 col-12 yekan" style={{ textAlign: "right", backgroundColor: '#f5f5f54a', padding: 10, borderRadius: 10 }}>
-                <p className="yekan" style={{ fontSize: 15, color: 'blue' }}>{car.title}</p>
-                <p className="yekan" style={{ fontSize: 18, whiteSpace: 'pre-wrap' }} >{car.desc}</p>
+                <p className="yekan" style={{ fontSize: 14, color: 'blue' }}>{car.title}</p>
+                <p className="yekan" style={{ fontSize: 17, whiteSpace: 'pre-wrap',marginTop:20 }} >{car.desc}</p>
 
 
               </div>
@@ -528,7 +528,7 @@ class Company_Request extends React.Component {
         </div>
 
 
-        <Dialog style={{ width: '60vw' }} header={this.state.selectedId ? "اصلاح" : "ثبت درخواست"} visible={this.state.visibleManageAction} footer={footer} onHide={this.onHideFormsDialog} maximizable={true} maximized={false}>
+        <Dialog style={{ width: '60vw' }} header={this.state.selectedId ? "اصلاح" : "ثبت درخواست"} visible={this.state.visibleManageAction} footer={footer} onHide={this.onHideFormsDialog} maximizable={true} maximized={true}>
           <div>
 
             <div className="row" style={{ alignItems: "center" }}>
